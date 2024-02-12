@@ -19,6 +19,15 @@ spec:
       labels:
         app: "merge-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data && chown -R 1000:1000 /app/merged-clstr-data"]
+          volumeMounts:
+          - name: app-merge-data
+            mountPath: /app/app-merge-data
+          - name: merged-clstr-data
+            mountPath: /app/merged-clstr-data
       containers:
         - name: "merge-container"
           image: sjafari2/kafkamerge:latest
@@ -42,11 +51,11 @@ spec:
             name: "exporter-port"
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "8Gi"
+              cpu: "2"
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "32Gi"
+              cpu: "10"
           volumeMounts:
           - mountPath: app/app-merge-data
             name: app-merge-data
@@ -60,17 +69,18 @@ spec:
         - name: merged-clstr-data
           persistentVolumeClaim:
             claimName: merged-clstr-data
-#      affinity:
-#        podAntiAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#          - labelSelector:
-#              matchExpressions:
-#              - key: app
-#                operator: In
-#                values:
-#                - merge-sts
-#                - cons-sts
-#                - prod-sts
-#                - kafka
-#                - kafka-zookeeper
-#            topologyKey: "kubernetes.io/hostname"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - request-sts
+                - merge-sts
+                - consumer-sts
+                - producer-sts
+                - pipe-kafka-controller
+                - kafka-zookeeper
+            topologyKey: "kubernetes.io/hostname"

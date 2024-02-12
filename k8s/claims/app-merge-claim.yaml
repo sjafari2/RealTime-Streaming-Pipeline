@@ -5,12 +5,13 @@ metadata:
     #  labels:
     #    io.kompose.service: producer-data
   name: app-merge-data
+  namespace: "kafkastreamingdata"
 spec:
-  #storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   capacity:
-    storage: 1Gi
+    storage: 10Gi
   hostPath:
     path: "app/app-merge-data"
 status: {}
@@ -25,10 +26,10 @@ metadata:
   name: app-merge-data
   namespace: "kafkastreamingdata"
 spec:
-  #storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 10Gi
 status: {}

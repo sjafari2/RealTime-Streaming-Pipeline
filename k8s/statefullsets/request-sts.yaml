@@ -19,6 +19,15 @@ spec:
       labels:
         app: "request-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c", "chown -R 1000:1000 /app/request-data && chown -R 1000:1000 /app/request-producer-data"]
+          volumeMounts:
+            - name: request-data
+              mountPath: /app/request-data
+            - name: request-producer-data
+              mountPath: /app/request-producer-data
       containers:
         - name: "request-container"
           image: sjafari2/kafkarequest:latest
@@ -55,11 +64,11 @@ spec:
             name: "exporter-port"
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "4Gi"
+              cpu: "2"
             limits:
-              memory: "5Gi"
-              cpu: "1"
+              memory: "16Gi"
+              cpu: "5"
           volumeMounts:
           - mountPath: app/request-data
             name: request-data
@@ -82,19 +91,19 @@ spec:
             #              path: RqstPodMntPath
             #            - key: RqstPodSharedPath
             #              path: RqstPodSharedPath
-      #affinity:
-      #  podAntiAffinity:
-      #    requiredDuringSchedulingIgnoredDuringExecution:
-      #    - labelSelector:
-      #        matchExpressions:
-      #        - key: app
-      #          operator: In
-      #          values:
-      #          - request-sts
-      #          - merge-sts
-      #          - cons-sts
-      #          - prod-sts
-      #          - kafka
-      #          - kafka-zookeeper
-      #      topologyKey: "kubernetes.io/hostname"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - request-sts
+                - merge-sts
+                - consumer-sts
+                - producer-sts
+                - pipe-kafka-controller
+                - kafka-zookeeper
+            topologyKey: "kubernetes.io/hostname"
 

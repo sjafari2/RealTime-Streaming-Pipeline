@@ -2,8 +2,9 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: producer-data
-spec:
-  #storageClassName: rook-cephfs-central
+  namespace: "kafkastreamingdata"
+pec:
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   capacity:
@@ -19,7 +20,7 @@ metadata:
   name: producer-data
   namespace: "kafkastreamingdata"
 spec:
-  #storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   resources:

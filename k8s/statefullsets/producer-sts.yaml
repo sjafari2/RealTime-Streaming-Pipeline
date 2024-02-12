@@ -19,6 +19,13 @@ spec:
       labels:
         app: "producer-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c",  "chown -R 1000:1000 /app/request-producer-data"]
+          volumeMounts:
+          - name: request-producer-data
+            mountPath: /app/request-producer-data
       containers:
         - name: "producer-container"
           image: sjafari2/kafkaproducer:latest
@@ -52,14 +59,14 @@ spec:
             name: notebook-port
           resources:
             requests:
-              memory: "1Gi"
+              memory: "2Gi"
               cpu: "1"
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "16Gi"
+              cpu: "5"
           volumeMounts:
-          - mountPath: app/producer-data
-            name: producer-data
+              # - mountPath: app/producer-data
+              #  name: producer-data
           - mountPath: app/request-producer-data
             name: request-producer-data
             # - mountPath: app/keystore
@@ -69,9 +76,9 @@ spec:
 
             #  serviceAccountName: kafka-user
       volumes:
-        - name: producer-data
-          persistentVolumeClaim:
-            claimName: producer-data
+          #  - name: producer-data
+          #   persistentVolumeClaim:
+          #    claimName: producer-data
         - name: request-producer-data
           persistentVolumeClaim:
             claimName: request-producer-data
@@ -88,19 +95,19 @@ spec:
             #items:
             #  - key: kafka.truststore.jks
             #    path: truststore/kafka.truststore.jks
-    #  affinity:
-    #    podAntiAffinity:
-    #      requiredDuringSchedulingIgnoredDuringExecution:
-    #      - labelSelector:
-    #          matchExpressions:
-    #          - key: app
-    #            operator: In
-    #            values:
-    #            - request-sts
-    #            - prod-sts
-    #            - cons-sts
-    #            - merge-sts
-    #            - kafka
-    #            - kafka-zookeeper
-    #        topologyKey: "kubernetes.io/hostname"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - request-sts
+                  #               - producer-sts
+                - consumer-sts
+                - merge-sts
+                - pipe-kafka-controller
+                - kafka-zookeeper
+            topologyKey: "kubernetes.io/hostname"
 
