@@ -19,6 +19,13 @@ spec:
       labels:
         app: "producer-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c",  "chown -R 1000:1000 /app/request-producer-data"]
+          volumeMounts:
+          - name: request-producer-data
+            mountPath: /app/request-producer-data
       containers:
         - name: "producer-container"
           image: sjafari2/kafkaproducer:latest
@@ -58,8 +65,8 @@ spec:
               memory: "1Gi"
               cpu: "1000m"
           volumeMounts:
-          - mountPath: app/producer-data
-            name: producer-data
+              # - mountPath: app/producer-data
+              #  name: producer-data
           - mountPath: app/request-producer-data
             name: request-proiducer-data
             # - mountPath: app/keystore
@@ -69,9 +76,9 @@ spec:
 
             #  serviceAccountName: kafka-user
       volumes:
-        - name: producer-data
-          persistentVolumeClaim:
-            claimName: producer-data
+          #  - name: producer-data
+          #   persistentVolumeClaim:
+          #    claimName: producer-data
         - name: request-producer-data
           persistentVolumeClaim:
             claimName: request-producer-data
@@ -88,6 +95,7 @@ spec:
             #items:
             #  - key: kafka.truststore.jks
             #    path: truststore/kafka.truststore.jks
+<<<<<<< HEAD
             # affinity:
             # podAntiAffinity:
             # requiredDuringSchedulingIgnoredDuringExecution:
@@ -107,3 +115,4 @@ spec:
                 operator: In
                 values:
                 - dtn-01.nrp.mghpcc.org  
+

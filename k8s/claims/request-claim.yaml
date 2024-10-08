@@ -5,12 +5,13 @@ metadata:
     #  labels:
     #    io.kompose.service: producer-data
   name: request-data
+  namespace: "kafkastreamingdata"
 spec:
-  #storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   capacity:
-    storage: 5Gi
+    storage: 50Gi
   hostPath:
     path: "app/request-data"
   affinity:
@@ -34,10 +35,10 @@ metadata:
   name: request-data
   namespace: "kafkastreamingdata"
 spec:
-  # storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
+      storage: 50Gi
 status: {}

@@ -19,6 +19,15 @@ spec:
       labels:
         app: "request-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c", "chown -R 1000:1000 /app/request-data && chown -R 1000:1000 /app/request-producer-data"]
+          volumeMounts:
+            - name: request-data
+              mountPath: /app/request-data
+            - name: request-producer-data
+              mountPath: /app/request-producer-data
       containers:
         - name: "request-container"
           image: sjafari2/kafkarequest:latest
@@ -101,3 +110,4 @@ spec:
             #    values:
             # topologyKey: "kubernetes.io/hostname"
  
+

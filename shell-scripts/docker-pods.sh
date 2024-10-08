@@ -18,20 +18,8 @@ process_pod() {
         echo "Error building ${image_name}:${current_date}"
         return 1
     fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 3c9528f72f99932daa8ee4d6057ec93d5853ec4c
-    # Tag Docker image
-    if ! docker tag "${image_name}:${current_date}" "sjafari2/kafka${image_name}:latest"; then
-        echo "Error tagging ${image_name}:${current_date}"
-        return 1
-    fi
-<<<<<<< HEAD
-=======
-
->>>>>>> 3c9528f72f99932daa8ee4d6057ec93d5853ec4c
-    # The pushing steps have been removed/commented out
+    # The tagging and pushing steps have been removed/commented out
     # The images will now only exist locally and not be pushed to a remote repository
 
     # Cleanup dangling images
@@ -44,7 +32,7 @@ process_pod() {
 # Main script logic
 docker_all_pods() {
     # Define an array of pod names
-    pod_names=("base" "request" "producer" "consumer" "merge")
+    pod_names=("request" "producer" "consumer" "merge")
     current_date=$(TZ=America/Denver date +"%Y-%m-%d")
 
     for image_name in "${pod_names[@]}"; do
@@ -68,3 +56,4 @@ docker_all_pods() {
 
 # Call the main function
 docker_all_pods
+

@@ -60,11 +60,12 @@ minikube_memory=4000     # it is in MG
 scripts=(
  ./shell-scripts/delete-dangling-img.sh
   # "./shell-scripts/docker-all-pods.sh"
- ./shell-scripts/minikube-status-check.sh "${minikube_cpu}" "${minikube_memory}"
-  #./shell-scripts/namespace-config.sh
+   ./shell-scripts/docker-pods-no-push.sh
+ # ./shell-scripts/minikube-status-check.sh "${minikube_cpu}" "${minikube_memory}"
+  ./shell-scripts/namespace-config.sh
   # "./shell-scripts/helm-install.sh"
   ./shell-scripts/deploy-cluster.sh "${restart_statefullsets}"
-  ./shell-scripts/run-all-pods-scripts.sh
+  #./shell-scripts/run-all-pods-scripts.sh
 )
 
 # Execute each script in the array

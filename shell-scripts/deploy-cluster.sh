@@ -1,6 +1,7 @@
 #!/bin/bash
 
-cluster_parts=("namespace" "claims" "services" "serviceaccount" "statefullsets")
+cluster_parts=("services" "serviceaccount" "statefullsets")
+#"namespace" "claims" "services" "serviceaccount" "statefullsets")
 error_occurred=0
 namespace=kafkastreamingdata
 restart_statefulsets=$1  # Default to not restarting

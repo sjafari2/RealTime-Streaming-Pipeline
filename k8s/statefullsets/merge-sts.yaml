@@ -19,6 +19,15 @@ spec:
       labels:
         app: "merge-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data && chown -R 1000:1000 /app/merged-clstr-data"]
+          volumeMounts:
+          - name: app-merge-data
+            mountPath: /app/app-merge-data
+          - name: merged-clstr-data
+            mountPath: /app/merged-clstr-data
       containers:
         - name: "merge-container"
           image: sjafari2/kafkamerge:latest

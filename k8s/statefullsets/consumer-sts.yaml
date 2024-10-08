@@ -19,6 +19,15 @@ spec:
       labels:
         app: "consumer-sts"
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: alpine
+          command: ["sh", "-c", "chown -R 1000:1000 /app/consumer-app-data && chown -R 1000:1000 /app/app-merge-data"]
+          volumeMounts:
+          - name: consumer-app-data
+            mountPath: /app/consumer-app-data
+          - name: app-merge-data
+            mountPath: /app/app-merge-data
       containers:
         - name: "consumer-container"
           image: sjafari2/kafkaconsumer:latest
