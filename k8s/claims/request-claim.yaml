@@ -13,6 +13,15 @@ spec:
     storage: 5Gi
   hostPath:
     path: "app/request-data"
+  affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org  
 status: {}
 
 ---

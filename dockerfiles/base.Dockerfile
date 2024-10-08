@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     && pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Common Python dependencies from requirements.txt
-COPY requirements.txt /install/requirements.txt
+COPY dockerfiles/requirements.txt /install/requirements.txt
 RUN pip install --no-cache-dir -r /install/requirements.txt \
     && pip install --no-cache-dir jupyterlab
 

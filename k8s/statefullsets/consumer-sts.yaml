@@ -46,10 +46,10 @@ spec:
           resources:
             requests:
               memory: "1Gi"
-              cpu: "2"
+              cpu: "1000m"
             limits:
-              memory: "1Gi"
-              cpu: "2"
+              memory: "2Gi"
+              cpu: "2000m"
           volumeMounts:
           - mountPath: app/consumer-app-data
             name: consumer-app-data
@@ -73,11 +73,11 @@ spec:
               sleep infinity
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "2Gi"
+              cpu: "2000m"
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "4Gi"
+              cpu: "4000m"
           volumeMounts:
           - mountPath: app/consumer-app-data
             name: consumer-app-data
@@ -89,7 +89,15 @@ spec:
         - name: app-merge-data
           persistentVolumeClaim:
             claimName: app-merge-data
-
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org  
 #      affinity:
 #        podAntiAffinity:
 #          requiredDuringSchedulingIgnoredDuringExecution:

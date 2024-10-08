@@ -14,12 +14,16 @@ process_pod() {
     echo "Creating docker image for $image_name"
 
     # Build Docker image
-    if ! docker build -t "sjafari2/kafka${image_name}:${current_date}" -f dockerfiles/"${image_name}.Dockerfile" .; then
+    if ! docker build -t "${image_name}:${current_date}" -f dockerfiles/"${image_name}.Dockerfile" .; then
         echo "Error building ${image_name}:${current_date}"
         return 1
     fi
-
-    # The tagging and pushing steps have been removed/commented out
+    # Tag Docker image
+    if ! docker tag "${image_name}:${current_date}" "sjafari2/kafka${image_name}:latest"; then
+        echo "Error tagging ${image_name}:${current_date}"
+        return 1
+    fi
+    # The pushing steps have been removed/commented out
     # The images will now only exist locally and not be pushed to a remote repository
 
     # Cleanup dangling images

@@ -13,7 +13,7 @@ spec:
   serviceName: "request-sts-svc"
   replicas: 1
   podManagementPolicy: Parallel
-  minReadySeconds: 10
+    # minReadySeconds: 10
   template:
     metadata:
       labels:
@@ -55,10 +55,10 @@ spec:
             name: "exporter-port"
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "256Mi"
+              cpu: "500m"
             limits:
-              memory: "5Gi"
+              memory: "512Mi"
               cpu: "1"
           volumeMounts:
           - mountPath: app/request-data
@@ -74,6 +74,15 @@ spec:
         - name: request-producer-data
           persistentVolumeClaim:
             claimName: request-producer-data
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org
         #- name: config-map-volume
         #  configMap:
         #    name: pipeline-configmap
@@ -82,19 +91,13 @@ spec:
             #              path: RqstPodMntPath
             #            - key: RqstPodSharedPath
             #              path: RqstPodSharedPath
-      #affinity:
-      #  podAntiAffinity:
-      #    requiredDuringSchedulingIgnoredDuringExecution:
-      #    - labelSelector:
-      #        matchExpressions:
-      #        - key: app
-      #          operator: In
-      #          values:
-      #          - request-sts
-      #          - merge-sts
-      #          - cons-sts
-      #          - prod-sts
-      #          - kafka
-      #          - kafka-zookeeper
-      #      topologyKey: "kubernetes.io/hostname"
-
+            #affinity:
+            # podAntiAffinity:
+            #requiredDuringSchedulingIgnoredDuringExecution:
+            # - labelSelector:
+            #  matchExpressions:
+            #  - key: app
+            #    operator: In
+            #    values:
+            # topologyKey: "kubernetes.io/hostname"
+ 

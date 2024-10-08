@@ -43,10 +43,10 @@ spec:
           resources:
             requests:
               memory: "1Gi"
-              cpu: "1"
+              cpu: "1000m"
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "2Gi"
+              cpu: "2000m"
           volumeMounts:
           - mountPath: app/app-merge-data
             name: app-merge-data
@@ -60,7 +60,16 @@ spec:
         - name: merged-clstr-data
           persistentVolumeClaim:
             claimName: merged-clstr-data
-#      affinity:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org  
+              #      affinity:
 #        podAntiAffinity:
 #          requiredDuringSchedulingIgnoredDuringExecution:
 #          - labelSelector:

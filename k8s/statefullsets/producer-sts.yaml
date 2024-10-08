@@ -52,16 +52,16 @@ spec:
             name: notebook-port
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "512Mi"
+              cpu: "500m"
             limits:
               memory: "1Gi"
-              cpu: "1"
+              cpu: "1000m"
           volumeMounts:
           - mountPath: app/producer-data
             name: producer-data
           - mountPath: app/request-producer-data
-            name: request-producer-data
+            name: request-proiducer-data
             # - mountPath: app/keystore
             #  name: kafka-keystore-volume
             #  - mountPath: app/truststore
@@ -88,19 +88,22 @@ spec:
             #items:
             #  - key: kafka.truststore.jks
             #    path: truststore/kafka.truststore.jks
-    #  affinity:
-    #    podAntiAffinity:
-    #      requiredDuringSchedulingIgnoredDuringExecution:
-    #      - labelSelector:
-    #          matchExpressions:
-    #          - key: app
-    #            operator: In
-    #            values:
-    #            - request-sts
-    #            - prod-sts
-    #            - cons-sts
-    #            - merge-sts
-    #            - kafka
-    #            - kafka-zookeeper
-    #        topologyKey: "kubernetes.io/hostname"
-
+            # affinity:
+            # podAntiAffinity:
+            # requiredDuringSchedulingIgnoredDuringExecution:
+            # - nodeSelectorTerms:
+            #  matchExpressions:
+            #  - key: nvidia.com/gpu.product
+            #    operator: In
+            #    values:
+            #    - request-sts
+            #topologyKey: "kubernetes.io/hostname"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org  
