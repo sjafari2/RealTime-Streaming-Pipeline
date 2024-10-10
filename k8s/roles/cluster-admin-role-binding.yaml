@@ -1,12 +1,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
-  name: admin-sa-cluster-admin
+  name: gitlab
+  namespace: kafkastreamingdata
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-admin
+  name: admin
 subjects:
 - kind: ServiceAccount
-  name: admin-sa
-
+  name: gitlab
+  namespace: kafkastreamindata
