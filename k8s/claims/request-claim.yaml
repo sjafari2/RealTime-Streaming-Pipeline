@@ -9,7 +9,7 @@ metadata:
 spec:
   storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   capacity:
     storage: 50Gi
   hostPath:
@@ -37,7 +37,7 @@ metadata:
 spec:
   storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 50Gi

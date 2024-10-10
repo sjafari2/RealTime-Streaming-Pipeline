@@ -1,12 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    #  creationTimestamp: null
-    #  labels:
-    #    io.kompose.service: producer-data
   name: request-producer-data
   namespace: "kafkastreamingdata"
-spec:
+pec:
   storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
@@ -14,15 +11,21 @@ spec:
     storage: 10Gi
   hostPath:
     path: "app/request-producer-data"
+  affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org  
 status: {}
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    #  creationTimestamp: null
-    #  labels:
-    #    io.kompose.service: producer-claim-data
   name: request-producer-data
   namespace: "kafkastreamingdata"
 spec:

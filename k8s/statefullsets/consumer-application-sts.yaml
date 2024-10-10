@@ -1,23 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: "consumer-sts"
+  name: "consumer-application-sts"
   namespace: kafkastreamingdata
   labels:
-    app: "consumer-sts"
-    serviceSelector: "consumer-sts"
+    app: "consumer-application-sts"
 spec:
   selector:
     matchLabels:
-      app: "consumer-sts"
-  serviceName: "consumer-sts-svc"
+      app: "consumer-application-sts"     # This selector matches the pod labels defined below
+        # serviceName: "consumer-application-headless-svc" # This should correspond to a headless service name, if used
   replicas: 1
   podManagementPolicy: Parallel
-  minReadySeconds: 10
+    # minReadySeconds: 10
   template:
     metadata:
       labels:
-        app: "consumer-sts"
+        app: "consumer-application-sts"   # Labels here must match spec.selector.matchLabels
     spec:
       initContainers:
         - name: volume-permission-fix
@@ -48,10 +47,10 @@ spec:
               echo "Pod ordinal value is: $ordinal"
               sleep infinity
           ports:
-          - containerPort: 9092
+          - containerPort: 8080
             name: "consumer-port"
           - containerPort: 9093
-            name: "exporter-port"
+            name: "consumer-exporter-port"
           resources:
             requests:
               memory: "1Gi"
@@ -69,8 +68,10 @@ spec:
             runAsUser: 1000  # UID for sjafari
             runAsGroup: 1000 # GID for sjafari
           ports:
+          - containerPort: 8081
+            name: "application-port"
           - containerPort: 9094
-            name: "app-port"
+            name: "application-exporter-port"
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -92,12 +93,12 @@ spec:
             name: consumer-app-data
           - mountPath: app/app-merge-data
             name: app-merge-data
-      volumes:
-        - name: consumer-app-data
-          emptyDir: {}  # Use emptyDir for temporary storage
-        - name: app-merge-data
-          persistentVolumeClaim:
-            claimName: app-merge-data
+              # volumes:
+              #  - name: consumer-app-data
+              # emptyDir: {}  # Use emptyDir for temporary storage
+              #  - name: app-merge-data
+              #persistentVolumeClaim:
+              #claimName: app-merge-data
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -107,7 +108,25 @@ spec:
                 operator: In
                 values:
                 - dtn-01.nrp.mghpcc.org  
-#      affinity:
+ 
+  volumeClaimTemplates:
+    - metadata:
+        name: consumer-app-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "5Gi"
+    - metadata:
+        name: app-merge-data
+      spec:
+        accessModes: ["ReadWriteMany"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "5Gi"
+    #      affinity:
 #        podAntiAffinity:
 #          requiredDuringSchedulingIgnoredDuringExecution:
 #          - labelSelector:

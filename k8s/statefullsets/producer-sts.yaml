@@ -5,19 +5,17 @@ metadata:
   namespace: kafkastreamingdata
   labels:
     app: "producer-sts"
-    serviceSelector: "producer-sts"
 spec:
   selector:
     matchLabels:
-      app: "producer-sts"
-  serviceName: "producer-sts-svc"
+      app: "producer-sts" # This selector matches the pod labels defined below
   replicas: 1
   podManagementPolicy: Parallel
-  minReadySeconds: 10
+    #minReadySeconds: 10
   template:
     metadata:
       labels:
-        app: "producer-sts"
+        app: "producer-sts" # Labels here must match spec.selector.matchLabels
     spec:
       initContainers:
         - name: volume-permission-fix
@@ -51,12 +49,12 @@ spec:
               echo "Pod ordinal value is: $ordinal"
               sleep infinity
           ports:
-          - containerPort: 9092
+          - containerPort: 8080
             name: producer-port
           - containerPort: 9093
-            name: exporter-port
+            name: producer-exporter-port
           - containerPort: 8888
-            name: notebook-port
+            name: producer-notebook-port
           resources:
             requests:
               memory: "512Mi"
@@ -65,23 +63,42 @@ spec:
               memory: "1Gi"
               cpu: "1000m"
           volumeMounts:
-              # - mountPath: app/producer-data
-              #  name: producer-data
+            # - mountPath: app/producer-data
+            #  name: producer-data
           - mountPath: app/request-producer-data
-            name: request-proiducer-data
-            # - mountPath: app/keystore
+            name: request-producer-data
+         
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - dtn-01.nrp.mghpcc.org  
+  volumeClaimTemplates:
+    - metadata:
+        name: request-producer-data
+      spec:
+        accessModes: ["ReadWriteMany"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "5Gi"     
+           
+              # - mountPath: app/keystore
             #  name: kafka-keystore-volume
             #  - mountPath: app/truststore
             # name: kafka-truststore-volume
 
             #  serviceAccountName: kafka-user
-      volumes:
-          #  - name: producer-data
-          #   persistentVolumeClaim:
-          #    claimName: producer-data
-        - name: request-producer-data
-          persistentVolumeClaim:
-            claimName: request-producer-data
+            #  volumes:
+            #  - name: producer-data
+            #   persistentVolumeClaim:
+            #    claimName: producer-data
+            # persistentVolumeClaim:
+            #claimName: request-producer-data
 
             #        - name: kafka-keystore-volume
             #          secret:
@@ -95,7 +112,6 @@ spec:
             #items:
             #  - key: kafka.truststore.jks
             #    path: truststore/kafka.truststore.jks
-<<<<<<< HEAD
             # affinity:
             # podAntiAffinity:
             # requiredDuringSchedulingIgnoredDuringExecution:
@@ -106,13 +122,4 @@ spec:
             #    values:
             #    - request-sts
             #topologyKey: "kubernetes.io/hostname"
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                - dtn-01.nrp.mghpcc.org  
 

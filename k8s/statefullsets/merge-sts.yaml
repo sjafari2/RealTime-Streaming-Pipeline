@@ -5,19 +5,17 @@ metadata:
   namespace: "kafkastreamingdata"
   labels:
     app: "merge-sts"
-    serviceSelector: "merge-sts"
 spec:
   selector:
     matchLabels:
-      app: "merge-sts"
-  serviceName: "merge-sts-svc"
+      app: "merge-sts" # This selector matches the pod labels defined below
   replicas: 1
   podManagementPolicy: Parallel
-  minReadySeconds: 10
+    #minReadySeconds: 10
   template:
     metadata:
       labels:
-        app: "merge-sts"
+        app: "merge-sts" # Labels here must match spec.selector.matchLabels
     spec:
       initContainers:
         - name: volume-permission-fix
@@ -45,10 +43,10 @@ spec:
               echo "Pod ordinal value is: $ordinal"
               sleep infinity
           ports:
-          - containerPort: 9092
+          - containerPort: 8080
             name: "merge-port"
           - containerPort: 9093
-            name: "exporter-port"
+            name: "merge-exporter-port"
           resources:
             requests:
               memory: "1Gi"
@@ -62,13 +60,13 @@ spec:
           - mountPath: app/merged-clstr-data
             name: merged-clstr-data
             #      restartPolicy: OnFailure
-      volumes:
-        - name: app-merge-data
-          persistentVolumeClaim:
-            claimName: app-merge-data
-        - name: merged-clstr-data
-          persistentVolumeClaim:
-            claimName: merged-clstr-data
+            #      volumes:
+            #- name: app-merge-data
+            #persistentVolumeClaim:
+            #claimName: app-merge-data
+            # - name: merged-clstr-data
+            #persistentVolumeClaim:
+            #claimName: merged-clstr-data
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -78,7 +76,25 @@ spec:
                 operator: In
                 values:
                 - dtn-01.nrp.mghpcc.org  
-              #      affinity:
+ 
+  volumeClaimTemplates:
+    - metadata:
+        name: merged-clstr-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "5Gi"
+    - metadata:
+        name: app-merge-data
+      spec:
+        accessModes: ["ReadWriteMany"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "5Gi"
+             #      affinity:
 #        podAntiAffinity:
 #          requiredDuringSchedulingIgnoredDuringExecution:
 #          - labelSelector:

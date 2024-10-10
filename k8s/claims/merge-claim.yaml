@@ -1,34 +1,37 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    #  creationTimestamp: null
-    #  labels:
-    #    io.kompose.service: producer-data
   name: merged-clstr-data
   namespace: "kafkastreamingdata"
 spec:
   storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   capacity:
     storage: 5Gi
   hostPath:
     path: "app/merged-clstr-data"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - dtn-01.nrp.mghpcc.org
 status: {}
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    #  creationTimestamp: null
-    #  labels:
-    #    io.kompose.service: producer-claim-data
   name: merged-clstr-data
   namespace: "kafkastreamingdata"
 spec:
   storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi

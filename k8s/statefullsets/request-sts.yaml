@@ -2,22 +2,20 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: "request-sts"
-  namespace: kafkastreamingdata
+  namespace: "kafkastreamingdata"
   labels:
     app: "request-sts"
-    serviceSelector: "request-sts"
 spec:
   selector:
     matchLabels:
-      app: "request-sts"
-  serviceName: "request-sts-svc"
+      app: "request-sts" # This selector matches the pod labels defined below
   replicas: 1
   podManagementPolicy: Parallel
     # minReadySeconds: 10
   template:
     metadata:
       labels:
-        app: "request-sts"
+        app: "request-sts" # Labels here must match spec.selector.matchLabels
     spec:
       initContainers:
         - name: volume-permission-fix
@@ -58,10 +56,10 @@ spec:
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               sleep infinity
           ports:
-          - containerPort: 9092
+          - containerPort: 8080  # should be matched with request  service port
             name: "request-port"
           - containerPort: 9093
-            name: "exporter-port"
+            name: "request-exporter-port"
           resources:
             requests:
               memory: "256Mi"
@@ -76,13 +74,13 @@ spec:
             name: request-producer-data
           #- name: config-map-volume
           #  mountPath: /etc/configmap
-      volumes:
-        - name: request-data
-          persistentVolumeClaim:
-            claimName: request-data
-        - name: request-producer-data
-          persistentVolumeClaim:
-            claimName: request-producer-data
+          #      volumes:
+          #- name: request-data
+          #persistentVolumeClaim:
+          #  claimName: request-data
+          #- name: request-producer-data
+          #persistentVolumeClaim:
+          #  claimName: request-producer-data
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -92,7 +90,25 @@ spec:
                 operator: In
                 values:
                 - dtn-01.nrp.mghpcc.org
-        #- name: config-map-volume
+ 
+  volumeClaimTemplates:
+    - metadata:
+        name: request-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "10Gi"
+    - metadata:
+        name: request-producer-data
+      spec:
+        accessModes: ["ReadWriteMany"]
+        storageClassName: "rook-cephfs-central"
+        resources:
+          requests:
+            storage: "5Gi"
+       #- name: config-map-volume
         #  configMap:
         #    name: pipeline-configmap
             #            items:
