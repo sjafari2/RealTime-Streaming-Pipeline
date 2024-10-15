@@ -50,7 +50,7 @@ spec:
           - containerPort: 8080
             name: "consumer-port"
           - containerPort: 9093
-            name: "consumer-exporter-port"
+            name: "cons-exp-port"
           resources:
             requests:
               memory: "1Gi"
@@ -71,7 +71,7 @@ spec:
           - containerPort: 8081
             name: "application-port"
           - containerPort: 9094
-            name: "application-exporter-port"
+            name: "app-exp-port"
           command: ["/bin/bash", "-c"]
           args:
             - |
