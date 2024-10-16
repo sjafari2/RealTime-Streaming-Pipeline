@@ -81,6 +81,17 @@ spec:
           #- name: request-producer-data
           #persistentVolumeClaim:
           #  claimName: request-producer-data
+      
+      tolerations:
+      - key: "nautilus.io/gitlab-issue"
+        operator: "Equal"
+        value: "1055"
+        effect: "NoSchedule"
+      - key: "nautilus.io/stashcache"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -89,14 +100,23 @@ spec:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                - dtn-01.nrp.mghpcc.org
- 
+                - gpu-04.nrp.mghpcc.org
+
+                  # preferredDuringSchedulingIgnoredDuringExecution:
+                  #   - preference:
+                  # matchExpressions:
+                  # - key: kubernetes.io/hostname
+                  #operator: In
+                  #values:
+                  #- gpu-04.nrp.mghpcc.org
+                  #weight: 1
+
   volumeClaimTemplates:
     - metadata:
         name: request-data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "rook-cephfs-central"
+        storageClassName: "rook-cephfs-east"
         resources:
           requests:
             storage: "10Gi"
@@ -104,7 +124,7 @@ spec:
         name: request-producer-data
       spec:
         accessModes: ["ReadWriteMany"]
-        storageClassName: "rook-cephfs-central"
+        storageClassName: "rook-cephfs-east"
         resources:
           requests:
             storage: "5Gi"

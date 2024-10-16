@@ -4,7 +4,7 @@ metadata:
   name: request-producer-data
   namespace: "kafkastreamingdata"
 pec:
-  storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-east
   accessModes:
     - ReadWriteMany
   capacity:
@@ -19,7 +19,7 @@ pec:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                - dtn-01.nrp.mghpcc.org  
+                - gpu-04.nrp.mghpcc.org  
 status: {}
 
 ---
@@ -29,7 +29,7 @@ metadata:
   name: request-producer-data
   namespace: "kafkastreamingdata"
 spec:
-  storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-east
   accessModes:
     - ReadWriteMany
   resources:

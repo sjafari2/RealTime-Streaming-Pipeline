@@ -596,14 +596,14 @@ controller:
     ## E.g.
     ## key: "kubernetes.io/e2e-az-name"
     ##
-    key: ""
+    key: "kubernetes.io/hostname"
     ## @param controller.nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
     ## E.g.
     ## values:
     ##   - e2e-az1
     ##   - e2e-az2
     ##
-    values: []
+    values: [gpu-04.nrp.mghpcc.org]
   ## @param controller.affinity Affinity for pod assignment
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ## Note: podAffinityPreset, podAntiAffinityPreset, and  nodeAffinityPreset will be ignored when it's set
@@ -716,7 +716,7 @@ controller:
     ## If undefined (the default) or set to null, no storageClassName spec is
     ## set, choosing the default provisioner.
     ##
-    storageClass: ""
+    storageClass: "us-east"
     ## @param controller.persistence.accessModes Persistent Volume Access Modes
     ##
     accessModes:
