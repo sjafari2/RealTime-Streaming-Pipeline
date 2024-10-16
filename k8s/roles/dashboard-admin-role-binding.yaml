@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dashboard-rolebinding
+  namespace: kubernetes-dashboard
+subjects:
+- kind: User
+  name: "http://cilogon.org/serverB/users/41300207" # Replace with your actual user ID
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: dashboard-access-role
+  apiGroup: rbac.authorization.k8s.io
+
