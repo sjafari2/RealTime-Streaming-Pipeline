@@ -8,32 +8,31 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: "merge-sts" # This selector matches the pod labels defined below
+      app: "merge-sts"
   replicas: 1
   podManagementPolicy: Parallel
-    #minReadySeconds: 10
   template:
     metadata:
       labels:
-        app: "merge-sts" # Labels here must match spec.selector.matchLabels
+        app: "merge-sts"
     spec:
       initContainers:
         - name: volume-permission-fix
           image: alpine
           command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data && chown -R 1000:1000 /app/merged-clstr-data"]
           volumeMounts:
-          - name: app-merge-data
-            mountPath: /app/app-merge-data
-          - name: merged-clstr-data
-            mountPath: /app/merged-clstr-data
+            - name: app-merge-data
+              mountPath: /app/app-merge-data
+            - name: merged-clstr-data
+              mountPath: /app/merged-clstr-data
       containers:
         - name: "merge-container"
           image: sjafari2/kafkamerge:latest
           env:
-          - name: POD_ORDINAL
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
+            - name: POD_ORDINAL
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -43,10 +42,10 @@ spec:
               echo "Pod ordinal value is: $ordinal"
               sleep infinity
           ports:
-          - containerPort: 8080
-            name: "merge-port"
-          - containerPort: 9093
-            name: "merge-exp-port"
+            - containerPort: 8080
+              name: "merge-port"
+            - containerPort: 9093
+              name: "merge-exp-port"
           resources:
             requests:
               memory: "1Gi"
@@ -55,66 +54,33 @@ spec:
               memory: "2Gi"
               cpu: "2000m"
           volumeMounts:
-          - mountPath: app/app-merge-data
-            name: app-merge-data
-          - mountPath: app/merged-clstr-data
-            name: merged-clstr-data
-            #      restartPolicy: OnFailure
-            #      volumes:
-            #- name: app-merge-data
-            #persistentVolumeClaim:
-            #claimName: app-merge-data
-            # - name: merged-clstr-data
-            #persistentVolumeClaim:
-            #claimName: merged-clstr-data
+            - name: app-merge-data
+              mountPath: /app/app-merge-data
+            - name: merged-clstr-data
+              mountPath: /app/merged-clstr-data
+      volumes:
+        - name: app-merge-data
+          persistentVolumeClaim:
+            claimName: app-merge-data
+        - name: merged-clstr-data
+          persistentVolumeClaim:
+            claimName: merged-clstr-data
       tolerations:
-      - key: "nautilus.io/gitlab-issue"
-        operator: "Equal"
-        value: "1055"
-        effect: "NoSchedule"
-      - key: "nautilus.io/stashcache"
-        operator: "Equal"
-        value: "true"
-        effect: "NoSchedule"
-
+        - key: "nautilus.io/gitlab-issue"
+          operator: "Equal"
+          value: "1055"
+          effect: "NoSchedule"
+        - key: "nautilus.io/stashcache"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                - gpu-04.nrp.mghpcc.org  
- 
-  volumeClaimTemplates:
-    - metadata:
-        name: merged-clstr-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: "rook-cephfs-east"
-        resources:
-          requests:
-            storage: "5Gi"
-    - metadata:
-        name: app-merge-data
-      spec:
-        accessModes: ["ReadWriteMany"]
-        storageClassName: "rook-cephfs-east"
-        resources:
-          requests:
-            storage: "5Gi"
-             #      affinity:
-#        podAntiAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#          - labelSelector:
-#              matchExpressions:
-#              - key: app
-#                operator: In
-#                values:
-#                - merge-sts
-#                - cons-sts
-#                - prod-sts
-#                - kafka
-#                - kafka-zookeeper
-#            topologyKey: "kubernetes.io/hostname"
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - gpu-04.nrp.mghpcc.org
+

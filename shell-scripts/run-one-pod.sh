@@ -17,7 +17,7 @@ pod_number=${2}
 #echo ${container_name}
 
 if [[ $pod_name == "application" ]]; then
-   kubectl exec -it consumer-sts-${pod_number} -c application-container  -- bash
+   kubectl exec -it consumer-application-sts-${pod_number} -c application-container  -- bash
 else 
    kubectl exec -it ${pod_name}-sts-${pod_number}  -- bash
 fi

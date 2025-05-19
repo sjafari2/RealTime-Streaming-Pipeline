@@ -8,14 +8,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: "request-sts" # This selector matches the pod labels defined below
+      app: "request-sts"
   replicas: 1
   podManagementPolicy: Parallel
-    # minReadySeconds: 10
   template:
     metadata:
       labels:
-        app: "request-sts" # Labels here must match spec.selector.matchLabels
+        app: "request-sts"
     spec:
       initContainers:
         - name: volume-permission-fix
@@ -30,8 +29,8 @@ spec:
         - name: "request-container"
           image: sjafari2/kafkarequest:latest
           securityContext:
-            runAsUser: 1000  # UID for sjafari
-            runAsGroup: 1000 # GID for sjafari
+            runAsUser: 1000
+            runAsGroup: 1000
           env:
             - name: POD_ORDINAL
               valueFrom:
@@ -48,7 +47,6 @@ spec:
                   name: pipeline-configmap
                   key: RqstPodSharedPath
           command: ["/bin/bash", "-c"]
-        #   chmod -R 755 ./${RqstPodSharedPath}   echo ${RqstPodSharedPath}
           args:
             - |
               rm -rf ./${RqstPodSharedPath}/*
@@ -56,7 +54,7 @@ spec:
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               sleep infinity
           ports:
-          - containerPort: 8080  # should be matched with request  service port
+          - containerPort: 8080
             name: "request-port"
           - containerPort: 9093
             name: "req-exp-port"
@@ -66,84 +64,35 @@ spec:
               cpu: "500m"
             limits:
               memory: "512Mi"
-              cpu: "1"
+              cpu: "500m"
           volumeMounts:
-          - mountPath: app/request-data
-            name: request-data
-          - mountPath: app/request-producer-data
-            name: request-producer-data
-          #- name: config-map-volume
-          #  mountPath: /etc/configmap
-          #      volumes:
-          #- name: request-data
-          #persistentVolumeClaim:
-          #  claimName: request-data
-          #- name: request-producer-data
-          #persistentVolumeClaim:
-          #  claimName: request-producer-data
-      
+            - name: request-data
+              mountPath: /app/request-data
+            - name: request-producer-data
+              mountPath: /app/request-producer-data
+      volumes:
+        - name: request-data
+          persistentVolumeClaim:
+            claimName: request-data
+        - name: request-producer-data
+          persistentVolumeClaim:
+            claimName: request-producer-data
       tolerations:
-      - key: "nautilus.io/gitlab-issue"
-        operator: "Equal"
-        value: "1055"
-        effect: "NoSchedule"
-      - key: "nautilus.io/stashcache"
-        operator: "Equal"
-        value: "true"
-        effect: "NoSchedule"
-      
+        - key: "nautilus.io/gitlab-issue"
+          operator: "Equal"
+          value: "1055"
+          effect: "NoSchedule"
+        - key: "nautilus.io/stashcache"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                - gpu-04.nrp.mghpcc.org
-
-                  # preferredDuringSchedulingIgnoredDuringExecution:
-                  #   - preference:
-                  # matchExpressions:
-                  # - key: kubernetes.io/hostname
-                  #operator: In
-                  #values:
-                  #- gpu-04.nrp.mghpcc.org
-                  #weight: 1
-
-  volumeClaimTemplates:
-    - metadata:
-        name: request-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: "rook-cephfs-east"
-        resources:
-          requests:
-            storage: "10Gi"
-    - metadata:
-        name: request-producer-data
-      spec:
-        accessModes: ["ReadWriteMany"]
-        storageClassName: "rook-cephfs-east"
-        resources:
-          requests:
-            storage: "5Gi"
-       #- name: config-map-volume
-        #  configMap:
-        #    name: pipeline-configmap
-            #            items:
-            #            - key: RqstPodMntPath
-            #              path: RqstPodMntPath
-            #            - key: RqstPodSharedPath
-            #              path: RqstPodSharedPath
-            #affinity:
-            # podAntiAffinity:
-            #requiredDuringSchedulingIgnoredDuringExecution:
-            # - labelSelector:
-            #  matchExpressions:
-            #  - key: app
-            #    operator: In
-            #    values:
-            # topologyKey: "kubernetes.io/hostname"
- 
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - gpu-04.nrp.mghpcc.org
 
