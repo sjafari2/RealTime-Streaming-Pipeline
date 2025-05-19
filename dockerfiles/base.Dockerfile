@@ -1,4 +1,4 @@
-FROM python:3.7-slim-bullseye
+FROM python:3.10-slim-bullseye
 
 # Install system packages
 RUN apt-get update && apt-get install -y \
@@ -31,13 +31,17 @@ RUN groupadd -g 1000 sjafari && \
 # Set Kafka work directory and extract Kafka
 WORKDIR /kafka
 RUN mkdir -p /install && \
-    wget -O - https://downloads.apache.org/kafka/3.8.0/kafka_2.12-3.8.0.tgz | tar xzf - -C /kafka --strip-components=1 && \
+   wget -O - https://downloads.apache.org/kafka/3.8.0/kafka_2.12-3.8.0.tgz | tar xzf - -C /kafka --strip-components=1 && \
     chown -R sjafari:sjafari /kafka /install
+
+
 
 # Install Python dependencies
 COPY dockerfiles/requirements.txt /install/requirements.txt
-RUN pip install --no-cache-dir -r /install/requirements.txt \
-    && pip install --no-cache-dir jupyterlab
+
+RUN ls -l /install/requirements.txt  
+RUN pip install --no-cache-dir -r /install/requirements.txt 
+#    && pip install --no-cache-dir jupyterlab
 
 # Set working directory for your app
 WORKDIR /app
