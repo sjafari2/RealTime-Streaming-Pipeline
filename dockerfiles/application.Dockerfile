@@ -1,21 +1,30 @@
 FROM sjafari2/kafkabase:latest
 
-WORKDIR /app
-COPY ./src/application .
-#COPY ./src/run-jupyterlab.sh .
-COPY ./src/pipeline-configmap.yaml .
+# Copy application code
+COPY --chown=sjafari:sjafari ./src/application/ /app/
 
-# Install additional unique dependencies for the application service
+# Become root to install system dependencies and set permissions
+USER root
+
 RUN apt-get update && apt-get install -y \
     openmpi-bin \
     libopenmpi-dev \
-    mpich \
-    libpcap-dev
+    libpcap-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir mpi4py \
-    && python -m spacy download en_core_web_sm \
-    && python -m nltk.downloader stopwords
+# Make sure the script is executable before dropping privileges
+RUN chmod 755 /app/runapplication.sh
 
-RUN chown -R sjafari:sjafari /app && chmod 755 runapplication.sh
+# Optional: debug
+RUN ls -l /app
 
-CMD ["bash", "sleep infinity"]
+# Drop to non-root
+USER sjafari
+
+# Python-level dependencies (as non-root is okay here)
+RUN pip install --no-cache-dir mpi4py && \
+    python -m spacy download en_core_web_sm && \
+    python -m nltk.downloader stopwords
+
+CMD ["bash", "sleep", "infinity"]
+

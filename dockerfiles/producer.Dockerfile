@@ -1,17 +1,21 @@
 FROM sjafari2/kafkabase:latest
 
-# Specific steps for producer, if any
-COPY ./src/producer /app
-#COPY ./src/run-jupyterlab.sh /app
-COPY ./src/pipeline-configmap.yaml /app
+# Copy producer code and configuration files
+COPY --chown=sjafari:sjafari ./src/producer/ /app/
 
-# Specific Python packages not included in the base image
- RUN pip install nltk \
-     && python3 -m spacy download en_core_web_sm \
-     && python3 -m nltk.downloader stopwords
+# Temporarily switch to root to update permissions
+USER root
+RUN chmod 755 /app/runproducer.sh
+USER sjafari
 
-# Set ownership and permissions
-RUN chown -R sjafari:sjafari /app \
-    && chmod 755 /app/runproducer.sh
+# Install producer-specific Python packages
+RUN pip install --no-cache-dir nltk && \
+    python3 -m spacy download en_core_web_sm && \
+    python3 -m nltk.downloader stopwords
 
-CMD ["bash", "sleep infinity"]
+# Optional: list files for debug
+RUN ls -l /app
+
+# Keep container alive (debug/dev mode)
+CMD ["bash", "sleep", "infinity"]
+

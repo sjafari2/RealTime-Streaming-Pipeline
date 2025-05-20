@@ -1,7 +1,8 @@
 FROM python:3.10-slim-bullseye
 
-# Install system packages
-RUN apt-get update && apt-get install -y \
+# Install system packages with cleanup to reduce image size
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     build-essential \
     python3-dev \
     openjdk-17-jdk \
@@ -20,35 +21,34 @@ RUN apt-get update && apt-get install -y \
     vim \
     screen \
     procps \
-    curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir --upgrade pip setuptools wheel
+    curl && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create user and group before chown
+# Upgrade pip and wheel
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Create non-root user
 RUN groupadd -g 1000 sjafari && \
     useradd -m -u 1000 -g sjafari -s /bin/bash sjafari
 
 # Set Kafka work directory and extract Kafka
 WORKDIR /kafka
 RUN mkdir -p /install && \
-   wget -O - https://downloads.apache.org/kafka/3.8.0/kafka_2.12-3.8.0.tgz | tar xzf - -C /kafka --strip-components=1 && \
+    wget -O - https://downloads.apache.org/kafka/3.8.0/kafka_2.12-3.8.0.tgz | \
+    tar xzf - -C /kafka --strip-components=1 && \
     chown -R sjafari:sjafari /kafka /install
 
-
-
-# Install Python dependencies
+# Install base Python dependencies
 COPY dockerfiles/requirements.txt /install/requirements.txt
+RUN pip install --no-cache-dir -r /install/requirements.txt
 
-RUN ls -l /install/requirements.txt  
-RUN pip install --no-cache-dir -r /install/requirements.txt 
-#    && pip install --no-cache-dir jupyterlab
-
-# Set working directory for your app
+# Set working directory for application layer
 WORKDIR /app
+COPY --chown=sjafari:sjafari ./src/pipeline-configmap.yaml .
 
-# Set environment variables
-ENV KAFKA_INSTALL_PATH /kafka/bin/
+# Environment variable for Kafka path
+ENV KAFKA_INSTALL_PATH=/kafka/bin/
 
-# Switch to non-root user
+# Default to non-root user for safety
 USER sjafari
 

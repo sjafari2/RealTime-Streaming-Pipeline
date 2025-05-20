@@ -1,20 +1,29 @@
 FROM sjafari2/kafkabase:latest
 
-WORKDIR /app
-COPY ./src/consumer .
-#COPY ./src/run-jupyterlab.sh .
-COPY ./src/pipeline-configmap.yaml .
+# Copy consumer code and config with correct ownership
+COPY --chown=sjafari:sjafari ./src/consumer/  /app/
 
+# Become root to install system packages and set permissions
+USER root
 
+# ✅ Install required system packages (cleaned up properly)
 RUN apt-get update && apt-get install -y \
     libffi-dev \
     libssl-dev \
     libblas-dev \
     liblapack-dev \
-    gfortran 
+    gfortran && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN chown -R sjafari:sjafari /app && chmod 755 /app/runconsumer.sh
+# ✅ Ensure the script is executable
+RUN chmod 755 /app/runconsumer.sh
 
-ENV KAFKA_INSTALL_PATH /kafka/bin/
+# ✅ Optional: Debug listing of files
+RUN ls -l /app
+
+# Optional (already set in base, but explicit is fine)
 USER sjafari
-CMD ["bash", "sleep infinity"]
+
+# ✅ Keeps the container running (debug/dev mode)
+CMD ["bash", "sleep", "infinity"]
+
