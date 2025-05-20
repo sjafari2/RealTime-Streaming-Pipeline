@@ -1,44 +1,47 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: "producer-sts"
+  name: producer-sts
   namespace: kafkastreamingdata
   labels:
-    app: "producer-sts"
+    app: producer-sts
 spec:
-  selector:
-    matchLabels:
-      app: "producer-sts" # This selector matches the pod labels defined below
+  serviceName: producer-headless-svc  # Required: reference a headless Service
   replicas: 1
   podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: producer-sts
   template:
     metadata:
       labels:
-        app: "producer-sts" # Labels here must match spec.selector.matchLabels
+        app: producer-sts
     spec:
       initContainers:
         - name: volume-permission-fix
           image: alpine
           command: ["sh", "-c", "chown -R 1000:1000 /app/request-producer-data"]
+          securityContext:
+            runAsUser: 0  # root
           volumeMounts:
-          - name: request-producer-data
-            mountPath: /app/request-producer-data
+            - name: request-producer-data
+              mountPath: /app/request-producer-data
       containers:
-        - name: "producer-container"
+        - name: producer-container
           image: sjafari2/kafkaproducer:latest
           securityContext:
-            runAsUser: 1000  # UID for sjafari
-            runAsGroup: 1000 # GID for sjafari
+            runAsUser: 1000
+            runAsGroup: 1000
           env:
-          - name: POD_ORDINAL
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: RqstPodSharedPath
-            valueFrom:
-              configMapKeyRef:
-                name: pipeline-configmap
-                key: RqstPodSharedPath
+            - name: POD_ORDINAL
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: RqstPodSharedPath
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-configmap
+                  key: RqstPodSharedPath
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -48,10 +51,10 @@ spec:
               echo "Pod ordinal value is: $ordinal"
               sleep infinity
           ports:
-          - containerPort: 8080
-            name: producer-port
-          - containerPort: 9093
-            name: prod-exp-port
+            - containerPort: 8080
+              name: producer-port
+            - containerPort: 9093
+              name: prod-exp-port
           resources:
             requests:
               memory: "256Mi"
@@ -60,28 +63,19 @@ spec:
               memory: "512Mi"
               cpu: "500m"
           volumeMounts:
-          - name: request-producer-data
-            mountPath: /app/request-producer-data
+            - name: request-producer-data
+              mountPath: /app/request-producer-data
       volumes:
-      - name: request-producer-data
-        persistentVolumeClaim:
-          claimName: request-producer-data
-      tolerations:
-      - key: "nautilus.io/gitlab-issue"
-        operator: "Equal"
-        value: "1055"
-        effect: "NoSchedule"
-      - key: "nautilus.io/stashcache"
-        operator: "Equal"
-        value: "true"
-        effect: "NoSchedule"
+        - name: request-producer-data
+          persistentVolumeClaim:
+            claimName: request-producer-data
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                - gpu-04.nrp.mghpcc.org
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - gpu-04.nrp.mghpcc.org
 

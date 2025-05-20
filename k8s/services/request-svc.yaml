@@ -2,14 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels: 
-    app: request-svc 
-  name: request-svc
+    app: request 
+  name: request-headless-svc
   namespace: kafkastreamingdata
 spec:
-  type: ClusterIP
+  clusterIP: None  # 👈 this makes it headless
   selector:
-    app: request-sts  
+    app: request-sts
   ports:
-    - protocol: TCP
-      port: 80         # Service external port
-      targetPort: 8080  # This should match the containerPort of request-sts-0 pod 
+    - name: request-port
+      port: 80         # Service port
+      targetPort: 8080 # Matches containerPort in StatefulSet
+

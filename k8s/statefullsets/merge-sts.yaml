@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: "merge-sts"
-  namespace: "kafkastreamingdata"
+  name: merge-sts
+  namespace: kafkastreamingdata
   labels:
-    app: "merge-sts"
+    app: merge-sts
 spec:
+  serviceName: merge-headless-svc  # Added headless service name for DNS-based discovery
   selector:
     matchLabels:
-      app: "merge-sts"
+      app: merge-sts
   replicas: 1
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
-        app: "merge-sts"
+        app: merge-sts
     spec:
       initContainers:
         - name: volume-permission-fix
@@ -26,7 +27,7 @@ spec:
             - name: merged-clstr-data
               mountPath: /app/merged-clstr-data
       containers:
-        - name: "merge-container"
+        - name: merge-container
           image: sjafari2/kafkamerge:latest
           env:
             - name: POD_ORDINAL
@@ -43,9 +44,9 @@ spec:
               sleep infinity
           ports:
             - containerPort: 8080
-              name: "merge-port"
+              name: merge-port
             - containerPort: 9093
-              name: "merge-exp-port"
+              name: merge-exp-port
           resources:
             requests:
               memory: "1Gi"
@@ -65,15 +66,6 @@ spec:
         - name: merged-clstr-data
           persistentVolumeClaim:
             claimName: merged-clstr-data
-      tolerations:
-        - key: "nautilus.io/gitlab-issue"
-          operator: "Equal"
-          value: "1055"
-          effect: "NoSchedule"
-        - key: "nautilus.io/stashcache"
-          operator: "Equal"
-          value: "true"
-          effect: "NoSchedule"
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
