@@ -6,7 +6,7 @@ metadata:
   labels:
     app: request-sts
 spec:
-  serviceName: request-headless-svc  # Add headless service name
+  serviceName: request-headless-svc
   selector:
     matchLabels:
       app: request-sts
@@ -17,10 +17,15 @@ spec:
       labels:
         app: request-sts
     spec:
+      securityContext:
+        fsGroup: 1000  # ensures mounted volumes are writable by group 1000
       initContainers:
         - name: volume-permission-fix
-          image: alpine
-          command: ["sh", "-c", "chown -R 1000:1000 /app/request-data && chown -R 1000:1000 /app/request-producer-data"]
+          image: busybox
+          command:
+            - sh
+            - -c
+            - chown -R 1000:1000 /app || true
           volumeMounts:
             - name: request-data
               mountPath: /app/request-data
@@ -53,6 +58,7 @@ spec:
               rm -rf ./${RqstPodSharedPath}/*
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
+              mkdir -p ${RqstPodSharedPath}/logs
               sleep infinity
           ports:
             - containerPort: 8080

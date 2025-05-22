@@ -1,14 +1,16 @@
 #!/bin/bash
 
-# Function to check if Docker daemon is running
+set -e
+
+# -----------------------------
+# Function: Check Docker daemon
+# -----------------------------
 check_docker_daemon() {
     if ! docker info >/dev/null 2>&1; then
         echo "Docker daemon is not running. Trying to start it..."
-        
-        # Try systemctl
+
         if command -v systemctl &> /dev/null; then
             sudo systemctl start docker
-        # Try service as fallback
         elif command -v service &> /dev/null; then
             sudo service docker start
         else
@@ -16,91 +18,101 @@ check_docker_daemon() {
             exit 1
         fi
 
-        # Re-check after attempting to start
         sleep 3
         if ! docker info >/dev/null 2>&1; then
             echo "Failed to start Docker daemon. Please start it manually."
             exit 1
-        else
-            echo "Docker daemon started successfully."
         fi
-    else
-        echo "Docker daemon is running."
     fi
 }
 
-# Function to clean up dangling images
+# -----------------------------
+# Function: Clean dangling images
+# -----------------------------
 cleanup_dangling_images() {
     echo "Cleaning up dangling images..."
     dangling_images=$(docker images -f "dangling=true" -q)
 
-    if [[ -z "$dangling_images" ]]; then
-        echo "No dangling images to clean up."
-    else
+    if [[ -n "$dangling_images" ]]; then
         docker rmi $dangling_images
+    else
+        echo "No dangling images to clean up."
     fi
 }
 
-# Function to process each pod
+# -----------------------------
+# Function: Build and push image
+# -----------------------------
 process_pod() {
     local image_name="$1"
-    local current_date="$2"
+    local repo="sjafari2"
+    local full_tag="${repo}/kafka${image_name}:latest"
+    local dockerfile="dockerfiles/${image_name}.Dockerfile"
 
-    echo "Creating docker image for $image_name"
+    echo "Building and pushing multi-arch image for $image_name"
 
-    # Build Docker image
-    if ! docker build -t "${image_name}:${current_date}" -f dockerfiles/"${image_name}.Dockerfile" .; then
-        echo "Error building ${image_name}:${current_date}"
+    if [[ ! -f "$dockerfile" ]]; then
+        echo "Dockerfile not found: $dockerfile"
         return 1
     fi
 
-    # Tag Docker image
-    if ! docker tag "${image_name}:${current_date}" "sjafari2/kafka${image_name}:latest"; then
-        echo "Error tagging ${image_name}:${current_date}"
-        return 1
-    fi
+    docker buildx build \
+        --platform linux/amd64,linux/arm64 \
+        -t "$full_tag" \
+        -f "$dockerfile" \
+        . \
+        --push
 
-    # Push Docker image
-    if ! docker push "sjafari2/kafka${image_name}:latest"; then
-        echo "Error pushing sjafari2/kafka${image_name}:latest"
-        return 1
-    fi
-
-    # Cleanup dangling images
     cleanup_dangling_images
 
-    echo "Successfully processed ${image_name}:${current_date}"
+    echo "Successfully built and pushed $full_tag"
     return 0
 }
 
-# Main script logic
+# -----------------------------
+# Main Logic
+# -----------------------------
 docker_all_pods() {
-    # Check Docker daemon status
     check_docker_daemon
 
-    # Define an array of pod names
+    # Ensure buildx builder exists
+    if ! docker buildx version &>/dev/null; then
+        echo "Installing Docker buildx..."
+        mkdir -p ~/.docker/cli-plugins
+        curl -SL https://github.com/docker/buildx/releases/download/v0.11.2/buildx-v0.11.2.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+        chmod +x ~/.docker/cli-plugins/docker-buildx
+    fi
+
+    if ! docker buildx inspect builder_multiarch &>/dev/null; then
+        docker buildx create --name builder_multiarch --use --driver docker-container
+    else
+        docker buildx use builder_multiarch
+    fi
+
+    docker buildx inspect --bootstrap
+
     pod_names=("base" "request" "producer" "consumer" "merge")
-    current_date=$(TZ=America/Denver date +"%Y-%m-%d")
 
     for image_name in "${pod_names[@]}"; do
-        if ! process_pod "$image_name" "$current_date"; then
-            echo "Not done completely."
+        if ! process_pod "$image_name"; then
+            echo "Failed to process image: $image_name"
             return 1
         fi
 
-        # Special case for consumer pod
         if [[ "$image_name" == "consumer" ]]; then
-            if ! process_pod "application" "$current_date"; then
-                echo "Not done completely."
+            if ! process_pod "application"; then
+                echo "Failed to process image: application"
                 return 1
             fi
         fi
     done
 
-    echo "All pods processed successfully."
+    echo "All images built and pushed successfully."
     return 0
 }
 
-# Call the main function
+# -----------------------------
+# Execute
+# -----------------------------
 docker_all_pods
 

@@ -21,7 +21,8 @@ RUN apt-get update && \
     vim \
     screen \
     procps \
-    curl && \
+    curl \
+    lsof && \
     rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and wheel
@@ -45,9 +46,12 @@ RUN pip install --no-cache-dir -r /install/requirements.txt
 # Set working directory for application layer
 WORKDIR /app
 COPY --chown=sjafari:sjafari ./src/pipeline-configmap.yaml .
+RUN mkdir -p ./logs && chown -R sjafari:sjafari ./logs
+
 
 # Environment variable for Kafka path
 ENV KAFKA_INSTALL_PATH=/kafka/bin/
+ENV PATH="$PATH:/home/sjafari/.local/bin"
 
 # Default to non-root user for safety
 USER sjafari

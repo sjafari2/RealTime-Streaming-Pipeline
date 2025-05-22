@@ -19,8 +19,8 @@ spec:
     spec:
       initContainers:
         - name: volume-permission-fix
-          image: alpine
-          command: ["sh", "-c", "chown -R 1000:1000 /app/request-producer-data"]
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /app/request-producer-data || true"]
           securityContext:
             runAsUser: 0  # root
           volumeMounts:

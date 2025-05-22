@@ -19,8 +19,8 @@ spec:
     spec:
       initContainers:
         - name: volume-permission-fix
-          image: alpine
-          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data && chown -R 1000:1000 /app/merged-clstr-data"]
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data /app/merged-clstr-data || true"]
           volumeMounts:
             - name: app-merge-data
               mountPath: /app/app-merge-data
