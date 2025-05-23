@@ -19,7 +19,12 @@ RUN apt-get update && \
     libatlas-base-dev \
     nano \
     vim \
+    nano \
     screen \
+    iputils-ping \
+    dnsutils \
+    netcat \
+    telnet \
     procps \
     curl \
     lsof && \
@@ -47,7 +52,8 @@ RUN pip install --no-cache-dir -r /install/requirements.txt
 WORKDIR /app
 COPY --chown=sjafari:sjafari ./src/pipeline-configmap.yaml .
 RUN mkdir -p ./logs && chown -R sjafari:sjafari ./logs
-
+RUN chown -R 1000:1000 .  && \
+    chmod -R u+w .
 
 # Environment variable for Kafka path
 ENV KAFKA_INSTALL_PATH=/kafka/bin/

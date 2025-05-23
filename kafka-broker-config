@@ -1,0 +1,120 @@
+Name:               pip-kafka-controller
+Namespace:          kafkastreamingdata
+CreationTimestamp:  Tue, 20 May 2025 15:54:22 -0600
+Selector:           app.kubernetes.io/component=controller-eligible,app.kubernetes.io/instance=pip-kafka,app.kubernetes.io/name=kafka,app.kubernetes.io/part-of=kafka
+Labels:             app.kubernetes.io/component=controller-eligible
+                    app.kubernetes.io/instance=pip-kafka
+                    app.kubernetes.io/managed-by=Helm
+                    app.kubernetes.io/name=kafka
+                    app.kubernetes.io/part-of=kafka
+                    app.kubernetes.io/version=3.8.1
+                    helm.sh/chart=kafka-30.1.8
+Annotations:        meta.helm.sh/release-name: pip-kafka
+                    meta.helm.sh/release-namespace: kafkastreamingdata
+Replicas:           3 desired | 3 total
+Update Strategy:    RollingUpdate
+Pods Status:        3 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:           app.kubernetes.io/component=controller-eligible
+                    app.kubernetes.io/instance=pip-kafka
+                    app.kubernetes.io/managed-by=Helm
+                    app.kubernetes.io/name=kafka
+                    app.kubernetes.io/part-of=kafka
+                    app.kubernetes.io/version=3.8.1
+                    helm.sh/chart=kafka-30.1.8
+  Annotations:      checksum/configuration: cdb42c251376622a17fb6615c1ad3de57cf3cf734cc3fae9c05560060676202d
+                    checksum/passwords-secret: 352b6b4b94b34971e2702c90ee0dc2b7f6aa4432941f85a3d879a528a22ed8f2
+  Service Account:  pip-kafka
+  Init Containers:
+   kafka-init:
+    Image:      docker.io/bitnami/kafka:3.8.1-debian-12-r0
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      /bin/bash
+    Args:
+      -ec
+      /scripts/kafka-init.sh
+      
+    Environment:
+      BITNAMI_DEBUG:                false
+      MY_POD_NAME:                   (v1:metadata.name)
+      KAFKA_VOLUME_DIR:             /bitnami/kafka
+      KAFKA_MIN_ID:                 0
+      KAFKA_CLIENT_USERS:           user1
+      KAFKA_CLIENT_PASSWORDS:       <set to the key 'client-passwords' in secret 'pip-kafka-user-passwords'>  Optional: false
+      KAFKA_INTER_BROKER_USER:      inter_broker_user
+      KAFKA_INTER_BROKER_PASSWORD:  <set to the key 'inter-broker-password' in secret 'pip-kafka-user-passwords'>  Optional: false
+      KAFKA_CONTROLLER_USER:        controller_user
+      KAFKA_CONTROLLER_PASSWORD:    <set to the key 'controller-password' in secret 'pip-kafka-user-passwords'>  Optional: false
+    Mounts:
+      /bitnami/kafka from data (rw)
+      /config from kafka-config (rw)
+      /configmaps from kafka-configmaps (rw)
+      /scripts from scripts (rw)
+      /secret-config from kafka-secret-config (rw)
+      /tmp from tmp (rw)
+  Containers:
+   kafka:
+    Image:       docker.io/bitnami/kafka:3.8.1-debian-12-r0
+    Ports:       9093/TCP, 9092/TCP, 9094/TCP
+    Host Ports:  0/TCP, 0/TCP, 0/TCP
+    Limits:
+      cpu:                750m
+      ephemeral-storage:  2Gi
+      memory:             768Mi
+    Requests:
+      cpu:                500m
+      ephemeral-storage:  50Mi
+      memory:             512Mi
+    Liveness:             exec [pgrep -f kafka] delay=10s timeout=5s period=10s #success=1 #failure=3
+    Readiness:            tcp-socket :controller delay=5s timeout=5s period=10s #success=1 #failure=6
+    Environment:
+      BITNAMI_DEBUG:                      false
+      KAFKA_HEAP_OPTS:                    -Xmx1024m -Xms1024m
+      KAFKA_KRAFT_CLUSTER_ID:             <set to the key 'kraft-cluster-id' in secret 'pip-kafka-kraft-cluster-id'>  Optional: false
+      KAFKA_KRAFT_BOOTSTRAP_SCRAM_USERS:  true
+      KAFKA_CLIENT_USERS:                 user1
+      KAFKA_CLIENT_PASSWORDS:             <set to the key 'client-passwords' in secret 'pip-kafka-user-passwords'>  Optional: false
+      KAFKA_INTER_BROKER_USER:            inter_broker_user
+      KAFKA_INTER_BROKER_PASSWORD:        <set to the key 'inter-broker-password' in secret 'pip-kafka-user-passwords'>  Optional: false
+      KAFKA_CONTROLLER_USER:              controller_user
+      KAFKA_CONTROLLER_PASSWORD:          <set to the key 'controller-password' in secret 'pip-kafka-user-passwords'>  Optional: false
+    Mounts:
+      /bitnami/kafka from data (rw)
+      /opt/bitnami/kafka/config/server.properties from kafka-config (rw,path="server.properties")
+      /opt/bitnami/kafka/logs from logs (rw)
+      /tmp from tmp (rw)
+  Volumes:
+   kafka-configmaps:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      pip-kafka-controller-configuration
+    Optional:  false
+   kafka-secret-config:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+   kafka-config:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+   tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+   scripts:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      pip-kafka-scripts
+    Optional:  false
+   logs:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+Volume Claims:
+  Name:          data
+  StorageClass:  
+  Labels:        <none>
+  Annotations:   <none>
+  Capacity:      8Gi
+  Access Modes:  [ReadWriteOnce]
+Events:          <none>

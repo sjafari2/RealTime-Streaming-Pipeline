@@ -20,7 +20,7 @@ spec:
       initContainers:
         - name: volume-permission-fix
           image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /app/consumer-app-data  /app/app-merge-data || true"]
+          command: ["sh", "-c", "chown -R 1000:1000 /app || true"]
           volumeMounts:
             - name: consumer-app-data
               mountPath: /app/consumer-app-data

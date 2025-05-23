@@ -1,0 +1,37 @@
+[?1049h[>4;2m[?1h=[?2004h[?1004h[1;54r[?12h[?12l[22;2t[22;1t[27m[23m[29m[m[H[2J[?25l[54;1H"/var/folders/2z/bnjkw3qd38b7gqpbhfdmfhpc0000gn/T/kubectl-edit-4065713815.yaml" 287L, 8689B[1;1H[34m# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#[m
+[36mapiVersion[m[35m:[m apps/v1
+[36mkind[m[35m:[m StatefulSet
+[36mmetadata[m[35m:[m
+  [36mannotations[m[35m:[m
+    [36mmeta.helm.sh/release-name[m[35m:[m pip-kafka
+    [36mmeta.helm.sh/release-namespace[m[35m:[m kafkastreamingdata
+  [36mcreationTimestamp[m[35m:[m [31m"2025-05-20T21:54:22Z"[m
+  [36mgeneration[m[35m:[m [31m1[m
+  [36mlabels[m[35m:[m
+    [36mapp.kubernetes.io/component[m[35m:[m controller-eligible
+    [36mapp.kubernetes.io/instance[m[35m:[m pip-kafka
+    [36mapp.kubernetes.io/managed-by[m[35m:[m Helm
+    [36mapp.kubernetes.io/name[m[35m:[m kafka
+    [36mapp.kubernetes.io/part-of[m[35m:[m kafka
+    [36mapp.kubernetes.io/version[m[35m:[m 3.8.1
+    [36mhelm.sh/chart[m[35m:[m kafka-30.1.8
+  [36mname[m[35m:[m pip-kafka-controller
+  [36mnamespace[m[35m:[m kafkastreamingdata
+  [36mresourceVersion[m[35m:[m [31m"10389611140"[m
+  [36muid[m[35m:[m 0a3d9e35-5312-4a2a-84dc-d17cf4946264
+[36mspec[m[35m:[m
+  [36mpersistentVolumeClaimRetentionPolicy[m[35m:[m
+    [36mwhenDeleted[m[35m:[m Retain
+    [36mwhenScaled[m[35m:[m Retain
+  [36mpodManagementPolicy[m[35m:[m Parallel
+  [36mreplicas[m[35m:[m [31m3[m
+  [36mrevisionHistoryLimit[m[35m:[m [31m10[m
+  [36mselector[m[35m:[m
+    [36mmatchLabels[m[35m:[m[34;7H[36mapp.kubernetes.io/component[m[35m:[m controller-eligible[35;7H[36mapp.kubernetes.io/instance[m[35m:[m pip-kafka[36;7H[36mapp.kubernetes.io/name[m[35m:[m kafka[37;7H[36mapp.kubernetes.io/part-of[m[35m:[m kafka
+  [36mserviceName[m[35m:[m pip-kafka-controller-headless
+  [36mtemplate[m[35m:[m
+    [36mmetadata[m[35m:[m[41;7H[36mannotations[m[35m:[m[42;9H[36mchecksum/configuration[m[35m:[m cdb42c251376622a17fb6615c1ad3de57cf3cf734cc3fae9c05560060676202d[43;9H[36mchecksum/passwords-secret[m[35m:[m 352b6b4b94b34971e2702c90ee0dc2b7f6aa4432941f85a3d879a528a22ed8f2[44;7H[36mcreationTimestamp[m[35m:[m [31mnull[m[45;7H[36mlabels[m[35m:[m[46;9H[36mapp.kubernetes.io/component[m[35m:[m controller-eligible[47;9H[36mapp.kubernetes.io/instance[m[35m:[m pip-kafka[48;9H[36mapp.kubernetes.io/managed-by[m[35m:[m Helm[49;9H[36mapp.kubernetes.io/name[m[35m:[m kafka[50;9H[36mapp.kubernetes.io/part-of[m[35m:[m kafka[51;9H[36mapp.kubernetes.io/version[m[35m:[m 3.8.1[52;9H[36mhelm.sh/chart[m[35m:[m kafka-30.1.8
+    [36mspec[m[35m:[1;1H[?25h[?4m[54;1H[?2004l[>4;m[23;2t[23;1t[m[54;1H[K[54;1H[?1004l[?2004l[?1l>[?1049l[>4;m
