@@ -24,7 +24,7 @@ if __name__ == '__main__':
     print("Create Producer Object")
     producer = KafkaProducer.Producer(serveruri=args.uris)
 
-    print(" Start Streaming Data")
+    print("Start Streaming Data")
     producer.stream_data(
         wait_time=args.wtime,
         topicTitle=args.topicTitle,

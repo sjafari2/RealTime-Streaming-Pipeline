@@ -46,26 +46,8 @@ kill_existing_processes() {
 kill_existing_processes
 
 # Main loop: wait for input and run producers
-while true; do
-    # Wait until input directory is not empty
-    while [ ! "$(ls -A "$input_path")" ]; do
-        echo "Waiting for input files in $input_path..."
-        sleep 20
-    done
-
-    # Check if any files for this pod exist
-    pod_files_exist=false
-    for file in "$input_path"/*-pod-"$pi"-*; do
-        if [ -f "$file" ]; then
-            pod_files_exist=true
-            echo "Input data detected for pod $pi."
-            break
-        fi
-    done
-
-    # Run producers if input exists
-    if [ "$pod_files_exist" = true ]; then
-        for ((i = 0; i < np; i++)); do
+#while true; do
+       for ((i = 0; i < np; i++)); do
             echo "Running Producer[$i]"
             python3 mainProducer.py \
                 -topicTitle "$topic_title" \
@@ -77,12 +59,12 @@ while true; do
                 -bs "$bs" \
                 -wtime "$wt" \
                 -cr "$col_range" \
-                -uris "$server_uri" \
-                >& "${log_path}/producer.$i.$((np - 1)).out" &
+                -uris "$server_uri" 
+               # >& "${log_path}/producer.$i.$((np - 1)).out" &
             pids[$i]=$!
         done
 
-        echo " All mainProducer.py instances started."
+        echo "All mainProducer.py instances started."
 
         # Wait for all producer processes to finish
         for pid in "${pids[@]}"; do
@@ -90,9 +72,6 @@ while true; do
         done
 
         echo " All producer processes completed."
-    else
-        echo "No files found for pod $pi. Waiting..."
-        sleep "$wait_time"
-    fi
-done
+#done
+
 

@@ -14,7 +14,6 @@ import random
 class Producer:
     def __init__(self, serveruri) -> None:
         self.topic_methods = {
-            "ukrain": self.ukrain_process,
             "random": self.random_structured_data_producer
         }
         self.hlpr = helper.Tools()
@@ -69,44 +68,46 @@ class Producer:
         return file_names
 
     def stream_data(self, wait_time, topicTitle, **kwargs):
-        print("Streaming Data")
-        while True:
-            filenames = self.fetch_files(kwargs.get('prodindex'), kwargs.get('podindex'), kwargs.get('input_path'))
-            if filenames:
-                process_method = self.topic_methods.get(topicTitle)
-                if not process_method:
-                    raise ValueError(f"No processing method found for topic: {topicTitle}")
-                process_method(filenames, topicTitle, **kwargs) if topicTitle == "ukrain" else process_method(topicTitle, **kwargs)
-            else:
-                time.sleep(wait_time)
-
+       # print("Streaming Data")
+        
+        if topicTitle == "random":
+            print("Streaming Synthatic Data")
+            self.topic_methods["random"](topicTitle, **kwargs)
+            return
+        
+      
     def random_structured_data_producer(self, topicTitle, nprod, num_topics, podindex, prodindex, batchsize, column_range, **kwargs):
-        print("\U0001F528 Starting random structured data producer")
+        print("\U0001F528 Starting synthatic structured data producer")
+
         index_start = podindex * batchsize * nprod + prodindex * batchsize
         rangehash = lambda x: hash(x) % column_range
 
-        for i in range(batchsize):
-            msg_index = index_start + i
-            hashed_key = rangehash(f"key_{msg_index}")
-            values = [rangehash(f"val_{msg_index}_{j}") for j in range(random.randint(2, 6))]
+        while True:  # ← Add this loop to continuously send data
+            for i in range(batchsize):
+                msg_index = index_start + i
+                hashed_key = rangehash(f"key_{msg_index}")
+                values = [rangehash(f"val_{msg_index}_{j}") for j in range(random.randint(2, 6))]
 
-            payload = {
-                "index": msg_index,
-                "timestamp": time.time(),
-                "values": values
-            }
+                payload = {
+                    "index": msg_index,
+                    "timestamp": time.time(),
+                    "values": values
+                }
 
-            message_json = json.dumps({hashed_key: payload})
-            message_bytes = message_json.encode("utf-8")
-            size_bytes = len(message_bytes)
-            key = hashed_key % num_topics
-            topic = f"{topicTitle}_{key}"
+                message_json = json.dumps({hashed_key: payload})
+                message_bytes = message_json.encode("utf-8")
+                size_bytes = len(message_bytes)
+                key = hashed_key % num_topics
+                topic = f"{topicTitle}_{key}"
 
-            headers = [
-                ('size_bytes', str(size_bytes).encode('utf-8')),
-                ('index', str(msg_index).encode('utf-8'))
-            ]
+                headers = [
+                    ('size_bytes', str(size_bytes).encode('utf-8')),
+                    ('index', str(msg_index).encode('utf-8'))
+                ]
 
-            print(f"\U0001F4E4 Sending message #{msg_index} to {topic} | size={size_bytes} bytes")
-            self.send_message(topic, message_bytes, headers=headers)
+                print(f"\U0001F4E4 Sending message #{msg_index} to {topic} | size={size_bytes} bytes")
+                self.send_message(topic, message_bytes, headers=headers)
+
+            index_start += batchsize  # Move forward for the next loop
+            time.sleep(1)  # Optional: pause briefly before next batch
 

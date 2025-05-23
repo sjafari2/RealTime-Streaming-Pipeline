@@ -1,8 +1,3 @@
-nodeSelector:
-  kubernetes.io/hostname: gpu-04.nrp.mghpcc.org
-persistence:
-  storageClass: rook-cephfs-east
-replicaCount: 3
 extraEnvVars:
   - name: POD_NAME
     valueFrom:
@@ -12,4 +7,8 @@ extraEnvVars:
     value: PLAINTEXT://0.0.0.0:9092
   - name: KAFKA_ADVERTISED_LISTENERS
     value: PLAINTEXT://$(POD_NAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092
-
+nodeSelector:
+  kubernetes.io/hostname: gpu-04.nrp.mghpcc.org
+persistence:
+  storageClass: rook-cephfs-east
+replicaCount: 3

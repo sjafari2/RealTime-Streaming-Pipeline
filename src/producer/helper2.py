@@ -8,7 +8,7 @@ import plotly.express as px
 import spacy
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
-from preprocess import *
+#from preprocess import *
 
 # added stop words
 #gist_file = open("data/gist_stopwords.txt", "r")
