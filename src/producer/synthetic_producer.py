@@ -4,7 +4,11 @@ import time
 import logging
 import re
 import argparse
+import socket
 from kafka import KafkaProducer
+from kafka.errors import NoBrokersAvailable
+from kafka.admin import KafkaAdminClient, NewTopic
+from kafka.errors import TopicAlreadyExistsError
 
 
 class Tools:
@@ -33,10 +37,25 @@ class Producer:
         self.serializer = Serializer()
 
         self.producer_bootstrap_servers = [
-           "pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
-           "pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
+         # "pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
+         #  "pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
            "pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092"
         ]
+        
+        # DNS + Port Reachability Check
+        for server in self.producer_bootstrap_servers:
+            host, port = server.split(":")
+            try:
+                ip = socket.gethostbyname(host)
+                print(f"DNS lookup successful: {host} resolved to {ip}")
+                with socket.create_connection((host, int(port)), timeout=5):
+                    print(f"Successfully connected to {host}:{port}")
+            except socket.gaierror:
+                print(f"DNS resolution failed for {host}")
+            except socket.timeout:
+                print(f"Connection timed out to {host}:{port}")
+            except Exception as e:
+                print(f"Failed to connect to {host}:{port} — {e}")
 
         config = self.hlpr.read_config('producer.properties')
         sasl_config = config.get('sasl.jaas.config', '')
@@ -47,8 +66,8 @@ class Producer:
         password = password_match.group(1) if password_match else ''
 
         producer_config_args = {
-            'security_protocol': config.get('security.protocol', 'PLAINTEXT'),
-            'sasl_mechanism': config.get('sasl.mechanism', 'PLAIN'),
+            'security_protocol': config.get('security.protocol', 'SASL_PLAINTEXT'),
+            'sasl_mechanism': config.get('sasl.mechanism', 'SCRAM-SHA-256'),
             'sasl_plain_username': username,
             'sasl_plain_password': password,
             'value_serializer': self.serializer.str_serializer,
@@ -57,14 +76,24 @@ class Producer:
             'compression_type': 'lz4',
             'batch_size': 16384,
         }
+    
+        self.producer = None
+        retry_delay = 5  # seconds
 
-        try:
-            self.producer = KafkaProducer(bootstrap_servers=self.producer_bootstrap_servers, **producer_config_args)
-            print("Kafka Producer is running.")
-        except Exception as ex:
-            logging.error('Exception while creating Kafka Producer: ' + str(ex))
-            print('Exception while creating Kafka Producer')
-            print(str(ex))
+        while self.producer is None:
+            try:
+                print("Attempting to connect to Kafka broker...")
+                self.producer = KafkaProducer(bootstrap_servers=self.producer_bootstrap_servers, **producer_config_args)
+                print("Kafka Producer successfully connected.")
+            except NoBrokersAvailable as e:
+                logging.warning("⚠️ No Kafka brokers available. Retrying in {} seconds...".format(retry_delay))
+                print("No brokers available. Retrying in {} seconds...".format(retry_delay))
+                time.sleep(retry_delay)
+            except Exception as ex:
+                logging.error('Unexpected error while creating Kafka Producer: ' + str(ex))
+                print('Error initializing Kafka Producer:', str(ex))
+                print("Retrying in {} seconds...".format(retry_delay))
+                time.sleep(retry_delay)
 
     def send_message_no_flush(self, topic, message, headers=None):
 

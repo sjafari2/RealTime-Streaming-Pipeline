@@ -1,12 +1,20 @@
+USER-SUPPLIED VALUES:
+resources:
+  limits:
+    cpu: 4
+    memory: 4096Mi
+  requests:
+    cpu: 2
+    memory: 2048Mi
 extraEnvVars:
-  - name: POD_NAME
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.name
-  - name: KAFKA_LISTENERS
-    value: PLAINTEXT://0.0.0.0:9092
-  - name: KAFKA_ADVERTISED_LISTENERS
-    value: PLAINTEXT://$(POD_NAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092
+- name: POD_NAME
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.name
+- name: KAFKA_LISTENERS
+  value: PLAINTEXT://0.0.0.0:9092
+- name: KAFKA_ADVERTISED_LISTENERS
+  value: PLAINTEXT://$(POD_NAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092
 nodeSelector:
   kubernetes.io/hostname: gpu-04.nrp.mghpcc.org
 persistence:

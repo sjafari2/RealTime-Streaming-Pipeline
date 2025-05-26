@@ -1,0 +1,91 @@
+# Top-level extraEnvVars (empty since we use controller-specific settings)
+#extraEnvVars: []
+
+# Extra volumes and volume mounts for JAAS file (unchanged)
+#extraVolumes:
+#  - name: kafka-jaas
+#    secret:
+#      secretName: kafka-jaas-secret
+#extraVolumeMounts:
+#  - name: kafka-jaas
+#    mountPath: /opt/bitnami/kafka/config/kafka_jaas.conf
+#    subPath: kafka_jaas.conf
+
+global:
+  storageClass: "rook-cephfs-east"
+
+# SASL configuration (unchanged)
+sasl:
+  enabledMechanisms: SCRAM-SHA-256, PLAIN
+  interBrokerMechanism: PLAIN
+  controllerMechanism: PLAIN
+  interbroker:
+    user: inter_broker_user
+    password: "inter123"
+  controller:
+    user: controller_user
+    password: "controller123"
+  client:
+    users:
+      - user1
+    passwords: "p5EMz9DDhO%"
+      #existingSecret: pip-kafka-user-passwords
+
+# Listener configuration (unchanged, kept for reference)
+#listeners:
+#  client:
+#    containerPort: 9092
+#    protocol: SASL_PLAINTEXT
+#    name: CLIENT
+#    sslClientAuth: ""
+#  controller:
+#    name: CONTROLLER
+#    containerPort: 9093
+#    protocol: SASL_PLAINTEXT
+#    sslClientAuth: ""
+#  interbroker:
+#    containerPort: 9094
+#    protocol: SASL_PLAINTEXT
+#    name: INTERNAL
+#    sslClientAuth: ""
+#  external:
+#    containerPort: 9095
+#    protocol: SASL_PLAINTEXT
+#    name: EXTERNAL
+#    sslClientAuth: ""
+
+# KRaft configuration (unchanged, no extraEnvVars here)
+#kraft:
+  #  enabled: true
+    #  clusterId: ""
+    #  controllerQuorumVoters: ""
+
+# Controller configuration
+controller:
+  replicaCount: 3
+    # extraEnvVars:
+    #- name: KAFKA_OPTS
+    #  value: "-Djava.security.auth.login.config=/opt/bitnami/kafka/config/kafka_jaas.conf"
+    #- name: POD_NAME
+    #  valueFrom:
+    #    fieldRef:
+    #      fieldPath: metadata.name
+    # extraConfig: |
+    #auto.create.topics.enable=true
+  resources:
+    limits:
+      cpu: 4
+      memory: 4096Mi
+    requests:
+      cpu: 2
+      memory: 2048Mi
+  persistence:
+    enabled: true
+    storageClass: "rook-cephfs-east"
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+metrics:
+   nodeAffinityPreset:
+     key: "kubernetes.io/hostname"
+     value: "gpu-04.nrp.mghpcc.org"
