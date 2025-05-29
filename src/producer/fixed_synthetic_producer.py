@@ -1,14 +1,15 @@
 import json
 import random
 import time
+import logging
 import re
 import argparse
 import socket
 from kafka import KafkaProducer
 from kafka.admin import KafkaAdminClient, NewTopic
-from kafka.errors import NoBrokersAvailable, TopicAlreadyExistsError
-import logging
-#logging.basicConfig(level=logging.DEBUG)
+from kafka.errors import NoBrokersAvailable, TopicAlreadyExistsError, KafkaConfigurationError
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Tools:
@@ -26,9 +27,7 @@ class Tools:
 
 class Serializer:
     def str_serializer(self, data):
-        if isinstance(data, str):
-            return data.encode('utf-8')
-        return data
+        return data.encode('utf-8') if isinstance(data, str) else data
 
 
 class Producer:
@@ -40,9 +39,9 @@ class Producer:
             "pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
             "pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
             "pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092"
- ]
+        ]
 
-        # DNS + Port Reachability Check
+        # Check connectivity to each broker
         for server in self.producer_bootstrap_servers:
             host, port = server.split(":")
             try:
@@ -50,12 +49,8 @@ class Producer:
                 print(f"DNS lookup successful: {host} resolved to {ip}")
                 with socket.create_connection((host, int(port)), timeout=5):
                     print(f"Successfully connected to {host}:{port}")
-            except socket.gaierror:
-                print(f"DNS resolution failed for {host}")
-            except socket.timeout:
-                print(f"Connection timed out to {host}:{port}")
             except Exception as e:
-                print(f"Failed to connect to {host}:{port} — {e}")
+                print(f"Connection check failed for {host}:{port} — {e}")
 
         config = self.hlpr.read_config('producer.properties')
         sasl_config = config.get('sasl.jaas.config', '').replace('\\', '')
@@ -66,11 +61,16 @@ class Producer:
         password = password_match.group(1) if password_match else ''
         print(f"Parsed username: {username}")
         print(f"Parsed password: {password}")
-        self.producer_config_args = {
+
+        self.admin_config_args = {
             'security_protocol': config.get('security.protocol', 'SASL_PLAINTEXT'),
-            'sasl_mechanism': config.get('sasl.mechanism', 'PLAIN'),
+            'sasl_mechanism': config.get('sasl.mechanism', 'SCRAM-SHA-256'),
             'sasl_plain_username': username,
             'sasl_plain_password': password,
+        }
+
+        self.producer_config_args = {
+            **self.admin_config_args,
             'value_serializer': self.serializer.str_serializer,
             'acks': 1,
             'linger_ms': 100,
@@ -79,21 +79,21 @@ class Producer:
         }
 
         self.producer = None
-        retry_delay = 5  # seconds
+        retry_delay = 5
 
         while self.producer is None:
             try:
                 print("Attempting to connect to Kafka broker...")
-                self.producer = KafkaProducer(bootstrap_servers=self.producer_bootstrap_servers, **self.producer_config_args)
+                self.producer = KafkaProducer(
+                    bootstrap_servers=self.producer_bootstrap_servers,
+                    **self.producer_config_args
+                )
                 print("Kafka Producer successfully connected.")
-            except NoBrokersAvailable as e:
-                logging.warning("No Kafka brokers available. Retrying in {} seconds...".format(retry_delay))
-                print("No brokers available. Retrying in {} seconds...".format(retry_delay))
+            except NoBrokersAvailable:
+                print(f"No brokers available. Retrying in {retry_delay} seconds...")
                 time.sleep(retry_delay)
             except Exception as ex:
-                logging.error('Unexpected error while creating Kafka Producer: ' + str(ex))
-                print('Error initializing Kafka Producer:', str(ex))
-                print("Retrying in {} seconds...".format(retry_delay))
+                print(f"Error initializing Kafka Producer: {ex}")
                 time.sleep(retry_delay)
 
     def create_topics_from_configmap(self, configmap_path='./pipeline-configmap.yaml'):
@@ -109,37 +109,34 @@ class Producer:
         topic_count = int(config_data.get("PRODUCER_TOPIC_COUNT", 10))
         topic_prefix = config_data.get("TOPIC_TITLE", "synthetic")
         num_partitions = int(config_data.get("NUM_PARTITIONS", 1))
-        replication_factor = int (config_data.get("REPLICATION_FACTOR","1"))
+        replication_factor = int(config_data.get("REPLICATION_FACTOR", "1"))
 
         print(f"Preparing to create {topic_count} Kafka topics with prefix '{topic_prefix}'")
 
-        admin = KafkaAdminClient(
-            bootstrap_servers=self.producer_bootstrap_servers,
-            security_protocol=self.producer_config_args['security_protocol'],
-            sasl_mechanism=self.producer_config_args['sasl_mechanism'],
-            sasl_plain_username=self.producer_config_args['sasl_plain_username'],
-            sasl_plain_password=self.producer_config_args['sasl_plain_password'],
-           # api_version=(1, 6, 1),
-            request_timeout_ms=5000,
-            metadata_max_age_ms=3000,
+        try:
+            admin = KafkaAdminClient(
+                bootstrap_servers=self.producer_bootstrap_servers,
+                api_version=(3, 8, 1),
+                request_timeout_ms=5000,
+                metadata_max_age_ms=3000,
+                **self.admin_config_args
             )
+        except KafkaConfigurationError as kce:
+            print(f"Kafka admin client configuration error: {kce}")
+            return
 
         try:
-            print("Fetching existing Kafka topics...")
             existing_topics = admin.list_topics()
             print(f"Found {len(existing_topics)} existing topics.")
         except Exception as e:
-            print(f"Failed to fetch existing topics: {e}")
-            print("Proceeding to create topics unconditionally...")
+            print(f"Failed to fetch topics: {e}")
             existing_topics = []
-            
 
-        topics_to_create = []
-
-        for i in range(topic_count):
-            topic_name = f"{topic_prefix}_{i}"
-            if topic_name not in existing_topics:
-                topics_to_create.append(NewTopic(name=topic_name, num_partitions=num_partitions, replication_factor=replication_factor))
+        topics_to_create = [
+            NewTopic(name=f"{topic_prefix}_{i}", num_partitions=num_partitions, replication_factor=replication_factor)
+            for i in range(topic_count)
+            if f"{topic_prefix}_{i}" not in existing_topics
+        ]
 
         if topics_to_create:
             try:
@@ -148,7 +145,7 @@ class Producer:
             except TopicAlreadyExistsError:
                 print("Some topics already exist.")
             except Exception as e:
-                print(f" Error creating topics: {e}")
+                print(f"Error creating topics: {e}")
         else:
             print("All topics already exist.")
 
@@ -156,9 +153,7 @@ class Producer:
 
     def send_message_no_flush(self, topic, message, headers=None):
         try:
-            print("Sending message...")
             future = self.producer.send(topic, value=message, headers=headers or [])
-            print("Waiting for Kafka to acknowledge...")
             future.get(timeout=10)
             print(f"Sent message to topic '{topic}'")
         except Exception as e:
@@ -190,7 +185,7 @@ class Producer:
                 ('index', str(index).encode('utf-8'))
             ]
 
-            print(f"Sending message {message_bytes} to topic {topic}")
+            print(f"Sending index {index} to topic {topic}")
             self.send_message_no_flush(topic, message_bytes, headers=headers)
             index += 1
             time.sleep(delay)

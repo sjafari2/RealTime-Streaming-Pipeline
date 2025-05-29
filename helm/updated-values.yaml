@@ -1,91 +1,94 @@
-# Top-level extraEnvVars (empty since we use controller-specific settings)
-#extraEnvVars: []
-
-# Extra volumes and volume mounts for JAAS file (unchanged)
-#extraVolumes:
-#  - name: kafka-jaas
-#    secret:
-#      secretName: kafka-jaas-secret
-#extraVolumeMounts:
-#  - name: kafka-jaas
-#    mountPath: /opt/bitnami/kafka/config/kafka_jaas.conf
-#    subPath: kafka_jaas.conf
-
 global:
   storageClass: "rook-cephfs-east"
 
-# SASL configuration (unchanged)
 sasl:
-  enabledMechanisms: SCRAM-SHA-256, PLAIN
+  enabledMechanisms: PLAIN
   interBrokerMechanism: PLAIN
   controllerMechanism: PLAIN
   interbroker:
-    user: inter_broker_user
+    user: interbrokeruser
     password: "inter123"
   controller:
-    user: controller_user
+    user: controlleruser
     password: "controller123"
   client:
     users:
       - user1
-    passwords: "p5EMz9DDhO%"
-      #existingSecret: pip-kafka-user-passwords
+    passwords:
+      - "p5EMz9DDhO%%"
+listeners:
+  client:
+    name: CLIENT
+    containerPort: 9092
+    protocol: SASL_PLAINTEXT
+    sslClientAuth: ""
+  controller:
+    name: CONTROLLER
+    containerPort: 9093
+    protocol: SASL_PLAINTEXT
+    sslClientAuth: ""
+  interbroker:
+    name: INTERNAL
+    containerPort: 9094
+    protocol: SASL_PLAINTEXT
+    sslClientAuth: ""
+  external:
+    name: EXTERNAL
+    containerPort: 9095
+    protocol: SASL_PLAINTEXT
+    sslClientAuth: ""
 
-# Listener configuration (unchanged, kept for reference)
-#listeners:
-#  client:
-#    containerPort: 9092
-#    protocol: SASL_PLAINTEXT
-#    name: CLIENT
-#    sslClientAuth: ""
-#  controller:
-#    name: CONTROLLER
-#    containerPort: 9093
-#    protocol: SASL_PLAINTEXT
-#    sslClientAuth: ""
-#  interbroker:
-#    containerPort: 9094
-#    protocol: SASL_PLAINTEXT
-#    name: INTERNAL
-#    sslClientAuth: ""
-#  external:
-#    containerPort: 9095
-#    protocol: SASL_PLAINTEXT
-#    name: EXTERNAL
-#    sslClientAuth: ""
+kraft:
+  enabled: true
+  clusterId: ""  # Let Kafka auto-generate
 
-# KRaft configuration (unchanged, no extraEnvVars here)
-#kraft:
-  #  enabled: true
-    #  clusterId: ""
-    #  controllerQuorumVoters: ""
-
-# Controller configuration
 controller:
   replicaCount: 3
-    # extraEnvVars:
-    #- name: KAFKA_OPTS
-    #  value: "-Djava.security.auth.login.config=/opt/bitnami/kafka/config/kafka_jaas.conf"
-    #- name: POD_NAME
-    #  valueFrom:
-    #    fieldRef:
-    #      fieldPath: metadata.name
-    # extraConfig: |
-    #auto.create.topics.enable=true
-  resources:
-    limits:
-      cpu: 4
-      memory: 4096Mi
-    requests:
-      cpu: 2
-      memory: 2048Mi
+  nodeSelector:
+    kubernetes.io/hostname: gpu-01.nrp.mghpcc.org
+  initContainers:
+    - name: volume-permission-fix
+      image: busybox
+      command:
+        - sh
+        - -c
+        - chown -R 1001:1001 /bitnami/kafka
+      volumeMounts:
+        - name: data
+          mountPath: /bitnami/kafka
   persistence:
     enabled: true
     storageClass: "rook-cephfs-east"
     accessModes:
       - ReadWriteOnce
     size: 8Gi
-metrics:
-   nodeAffinityPreset:
-     key: "kubernetes.io/hostname"
-     value: "gpu-04.nrp.mghpcc.org"
+
+  extraEnvVars:
+    - name: HOSTNAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: KAFKA_CFG_ADVERTISED_LISTENERS
+      value: CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092
+
+  extraConfig: |
+    auto.create.topics.enable=true
+    listener.security.protocol.map=CLIENT:SASL_PLAINTEXT,CONTROLLER:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
+    listeners=CLIENT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9095
+    inter.broker.listener.name=INTERNAL
+    sasl.enabled.mechanisms=PLAIN
+    sasl.mechanism.inter.broker.protocol=PLAIN
+
+    listener.name.controller.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="controlleruser" password="controller123";
+    listener.name.internal.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="interbrokeruser" password="inter123";
+    listener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="p5EMz9DDhO%%";
+    listener.name.external.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="p5EMz9DDhO%%";
+
+  resources:
+    limits:
+      cpu: 2
+      memory: 500Mi
+    requests:
+      cpu: 1
+      memory: 250Mi
+

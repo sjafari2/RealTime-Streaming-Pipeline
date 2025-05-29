@@ -42,9 +42,9 @@ list_and_count_files() {
 #pods=("consumer-sts" "consumer-sts" "producer-sts" "request-sts" "merge-sts")
 #destinations=("src/consumer" "src/application" "src/producer" "src/request" "src/merge")
 #containers=("consumer-sts" "application-sts" "producer-container" "request-container" "merge-sts") # Add a list of containers
-pods=("request-sts" "producer-sts" "consumer-application-sts" "consumer-application-sts" "merge-sts")
-destinations=("./src/request" "./src/producer" "./src/consumer" "./src/application" "./src/merge")
-containers=("request-container" "producer-container" "consumer-container" "application-container" "merge-container")
+pods=( "producer-sts" "consumer-application-sts" "consumer-application-sts" "merge-sts" "request-sts")
+destinations=( "./src/producer" "./src/consumer" "./src/application" "./src/merge" "./src/request")
+containers=( "producer-container" "consumer-container" "application-container" "merge-container" "request-container")
 # Loop through the pods and copy files based on their extensions
 for ((i=0; i<${#pods[@]}; i++)); do
     pod="${pods[i]}"-0

@@ -1,0 +1,5 @@
+helm upgrade pip-kafka bitnami/kafka \
+  --set kraft.clusterId=$KRAFT_CLUSTER_ID \
+  --set auth.client.users[0]=user1 \
+  --set auth.client.passwords[0]="3qPLZfS1FK"
+
