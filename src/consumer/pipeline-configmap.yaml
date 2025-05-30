@@ -16,7 +16,11 @@ data:
   PRODUCER_POD_COUNT: "1"
   WAITE_TIME: "10"
   BATCH_SIZE: "100"
-  TOPIC_TITLE: "random"
+  TOPIC_TITLE: "synthetic"
+  NUM_PARTITIONS: "1"
+  REPLICATION_FACTOR: "1"
+  DELAY_BETWEEN_MESSAGES: "0.5"
+  RANDOM_RANGE: "50000"
 
 
   ############# CONSUMER PROPERTIES #############################
@@ -29,6 +33,7 @@ data:
   CONSUMER_POD_COUNT: "1"
   CONSUMER_COUNT: "1"
   CONSUMER_WINDOW_COUNT: "2"
+  MAX_MESSAGES: "100"
 
   ##### APPLICATION POD VARIABLES ##########################
   APPLICATION_WAIT_TIME: "60"

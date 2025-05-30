@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Set the release name and namespace
-RELEASE_NAME="pipe"
-NAMESPACE="kafkastreamingadata"
+RELEASE_NAME="pip"
+NAMESPACE="kafkastreamingdata"
 #NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 #RELEASE_NAME=$(kubectl get pods -n $NAMESPACE -o=jsonpath='{.items[0].metadata.labels.helm\.sh/release}')
 

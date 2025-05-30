@@ -82,7 +82,7 @@ class Producer:
         index_start = podindex * batchsize * nprod + prodindex * batchsize
         rangehash = lambda x: hash(x) % column_range
 
-        while True:  # ← Add this loop to continuously send data
+        while True:  
             for i in range(batchsize):
                 msg_index = index_start + i
                 hashed_key = rangehash(f"key_{msg_index}")

@@ -95,6 +95,7 @@ class Producer:
                 print('Error initializing Kafka Producer:', str(ex))
                 print("Retrying in {} seconds...".format(retry_delay))
                 time.sleep(retry_delay)
+    '''
 
     def create_topics_from_configmap(self, configmap_path='./pipeline-configmap.yaml'):
         config_data = {}
@@ -153,10 +154,10 @@ class Producer:
             print("All topics already exist.")
 
         admin.close()
-
+'''
     def send_message_no_flush(self, topic, message, headers=None):
         try:
-            print("Sending message...")
+           #print("Sending message...")
             future = self.producer.send(topic, value=message, headers=headers or [])
             print("Waiting for Kafka to acknowledge...")
             future.get(timeout=10)
@@ -172,11 +173,11 @@ class Producer:
         except Exception as e:
             print(f"Error sending message: {e}")
 
-    def start_synthetic_stream(self, num_topics=10, delay=0.5, column_range=500000):
+    def start_synthetic_stream(self, topic_title, num_topics, delay,num_partitions, replica_factor,random_range):
         index = 0
         while True:
-            topic = f"synthetic_{index % num_topics}"
-            values = [random.randint(0, column_range) for _ in range(random.randint(3, 6))]
+            topic = f"{topic_title}_{index % num_topics}"
+            values = [random.randint(0, random_range) for _ in range(random.randint(3, 6))]
             payload = {
                 "index": index,
                 "timestamp": time.time(),
@@ -197,13 +198,15 @@ class Producer:
 
 
 if __name__ == "__main__":
+    print("Start main")
     parser = argparse.ArgumentParser(description="Synthetic Kafka Data Producer")
-    parser.add_argument('--topics', type=int, default=10, help='Number of Kafka topics to use')
+    parser.add_argument('--topicTitle', type=str, default="synthetic", help='Kafka topics title')
+    parser.add_argument('--numTopics', type=int, default=10, help='Number of Kafka topics to use')
     parser.add_argument('--delay', type=float, default=0.5, help='Delay between messages in seconds')
-    parser.add_argument('--configmap', type=str, default='./pipeline-configmap.yaml', help='Path to mounted configmap file')
+    parser.add_argument('--numPartitions', type=int, default=1, help='Nnumber of partitions')
+    parser.add_argument('--replica', type=int, default=1, help='Replication factor')
+    parser.add_argument('--randomRange', type=int, default=50000, help='Range of random values')
     args = parser.parse_args()
-
+    print("Start Producer")
     producer = Producer()
-    producer.create_topics_from_configmap(configmap_path=args.configmap)
-    producer.start_synthetic_stream(num_topics=args.topics, delay=args.delay)
-
+    producer.start_synthetic_stream(topic_title=args.topicTitle, num_topics=args.numTopics, delay=args.delay, num_partitions=args.numPartitions, replica_factor=args.replica,random_range=args.randomRange)

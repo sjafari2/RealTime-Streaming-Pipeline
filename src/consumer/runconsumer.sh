@@ -30,14 +30,12 @@ server_uri=$(bash get_kafka_consumer_dns.sh)
 tpcs_per_pod=$((topics_len / pod_count))
 tpcs_extra_pod=$((topics_len % pod_count))
 if [ "$pod_index" -lt "$tpcs_extra_pod" ]; then
-    ((tpcs_per_pod++))
-    spoint=$((pod_index * tpcs_per_pod))
-elif [ "$pod_index" -eq "$tpcs_extra_pod" ]; then
-    spoint=$((pod_index * (tpcs_per_pod+1)))
+    tpcs_this_pod=$((tpcs_per_pod + 1))
+    spoint=$((pod_index * tpcs_this_pod))
+else
+    tpcs_this_pod=$tpcs_per_pod
+    spoint=$((tpcs_extra_pod * (tpcs_per_pod + 1) + (pod_index - tpcs_extra_pod) * tpcs_per_pod))
 fi
-#else
-#    spoint=$((tpcs_extra_pod * (tpcs_per_pod + 1) + (pod_index - tpcs_extra_pod) * tpcs_per_pod))
-#fi
 #tpcs_per_consr=$((tpcs_per_pod / nconsumers))
 #tpcs_extra=$((tpcs_per_pod % nconsumers))
 #spoint=0
