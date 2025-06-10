@@ -15,7 +15,7 @@ sasl:
     users:
       - user1
     passwords:
-      - "p5EMz9DDhO%%"
+      - "5x4XjjbPod"
 listeners:
   client:
     name: CLIENT
@@ -40,12 +40,17 @@ listeners:
 
 kraft:
   enabled: true
-  clusterId: ""  # Let Kafka auto-generate
+  controllerListenerNames: CONTROLLER
+  processRoles: controller,broker
+    #clusterId: ""  # Let Kafka auto-generate
 
 controller:
+  jaas:
+    user: controlleruser
+    password: "controller123"
   replicaCount: 3
   nodeSelector:
-    kubernetes.io/hostname: gpu-01.nrp.mghpcc.org
+    kubernetes.io/hostname: gpu-04.nrp.mghpcc.org
   initContainers:
     - name: volume-permission-fix
       image: busybox
@@ -68,27 +73,34 @@ controller:
       valueFrom:
         fieldRef:
           fieldPath: metadata.name
+    - name: KAFKA_CFG_NODE_ID
+      value: "{{ .StatefulSetOrdinal }}"
     - name: KAFKA_CFG_ADVERTISED_LISTENERS
-      value: CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092
-
+      value: >-
+        CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,
+        #        CONTROLLER://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,
+        INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
+        EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
+    - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+      value: "0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093"
   extraConfig: |
+    delete.topic.enable=true
     auto.create.topics.enable=true
     listener.security.protocol.map=CLIENT:SASL_PLAINTEXT,CONTROLLER:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
     listeners=CLIENT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9095
     inter.broker.listener.name=INTERNAL
     sasl.enabled.mechanisms=PLAIN
     sasl.mechanism.inter.broker.protocol=PLAIN
-
     listener.name.controller.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="controlleruser" password="controller123";
     listener.name.internal.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="interbrokeruser" password="inter123";
-    listener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="p5EMz9DDhO%%";
-    listener.name.external.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="p5EMz9DDhO%%";
+    listener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
+    listener.name.external.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
 
   resources:
     limits:
-      cpu: 2
-      memory: 500Mi
+      cpu: 3
+      memory: 1G
     requests:
-      cpu: 1
-      memory: 250Mi
+      cpu: 3
+      memory: 1G
 
