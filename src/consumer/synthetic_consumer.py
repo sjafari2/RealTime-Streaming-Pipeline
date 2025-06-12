@@ -2,8 +2,9 @@ import json
 import time
 import argparse
 import pandas as pd
-import helper
+import numpy as np
 from kafka import KafkaConsumer
+import helper
 
 
 class ConfigLoader:
@@ -80,7 +81,13 @@ class MetricConsumer:
                     now = time.time()
                     producer_timestamp = msg.value.get('timestamp')
                     index = msg.value.get('index')
-                    delay = now - producer_timestamp if producer_timestamp else None
+
+                    consumer_delay = now - producer_timestamp if producer_timestamp else None
+
+                    app_time = max(0, np.random.normal(loc=1.0, scale=0.1))
+                    time.sleep(app_time)
+
+                    app_delay = time.time() - producer_timestamp if producer_timestamp else None
 
                     msg_size = None
                     for header in (msg.headers or []):
@@ -91,10 +98,10 @@ class MetricConsumer:
 
                     self.metrics.append({
                         'index': index,
-                        'delay_sec': delay,
+                        'consumer_delay_sec': consumer_delay,
+                        'app_time_sec': app_time,
+                        'app_delay_sec': app_delay,
                         'size_bytes': msg_size,
-                        'recv_timestamp': now,
-                        'sent_timestamp': producer_timestamp,
                         'topic': msg.topic
                     })
                     self.message_count += 1
