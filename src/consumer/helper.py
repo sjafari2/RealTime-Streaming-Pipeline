@@ -20,17 +20,16 @@ class Tools:
         pass
 
     def read_config(self, filepath):
-        with open(filepath, 'r') as f:
-            lines = f.readlines()
-
         config = {}
-        for line in lines:
-            key, value = line.strip().split('=', 1)
-            config[key] = value
-
+        with open(filepath, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#') or '=' not in line:
+                    continue
+                key, value = line.split('=', 1)
+                config[key.strip()] = value.strip()
         return config
-
-   
+ 
     def save_csv(file_, filename):
         with open(filename + '.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)

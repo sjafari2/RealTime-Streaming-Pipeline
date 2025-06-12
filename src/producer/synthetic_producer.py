@@ -72,7 +72,6 @@ class Producer:
             raise
 
         self.create_topics_if_missing(args.topicTitle, args.numTopics, args.numPartitions, args.replica)
-
     def create_topics_if_missing(self, base_topic, num_topics, num_partitions, replication_factor):
         try:
             admin = KafkaAdminClient(
@@ -83,13 +82,24 @@ class Producer:
                 sasl_plain_password=self.producer_config_args['sasl_plain_password']
             )
 
-            topics = []
+            existing_topics = admin.list_topics()
+            topics_to_create = []
+
             for i in range(num_topics):
                 topic_name = f"{base_topic}_{i}"
-                topics.append(NewTopic(name=topic_name, num_partitions=num_partitions, replication_factor=replication_factor))
+                if topic_name not in existing_topics:
+                    topics_to_create.append(NewTopic(
+                        name=topic_name,
+                        num_partitions=num_partitions,
+                        replication_factor=replication_factor
+                    ))
 
-            admin.create_topics(new_topics=topics, validate_only=False)
-            print(f"Created topics: {[t.name for t in topics]}")
+            if topics_to_create:
+                admin.create_topics(new_topics=topics_to_create, validate_only=False)
+                print(f"Created topics: {[t.name for t in topics_to_create]}")
+            else:
+                print("All topics already exist. Skipping creation.")
+
         except TopicAlreadyExistsError:
             print("Some or all topics already exist.")
         except KafkaError as e:
@@ -104,7 +114,7 @@ class Producer:
         try:
             future = self.producer.send(topic, value=message, headers=headers or [])
             if self.producer_config_args['acks'] != '0':
-                future.get(timeout=30)
+                future.get(timeout=45)
             print(f"Sent message to topic '{topic}'")
             return True
         except Exception as e:

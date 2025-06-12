@@ -13,9 +13,14 @@ pod_count=${data_CONSUMER_POD_COUNT}
 msg_max=${data_MAX_MESSAGES}
 pod_index=${1:-0}
 
-# Optional configs for consumer
+# Optional consumer tuning params from ConfigMap (with defaults if missing)
 auto_commit=${data_ENABLE_AUTO_COMMIT:-true}
 offset_reset=${data_OFFSET_RESET:-earliest}
+poll_timeout=${data_POLL_TIMEOUT:-300}
+max_records=${data_MAX_RECORDS:-500}
+fetch_max_bytes=${data_FETCH_MAX_BYTES:-10485760}
+fetch_min_bytes=${data_FETCH_MIN_BYTES:-1024}
+fetch_max_wait_ms=${data_FETCH_MAX_WAIT_MS:-500}
 
 # Get list of topics matching the prefix
 source kafka-list-topics.sh
@@ -68,7 +73,12 @@ for ((i = 0; i < nconsumers; i++)); do
         --enableAutoCommit "$auto_commit" \
         --offsetReset "$offset_reset" \
         --maxMsg "$msg_max" \
-        >& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
+        --pollTimeout "$poll_timeout" \
+        --maxRecords "$max_records" \
+        --fetchMaxBytes "$fetch_max_bytes" \
+        --fetchMinBytes "$fetch_min_bytes" \
+        --fetchMaxWaitMs "$fetch_max_wait_ms"& # \
+        #>& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
 done
 
 wait
