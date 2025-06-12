@@ -59,10 +59,11 @@ for ((i = 0; i < nconsumers; i++)); do
 
     python3 synthetic_consumer.py \
         --topics "$topic_str" \
+        --maxMsg "$msg_max" \
         --groupId "consumer-group-${pod_index}-${i}" \
         --outputPath "${output_path}/result_consumer_pod${pod_index}_proc${i}.csv" \
-        --uris "$server_uri" & #\
-	#>& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
+        --uris "$server_uri" \
+	>& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
 done
 
 wait
