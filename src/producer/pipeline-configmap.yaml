@@ -19,26 +19,28 @@ data:
   TOPIC_TITLE: "synthetic"
   NUM_PARTITIONS: "1"
   REPLICATION_FACTOR: "1"
-  DELAY_BETWEEN_MESSAGES: "0.5" 
+  DELAY_BETWEEN_MESSAGES: "0.5"
   RANDOM_RANGE: "50000"
+  LINGER_MS: "200"
+  COMPRESSION_TYPE: "gzip"
+  MAX_REQUEST_SIZE: "1048576"  # 1MB
+  ACKS: "all"
 
   ############# CONSUMER PROPERTIES #############################
-  auto_offset_reset: "earliest"
-  group_id: "StreamData"
+  OFFSET_RESET: "earliest"
+  ENABLE_AUTO_COMMIT: "True"
+  MAX_MESSAGES: "100"
+  group_id: "Streaming"
   max_in_flight_requests_per_connection: "1"
-  enable_auto_commit: "true"
   auto_commit_interval_ms: "5000"
-  enable.idempotence: "true"
+  enable.idempotence: "True"
   CONSUMER_POD_COUNT: "1"
   CONSUMER_COUNT: "1"
   CONSUMER_WINDOW_COUNT: "2"
-  MAX_MESSAGES: "100"
 
   ##### APPLICATION POD VARIABLES ##########################
   APPLICATION_WAIT_TIME: "60"
   APPLICATION_COUNT: "1"
-
-
 
   ############### ZIKA VARIABLES ##############################
   ZIKA_DATA_ADDRESS: "./data/zika_data_only_hashtags.csv"
@@ -80,8 +82,8 @@ data:
   RqstPodSharedPath: "request-producer-data"
 
   ############# MERGE PODS VARIABLES ###############
-
   MERGE_COUNT: "1"
   MERGE_WAIT_TIME: "600"
   MERGE_WAIT_THRESHOLD: "20"
   merge_path: "./merged-clstr-data"
+

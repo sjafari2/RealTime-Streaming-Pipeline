@@ -13,6 +13,10 @@ pod_count=${data_CONSUMER_POD_COUNT}
 msg_max=${data_MAX_MESSAGES}
 pod_index=${1:-0}
 
+# Optional configs for consumer
+auto_commit=${data_ENABLE_AUTO_COMMIT:-true}
+offset_reset=${data_OFFSET_RESET:-earliest}
+
 # Get list of topics matching the prefix
 source kafka-list-topics.sh
 TOPICS=$(printf "%s\n" "${TOPICS[@]}" | grep ${topic_title})
@@ -21,7 +25,6 @@ topics_len=${#TOPICS[@]}
 
 # Get Kafka brokers
 server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr '\n' ',' | sed 's/,$//')
-#echo Server URIs are ${server_uri}
 
 # Logging setup
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
@@ -59,11 +62,13 @@ for ((i = 0; i < nconsumers; i++)); do
 
     python3 synthetic_consumer.py \
         --topics "$topic_str" \
-        --maxMsg "$msg_max" \
         --groupId "consumer-group-${pod_index}-${i}" \
         --outputPath "${output_path}/result_consumer_pod${pod_index}_proc${i}.csv" \
         --uris "$server_uri" \
-	>& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
+        --enableAutoCommit "$auto_commit" \
+        --offsetReset "$offset_reset" \
+        --maxMsg "$msg_max" \
+        >& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
 done
 
 wait
