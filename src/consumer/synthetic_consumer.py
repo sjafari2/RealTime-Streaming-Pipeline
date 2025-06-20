@@ -59,12 +59,12 @@ class MetricConsumer:
         self.consumer.subscribe(topics)
         print("Subscribed to topics. Waiting for partition assignment...")
 
-        for i in range(10):
+        for i in range(5):
             partitions = self.consumer.assignment()
             if partitions:
                 print(f"Assigned to partitions: {partitions}")
                 break
-            print(f"Waiting for partition assignment... ({i+1}/10)")
+            print(f"Waiting for partition assignment... ({i+1}/5)")
             time.sleep(1)
 
     def consume(self):

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: consumer-merge-data
+  namespace: "kafkastreamingdata"
+spec:
+  storageClassName: rook-cephfs-east
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: "app/consumer-merge-data"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - gpu-04.nrp.mghpcc.org
+status: {}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: consumer-merge-data
+  namespace: "kafkastreamingdata"
+spec:
+  storageClassName: rook-cephfs-east
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+status: {}
+
