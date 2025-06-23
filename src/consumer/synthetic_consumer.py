@@ -2,10 +2,8 @@ import json
 import time
 import argparse
 import pandas as pd
-import numpy as np
-from kafka import KafkaConsumer
 import helper
-
+from kafka import KafkaConsumer
 
 class ConfigLoader:
     @staticmethod
@@ -22,9 +20,7 @@ class ConfigLoader:
 
 
 class MetricConsumer:
-    def __init__(self, topics, servers, group_id, output_path, auto_commit, offset_reset,
-                 auth_config, max_messages, poll_timeout, max_records,
-                 fetch_max_bytes, fetch_min_bytes, fetch_max_wait_ms):
+    def __init__(self, topics, servers, group_id, output_path, auto_commit, offset_reset, auth_config, max_messages):
         self.topics = topics
         self.output_path = output_path
         self.metrics = []
@@ -32,8 +28,6 @@ class MetricConsumer:
         self.total_bytes = 0
         self.message_count = 0
         self.max_messages = max_messages
-        self.poll_timeout = poll_timeout
-        self.max_records = max_records
         self.hlpr = helper.Tools()
 
         config = self.hlpr.read_config('consumer.properties')
@@ -50,27 +44,24 @@ class MetricConsumer:
             enable_auto_commit=auto_commit,
             auto_offset_reset=offset_reset,
             group_id=group_id,
-            fetch_max_bytes=fetch_max_bytes,
-            fetch_min_bytes=fetch_min_bytes,
-            fetch_max_wait_ms=fetch_max_wait_ms,
-            **consumer_security_args
+            **consumer_security_args       
         )
 
         self.consumer.subscribe(topics)
         print("Subscribed to topics. Waiting for partition assignment...")
 
-        for i in range(5):
+        for i in range(10):
             partitions = self.consumer.assignment()
             if partitions:
                 print(f"Assigned to partitions: {partitions}")
                 break
-            print(f"Waiting for partition assignment... ({i+1}/5)")
+            print(f"Waiting for partition assignment... ({i+1}/10)")
             time.sleep(1)
 
     def consume(self):
         print("Start consuming...")
         while True:
-            records = self.consumer.poll(timeout_ms=self.poll_timeout, max_records=self.max_records)
+            records = self.consumer.poll(timeout_ms=1000, max_records=100)
             if not records:
                 print("No new messages. Waiting...")
                 time.sleep(1)
@@ -81,13 +72,7 @@ class MetricConsumer:
                     now = time.time()
                     producer_timestamp = msg.value.get('timestamp')
                     index = msg.value.get('index')
-
-                    consumer_delay = now - producer_timestamp if producer_timestamp else None
-
-                    app_time = max(0, np.random.normal(loc=1.0, scale=0.1))
-                    time.sleep(app_time)
-
-                    app_delay = time.time() - producer_timestamp if producer_timestamp else None
+                    delay = now - producer_timestamp if producer_timestamp else None
 
                     msg_size = None
                     for header in (msg.headers or []):
@@ -98,13 +83,18 @@ class MetricConsumer:
 
                     self.metrics.append({
                         'index': index,
-                        'consumer_delay_sec': consumer_delay,
-                        'app_time_sec': app_time,
-                        'app_delay_sec': app_delay,
+                        'delay_sec': delay,
                         'size_bytes': msg_size,
+                        'recv_timestamp': now,
+                        'sent_timestamp': producer_timestamp,
                         'topic': msg.topic
                     })
                     self.message_count += 1
+
+                    if self.message_count >= self.max_messages:
+                        self.save_metrics()
+                        print(f"Reached max message limit: {self.max_messages}. Exiting.")
+                        return
 
             if len(self.metrics) >= self.max_messages:
                 self.save_metrics()
@@ -137,12 +127,7 @@ if __name__ == "__main__":
     parser.add_argument('--uris', type=str, required=True, help='Comma-separated Kafka bootstrap servers')
     parser.add_argument('--enableAutoCommit', type=bool, default=True, help='Enable auto commit')
     parser.add_argument('--offsetReset', type=str, default="earliest", help='Offset reset policy')
-    parser.add_argument('--maxMsg', type=int, default=100, help='Messages per batch before saving to CSV')
-    parser.add_argument('--pollTimeout', type=int, default=300, help='KafkaConsumer poll timeout in ms')
-    parser.add_argument('--maxRecords', type=int, default=500, help='Maximum records to consume per poll')
-    parser.add_argument('--fetchMaxBytes', type=int, default=10485760, help='Maximum bytes fetched per request (default 10MB)')
-    parser.add_argument('--fetchMinBytes', type=int, default=1024, help='Minimum bytes to wait for per fetch')
-    parser.add_argument('--fetchMaxWaitMs', type=int, default=500, help='Max wait time (ms) before Kafka responds to fetch')
+    parser.add_argument('--maxMsg', type=int, default=100, help='Maximum number of messages to consume')
 
     args = parser.parse_args()
 
@@ -161,12 +146,7 @@ if __name__ == "__main__":
         auto_commit=args.enableAutoCommit,
         offset_reset=args.offsetReset,
         auth_config=auth_config,
-        max_messages=args.maxMsg,
-        poll_timeout=args.pollTimeout,
-        max_records=args.maxRecords,
-        fetch_max_bytes=args.fetchMaxBytes,
-        fetch_min_bytes=args.fetchMinBytes,
-        fetch_max_wait_ms=args.fetchMaxWaitMs
+        max_messages=args.maxMsg
     )
 
     consumer.consume()

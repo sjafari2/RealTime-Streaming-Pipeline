@@ -6,7 +6,7 @@ metadata:
   labels:
     app: consumer-application-sts
 spec:
-  serviceName: cons-app-headless-svc  # Added serviceName field for StatefulSet
+  serviceName: cons-app-headless-svc
   selector:
     matchLabels:
       app: consumer-application-sts
@@ -26,6 +26,9 @@ spec:
               mountPath: /app/consumer-app-data
             - name: app-merge-data
               mountPath: /app/app-merge-data
+            - name: consumer-app-merge-data
+              mountPath: /app/consumer-app-merge-data
+
       containers:
         - name: consumer-container
           image: sjafari2/kafkaconsumer:latest
@@ -60,6 +63,8 @@ spec:
           volumeMounts:
             - name: consumer-app-data
               mountPath: /app/consumer-app-data
+            - name: consumer-app-merge-data
+              mountPath: /app/consumer-app-merge-data
 
         - name: application-container
           image: sjafari2/kafkaapplication:latest
@@ -92,6 +97,8 @@ spec:
               mountPath: /app/consumer-app-data
             - name: app-merge-data
               mountPath: /app/app-merge-data
+            - name: consumer-app-merge-data
+              mountPath: /app/consumer-app-merge-data
 
       volumes:
         - name: consumer-app-data
@@ -100,6 +107,9 @@ spec:
         - name: app-merge-data
           persistentVolumeClaim:
             claimName: app-merge-data
+        - name: consumer-app-merge-data
+          persistentVolumeClaim:
+            claimName: consumer-app-merge-data
 
       affinity:
         nodeAffinity:

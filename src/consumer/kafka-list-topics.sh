@@ -7,5 +7,5 @@ export TOPICS=$(${KAFKA_INSTALL_PATH}/kafka-topics.sh --list --bootstrap-server 
 TOPICS=($TOPICS)
 topics=("${TOPICS[@]}")
 topics_len=${#topics[@]}
-#echo Topics are: ${TOPICS[@]}
+echo Topics are: ${TOPICS[@]}
 #echo Number of All Topics: $topics_len

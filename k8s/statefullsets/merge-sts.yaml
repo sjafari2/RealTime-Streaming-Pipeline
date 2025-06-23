@@ -20,12 +20,14 @@ spec:
       initContainers:
         - name: volume-permission-fix
           image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data /app/merged-clstr-data || true"]
+          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data /app/merged-clstr-data /app/consumer-app-merge-data || true"]
           volumeMounts:
             - name: app-merge-data
               mountPath: /app/app-merge-data
             - name: merged-clstr-data
               mountPath: /app/merged-clstr-data
+            - name: consumer-app-merge-data
+              mountPath: /app/consumer-app-merge-data
       containers:
         - name: merge-container
           image: sjafari2/kafkamerge:latest
@@ -59,6 +61,8 @@ spec:
               mountPath: /app/app-merge-data
             - name: merged-clstr-data
               mountPath: /app/merged-clstr-data
+            - name: consumer-app-merge-data
+              mountPath: /app/consumer-app-merge-data
       volumes:
         - name: app-merge-data
           persistentVolumeClaim:
@@ -66,6 +70,9 @@ spec:
         - name: merged-clstr-data
           persistentVolumeClaim:
             claimName: merged-clstr-data
+        - name: consumer-app-merge-data
+          persistentVolumeClaim:
+            claimName: consumer-app-merge-data
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
