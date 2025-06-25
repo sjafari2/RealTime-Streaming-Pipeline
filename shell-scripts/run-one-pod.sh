@@ -12,7 +12,7 @@
 # Another Approach
 
 pod_name=${1}
-pod_number=${2}
+pod_number=${2:-0}
 #container_name=${3:${pod_name}-sts}
 #echo ${container_name}
 

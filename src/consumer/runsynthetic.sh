@@ -30,7 +30,8 @@ server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
 log_path="./logs/consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
-output_path="./result/consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
+output_path="./consumer-app-data/result"
+# consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
 
 mkdir -p "${log_path}"
 mkdir -p "${output_path}"
@@ -60,15 +61,15 @@ for ((i = 0; i < nconsumers; i++)); do
 
     echo "Launching consumer [$i] in pod [$pod_index] for topics: $topic_str"
 
-    python3 synthetic_consumer.py \
+    python3 confluent_consumer.py \
         --topics "$topic_str" \
         --groupId "consumer-group-${pod_index}-${i}" \
-        --outputPath "${output_path}/result_consumer_pod${pod_index}_proc${i}.csv" \
+        --outputPath "${output_path}/consumer_pod${pod_index}_proc${i}.csv" \
         --uris "$server_uri" \
         --enableAutoCommit "$auto_commit" \
         --offsetReset "$offset_reset" \
-        --maxMsg "$msg_max" \
-        >& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
+        --maxMsg "$msg_max" & #\
+        #>& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
 done
 
 wait

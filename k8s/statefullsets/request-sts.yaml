@@ -18,48 +18,56 @@ spec:
         app: request-sts
     spec:
       securityContext:
-        fsGroup: 1000  # ensures mounted volumes are writable by group 1000
+        fsGroup: 1000
       initContainers:
-        - name: volume-permission-fix
-          image: busybox
+        - name: volume-permission-and-bootstrap
+          image: sjafari2/kafkaconfluentrequest:latest
           command:
-            - sh
+            - /bin/sh
             - -c
-            - chown -R 1000:1000 /app || true
-            - chmod -R u+w /app
+            - |
+              echo "[init] Setting up permissions and bootstrapping code..."
+              chown -R 1000:1000 /app/request-data && chmod -R u+w /app/request-data
+              chown -R 1000:1000 /app/request-producer-data && chmod -R u+w /app/request-producer-data
+
+              mkdir -p /config
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+
+              if [ ! -f /app/request-data/.code_initialized ]; then
+                echo "[init] Copying code from /code to /app/request-data ..."
+                cp -r /code/* /app/request-data/
+                touch /app/request-data/.code_initialized
+                chown -R 1000:1000 /app/request-data
+                chmod -R u+w /app/request-data
+              fi
+          securityContext:
+            runAsUser: 0
           volumeMounts:
             - name: request-data
               mountPath: /app/request-data
             - name: request-producer-data
               mountPath: /app/request-producer-data
+            - name: shared-config
+              mountPath: /config
+            - name: config-default
+              mountPath: /defaults
+
       containers:
         - name: request-container
-          image: sjafari2/kafkarequest:latest
+          image: sjafari2/kafkaconfluentrequest:latest
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-          env:
-            - name: POD_ORDINAL
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: RqstPodMntPath
-              valueFrom:
-                configMapKeyRef:
-                  name: pipeline-configmap
-                  key: RqstPodMntPath
-            - name: RqstPodSharedPath
-              valueFrom:
-                configMapKeyRef:
-                  name: pipeline-configmap
-                  key: RqstPodSharedPath
+          workingDir: /app/request-data
           command: ["/bin/bash", "-c"]
           args:
             - |
-              rm -rf ./${RqstPodSharedPath}/*
+              rm -rf ./logs/*
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
-              mkdir -p ${RqstPodSharedPath}/logs
+              mkdir -p ./logs
+              echo "Loaded config:"
+              cat /config/pipeline-configmap.yaml
               sleep infinity
           ports:
             - containerPort: 8080
@@ -78,6 +86,10 @@ spec:
               mountPath: /app/request-data
             - name: request-producer-data
               mountPath: /app/request-producer-data
+            - name: shared-config
+              mountPath: /config
+              readOnly: true
+
       volumes:
         - name: request-data
           persistentVolumeClaim:
@@ -85,6 +97,16 @@ spec:
         - name: request-producer-data
           persistentVolumeClaim:
             claimName: request-producer-data
+        - name: shared-config
+          persistentVolumeClaim:
+            claimName: pipeline-configmap-pvc
+        - name: config-default
+          configMap:
+            name: pipeline-configmap
+            items:
+              - key: pipeline-configmap.yaml
+                path: pipeline-configmap.yaml
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

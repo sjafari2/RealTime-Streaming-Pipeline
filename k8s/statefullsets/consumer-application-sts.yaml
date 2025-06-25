@@ -18,20 +18,64 @@ spec:
         app: consumer-application-sts
     spec:
       initContainers:
-        - name: volume-permission-fix
-          image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /app || true"]
+        - name: bootstrap-consumer-code
+          image: sjafari2/kafkaconfluentconsumer:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[init] Bootstrapping consumer code..."
+              if [ ! -f /app/consumer-app-data/.code_initialized ]; then
+                cp -r /code/* /app/consumer-app-data/
+                touch /app/consumer-app-data/.code_initialized
+                chown -R 1000:1000 /app/consumer-app-data
+                chmod -R u+w /app/consumer-app-data
+              fi
+          securityContext:
+            runAsUser: 0
           volumeMounts:
             - name: consumer-app-data
               mountPath: /app/consumer-app-data
+
+        - name: bootstrap-application-code
+          image: sjafari2/kafkaconfluentapplication:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[init] Bootstrapping application code..."
+              if [ ! -f /app/app-merge-data/.code_initialized ]; then
+                cp -r /code/* /app/app-merge-data/
+                touch /app/app-merge-data/.code_initialized
+                chown -R 1000:1000 /app/app-merge-data
+                chmod -R u+w /app/app-merge-data
+              fi
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
             - name: app-merge-data
               mountPath: /app/app-merge-data
-            - name: consumer-app-merge-data
-              mountPath: /app/consumer-app-merge-data
+
+        - name: config-bootstrap
+          image: sjafari2/kafkaconfluentconsumer:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[init] Copying configmap if not already present..."
+              mkdir -p /config
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: shared-config
+              mountPath: /config
+            - name: config-default
+              mountPath: /defaults
 
       containers:
         - name: consumer-container
-          image: sjafari2/kafkaconsumer:latest
+          image: sjafari2/kafkaconfluentconsumer:latest
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
@@ -40,6 +84,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          workingDir: /app/consumer-app-data
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -47,6 +92,8 @@ spec:
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
+              echo "Loaded config file contents:"
+              cat /config/pipeline-configmap.yaml
               sleep infinity
           ports:
             - containerPort: 8080
@@ -63,22 +110,25 @@ spec:
           volumeMounts:
             - name: consumer-app-data
               mountPath: /app/consumer-app-data
-            - name: consumer-app-merge-data
-              mountPath: /app/consumer-app-merge-data
+            - name: shared-config
+              mountPath: /config
+              readOnly: true
 
         - name: application-container
-          image: sjafari2/kafkaapplication:latest
+          image: sjafari2/kafkaconfluentapplication:latest
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+          workingDir: /app/app-merge-data
           command: ["/bin/bash", "-c"]
           args:
             - |
-              rm -rf /app/app-merge-data/*
               rm -rf ./logs/*
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
+              echo "Loaded config file contents:"
+              cat /config/pipeline-configmap.yaml
               sleep infinity
           ports:
             - containerPort: 8081
@@ -93,12 +143,11 @@ spec:
               memory: "4Gi"
               cpu: "4000m"
           volumeMounts:
-            - name: consumer-app-data
-              mountPath: /app/consumer-app-data
             - name: app-merge-data
               mountPath: /app/app-merge-data
-            - name: consumer-app-merge-data
-              mountPath: /app/consumer-app-merge-data
+            - name: shared-config
+              mountPath: /config
+              readOnly: true
 
       volumes:
         - name: consumer-app-data
@@ -107,9 +156,15 @@ spec:
         - name: app-merge-data
           persistentVolumeClaim:
             claimName: app-merge-data
-        - name: consumer-app-merge-data
+        - name: shared-config
           persistentVolumeClaim:
-            claimName: consumer-app-merge-data
+            claimName: pipeline-configmap-pvc
+        - name: config-default
+          configMap:
+            name: pipeline-configmap
+            items:
+              - key: pipeline-configmap.yaml
+                path: pipeline-configmap.yaml
 
       affinity:
         nodeAffinity:

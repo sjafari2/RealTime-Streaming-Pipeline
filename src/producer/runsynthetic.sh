@@ -38,7 +38,7 @@ pkill -f synthetic_producer.py || true
 # Start producers
 for ((i = 0; i < nproducers; i++)); do
     echo "Starting Producer[$i]..."
-    python3 synthetic_producer.py \
+    python3 confluent_kafka_producer.py \
         --topicTitle "${topic_title}" \
         --numTopics "${num_topics}" \
         --delay "${delay}" \
@@ -49,8 +49,8 @@ for ((i = 0; i < nproducers; i++)); do
         --compressionType "${compression_type}" \
         --batchSize "${batch_size}" \
         --maxRequestSize "${max_request_size}" \
-        --acks "${acks}" & #\
-       # > "${log_path}/producer.$i.log" 2>&1 &
+        --acks "${acks}" & # \
+        #> "${log_path}/producer.$i.log" 2>&1 &
 done
 
 wait

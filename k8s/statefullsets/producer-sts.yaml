@@ -6,7 +6,7 @@ metadata:
   labels:
     app: producer-sts
 spec:
-  serviceName: producer-headless-svc  # Required: reference a headless Service
+  serviceName: producer-headless-svc
   replicas: 1
   podManagementPolicy: Parallel
   selector:
@@ -18,30 +18,42 @@ spec:
         app: producer-sts
     spec:
       initContainers:
-        - name: volume-permission-fix
-          image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /app  && chmod -R u+w /app"]
+        - name: volume-permission-and-bootstrap
+          image: sjafari2/kafkaconfluentproducer:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[init] Setting permissions and bootstrapping code..."
+              mkdir -p /config
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+
+              if [ ! -f /app/request-producer-data/.code_initialized ]; then
+               echo "[init] Bootstrapping code from /code..."
+               cp -r /code/* /app/request-producer-data/
+               touch /app/request-producer-data/.code_initialized
+               chown -R 1000:1000 /app/request-producer-data
+               chmod -R u+w /app/request-producer-data
+              fi
           securityContext:
-            runAsUser: 0  # root
+            runAsUser: 0
           volumeMounts:
             - name: request-producer-data
               mountPath: /app/request-producer-data
+            - name: shared-config
+              mountPath: /config
       containers:
         - name: producer-container
-          image: sjafari2/kafkaproducer:latest
+          image: sjafari2/kafkaconfluentproducer:latest
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+          workingDir: /app/request-producer-data
           env:
             - name: POD_ORDINAL
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: RqstPodSharedPath
-              valueFrom:
-                configMapKeyRef:
-                  name: pipeline-configmap
-                  key: RqstPodSharedPath
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -49,6 +61,8 @@ spec:
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
+              echo "Contents of pipeline-configmap.yaml:"
+              cat /config/pipeline-configmap.yaml
               sleep infinity
           ports:
             - containerPort: 8080
@@ -65,10 +79,16 @@ spec:
           volumeMounts:
             - name: request-producer-data
               mountPath: /app/request-producer-data
+            - name: shared-config
+              mountPath: /config
+              readOnly: true
       volumes:
         - name: request-producer-data
           persistentVolumeClaim:
             claimName: request-producer-data
+        - name: shared-config
+          persistentVolumeClaim:
+            claimName: pipeline-configmap-pvc
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

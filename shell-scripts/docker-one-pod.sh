@@ -12,8 +12,8 @@ fi
 
 IMAGE_NAME="$1"
 REPO="sjafari2"
-LATEST_TAG="${REPO}/kafka${IMAGE_NAME}:latest"
-DOCKERFILE="dockerfiles/${IMAGE_NAME}.Dockerfile"
+LATEST_TAG="${REPO}/kafkaconfluent${IMAGE_NAME}:latest"
+DOCKERFILE="dockerfiles_confluent/${IMAGE_NAME}.Dockerfile"
 
 # -----------------------------
 # Verify Dockerfile exists

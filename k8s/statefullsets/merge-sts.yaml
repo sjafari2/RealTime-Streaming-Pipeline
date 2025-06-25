@@ -6,7 +6,7 @@ metadata:
   labels:
     app: merge-sts
 spec:
-  serviceName: merge-headless-svc  # Added headless service name for DNS-based discovery
+  serviceName: merge-headless-svc
   selector:
     matchLabels:
       app: merge-sts
@@ -18,19 +18,43 @@ spec:
         app: merge-sts
     spec:
       initContainers:
-        - name: volume-permission-fix
-          image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /app/app-merge-data /app/merged-clstr-data /app/consumer-app-merge-data || true"]
+        - name: volume-permission-and-bootstrap
+          image: sjafari2/kafkaconfluentmerge:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[init] Setting permissions on target dirs..."
+              chown -R 1000:1000 /app/app-merge-data && chmod -R u+w /app/app-merge-data
+              chown -R 1000:1000 /app/merged-data && chmod -R u+w /app/merged-data
+
+              echo "[init] Bootstrapping config if needed..."
+              if [ ! -f /config/pipeline-configmap.yaml ]; then
+                cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
+              fi
+
+              echo "[init] Bootstrapping merge code if not present..."
+              if [ ! -f /app/merged-data/.code_initialized ]; then
+                cp -r /code/* /app/merged-data/
+                touch /app/merged-data/.code_initialized
+                chown -R 1000:1000 /app/merged-data
+                chmod -R u+w /app/merged-data
+              fi
+          securityContext:
+            runAsUser: 0
           volumeMounts:
             - name: app-merge-data
               mountPath: /app/app-merge-data
-            - name: merged-clstr-data
-              mountPath: /app/merged-clstr-data
-            - name: consumer-app-merge-data
-              mountPath: /app/consumer-app-merge-data
+            - name: merged-data
+              mountPath: /app/merged-data
+            - name: shared-config
+              mountPath: /config
+            - name: config-default
+              mountPath: /defaults
+
       containers:
         - name: merge-container
-          image: sjafari2/kafkamerge:latest
+          image: sjafari2/kafkaconfluentmerge:latest
           env:
             - name: POD_ORDINAL
               valueFrom:
@@ -43,6 +67,8 @@ spec:
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
+              echo "Loaded config file contents:"
+              cat /config/pipeline-configmap.yaml
               sleep infinity
           ports:
             - containerPort: 8080
@@ -59,20 +85,29 @@ spec:
           volumeMounts:
             - name: app-merge-data
               mountPath: /app/app-merge-data
-            - name: merged-clstr-data
-              mountPath: /app/merged-clstr-data
-            - name: consumer-app-merge-data
-              mountPath: /app/consumer-app-merge-data
+            - name: merged-data
+              mountPath: /app/merged-data
+            - name: shared-config
+              mountPath: /config
+              readOnly: true
+
       volumes:
         - name: app-merge-data
           persistentVolumeClaim:
             claimName: app-merge-data
-        - name: merged-clstr-data
+        - name: merged-data
           persistentVolumeClaim:
-            claimName: merged-clstr-data
-        - name: consumer-app-merge-data
+            claimName: merged-data
+        - name: shared-config
           persistentVolumeClaim:
-            claimName: consumer-app-merge-data
+            claimName: pipeline-configmap-pvc
+        - name: config-default
+          configMap:
+            name: pipeline-configmap
+            items:
+              - key: pipeline-configmap.yaml
+                path: pipeline-configmap.yaml
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
