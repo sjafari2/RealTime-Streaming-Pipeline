@@ -3,10 +3,11 @@ import time
 import argparse
 import pandas as pd
 import numpy as np
+import os
+from datetime import datetime
 from confluent_kafka import Consumer, KafkaError
-from confluent_kafka.serialization import SerializationContext, MessageField
-from confluent_kafka.schema_registry import SchemaRegistryClient
 import helper
+import uuid
 
 
 class ConfigLoader:
@@ -75,7 +76,7 @@ class MetricConsumer:
                 msg_value = json.loads(msg.value().decode('utf-8'))
                 producer_timestamp = msg_value.get('timestamp')
                 index = msg_value.get('index')
-     
+
                 msg_size = None
                 for header in (msg.headers() or []):
                     if header[0] == 'size_bytes':
@@ -83,7 +84,6 @@ class MetricConsumer:
                         self.total_bytes += msg_size
                         break
 
-                
                 consumer_delay = now - producer_timestamp if producer_timestamp else None
 
                 self.metrics.append({
@@ -92,9 +92,8 @@ class MetricConsumer:
                     'size_bytes': msg_size,
                     'producer_timestamp': producer_timestamp,
                     'consumer_timestamp': now,
-                    'consumer_delay_sec': now - producer_timestamp if producer_timestamp else None,
-                  
-                    })
+                    'consumer_delay_sec': consumer_delay
+                })
                 self.message_count += 1
 
                 if len(self.metrics) >= self.max_messages:
@@ -120,8 +119,29 @@ class MetricConsumer:
         print(f"Throughput: {throughput:.4f} MB/s")
 
         if self.output_path:
-            df.to_csv(self.output_path, mode='a', index=False, header=not pd.io.common.file_exists(self.output_path))
-            print(f"Saved metrics to {self.output_path}")
+            try:
+                dir_name = os.path.dirname(self.output_path)
+                base_name, ext = os.path.splitext(os.path.basename(self.output_path))
+        
+                # Create timestamp with microseconds
+                now = datetime.now()
+                timestamp = now.strftime("%Y%m%d_%H%M%S") + f"_{now.microsecond:06d}"
+        
+                # Generate final file names
+                final_filename = f"{base_name}_{timestamp}{ext}"
+                tmp_file = os.path.join(dir_name, f".tmp_{final_filename}")
+                final_file = os.path.join(dir_name, final_filename)
+
+                # Write and rename file
+                df.to_csv(tmp_file, index=False)
+                os.rename(tmp_file, final_file)
+                print(f"Saved final metrics file: {final_file}")
+            except Exception as e:
+                print(f"[ERROR] Failed to save metrics: {e}")
+
+
+def str2bool(v):
+    return v.lower() in ('yes', 'true', 't', '1')
 
 
 if __name__ == "__main__":
@@ -130,7 +150,7 @@ if __name__ == "__main__":
     parser.add_argument('--groupId', type=str, default="group-0-0")
     parser.add_argument('--outputPath', type=str, default="message_metrics.csv")
     parser.add_argument('--uris', type=str, required=True)
-    parser.add_argument('--enableAutoCommit', type=bool, default=True)
+    parser.add_argument('--enableAutoCommit', type=str2bool, default=True)
     parser.add_argument('--offsetReset', type=str, default="earliest")
     parser.add_argument('--maxMsg', type=int, default=100)
     parser.add_argument('--pollTimeout', type=int, default=300)

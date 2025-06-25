@@ -17,17 +17,12 @@ def main(input_file, output_dir, pod_index, proc_index):
         print(f"[ERROR] Failed to read {input_file}: {e}")
         return
 
-    # Debug: show column info and sample
-    #print(f"[DEBUG] Columns detected: {df.columns.tolist()}")
-    #print(f"[DEBUG] Sample rows:\n{df.head()}")
-
-    # Handle missing or unnamed columns (fallback header)
+    # Handle missing or unnamed columns
     if df.shape[1] == 1 and df.columns[0].startswith("Unnamed"):
         print(f"[WARNING] Detected single-column CSV. Attempting to reload with header=None")
         df = pd.read_csv(input_file, header=None)
         print(f"[DEBUG] Data with header=None:\n{df.head()}")
 
-        # Fallback column names – update if needed
         expected_cols = [
             "index",
             "topic",
@@ -46,25 +41,30 @@ def main(input_file, output_dir, pod_index, proc_index):
         print(f"[WARNING] Empty or invalid format in {input_file}")
         return
 
-    # Simulate delay before application starts processing
+    # Simulate delay
     delay = simulate_processing_delay()
     time.sleep(delay)
 
-    # Compute application delay relative to consumer timestamp
+    # Compute application delay
     now = time.time()
     df['application_timestamp'] = now
     df['application_delay_sec'] = df['consumer_timestamp'].apply(
         lambda t: now - t if pd.notna(t) else None
     )
 
-    # Rename and write the processed file
-    output_file = f"consumer_app_pod{pod_index}_proc{proc_index}.csv"
-    output_path = os.path.join(output_dir, output_file)
+    # Use original filename for output
+    base_filename = os.path.basename(input_file)
+    tmp_path = os.path.join(output_dir, f".tmp_{base_filename}")
+    final_path = os.path.join(output_dir, base_filename)
 
-    df.to_csv(output_path, index=False, header=True)
-    print(f"[Application] Processed file saved to: {output_path}")
+    try:
+        df.to_csv(tmp_path, index=False, header=True)
+        os.rename(tmp_path, final_path)
+        print(f"[Application] Processed file saved to: {final_path}")
+    except Exception as e:
+        print(f"[ERROR] Failed to write application file: {e}")
+        return
 
-    # Remove the original file to prevent reprocessing
     try:
         os.remove(input_file)
         print(f"[Application] Deleted original file: {input_file}")

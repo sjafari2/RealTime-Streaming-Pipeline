@@ -112,7 +112,6 @@ spec:
               mountPath: /app/consumer-app-data
             - name: shared-config
               mountPath: /config
-              readOnly: true
 
         - name: application-container
           image: sjafari2/kafkaconfluentapplication:latest
@@ -149,7 +148,6 @@ spec:
               mountPath: /app/app-merge-data
             - name: shared-config
               mountPath: /config
-              readOnly: true
 
       volumes:
         - name: consumer-app-data

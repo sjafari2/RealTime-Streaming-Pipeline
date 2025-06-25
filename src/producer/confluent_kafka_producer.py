@@ -74,7 +74,7 @@ class MyProducer:
                     f.result()
                     print(f"Topic created: {topic}")
                 except KafkaException as e:
-                    print(f"Topic creation failed or already exists for {topic}: {e}")
+                    print(f"Topic already exists for {topic}: {e}")
         except Exception as e:
             print(f"Admin client error: {e}")
 

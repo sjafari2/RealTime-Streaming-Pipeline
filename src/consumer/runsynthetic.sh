@@ -28,7 +28,7 @@ server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr
 
 # Logging setup
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
-CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
+CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S-%3N-%6N")
 log_path="./logs/consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
 output_path="./consumer-result"
 # consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
@@ -64,7 +64,7 @@ for ((i = 0; i < nconsumers; i++)); do
     python3 confluent_consumer.py \
         --topics "$topic_str" \
         --groupId "consumer-group-${pod_index}-${i}" \
-        --outputPath "${output_path}/consumer_pod${pod_index}_proc${i}_${CURRENT_DATE}_${CURRENT_TIME}.csv" \
+        --outputPath "${output_path}/consumer_pod${pod_index}_proc${i}.csv" \
         --uris "$server_uri" \
         --enableAutoCommit "$auto_commit" \
         --offsetReset "$offset_reset" \
