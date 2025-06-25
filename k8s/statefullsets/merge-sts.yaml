@@ -60,6 +60,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          workingDir: /app/merged-data
           command: ["/bin/bash", "-c"]
           args:
             - |

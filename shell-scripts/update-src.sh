@@ -1,81 +1,51 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Define a function to copy files from a pod to a destination directory
+# Define config: alias → "pod:container:src_path:dst_path"
+declare -A pod_configs=(
+  ["producer"]="producer-sts-0:producer-container:/app/request-producer-data:./src/producer"
+  ["consumer"]="consumer-application-sts-0:consumer-container:/app/consumer-app-data:./src/consumer"
+  ["application"]="consumer-application-sts-0:application-container:/app/app-merge-data:./src/application"
+  ["merge"]="merge-sts-0:merge-container:/app/merged-data:./src/merge"
+)
+
+# Define processing order
+ordered_keys=("producer" "consumer" "application" "merge")
+
+# Extensions to copy
+file_extensions=("py" "sh" "yaml" "yml" "properties")
+
 copy_files() {
-    local pod_name="$1"
-    local file_extension="$2"
-    local destination_path="$3"
-    local container_name="$4"  # Optional container name
+  local pod="$1"
+  local container="$2"
+  local src_path="$3"
+  local dst_path="$4"
 
-    # Modify the kubectl command based on whether a container name is provided
-    if [ -z "$container_name" ]; then
-        files_to_copy=$(kubectl exec "$pod_name" -- ls "/app" | grep -E "\.${file_extension}$")
-    else
-        files_to_copy=$(kubectl exec "$pod_name" -c "$container_name" -- ls "/app" | grep -E "\.${file_extension}$")
-    fi
-
-    # Copy each file to the destination directory
-    for file in $files_to_copy; do
-        if [ -z "$container_name" ]; then
-            kubectl cp "$pod_name:/app/$file" "$destination_path/$file"
-        else
-            kubectl cp "$pod_name:/app/$file" "$destination_path/$file" -c "$container_name"
-        fi
-        # echo "Copied $file from $pod_name to $destination_path/$file"
+  mkdir -p "$dst_path"
+  for ext in "${file_extensions[@]}"; do
+    files=$(kubectl exec "$pod" -c "$container" -- find "$src_path" -type f -name "*.${ext}" 2>/dev/null)
+    for file in $files; do
+      rel_path="${file#$src_path/}"
+      local_dir="$dst_path/$(dirname "$rel_path")"
+      mkdir -p "$local_dir"
+      kubectl cp "$pod:$file" "$dst_path/$rel_path" -c "$container" 2>/dev/null
     done
+  done
 }
 
-# Define a function to list and count files in a directory and display them
 list_and_count_files() {
-    local destination_path="$1"
-
-    # List the files in the destination directory
-    files_list=$(ls "$destination_path")
-
-    # Count the number of files in the destination directory
-    num_files=$(ls -1 "$destination_path" | wc -l)
-
-    # Display the list of files and the total count
-    echo "List of files copied in $destination_path:"
-    echo "$files_list"
-    echo "Total number of files copied: $num_files"
-    echo "###############################################################################"
+  local path="$1"
+  echo "Files in $path:"
+  find "$path" -type f
+  count=$(find "$path" -type f | wc -l)
+  echo "Total files: $count"
+  echo "================================================================================="
 }
 
-# Define the base names for the pods and their corresponding destination paths
-pod_bases=("request" "producer" "consumer" "merge")
-destinations=("src/request" "src/producer" "src/consumer" "src/merge")
-
-# Loop through the pod bases and copy files based on their extensions
-for ((i=0; i<${#pod_bases[@]}; i++)); do
-    pod_base="${pod_bases[i]}-sts"
-    destination="${destinations[i]}"
-
-    # Process pods with pattern pod-name-sts-number
-    for pod_name in $(kubectl get pods -o name | grep "${pod_base}-[0-9]\+" | sed 's|^pod/||')
-    do
-        echo "Copying files for $pod_name"
-
-        # Special handling for consumer-sts pods
-        if [[ "$pod_base" == "consumer-sts" ]]; then
-
-            # Copy files from the application container
-            app_destination="src/application"
-            copy_files "$pod_name" "py" "$app_destination" "application"
-            copy_files "$pod_name" "sh" "$app_destination" "application"
-            copy_files "$pod_name" "yaml" "$app_destination" "application"
-            copy_files "$pod_name" "yml" "$app_destination" "application"
-
-            list_and_count_files "$app_destination"
-        fi
-            # Process for other containers
-        copy_files "$pod_name" "py" "$destination"
-        copy_files "$pod_name" "sh" "$destination"
-        copy_files "$pod_name" "yaml" "$destination"
-        copy_files "$pod_name" "yml" "$destination"
-        list_and_count_files "$destination"
-        echo "Finished copying files for $pod_name"
-    done
-
-    echo "*********************************************************************************************"
+# Main loop
+for key in "${ordered_keys[@]}"; do
+  IFS=':' read -r pod container src_path dst_path <<< "${pod_configs[$key]}"
+  echo "🔄 Copying from $pod (container: $container, path: $src_path) to $dst_path"
+  copy_files "$pod" "$container" "$src_path" "$dst_path"
+  list_and_count_files "$dst_path"
 done
+

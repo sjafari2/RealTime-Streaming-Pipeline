@@ -143,6 +143,8 @@ spec:
               memory: "4Gi"
               cpu: "4000m"
           volumeMounts:
+            - name: consumer-app-data
+              mountPath: /app/consumer-app-data
             - name: app-merge-data
               mountPath: /app/app-merge-data
             - name: shared-config

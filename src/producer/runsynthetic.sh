@@ -2,7 +2,7 @@
 
 # Load configuration
 source parseYaml.sh
-eval $(parse_yaml pipeline-configmap.yaml)
+eval $(parse_yaml /config/pipeline-configmap.yaml)
 
 trap "exit" INT TERM
 trap "kill 0" EXIT
@@ -29,7 +29,7 @@ server_uri=$(bash ./get_kafka_producer_dns.sh)
 # Create logs
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
-log_path="./logs/producer/${topic_title}/${CURRENT_DATE}/${CURRENT_TIME}/Pod_$pod_index"
+log_path="./logs/producer/${CURRENT_DATE}/${CURRENT_TIME}/Pod_$pod_index"
 mkdir -p "${log_path}"
 
 # Kill old producer processes

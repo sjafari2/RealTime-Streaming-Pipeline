@@ -2,7 +2,7 @@
 
 # Load config
 source parseYaml.sh
-eval $(parse_yaml pipeline-configmap.yaml)
+eval $(parse_yaml /config/pipeline-configmap.yaml)
 trap "exit" INT TERM
 trap "kill 0" EXIT
 
@@ -30,7 +30,7 @@ server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
 log_path="./logs/consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
-output_path="./consumer-app-data/result"
+output_path="./consumer-result"
 # consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
 
 mkdir -p "${log_path}"
@@ -64,7 +64,7 @@ for ((i = 0; i < nconsumers; i++)); do
     python3 confluent_consumer.py \
         --topics "$topic_str" \
         --groupId "consumer-group-${pod_index}-${i}" \
-        --outputPath "${output_path}/consumer_pod${pod_index}_proc${i}.csv" \
+        --outputPath "${output_path}/consumer_pod${pod_index}_proc${i}_${CURRENT_DATE}_${CURRENT_TIME}.csv" \
         --uris "$server_uri" \
         --enableAutoCommit "$auto_commit" \
         --offsetReset "$offset_reset" \

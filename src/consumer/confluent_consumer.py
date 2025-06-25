@@ -75,8 +75,7 @@ class MetricConsumer:
                 msg_value = json.loads(msg.value().decode('utf-8'))
                 producer_timestamp = msg_value.get('timestamp')
                 index = msg_value.get('index')
-                consumer_delay = now - producer_timestamp if producer_timestamp else None
-
+     
                 msg_size = None
                 for header in (msg.headers() or []):
                     if header[0] == 'size_bytes':
@@ -84,12 +83,18 @@ class MetricConsumer:
                         self.total_bytes += msg_size
                         break
 
+                
+                consumer_delay = now - producer_timestamp if producer_timestamp else None
+
                 self.metrics.append({
                     'index': index,
-                    'consumer_delay_sec': consumer_delay,
+                    'topic': msg.topic(),
                     'size_bytes': msg_size,
-                    'topic': msg.topic()
-                })
+                    'producer_timestamp': producer_timestamp,
+                    'consumer_timestamp': now,
+                    'consumer_delay_sec': now - producer_timestamp if producer_timestamp else None,
+                  
+                    })
                 self.message_count += 1
 
                 if len(self.metrics) >= self.max_messages:
