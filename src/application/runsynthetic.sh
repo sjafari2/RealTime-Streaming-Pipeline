@@ -40,7 +40,7 @@ for ((i = 0; i < app_count; i++)); do
             latest_file=$(ls -t "${matching_files[@]}" | head -n 1)
 
             echo "[App $i] Found file: $latest_file. Starting processing..."
-            python3 confluent_application.py --input "$latest_file" --output "$output_dir" --pod_index "$pod_index" --proc_index "$i"
+            python3 confluent_application.py --input "$latest_file" --output "$output_dir" --pod_index "$pod_index" --proc_index "$i" & #>& "${log_dir}/application_pod${pod_index}_proc${i}.out" &
 
             echo "[App $i] Processing complete. Watching for next file..."
         done

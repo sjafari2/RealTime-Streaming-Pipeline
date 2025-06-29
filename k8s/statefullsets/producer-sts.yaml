@@ -8,6 +8,7 @@ metadata:
 spec:
   serviceName: producer-headless-svc
   replicas: 1
+  restartPolicy: Always
   podManagementPolicy: Parallel
   selector:
     matchLabels:

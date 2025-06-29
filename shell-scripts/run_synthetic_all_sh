@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -euo pipefail
+
+echo "=== Starting ./runsynthetic.sh concurrently on all pods ==="
+
+run_for_pod() {
+    pod=$1
+    container=$2
+    path=$3
+    log_dir=$4
+
+    mkdir -p "$log_dir"
+    echo "[INFO] Running ./runsynthetic.sh in $pod/$container at $path ..."
+    
+    kubectl exec "$pod" -c "$container" -- bash -c "cd $path && chmod +x ./runsynthetic.sh && nohup ./runsynthetic.sh > runsynthetic_stdout.log 2> runsynthetic_stderr.log &" \
+        > "$log_dir/runsynthetic.log" 2>&1 || echo "[WARNING] ./runsynthetic.sh failed in $pod/$container, check $log_dir/runsynthetic.log"
+    
+    # Wait a few seconds to allow the background job to produce some output
+    sleep 5
+
+    # Copy results and logs
+    kubectl cp "$pod:$path/." "$log_dir/" -c "$container" || echo "[WARNING] No result files copied from $pod/$container"
+    echo "[INFO] Completed $pod/$container"
+}
+
+# Producer
+producer_pods=$(kubectl get pods -l app=producer-sts -o jsonpath='{.items[*].metadata.name}')
+for pod in $producer_pods; do
+    log_dir="results-all-pods/producer/$pod"
+    run_for_pod "$pod" "producer-container" "/app/request-producer-data" "$log_dir" &
+done
+
+# Consumer
+consumer_pods=$(kubectl get pods -l app=consumer-application-sts -o jsonpath='{.items[*].metadata.name}')
+for pod in $consumer_pods; do
+    # Consumer container
+    log_dir="results-all-pods/consumer/$pod"
+    run_for_pod "$pod" "consumer-container" "/app/consumer-app-data" "$log_dir" &
+
+    # Application container
+    app_log_dir="results-all-pods/application/$pod"
+    run_for_pod "$pod" "application-container" "/app/app-merge-data" "$app_log_dir" &
+done
+
+# Merge
+merge_pods=$(kubectl get pods -l app=merge-sts -o jsonpath='{.items[*].metadata.name}')
+for pod in $merge_pods; do
+    log_dir="results-all-pods/merge/$pod"
+    run_for_pod "$pod" "merge-container" "/app/merged-data" "$log_dir" &
+done
+
+# Wait for all background jobs to finish
+wait
+
+echo "=== All pods have completed ./runsynthetic.sh concurrently ==="
+

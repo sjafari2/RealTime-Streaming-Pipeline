@@ -68,8 +68,8 @@ for ((i = 0; i < nconsumers; i++)); do
         --uris "$server_uri" \
         --enableAutoCommit "$auto_commit" \
         --offsetReset "$offset_reset" \
-        --maxMsg "$msg_max" & #\
-        #>& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
+        --maxMsg "$msg_max" &#\
+       # >& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
 done
 
 wait

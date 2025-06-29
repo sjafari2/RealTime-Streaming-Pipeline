@@ -11,6 +11,7 @@ spec:
     matchLabels:
       app: consumer-application-sts
   replicas: 1
+  restartPolicy: Always
   podManagementPolicy: Parallel
   template:
     metadata:

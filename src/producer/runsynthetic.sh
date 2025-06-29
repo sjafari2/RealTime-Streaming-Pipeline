@@ -50,7 +50,7 @@ for ((i = 0; i < nproducers; i++)); do
         --batchSize "${batch_size}" \
         --maxRequestSize "${max_request_size}" \
         --acks "${acks}" & # \
-        #> "${log_path}/producer.$i.log" 2>&1 &
+       # >& "${log_path}/producer.$i.log" 2>&1 &
 done
 
 wait
