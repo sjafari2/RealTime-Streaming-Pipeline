@@ -16,6 +16,7 @@ sasl:
       - user1
     passwords:
       - "5x4XjjbPod"
+
 listeners:
   client:
     name: CLIENT
@@ -42,7 +43,6 @@ kraft:
   enabled: true
   controllerListenerNames: CONTROLLER
   processRoles: controller,broker
-    #clusterId: ""  # Let Kafka auto-generate
 
 controller:
   jaas:
@@ -61,12 +61,13 @@ controller:
       volumeMounts:
         - name: data
           mountPath: /bitnami/kafka
+
   persistence:
     enabled: true
     storageClass: "rook-cephfs-east"
     accessModes:
       - ReadWriteOnce
-    size: 8Gi
+    size: 300Gi   
 
   extraEnvVars:
     - name: HOSTNAME
@@ -78,11 +79,11 @@ controller:
     - name: KAFKA_CFG_ADVERTISED_LISTENERS
       value: >-
         CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,
-        #        CONTROLLER://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,
         INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
         EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
     - name: KAFKA_CONTROLLER_QUORUM_VOTERS
       value: "0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093"
+
   extraConfig: |
     delete.topic.enable=true
     auto.create.topics.enable=true
@@ -96,11 +97,18 @@ controller:
     listener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
     listener.name.external.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
 
+    # New cleanup and stability settings:
+    log.retention.hours=2
+    log.segment.bytes=134217728
+    message.max.bytes=1048576
+    # Optional size-based retention:
+    #log.retention.bytes=10737418240
+
   resources:
     limits:
-      cpu: 6
-      memory: 4096Mi
+      cpu: 8
+      memory: 16Gi
     requests:
-      cpu: 3
-      memory: 2048Mi
+      cpu: 4
+      memory: 8Gi
 

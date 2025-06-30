@@ -8,7 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   capacity:
-    storage: 10Gi
+    storage: 200Gi
   hostPath:
     path: "app/consumer-app-data"
   affinity:
@@ -34,5 +34,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 200Gi
 status: {}

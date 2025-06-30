@@ -8,7 +8,7 @@ pec:
   accessModes:
     - ReadWriteMany
   capacity:
-    storage: 10Gi
+    storage: 200Gi
   hostPath:
     path: "app/request-producer-data"
   affinity:
@@ -34,5 +34,5 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 10Gi
+      storage: 200Gi
 status: {}

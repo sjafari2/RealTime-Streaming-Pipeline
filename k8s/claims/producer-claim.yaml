@@ -11,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   capacity:
-    storage: 10Gi
+    storage: 100Gi
   hostPath:
     path: "app/producer-data"
   affinity:
@@ -40,5 +40,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 100Gi
 status: {}
