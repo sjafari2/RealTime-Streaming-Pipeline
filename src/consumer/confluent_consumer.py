@@ -8,21 +8,21 @@ from datetime import datetime
 from confluent_kafka import Consumer, KafkaError
 import helper
 import psutil
-from flask import Flask, jsonify
+from flask import Flask
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_client import Counter, Gauge
 import socket
 import threading
 
 app = Flask(__name__)
-metrics = {
-    "msg_consumed": 0,
-    "start_time": time.time(),
-    "cpu_percent": 0,
-    "mem_percent": 0,
-    "uptime_sec": 0
-}
+metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
 
-def simulate_processing_delay(mean=0.5, std=0.1):
-    return max(0.0, np.random.normal(loc=mean, scale=std))
+# Explicitly defined Prometheus metrics
+msg_consumed_counter = Counter('consumer_messages_consumed_total', 'Total messages consumed')
+msg_rate_gauge = Gauge('consumer_message_rate', 'Message consumption rate (msg/sec)')
+cpu_gauge = Gauge('consumer_cpu_percent', 'CPU percent usage')
+mem_gauge = Gauge('consumer_memory_percent', 'Memory percent usage')
+uptime_gauge = Gauge('consumer_uptime_seconds', 'Consumer uptime in seconds')
 
 class MetricConsumer:
     def __init__(self, topics, servers, group_id, max_messages, poll_timeout, fetch_max_bytes,
@@ -30,9 +30,11 @@ class MetricConsumer:
         self.topics = topics
         self.metrics_list = []
         self.max_messages = max_messages
-        self.poll_timeout = poll_timeout / 1000  # convert ms to seconds
+        self.poll_timeout = poll_timeout / 1000
         self.consumer_output_dir = consumer_output_dir
         self.pod_name = socket.gethostname()
+        self.start_time = time.time()
+        self.msg_consumed = 0
         self.last_log_time = time.time()
 
         config = helper.Tools().read_config('consumer.properties')
@@ -55,26 +57,13 @@ class MetricConsumer:
         })
 
         self.consumer.subscribe(topics)
-        self.msg_consumed = 0
-
-    def get_metrics(self):
-        elapsed = time.time() - metrics["start_time"]
-        msg_rate = self.msg_consumed / elapsed if elapsed > 0 else 0
-        metrics.update({
-            "msg_rate": msg_rate,
-            "cpu_percent": psutil.cpu_percent(interval=1),
-            "mem_percent": psutil.virtual_memory().percent,
-            "uptime_sec": elapsed,
-            "msg_consumed": self.msg_consumed
-        })
-        return metrics
 
     def consume(self):
         while True:
             try:
                 msgs = self.consumer.consume(num_messages=20, timeout=self.poll_timeout)
-
                 now = time.time()
+
                 if now - self.last_log_time > 10:
                     print(f"[HEALTH] Polling active. Messages consumed: {self.msg_consumed}")
                     self.last_log_time = now
@@ -88,15 +77,11 @@ class MetricConsumer:
                         continue
 
                     headers = dict(msg.headers() or [])
-                    index = headers.get('index', b'')
-                    producer_ts = headers.get('producer_timestamp', b'')
-
-                    index = index.decode() if index else ''
-                    producer_ts = producer_ts.decode() if producer_ts else ''
+                    index = headers.get(b'index', b'').decode() if headers.get(b'index') else ''
+                    producer_ts = headers.get(b'producer_timestamp', b'').decode() if headers.get(b'producer_timestamp') else ''
                     receive_ts = str(time.time())
 
                     if index == '' or producer_ts == '':
-                        print(f"[WARN] Skipping message with missing headers: {msg}")
                         continue
 
                     self.metrics_list.append({
@@ -106,13 +91,21 @@ class MetricConsumer:
                     })
 
                     self.msg_consumed += 1
+                    msg_consumed_counter.inc()
+
+                    elapsed = now - self.start_time
+                    msg_rate = self.msg_consumed / elapsed if elapsed > 0 else 0
+
+                    msg_rate_gauge.set(msg_rate)
+                    cpu_gauge.set(psutil.cpu_percent(interval=None))
+                    mem_gauge.set(psutil.virtual_memory().percent)
+                    uptime_gauge.set(elapsed)
+
                     self.consumer.commit(message=msg, asynchronous=False)
 
                     if len(self.metrics_list) >= self.max_messages:
                         self.save_batch()
                         self.metrics_list.clear()
-
-                    time.sleep(simulate_processing_delay(mean=0.2, std=0.05))
 
             except Exception as e:
                 print(f"[ERROR] Consume loop error: {e}")
@@ -135,12 +128,6 @@ class MetricConsumer:
         except Exception as e:
             print(f"[ERROR] Failed to save batch: {e}")
 
-consumer_instance = None
-
-@app.route('/metrics', methods=['GET'])
-def metrics_endpoint():
-    return jsonify(consumer_instance.get_metrics()) if consumer_instance else jsonify({"error": "Consumer not initialized"})
-
 def start_metrics_server():
     app.run(host='0.0.0.0', port=8000)
 
@@ -157,7 +144,6 @@ if __name__ == "__main__":
     parser.add_argument('--consumerOutputDir', type=str, required=True)
     parser.add_argument('--enableAutoCommit', type=str, default="false")
     parser.add_argument('--autoOffsetReset', type=str, default="earliest")
-
     args = parser.parse_args()
 
     consumer_instance = MetricConsumer(
@@ -176,4 +162,3 @@ if __name__ == "__main__":
 
     threading.Thread(target=start_metrics_server, daemon=True).start()
     consumer_instance.consume()
-

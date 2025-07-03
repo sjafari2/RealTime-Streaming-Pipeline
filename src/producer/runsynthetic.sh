@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 source parseYaml.sh
 eval $(parse_yaml /config/pipeline-configmap.yaml)

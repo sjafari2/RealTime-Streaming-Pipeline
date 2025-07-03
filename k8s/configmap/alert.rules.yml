@@ -1,0 +1,30 @@
+groups:
+  - name: kafka-pipeline-alerts
+    rules:
+      - alert: NoMerges
+        expr: time() - max(prometheus_tsdb_last_scrape_duration_seconds) > 300
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No merges detected for over 5 minutes"
+          description: "No data merges have been processed in the last 5 minutes. Check pipeline health."
+
+      - alert: HighPodCPU
+        expr: avg(rate(process_cpu_seconds_total[1m])) by (instance) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "Pod CPU usage is above 80% for 2 minutes."
+
+      - alert: HighLateArrivalRate
+        expr: kafka_pipeline_late_arrival_rate > 0.1
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High late arrival rate in pipeline"
+          description: "More than 10% of messages are arriving late. Check producer and consumer timing."
+
