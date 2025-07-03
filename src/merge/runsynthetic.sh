@@ -7,10 +7,10 @@ eval $(parse_yaml /config/pipeline-configmap.yaml)
 
 pod_index=${1:-0}
 
-watch_dir="${SHARED_MERGE_DIR:-"../consumer-merge-data/consumer-result"}"
-processed_dir="${watch_dir}/${PROCESSED_CSV_DIR:-"processed/"}"
-merged_dir="${MERGED_CSV_DIR:-"./merge-result/"}"
-metrics_dir="${METRICS_CSV_DIR:-"./merge-result/"}"
+watch_dir="${CONSUMER_OUTPUT_DIR}"    #:-"/app/consumer-merge-data/consumer-result"}"
+processed_dir="${CONSUMER_OUTPUT_DIR}/processed/"
+merged_dir="${MERGE_OUTPUT_DIR}"     #:-"./merge-result/"}"
+metrics_dir="${METRICS_OUTPUT_DIR}"   #:-"./merge-result/"}"
 min_files="${MERGE_MIN_FILES:-5}"
 interval_sec="${MERGE_INTERVAL:-10}"
 

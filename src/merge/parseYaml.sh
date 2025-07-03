@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function parse_yaml {
-   local prefix=${2:-}
+   local prefix=${2:-}  
    local s='[[:space:]]*' 
    local w='[a-zA-Z0-9_]*'
    local fs=$(echo @|tr @ '\034')
