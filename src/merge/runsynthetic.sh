@@ -7,12 +7,12 @@ eval $(parse_yaml /config/pipeline-configmap.yaml)
 
 pod_index=${1:-0}
 
-watch_dir="${data_SHARED_MERGE_DIR:-"../app-merge-data/application-result"}"
-processed_dir="${watch_dir}/${data_PROCESSED_CSV_DIR:-"processed/"}"
-merged_dir="${data_MERGED_CSV_DIR:-"./merge-result/"}"
-metrics_dir="${data_METRICS_CSV_DIR:-"./merge-result/"}"
-min_files="${data_MERGE_MIN_FILES:-5}"
-interval_sec="${data_MERGE_INTERVAL:-10}"
+watch_dir="${SHARED_MERGE_DIR:-"../consumer-merge-data/consumer-result"}"
+processed_dir="${watch_dir}/${PROCESSED_CSV_DIR:-"processed/"}"
+merged_dir="${MERGED_CSV_DIR:-"./merge-result/"}"
+metrics_dir="${METRICS_CSV_DIR:-"./merge-result/"}"
+min_files="${MERGE_MIN_FILES:-5}"
+interval_sec="${MERGE_INTERVAL:-10}"
 
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")

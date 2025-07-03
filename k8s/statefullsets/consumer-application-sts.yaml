@@ -10,14 +10,33 @@ spec:
   selector:
     matchLabels:
       app: consumer-application-sts
-  replicas: 1
-  restartPolicy: Always
+  replicas: 2
   podManagementPolicy: Parallel
+
   template:
     metadata:
       labels:
         app: consumer-application-sts
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - gpu-01.nrp.mghpcc.org
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - consumer-application-sts
+              topologyKey: kubernetes.io/hostname
+
       initContainers:
         - name: bootstrap-consumer-code
           image: sjafari2/kafkaconfluentconsumer:latest
@@ -31,6 +50,8 @@ spec:
                 touch /app/consumer-app-data/.code_initialized
                 chown -R 1000:1000 /app/consumer-app-data
                 chmod -R u+w /app/consumer-app-data
+                chown -R 1000:1000 /config
+                chmod -R u+w /config
               fi
           securityContext:
             runAsUser: 0
@@ -50,6 +71,8 @@ spec:
                 touch /app/app-merge-data/.code_initialized
                 chown -R 1000:1000 /app/app-merge-data
                 chmod -R u+w /app/app-merge-data
+                chown -R 1000:1000 /config
+                chmod -R u+w /config
               fi
           securityContext:
             runAsUser: 0
@@ -80,12 +103,12 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+          workingDir: /app/consumer-app-data
           env:
             - name: POD_ORDINAL
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          workingDir: /app/consumer-app-data
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -166,14 +189,4 @@ spec:
             items:
               - key: pipeline-configmap.yaml
                 path: pipeline-configmap.yaml
-
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - gpu-01.nrp.mghpcc.org
 

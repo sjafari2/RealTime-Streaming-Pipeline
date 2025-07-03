@@ -10,9 +10,9 @@ spec:
   selector:
     matchLabels:
       app: request-sts
-  replicas: 1
-  restartPolicy: Always
+  replicas: 1   
   podManagementPolicy: Parallel
+
   template:
     metadata:
       labels:
@@ -20,6 +20,26 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - gpu-01.nrp.mghpcc.org
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - request-sts
+              topologyKey: kubernetes.io/hostname
+
       initContainers:
         - name: volume-permission-and-bootstrap
           image: sjafari2/kafkaconfluentrequest:latest
@@ -33,6 +53,10 @@ spec:
 
               mkdir -p /config
               cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+
+              # ✅ Ensure /config ownership and permissions
+              chown -R 1000:1000 /config
+              chmod -R u+w /config
 
               if [ ! -f /app/request-data/.code_initialized ]; then
                 echo "[init] Copying code from /code to /app/request-data ..."
@@ -106,14 +130,4 @@ spec:
             items:
               - key: pipeline-configmap.yaml
                 path: pipeline-configmap.yaml
-
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - gpu-01.nrp.mghpcc.org
 

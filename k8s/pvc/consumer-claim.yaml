@@ -7,9 +7,9 @@ metadata:
   name: consumer-data
   namespace: "kafkastreamingdata"
 spec:
-  storageClassName: rook-cephfs-east
+  storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   capacity:
     storage: 200Gi
   hostPath:
@@ -35,9 +35,9 @@ metadata:
   name: consumer-data
   namespace: "kafkastreamingdata"
 spec:
-  storageClassName: rook-cephfs-east
+  storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 200Gi

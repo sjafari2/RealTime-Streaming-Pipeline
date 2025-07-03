@@ -11,9 +11,9 @@ RUN chmod 755 /code/runproducer.sh && \
     chmod 755 /code/runsynthetic.sh
 
 # Create logs folder inside target persistent volume path (used in volume mount later)
-RUN mkdir -p /app/request-producer-data/logs && \
-    chown -R 1000:1000 /app/request-producer-data && \
-    chmod -R u+w /app/request-producer-data
+RUN mkdir -p /app/producer-data/logs && \
+    chown -R 1000:1000 /app/producer-data && \
+    chmod -R u+w /app/producer-data
 
 # Return to non-root user for security
 USER sjafari

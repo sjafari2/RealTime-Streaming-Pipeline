@@ -11,8 +11,8 @@ spec:
     matchLabels:
       app: merge-sts
   replicas: 1
-  restartPolicy: Always
   podManagementPolicy: Parallel
+
   template:
     metadata:
       labels:
@@ -26,13 +26,15 @@ spec:
             - -c
             - |
               echo "[init] Setting permissions on target dirs..."
-              chown -R 1000:1000 /app/app-merge-data && chmod -R u+w /app/app-merge-data
+              chown -R 1000:1000 /app/consumer-merge-data && chmod -R u+w /app/consumer-merge-data
               chown -R 1000:1000 /app/merged-data && chmod -R u+w /app/merged-data
 
               echo "[init] Bootstrapping config if needed..."
               if [ ! -f /config/pipeline-configmap.yaml ]; then
                 cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
               fi
+              chown -R 1000:1000 /config
+              chmod -R u+w /config
 
               echo "[init] Bootstrapping merge code if not present..."
               if [ ! -f /app/merged-data/.code_initialized ]; then
@@ -44,8 +46,8 @@ spec:
           securityContext:
             runAsUser: 0
           volumeMounts:
-            - name: app-merge-data
-              mountPath: /app/app-merge-data
+            - name: consumer-merge-data
+              mountPath: /app/consumer-merge-data
             - name: merged-data
               mountPath: /app/merged-data
             - name: shared-config
@@ -56,6 +58,9 @@ spec:
       containers:
         - name: merge-container
           image: sjafari2/kafkaconfluentmerge:latest
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
           env:
             - name: POD_ORDINAL
               valueFrom:
@@ -66,36 +71,60 @@ spec:
           args:
             - |
               rm -rf ./logs/*
+              mkdir -p ./logs
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
               echo "Loaded config file contents:"
               cat /config/pipeline-configmap.yaml
-              sleep infinity
+              # Create /tmp/healthy periodically for probe success
+              while true; do date > /tmp/healthy; sleep 10; done
+
           ports:
             - containerPort: 8080
               name: merge-port
             - containerPort: 9093
               name: merge-exp-port
+
+          # Liveness and readiness probes for stability
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - "test -f /tmp/healthy"
+            initialDelaySeconds: 60
+            periodSeconds: 30
+
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - "test -f /tmp/healthy"
+            initialDelaySeconds: 30
+            periodSeconds: 15
+
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "1000m"
-            limits:
               memory: "2Gi"
               cpu: "2000m"
+            limits:
+              memory: "4Gi"
+              cpu: "4000m"
+
           volumeMounts:
-            - name: app-merge-data
-              mountPath: /app/app-merge-data
+            - name: consumer-merge-data
+              mountPath: /app/consumer-merge-data
             - name: merged-data
               mountPath: /app/merged-data
             - name: shared-config
               mountPath: /config
 
       volumes:
-        - name: app-merge-data
+        - name: consumer-merge-data
           persistentVolumeClaim:
-            claimName: app-merge-data
+            claimName: consumer-merge-data
         - name: merged-data
           persistentVolumeClaim:
             claimName: merged-data
@@ -108,14 +137,4 @@ spec:
             items:
               - key: pipeline-configmap.yaml
                 path: pipeline-configmap.yaml
-
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - gpu-01.nrp.mghpcc.org
 

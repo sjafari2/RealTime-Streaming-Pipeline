@@ -7,36 +7,33 @@ import os
 from datetime import datetime
 from confluent_kafka import Consumer, KafkaError
 import helper
-import uuid
+import psutil
+from flask import Flask, jsonify
+import socket
+import threading
 
+app = Flask(__name__)
+metrics = {
+    "msg_consumed": 0,
+    "start_time": time.time(),
+    "cpu_percent": 0,
+    "mem_percent": 0,
+    "uptime_sec": 0
+}
 
-class ConfigLoader:
-    @staticmethod
-    def read_properties(filepath):
-        config = {}
-        with open(filepath, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith('#') or '=' not in line:
-                    continue
-                key, value = line.split('=', 1)
-                config[key.strip()] = value.strip()
-        return config
-
+def simulate_processing_delay(mean=0.5, std=0.1):
+    return max(0.0, np.random.normal(loc=mean, scale=std))
 
 class MetricConsumer:
-    def __init__(self, topics, servers, group_id, output_path, auto_commit, offset_reset,
-                 auth_config, max_messages, poll_timeout, max_records,
-                 fetch_max_bytes, fetch_min_bytes, fetch_max_wait_ms):
+    def __init__(self, topics, servers, group_id, max_messages, poll_timeout, fetch_max_bytes,
+                 fetch_min_bytes, fetch_max_wait_ms, consumer_output_dir, enable_auto_commit, auto_offset_reset):
         self.topics = topics
-        self.output_path = output_path
-        self.metrics = []
-        self.start_time = time.time()
-        self.total_bytes = 0
-        self.message_count = 0
+        self.metrics_list = []
         self.max_messages = max_messages
-        self.poll_timeout = poll_timeout / 1000  # Convert ms to seconds
-        self.max_records = max_records
+        self.poll_timeout = poll_timeout / 1000  # convert ms to seconds
+        self.consumer_output_dir = consumer_output_dir
+        self.pod_name = socket.gethostname()
+        self.last_log_time = time.time()
 
         config = helper.Tools().read_config('consumer.properties')
         jaas_config = config.get('sasl.jaas.config', '')
@@ -46,8 +43,8 @@ class MetricConsumer:
         self.consumer = Consumer({
             'bootstrap.servers': ','.join(servers),
             'group.id': group_id,
-            'enable.auto.commit': auto_commit,
-            'auto.offset.reset': offset_reset,
+            'enable.auto.commit': enable_auto_commit,
+            'auto.offset.reset': auto_offset_reset,
             'security.protocol': config.get('security.protocol', 'PLAINTEXT'),
             'sasl.mechanism': config.get('sasl.mechanism', 'PLAIN'),
             'sasl.username': username,
@@ -58,128 +55,125 @@ class MetricConsumer:
         })
 
         self.consumer.subscribe(topics)
-        print(f"Subscribed to topics: {topics}")
+        self.msg_consumed = 0
+
+    def get_metrics(self):
+        elapsed = time.time() - metrics["start_time"]
+        msg_rate = self.msg_consumed / elapsed if elapsed > 0 else 0
+        metrics.update({
+            "msg_rate": msg_rate,
+            "cpu_percent": psutil.cpu_percent(interval=1),
+            "mem_percent": psutil.virtual_memory().percent,
+            "uptime_sec": elapsed,
+            "msg_consumed": self.msg_consumed
+        })
+        return metrics
 
     def consume(self):
-        print("Start consuming...")
         while True:
-            msg = self.consumer.poll(self.poll_timeout)
-            if msg is None:
-                print("No message received. Waiting...")
-                continue
-            if msg.error():
-                print(f"Consumer error: {msg.error()}")
-                continue
-
-            now = time.time()
             try:
-                msg_value = json.loads(msg.value().decode('utf-8'))
-                producer_timestamp = msg_value.get('timestamp')
-                index = msg_value.get('index')
+                msgs = self.consumer.consume(num_messages=20, timeout=self.poll_timeout)
 
-                msg_size = None
-                for header in (msg.headers() or []):
-                    if header[0] == 'size_bytes':
-                        msg_size = int(header[1].decode('utf-8'))
-                        self.total_bytes += msg_size
-                        break
+                now = time.time()
+                if now - self.last_log_time > 10:
+                    print(f"[HEALTH] Polling active. Messages consumed: {self.msg_consumed}")
+                    self.last_log_time = now
 
-                consumer_delay = now - producer_timestamp if producer_timestamp else None
+                for msg in msgs:
+                    if msg is None:
+                        continue
+                    if msg.error():
+                        if msg.error().code() != KafkaError._PARTITION_EOF:
+                            print(f"[ERROR] Poll error: {msg.error()}")
+                        continue
 
-                self.metrics.append({
-                    'index': index,
-                    'topic': msg.topic(),
-                    'size_bytes': msg_size,
-                    'producer_timestamp': producer_timestamp,
-                    'consumer_timestamp': now,
-                    'consumer_delay_sec': consumer_delay
-                })
-                self.message_count += 1
+                    headers = dict(msg.headers() or [])
+                    index = headers.get('index', b'')
+                    producer_ts = headers.get('producer_timestamp', b'')
 
-                if len(self.metrics) >= self.max_messages:
-                    self.save_metrics()
-                    self.metrics.clear()
-                    self.consumer.commit(asynchronous=False)
+                    index = index.decode() if index else ''
+                    producer_ts = producer_ts.decode() if producer_ts else ''
+                    receive_ts = str(time.time())
+
+                    if index == '' or producer_ts == '':
+                        print(f"[WARN] Skipping message with missing headers: {msg}")
+                        continue
+
+                    self.metrics_list.append({
+                        "index": index,
+                        "producer_timestamp": producer_ts,
+                        "consumer_receive_timestamp": receive_ts
+                    })
+
+                    self.msg_consumed += 1
+                    self.consumer.commit(message=msg, asynchronous=False)
+
+                    if len(self.metrics_list) >= self.max_messages:
+                        self.save_batch()
+                        self.metrics_list.clear()
+
+                    time.sleep(simulate_processing_delay(mean=0.2, std=0.05))
 
             except Exception as e:
-                print(f"Error processing message: {e}")
+                print(f"[ERROR] Consume loop error: {e}")
 
-    def save_metrics(self):
-        print("Saving results...")
-        df = pd.DataFrame(self.metrics)
+    def save_batch(self):
+        df = pd.DataFrame(self.metrics_list)
         if df.empty:
             return
 
-        total_time = time.time() - self.start_time
-        throughput = (self.total_bytes / 1024 / 1024) / total_time if total_time > 0 else 0
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M%S_%f")
+        filename = f"batch_{self.pod_name}_{timestamp}.csv"
+        tmp_path = os.path.join(self.consumer_output_dir, f".tmp_{filename}")
+        final_path = os.path.join(self.consumer_output_dir, filename)
 
-        print(f"Consumed {len(df)} messages across topics: {', '.join(set(df['topic']))}")
-        print(f"Total size: {self.total_bytes / 1024:.2f} KB")
-        print(f"Elapsed time: {total_time:.2f} sec")
-        print(f"Throughput: {throughput:.4f} MB/s")
+        try:
+            df.to_csv(tmp_path, index=False)
+            os.rename(tmp_path, final_path)
+            print(f"[INFO] Saved batch: {final_path} with {len(df)} records")
+        except Exception as e:
+            print(f"[ERROR] Failed to save batch: {e}")
 
-        if self.output_path:
-            try:
-                dir_name = os.path.dirname(self.output_path)
-                base_name, ext = os.path.splitext(os.path.basename(self.output_path))
-        
-                # Create timestamp with microseconds
-                now = datetime.now()
-                timestamp = now.strftime("%Y%m%d_%H%M%S") + f"_{now.microsecond:06d}"
-        
-                # Generate final file names
-                final_filename = f"{base_name}_{timestamp}{ext}"
-                tmp_file = os.path.join(dir_name, f".tmp_{final_filename}")
-                final_file = os.path.join(dir_name, final_filename)
+consumer_instance = None
 
-                # Write and rename file
-                df.to_csv(tmp_file, index=False)
-                os.rename(tmp_file, final_file)
-                print(f"Saved final metrics file: {final_file}")
-            except Exception as e:
-                print(f"[ERROR] Failed to save metrics: {e}")
+@app.route('/metrics', methods=['GET'])
+def metrics_endpoint():
+    return jsonify(consumer_instance.get_metrics()) if consumer_instance else jsonify({"error": "Consumer not initialized"})
 
-
-def str2bool(v):
-    return v.lower() in ('yes', 'true', 't', '1')
-
+def start_metrics_server():
+    app.run(host='0.0.0.0', port=8000)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Real-time Kafka Consumer for Metrics")
+    parser = argparse.ArgumentParser()
     parser.add_argument('--topics', type=str, required=True)
-    parser.add_argument('--groupId', type=str, default="group-0-0")
-    parser.add_argument('--outputPath', type=str, default="message_metrics.csv")
     parser.add_argument('--uris', type=str, required=True)
-    parser.add_argument('--enableAutoCommit', type=str2bool, default=True)
-    parser.add_argument('--offsetReset', type=str, default="earliest")
+    parser.add_argument('--groupId', type=str, default="consumer-group")
     parser.add_argument('--maxMsg', type=int, default=100)
     parser.add_argument('--pollTimeout', type=int, default=300)
-    parser.add_argument('--maxRecords', type=int, default=500)
     parser.add_argument('--fetchMaxBytes', type=int, default=10485760)
     parser.add_argument('--fetchMinBytes', type=int, default=1024)
     parser.add_argument('--fetchMaxWaitMs', type=int, default=500)
+    parser.add_argument('--consumerOutputDir', type=str, required=True)
+    parser.add_argument('--enableAutoCommit', type=str, default="false")
+    parser.add_argument('--autoOffsetReset', type=str, default="earliest")
 
     args = parser.parse_args()
 
-    topic_list = args.topics.split(',')
-    server_list = [s.strip() for s in args.uris.split(',') if s.strip()]
-    auth_config = ConfigLoader.read_properties('consumer.properties')
-
-    consumer = MetricConsumer(
-        topics=topic_list,
-        servers=server_list,
+    consumer_instance = MetricConsumer(
+        topics=args.topics.split(','),
+        servers=[s.strip() for s in args.uris.split(',') if s.strip()],
         group_id=args.groupId,
-        output_path=args.outputPath,
-        auto_commit=args.enableAutoCommit,
-        offset_reset=args.offsetReset,
-        auth_config=auth_config,
         max_messages=args.maxMsg,
         poll_timeout=args.pollTimeout,
-        max_records=args.maxRecords,
         fetch_max_bytes=args.fetchMaxBytes,
         fetch_min_bytes=args.fetchMinBytes,
-        fetch_max_wait_ms=args.fetchMaxWaitMs
+        fetch_max_wait_ms=args.fetchMaxWaitMs,
+        consumer_output_dir=args.consumerOutputDir,
+        enable_auto_commit=args.enableAutoCommit.lower() == "true",
+        auto_offset_reset=args.autoOffsetReset
     )
 
-    consumer.consume()
+    threading.Thread(target=start_metrics_server, daemon=True).start()
+    consumer_instance.consume()
 

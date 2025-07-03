@@ -2,14 +2,14 @@
 
 # Define config: alias → "pod:container:src_path:dst_path"
 declare -A pod_configs=(
-  ["producer"]="producer-sts-0:producer-container:/app/request-producer-data:./src/producer"
-  ["consumer"]="consumer-application-sts-0:consumer-container:/app/consumer-app-data:./src/consumer"
-  ["application"]="consumer-application-sts-0:application-container:/app/app-merge-data:./src/application"
+  ["producer"]="producer-sts-0:producer-container:/app/producer-data:./src/producer"
+  ["consumer"]="consumer-sts-0:consumer-container:/app/consumer-merge-data:./src/consumer"
+ # ["application"]="consumer-application-sts-0:application-container:/app/app-merge-data:./src/application"
   ["merge"]="merge-sts-0:merge-container:/app/merged-data:./src/merge"
 )
 
 # Define processing order
-ordered_keys=("producer" "consumer" "application" "merge")
+ordered_keys=("producer" "consumer" "merge")
 
 # Extensions to copy
 file_extensions=("py" "sh" "yaml" "yml" "properties")

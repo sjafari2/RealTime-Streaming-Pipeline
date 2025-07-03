@@ -1,76 +1,72 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Load config
+set -euo pipefail
+
+# === Load configuration ===
 source parseYaml.sh
 eval $(parse_yaml /config/pipeline-configmap.yaml)
+: "${TOPIC_TITLE:?TOPIC_TITLE not set in config}"
 trap "exit" INT TERM
 trap "kill 0" EXIT
 
-# Config values
-topic_title=${data_TOPIC_TITLE}
-nconsumers=${data_CONSUMER_COUNT}
-pod_count=${data_CONSUMER_POD_COUNT}
-msg_max=${data_MAX_MESSAGES}
-pod_index=${1:-0}
+CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 
-# Optional configs for consumer
-auto_commit=${data_ENABLE_AUTO_COMMIT:-true}
-offset_reset=${data_OFFSET_RESET:-earliest}
+# === Config values ===
+#topic_title="${data_TOPIC_TITLE}"
+topic_title="${TOPIC_TITLE}" #:?TOPIC_TITLE not defined in config}"
+group_id="${CONSUMER_GROUP_ID}"
+msg_max="${MAX_MESSAGES}"
+poll_timeout="${POLL_TIMEOUT}"
+fetch_max_bytes="${FETCH_MAX_BYTES}"
+fetch_min_bytes="${FETCH_MIN_BYTES}"
+fetch_max_wait_ms="${FETCH_MAX_WAIT_MS}"
+auto_commit="${ENABLE_AUTO_COMMIT}"
+offset_reset="${OFFSET_RESET}"
+consumer_output_dir="${CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
+mkdir -p "${consumer_output_dir}"
 
-# Get list of topics matching the prefix
-source kafka-list-topics.sh
-TOPICS=$(printf "%s\n" "${TOPICS[@]}" | grep ${topic_title})
-TOPICS=($TOPICS)
-topics_len=${#TOPICS[@]}
-
-# Get Kafka brokers
+# === Get brokers ===
 server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr '\n' ',' | sed 's/,$//')
 
-# Logging setup
-CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
-CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S-%3N-%6N")
-log_path="./logs/consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
-output_path="./consumer-result"
-# consumer/Pod_${pod_index}/${CURRENT_DATE}/${CURRENT_TIME}"
+if [ -z "${topic_title}" ]; then
+    echo "ERROR: TOPIC_TITLE is empty in ConfigMap."
+    exit 1
+fi
 
+# === Get topics matching prefix ===
+IFS=$'\n' read -r -d '' -a TOPICS < <(
+    ${KAFKA_INSTALL_PATH}/kafka-topics.sh --list --bootstrap-server "${server_uri}" --command-config ./consumer.properties && printf '\0'
+)
+
+MATCHED_TOPICS=$(printf "%s\n" "${TOPICS[@]}" | grep -E "^${topic_title}" | paste -sd "," -)
+
+if [ -z "${MATCHED_TOPICS}" ]; then
+    echo "ERROR: No topics matched with prefix '${topic_title}'."
+    exit 1
+fi
+
+echo "Matched topics: ${MATCHED_TOPICS}"
+
+# === Logging setup ===
+log_path="./logs/consumer"
 mkdir -p "${log_path}"
-mkdir -p "${output_path}"
+pod_name=$(hostname)
 
-# Kill any existing consumer processes
-pgrep -f synthetic_consumer.py > /dev/null && pkill -f synthetic_consumer.py
+# === Kill old consumers safely ===
+pkill -f confluent_consumer.py || true
 
-# Calculate topic assignment per process
-total_consumers=$((pod_count * nconsumers))
-topics_per_consumer=$((topics_len / total_consumers))
-extra_topics=$((topics_len % total_consumers))
-
-# Launch consumer processes
-for ((i = 0; i < nconsumers; i++)); do
-    global_index=$((pod_index * nconsumers + i))
-
-    if [ "$global_index" -lt "$extra_topics" ]; then
-        count=$((topics_per_consumer + 1))
-        start=$((global_index * count))
-    else
-        count=$topics_per_consumer
-        start=$((extra_topics * (topics_per_consumer + 1) + (global_index - extra_topics) * topics_per_consumer))
-    fi
-
-    assigned_topics=("${TOPICS[@]:$start:$count}")
-    topic_str=$(IFS=, ; echo "${assigned_topics[*]}")
-
-    echo "Launching consumer [$i] in pod [$pod_index] for topics: $topic_str"
-
-    python3 confluent_consumer.py \
-        --topics "$topic_str" \
-        --groupId "consumer-group-${pod_index}-${i}" \
-        --outputPath "${output_path}/consumer_pod${pod_index}_proc${i}.csv" \
-        --uris "$server_uri" \
-        --enableAutoCommit "$auto_commit" \
-        --offsetReset "$offset_reset" \
-        --maxMsg "$msg_max" &#\
-       # >& "${log_path}/consumer_pod${pod_index}_proc${i}.out" &
-done
-
-wait
+# === Launch consumer ===
+python3 confluent_consumer.py \
+    --topics "${MATCHED_TOPICS}" \
+    --uris "${server_uri}" \
+    --groupId "${group_id}" \
+    --maxMsg "${msg_max}" \
+    --pollTimeout "${poll_timeout}" \
+    --fetchMaxBytes "${fetch_max_bytes}" \
+    --fetchMinBytes "${fetch_min_bytes}" \
+    --fetchMaxWaitMs "${fetch_max_wait_ms}" \
+    --consumerOutputDir "${consumer_output_dir}" \
+    --enableAutoCommit "${auto_commit}" \
+    --autoOffsetReset "${offset_reset}" #\
+    #&> "${log_path}/consumer_${pod_name}.log"
 

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: producer-sts
+  name: consumer-sts
   namespace: kafkastreamingdata
   labels:
-    app: producer-sts
+    app: consumer-sts
 spec:
-  serviceName: producer-headless-svc
+  serviceName: cons-app-headless-svc
   selector:
     matchLabels:
-      app: producer-sts
+      app: consumer-sts
   replicas: 2
   podManagementPolicy: Parallel
 
   template:
     metadata:
       labels:
-        app: producer-sts
+        app: consumer-sts
     spec:
       affinity:
         podAntiAffinity:
@@ -26,44 +26,57 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - producer-sts
+                      - consumer-sts
               topologyKey: kubernetes.io/hostname
 
       initContainers:
-        - name: volume-permission-and-bootstrap
-          image: sjafari2/kafkaconfluentproducer:latest
+        - name: bootstrap-consumer-code
+          image: sjafari2/kafkaconfluentconsumer:latest
           command:
             - /bin/sh
             - -c
             - |
-              echo "[init] Setting permissions and bootstrapping code..."
-              mkdir -p /config
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
-
-              if [ ! -f /app/producer-data/.code_initialized ]; then
-                echo "[init] Bootstrapping code from /code..."
-                cp -r /code/* /app/producer-data/
-                touch /app/producer-data/.code_initialized
-                chown -R 1000:1000 /app/producer-data
-                chmod -R u+w /app/producer-data
+              echo "[init] Bootstrapping consumer code..."
+              if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
+                cp -r /code/* /app/consumer-merge-data/
+                touch /app/consumer-merge-data/.code_initialized
+                chown -R 1000:1000 /app/consumer-merge-data
+                chmod -R u+w /app/consumer-merge-data
                 chown -R 1000:1000 /config
                 chmod -R u+w /config
               fi
           securityContext:
             runAsUser: 0
           volumeMounts:
-            - name: producer-data
-              mountPath: /app/producer-data
+            - name: consumer-merge-data
+              mountPath: /app/consumer-merge-data
+
+        - name: config-bootstrap
+          image: sjafari2/kafkaconfluentconsumer:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[init] Copying configmap if not already present..."
+              mkdir -p /config
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+              chown -R 1000:1000 /config
+              chmod -R u+w /config
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
             - name: shared-config
               mountPath: /config
+            - name: config-default
+              mountPath: /defaults
 
       containers:
-        - name: producer-container
-          image: sjafari2/kafkaconfluentproducer:latest
+        - name: consumer-container
+          image: sjafari2/kafkaconfluentconsumer:latest
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-          workingDir: /app/producer-data
+          workingDir: /app/consumer-merge-data
           env:
             - name: POD_ORDINAL
               valueFrom:
@@ -77,15 +90,15 @@ spec:
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
-              echo "Contents of pipeline-configmap.yaml:"
+              echo "Loaded config file contents:"
               cat /config/pipeline-configmap.yaml
               while true; do date > /tmp/healthy; sleep 10; done
 
           ports:
             - containerPort: 8080
-              name: producer-port
+              name: consumer-port
             - containerPort: 9093
-              name: prod-exp-port
+              name: cons-exp-port
 
           livenessProbe:
             exec:
@@ -114,16 +127,22 @@ spec:
               cpu: "4000m"
 
           volumeMounts:
-            - name: producer-data
-              mountPath: /app/producer-data
+            - name: consumer-merge-data
+              mountPath: /app/consumer-merge-data
             - name: shared-config
               mountPath: /config
 
       volumes:
-        - name: producer-data
+        - name: consumer-merge-data
           persistentVolumeClaim:
-            claimName: producer-data
+            claimName: consumer-merge-data
         - name: shared-config
           persistentVolumeClaim:
             claimName: pipeline-configmap-pvc
+        - name: config-default
+          configMap:
+            name: pipeline-configmap
+            items:
+              - key: pipeline-configmap.yaml
+                path: pipeline-configmap.yaml
 

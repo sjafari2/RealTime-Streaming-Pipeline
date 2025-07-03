@@ -11,9 +11,9 @@ RUN chmod 755 /code/runconsumer.sh && \
     chmod 755 /code/runsynthetic.sh
 
 # Create logs folder inside target persistent volume path (used in volume mount later)
-RUN mkdir -p /app/consumer-app-data/logs && \
-    chown -R 1000:1000 /app/consumer-app-data && \
-    chmod -R u+w /app/consumer-app-data
+RUN mkdir -p /app/consumer-merge-data/logs && \
+    chown -R 1000:1000 /app/consumer-merge-data && \
+    chmod -R u+w /app/consumer-merge-data
 
 # Install required system packages (optional if already in base image)
 RUN apt-get update && \
