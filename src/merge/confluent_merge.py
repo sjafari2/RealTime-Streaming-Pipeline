@@ -11,6 +11,8 @@ import threading
 from flask import Flask
 from prometheus_flask_exporter import PrometheusMetrics
 from prometheus_client import Gauge
+import signal
+import sys
 
 app = Flask(__name__)
 metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
@@ -37,6 +39,7 @@ class HybridMerger:
         self.previous_max_producer_timestamp = 0
         self.pod_name = socket.gethostname()
         self.start_time = time.time()
+        self.running = True
 
         os.makedirs(self.watch_dir, exist_ok=True)
         os.makedirs(self.processed_dir, exist_ok=True)
@@ -44,6 +47,19 @@ class HybridMerger:
         os.makedirs(self.metrics_dir, exist_ok=True)
 
         print(f"[MERGE] HybridMerger started. Watching: {self.watch_dir}")
+
+        # Start system metrics updater thread
+        threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
+
+    def update_metrics_periodically(self):
+        while self.running:
+            try:
+                cpu_gauge.set(psutil.cpu_percent(interval=1))
+                mem_gauge.set(psutil.virtual_memory().percent)
+                uptime_gauge.set(time.time() - self.start_time)
+            except Exception as e:
+                print(f"[ERROR] Metrics update error: {e}")
+            time.sleep(5)
 
     def get_unprocessed_files(self):
         files = []
@@ -113,9 +129,6 @@ class HybridMerger:
         late_rate_gauge.set(late_rate)
         out_of_order_gauge.set(out_of_order_rate)
         duplicate_gauge.set(duplicate_rate)
-        cpu_gauge.set(psutil.cpu_percent(interval=None))
-        mem_gauge.set(psutil.virtual_memory().percent)
-        uptime_gauge.set(now - self.start_time)
         last_merge_time_gauge.set(now)
         last_batch_size_gauge.set(len(merged_df))
 
@@ -123,7 +136,7 @@ class HybridMerger:
         return merged_path, now
 
     def run(self):
-        while True:
+        while self.running:
             try:
                 files = self.get_unprocessed_files()
                 now = time.time()
@@ -137,15 +150,27 @@ class HybridMerger:
                     time.sleep(2)
             except KeyboardInterrupt:
                 print("[MERGE] Stopping merger.")
-                break
+                self.stop()
             except Exception as e:
                 print(f"[ERROR] {e}")
                 time.sleep(2)
 
+    def stop(self):
+        self.running = False
+        print("[MERGE] Merger stopped cleanly.")
+
 def start_metrics_server():
     app.run(host='0.0.0.0', port=8000)
 
+def graceful_shutdown(signal_num, frame):
+    print("[MERGE] Received shutdown signal. Stopping gracefully...")
+    merger.stop()
+    sys.exit(0)
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, graceful_shutdown)
+    signal.signal(signal.SIGTERM, graceful_shutdown)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--watchDir", required=True)
     parser.add_argument("--processedDir", required=True)

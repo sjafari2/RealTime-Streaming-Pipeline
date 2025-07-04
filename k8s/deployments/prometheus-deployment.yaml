@@ -19,6 +19,7 @@ spec:
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention.time=7d"
           ports:
             - containerPort: 9090
           resources:
@@ -32,19 +33,21 @@ spec:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/prometheus.yml
               subPath: prometheus.yml
-            - name: prometheus-storage
+            - name: prometheus-volume
               mountPath: /prometheus
-            - name: prometheus-rules
-              mountPath: /etc/prometheus/alert.rules.yml
-              subPath: alert.rules.yml
-
+            - name: prometheus-rules-volume
+              mountPath: /etc/prometheus/alert-rules.yml
+              subPath: alert-rules-configmap.yml
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
       volumes:
         - name: prometheus-config-volume
           configMap:
             name: prometheus-configmap
-        - name: prometheus-rules
+        - name: prometheus-rules-volume
           configMap:
-            name: prometheus-rules
-        - name: prometheus-storage
-          emptyDir: {}
-
+            name: prometheus-rules-configmap
+        - name: prometheus-volume
+          persistentVolumeClaim:
+            claimName: prometheus-pvc

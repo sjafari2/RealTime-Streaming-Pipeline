@@ -10,7 +10,7 @@ pod_index=${1:-0}
 watch_dir="${CONSUMER_OUTPUT_DIR}"    #:-"/app/consumer-merge-data/consumer-result"}"
 processed_dir="${CONSUMER_OUTPUT_DIR}/processed/"
 merged_dir="${MERGE_OUTPUT_DIR}"     #:-"./merge-result/"}"
-metrics_dir="${METRICS_OUTPUT_DIR}"   #:-"./merge-result/"}"
+metrics_dir="${MERGE_METRICS_DIR}"   #:-"./merge-result/"}"
 min_files="${MERGE_MIN_FILES:-5}"
 interval_sec="${MERGE_INTERVAL:-10}"
 

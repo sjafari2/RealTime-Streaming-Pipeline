@@ -10,6 +10,9 @@ from prometheus_client import Counter, Gauge
 from confluent_kafka import Producer, KafkaException
 from confluent_kafka.admin import AdminClient, NewTopic
 import socket
+import signal
+import sys
+from helper import Tools  
 
 app = Flask(__name__)
 metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
@@ -27,8 +30,9 @@ class MyProducer:
         self.msg_sent = 0
         self.bytes_sent = 0
         self.pod_name = socket.gethostname()
-
-        config = Tools.read_config('producer.properties')
+        self.running = True
+        t = Tools()
+        config = t.read_config('producer.properties')
         sasl_config = config.get('sasl.jaas.config', '')
         username = sasl_config.split('username=')[1].split(' ')[0].strip('"')
         password = sasl_config.split('password=')[1].strip('";')
@@ -62,6 +66,9 @@ class MyProducer:
             'bootstrap.servers', 'security.protocol', 'sasl.mechanism', 'sasl.username', 'sasl.password']})
         self.create_topics_if_missing(args.topicTitle, args.numTopics, args.numPartitions, args.replica)
 
+        # Start metrics updater thread
+        threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
+
     def create_topics_if_missing(self, base_topic, num_topics, num_partitions, replication_factor):
         topics = [NewTopic(f"{base_topic}_{i}", num_partitions, replication_factor) for i in range(num_topics)]
         fs = self.admin.create_topics(topics)
@@ -72,9 +79,19 @@ class MyProducer:
             except KafkaException as e:
                 print(f"[INFO] Topic {topic} may already exist: {e}")
 
+    def update_metrics_periodically(self):
+        while self.running:
+            try:
+                cpu_gauge.set(psutil.cpu_percent(interval=1))
+                mem_gauge.set(psutil.virtual_memory().percent)
+                uptime_gauge.set(time.time() - self.start_time)
+            except Exception as e:
+                print(f"[ERROR] Metrics update error: {e}")
+            time.sleep(5)
+
     def send_message(self, topic, message, headers=None):
         delivered = False
-        while not delivered:
+        while not delivered and self.running:
             try:
                 self.producer.produce(
                     topic=topic,
@@ -94,9 +111,6 @@ class MyProducer:
                 msg_sent_counter.inc()
                 msg_rate_gauge.set(msg_rate)
                 mb_rate_gauge.set(mb_rate)
-                cpu_gauge.set(psutil.cpu_percent(interval=None))
-                mem_gauge.set(psutil.virtual_memory().percent)
-                uptime_gauge.set(elapsed)
 
             except BufferError:
                 print("[WARN] Buffer full, waiting...")
@@ -110,12 +124,13 @@ class MyProducer:
         if err:
             print(f"[ERROR] Delivery failed: {err}")
         else:
-            print(f"[INFO] Delivered to {msg.topic()} [{msg.partition()}] offset {msg.offset()}")
+            if self.msg_sent % 100 == 0:
+                print(f"[INFO] Delivered to {msg.topic()} [{msg.partition()}] offset {msg.offset()}")
 
     def start_synthetic_stream(self, topic_title, num_topics, delay, random_range):
         idx = 0
         try:
-            while True:
+            while self.running:
                 topic = f"{topic_title}_{idx % num_topics}"
                 payload = json.dumps({
                     "index": idx,
@@ -134,12 +149,25 @@ class MyProducer:
                 time.sleep(delay)
         except KeyboardInterrupt:
             print("[INFO] Flushing and stopping producer...")
-            self.producer.flush()
+            self.stop()
+
+    def stop(self):
+        self.running = False
+        self.producer.flush()
+        print("[INFO] Producer stopped cleanly.")
 
 def start_metrics_server():
     app.run(host='0.0.0.0', port=8000)
 
+def graceful_shutdown(signal_num, frame):
+    print("[INFO] Shutting down producer gracefully...")
+    producer_instance.stop()
+    sys.exit(0)
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, graceful_shutdown)
+    signal.signal(signal.SIGTERM, graceful_shutdown)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--topicTitle', required=True)
     parser.add_argument('--numTopics', type=int, required=True)

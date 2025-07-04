@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: cons-app-headless-svc
+  name: consumer-headless-svc
   namespace: kafkastreamingdata
   labels:
-    app: consumer-application
+    app: consumer-sts
 spec:
   clusterIP: None  # Headless service for stable pod DNS
   selector:
-    app: consumer-application-sts
+    app: consumer-sts
   ports:
     - name: consumer-port
       port: 80
@@ -16,4 +16,6 @@ spec:
     - name: application-port
       port: 81
       targetPort: 8081
-
+    - name: metrics
+      port: 8000
+      targetPort: 8000

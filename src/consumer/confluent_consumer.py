@@ -13,11 +13,12 @@ from prometheus_flask_exporter import PrometheusMetrics
 from prometheus_client import Counter, Gauge
 import socket
 import threading
+import signal
+import sys
 
 app = Flask(__name__)
 metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
 
-# Explicitly defined Prometheus metrics
 msg_consumed_counter = Counter('consumer_messages_consumed_total', 'Total messages consumed')
 msg_rate_gauge = Gauge('consumer_message_rate', 'Message consumption rate (msg/sec)')
 cpu_gauge = Gauge('consumer_cpu_percent', 'CPU percent usage')
@@ -59,10 +60,17 @@ class MetricConsumer:
         self.consumer.subscribe(topics)
 
     def consume(self):
+        last_metrics_update = time.time()
         while True:
             try:
                 msgs = self.consumer.consume(num_messages=20, timeout=self.poll_timeout)
                 now = time.time()
+
+                if now - last_metrics_update >= 5:
+                    cpu_gauge.set(psutil.cpu_percent(interval=1))
+                    mem_gauge.set(psutil.virtual_memory().percent)
+                    uptime_gauge.set(now - self.start_time)
+                    last_metrics_update = now
 
                 if now - self.last_log_time > 10:
                     print(f"[HEALTH] Polling active. Messages consumed: {self.msg_consumed}")
@@ -77,12 +85,14 @@ class MetricConsumer:
                         continue
 
                     headers = dict(msg.headers() or [])
-                    index = headers.get(b'index', b'').decode() if headers.get(b'index') else ''
-                    producer_ts = headers.get(b'producer_timestamp', b'').decode() if headers.get(b'producer_timestamp') else ''
-                    receive_ts = str(time.time())
-
-                    if index == '' or producer_ts == '':
+                    index = headers.get('index')
+                    producer_ts = headers.get('producer_timestamp')
+                    if index is None or producer_ts is None:
                         continue
+                    index = index.decode()
+                    producer_ts = producer_ts.decode()
+                    
+                    receive_ts = str(time.time())
 
                     self.metrics_list.append({
                         "index": index,
@@ -95,11 +105,7 @@ class MetricConsumer:
 
                     elapsed = now - self.start_time
                     msg_rate = self.msg_consumed / elapsed if elapsed > 0 else 0
-
                     msg_rate_gauge.set(msg_rate)
-                    cpu_gauge.set(psutil.cpu_percent(interval=None))
-                    mem_gauge.set(psutil.virtual_memory().percent)
-                    uptime_gauge.set(elapsed)
 
                     self.consumer.commit(message=msg, asynchronous=False)
 
@@ -109,6 +115,7 @@ class MetricConsumer:
 
             except Exception as e:
                 print(f"[ERROR] Consume loop error: {e}")
+                time.sleep(1)
 
     def save_batch(self):
         df = pd.DataFrame(self.metrics_list)
@@ -131,7 +138,14 @@ class MetricConsumer:
 def start_metrics_server():
     app.run(host='0.0.0.0', port=8000)
 
+def graceful_shutdown(signal_num, frame):
+    print("[INFO] Shutting down gracefully...")
+    sys.exit(0)
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, graceful_shutdown)
+    signal.signal(signal.SIGTERM, graceful_shutdown)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--topics', type=str, required=True)
     parser.add_argument('--uris', type=str, required=True)
@@ -162,3 +176,4 @@ if __name__ == "__main__":
 
     threading.Thread(target=start_metrics_server, daemon=True).start()
     consumer_instance.consume()
+

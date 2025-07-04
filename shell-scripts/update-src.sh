@@ -49,3 +49,13 @@ for key in "${ordered_keys[@]}"; do
   list_and_count_files "$dst_path"
 done
 
+#  Copy /config/pipeline-configmap.yaml to ./src ===
+
+kubectl cp merge-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml 2>/dev/null
+
+if [ -f ./src/pipeline-configmap.yaml ]; then
+  echo "✅ Saved pipeline-configmap.yaml to ./src/pipeline-configmap.yaml"
+else
+  echo "⚠️  Failed to copy pipeline-configmap.yaml. Please check if it is mounted in a pod or available in the namespace."
+fi
+

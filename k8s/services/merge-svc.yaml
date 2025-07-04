@@ -10,7 +10,9 @@ spec:
   selector:
     app: merge-sts
   ports:
-    - name: merge-pport
+    - name: merge-port
       port: 80         # Service port
       targetPort: 8080 # Matches containerPort in StatefulSet
-
+    - name: metrics
+      port: 8000
+      targetPort: 8000

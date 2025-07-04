@@ -21,7 +21,7 @@ fetch_max_bytes="${FETCH_MAX_BYTES}"
 fetch_min_bytes="${FETCH_MIN_BYTES}"
 fetch_max_wait_ms="${FETCH_MAX_WAIT_MS}"
 auto_commit="${ENABLE_AUTO_COMMIT}"
-offset_reset="${OFFSET_RESET}"
+offset_reset="${AUTO_OFFSET_RESET}"
 consumer_output_dir="${CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
 mkdir -p "${consumer_output_dir}"
 
