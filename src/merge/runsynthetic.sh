@@ -18,6 +18,8 @@ CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
 log_path="./logs/merge/${CURRENT_DATE}/${CURRENT_TIME}"
 mkdir -p "$log_path"
+mkdir -p "$merged_dir"
+mkdir -p "$metrics_dir"
 
 log_file="${log_path}/merge.log"
 
@@ -39,6 +41,6 @@ exec python3 confluent_merge.py \
     --mergedDir "$merged_dir" \
     --metricsDir "$metrics_dir" \
     --minFiles "$min_files" \
-    --intervalSec "$interval_sec" \
-    2>&1 | tee -a "$log_file"
+    --intervalSec "$interval_sec" # \
+    #2>&1 | tee -a "$log_file"
 

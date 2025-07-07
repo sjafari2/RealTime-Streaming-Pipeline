@@ -6,15 +6,15 @@ metadata:
 data:
   # Kafka Producer Settings
   TOPIC_COUNT: "10"
-  TOPIC_TITLE: "kafka"
+  TOPIC_TITLE: "kube"
   NUM_PARTITIONS: "10"
   REPLICATION_FACTOR: "1"
   PRODUCER_COUNT: "1"
   PRODUCER_POD_COUNT: "2"
   PRODUCER_INPUT_PATH: "producer-data"
   DELAY_BETWEEN_MESSAGES: "0"       
-  LINGER_MS: "20"
-  BATCH_SIZE: "32768"
+  LINGER_MS: "5"
+  BATCH_SIZE: "8192"
   COMPRESSION_TYPE: "lz4"
   MAX_REQUEST_SIZE: "2097152"
   ACKS: "1"
@@ -22,27 +22,27 @@ data:
   REQUEST_TIMEOUT_MS: "30000"
   DELIVERY_TIMEOUT_MS: "60000"
   QUEUE_BUFFERING_MAX_MESSAGES: "100000"
-  QUEUE_BUFFERING_MAX_KBYTES: "524288"
+  QUEUE_BUFFERING_MAX_KBYTES: "1048576"
 
   # Kafka Consumer Settings
   CONSUMER_GROUP_ID: "consumer-group"
   CONSUMER_COUNT: "1"
   CONSUMER_POD_COUNT: "2"
-  MAX_MESSAGES: "100"                 
+  MAX_MESSAGES: "500"                 
   ENABLE_AUTO_COMMIT: "true"
   AUTO_OFFSET_RESET: "earliest"
-  POLL_TIMEOUT: "300"
+  POLL_TIMEOUT: "3000"
   FETCH_MAX_BYTES: "10485760"
   FETCH_MIN_BYTES: "1024"
-  FETCH_MAX_WAIT_MS: "500"
+  FETCH_MAX_WAIT_MS: "100"
   CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
 
   # Merge Pod Settings
   MERGE_COUNT: "1"
-  MERGE_WAIT_TIME: "30"
+  MERGE_WAIT_TIME: "5"
   MERGE_WAIT_THRESHOLD: "5"
-  MERGE_OUTPUT_DIR: "/app/consumer-merge-data/merged-result"
-  MERGE_METRICS_DIR: "/app/consumer-merge-data/merge-metrics"
+  MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
+  MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
 
   # Request Simulator (Optional)
   REQUEST_COUNT: "1"

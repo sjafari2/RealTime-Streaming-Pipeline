@@ -99,7 +99,8 @@ controller:
 
     # New cleanup and stability settings:
     log.retention.ms=60000
-    log.segment.bytes=134217728
+    log.retention.check.interval.ms=10000
+    log.segment.bytes=1048576
     message.max.bytes=1048576
     # Optional size-based retention:
     #log.retention.bytes=10737418240

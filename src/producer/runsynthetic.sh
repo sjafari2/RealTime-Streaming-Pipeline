@@ -31,6 +31,7 @@ pod_name=$(hostname)
 
 # Kill old producer
 pkill -f confluent_kafka_producer.py || true
+#pkill -f runsynthetic.sh || true
 
 # Launch single producer per pod
 python3 confluent_kafka_producer.py \

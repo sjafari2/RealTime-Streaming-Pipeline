@@ -74,8 +74,32 @@ class HybridMerger:
         shutil.move(filepath, dest)
         print(f"[MERGE] Moved {os.path.basename(filepath)} to processed.")
 
+    def remove_file(self, filepath):
+       os.remove(filepath)
+       print(f"[MERGE] Removed {os.path.basename(filepath)} after processing.")
+
     def compute_throughput(self, batch_MB, duration):
         return batch_MB / duration if duration > 0 else 0
+
+    def save_metrics_to_csv(self, throughput_MBps, late_rate, out_of_order_rate, duplicate_rate, batch_size, timestamp):
+        metrics_file = os.path.join(self.metrics_dir, "merge_metrics.csv")
+        metrics_data = {
+            "timestamp": [datetime.utcfromtimestamp(timestamp).isoformat()],
+            "throughput_MBps": [throughput_MBps],
+            "late_rate": [late_rate],
+            "out_of_order_rate": [out_of_order_rate],
+            "duplicate_rate": [duplicate_rate],
+            "batch_size": [batch_size],
+            "uptime_seconds": [time.time() - self.start_time],
+            "cpu_percent": [psutil.cpu_percent()],
+            "memory_percent": [psutil.virtual_memory().percent]
+        }
+        df = pd.DataFrame(metrics_data)
+
+        if not os.path.exists(metrics_file):
+            df.to_csv(metrics_file, index=False)
+        else:
+            df.to_csv(metrics_file, mode='a', header=False, index=False)
 
     def merge_csv_files(self, files):
         dfs, total_bytes = [], 0
@@ -118,7 +142,7 @@ class HybridMerger:
         duplicate_rate = duplicate_flags.mean()
 
         merged_df['merge_timestamp'] = now
-        merged_df['end_to_end_delay_ms'] = (merged_df['merge_timestamp'] - merged_df['producer_timestamp']) * 1000
+        merged_df['end_to_end_delay_ms'] = (merged_df['merge_timestamp'] - merged_df['producer_timestamp'])*1000
 
         fname = f"merged_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         merged_path = os.path.join(self.merged_dir, fname)
@@ -133,6 +157,15 @@ class HybridMerger:
         last_batch_size_gauge.set(len(merged_df))
 
         self.previous_max_producer_timestamp = merged_df['producer_timestamp'].max()
+        self.save_metrics_to_csv(
+            throughput_MBps=throughput_MBps,
+            late_rate=late_rate,
+            out_of_order_rate=out_of_order_rate,
+            duplicate_rate=duplicate_rate,
+            batch_size=len(merged_df),
+            timestamp=now
+        )
+
         return merged_path, now
 
     def run(self):
@@ -144,7 +177,7 @@ class HybridMerger:
                     merged_path, merge_ts = self.merge_csv_files(files)
                     if merged_path:
                         for f in files:
-                            self.move_to_processed(f)
+                            self.remove_file(f)
                         self.last_merge_time = merge_ts
                 else:
                     time.sleep(2)
