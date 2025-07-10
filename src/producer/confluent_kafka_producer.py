@@ -12,7 +12,7 @@ from confluent_kafka.admin import AdminClient, NewTopic
 import socket
 import signal
 import sys
-from helper import Tools  
+from helper import Tools
 
 app = Flask(__name__)
 metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
@@ -31,6 +31,8 @@ class MyProducer:
         self.bytes_sent = 0
         self.pod_name = socket.gethostname()
         self.running = True
+        self.dynamic_target_rate = args.targetRate if args.targetRate else 100
+
         t = Tools()
         config = t.read_config('producer.properties')
         sasl_config = config.get('sasl.jaas.config', '')
@@ -65,17 +67,10 @@ class MyProducer:
         self.admin = AdminClient({k: self.producer_config[k] for k in [
             'bootstrap.servers', 'security.protocol', 'sasl.mechanism', 'sasl.username', 'sasl.password']})
         self.create_topics_if_missing(args.topicTitle, args.numTopics, args.numPartitions, args.replica)
-
-        # Start metrics updater thread
         threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
 
     def create_topics_if_missing(self, base_topic, num_topics, num_partitions, replication_factor):
-        topics = [NewTopic
-                  (f"{base_topic}_{i}", 
-                  num_partitions, 
-                  replication_factor,
-                  config={"min.insync.replicas": str(args.minInSync)}
-                  ) for i in range(num_topics)]
+        topics = [NewTopic(f"{base_topic}_{i}", num_partitions, replication_factor) for i in range(num_topics)]
         fs = self.admin.create_topics(topics)
         for topic, f in fs.items():
             try:
@@ -90,6 +85,11 @@ class MyProducer:
                 cpu_gauge.set(psutil.cpu_percent(interval=1))
                 mem_gauge.set(psutil.virtual_memory().percent)
                 uptime_gauge.set(time.time() - self.start_time)
+                elapsed = time.time() - self.start_time
+                if elapsed > 0:
+                    msg_rate = self.msg_sent / elapsed
+                    mb_rate = (self.bytes_sent / (1024 * 1024)) / elapsed
+                    print(f"[METRIC] Elapsed: {elapsed:.2f}s | Sent: {self.msg_sent} msgs | Rate: {msg_rate:.2f} msg/s | Throughput: {mb_rate:.4f} MB/s")
             except Exception as e:
                 print(f"[ERROR] Metrics update error: {e}")
             time.sleep(5)
@@ -108,19 +108,14 @@ class MyProducer:
                 delivered = True
                 self.msg_sent += 1
                 self.bytes_sent += len(message.encode('utf-8'))
-
-                elapsed = time.time() - self.start_time
-                msg_rate = self.msg_sent / elapsed if elapsed > 0 else 0
-                mb_rate = (self.bytes_sent / (1024 * 1024)) / elapsed if elapsed > 0 else 0
-
                 msg_sent_counter.inc()
-                msg_rate_gauge.set(msg_rate)
-                mb_rate_gauge.set(mb_rate)
 
             except BufferError:
-                print("[WARN] Buffer full, waiting...")
+                print(f"[WARN] Buffer full, reducing target rate from {self.dynamic_target_rate}")
+                self.dynamic_target_rate = max(int(self.dynamic_target_rate * 0.9), 10)
+                print(f"[TUNE] New target rate: {self.dynamic_target_rate} msg/sec")
                 self.producer.poll(1)
-                time.sleep(0.1)
+                time.sleep(0.2)
             except KafkaException as e:
                 print(f"[ERROR] Send failed: {e}")
                 break
@@ -136,26 +131,24 @@ class MyProducer:
         idx = 0
         try:
             while self.running:
+                now = time.time()
                 topic = f"{topic_title}_{idx % num_topics}"
                 payload = json.dumps({
                     "index": idx,
-                    "producer_timestamp": time.time(),
+                    "producer_timestamp": now,
                     "pod_name": self.pod_name,
                     "values": [random.randint(0, random_range) for _ in range(random.randint(3, 6))]
                 })
                 headers = [
                     ("index", str(idx).encode()),
-                    ("producer_timestamp", str(time.time()).encode()),
+                    ("producer_timestamp", str(now).encode()),
                     ("size_bytes", str(len(payload)).encode()),
                     ("producer_pod_name", self.pod_name.encode())
                 ]
                 self.send_message(topic, payload, headers)
                 idx += 1
-                if args.targetRate:
-                    time_per_msg = 1 / args.targetRate
-                    time.sleep(time_per_msg)
-                else:
-                    time.sleep(args.delay)
+                time_per_msg = 1 / self.dynamic_target_rate
+                time.sleep(time_per_msg)
 
         except KeyboardInterrupt:
             print("[INFO] Flushing and stopping producer...")

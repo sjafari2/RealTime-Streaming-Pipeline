@@ -44,11 +44,13 @@ save_codes() {
     echo "Completed copying for $key."
   done
 
-  echo "Copying /config/pipeline-configmap.yaml explicitly from merge pod..."
-  if kubectl cp merge-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml -c merge-container 2>/dev/null; then
-    echo "✅ Saved pipeline-configmap.yaml to ./src/pipeline-configmap.yaml"
+  echo "Copying pipeline-configmap.yaml..."
+  kubectl cp merge-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml 2>/dev/null || true
+
+  if [ -f ./src/pipeline-configmap.yaml ]; then
+    echo "Saved pipeline-configmap.yaml to ./src/pipeline-configmap.yaml"
   else
-    echo "⚠️ Warning: Failed to copy /config/pipeline-configmap.yaml from merge pod. Check if it is mounted."
+    echo "Warning: Failed to copy pipeline-configmap.yaml. Check if it is mounted."
   fi
   echo "==================================================================="
 }
@@ -95,12 +97,13 @@ process_pods() {
 
       if [[ "$save_results" == "y" && -n "${results_paths[$i]}" ]]; then
         for remote_path in ${results_paths[$i]}; do
-          folder_name=$(basename $remote_path)
-          new_folder_name="${pod}-${folder_name}"
-          new_folder_name="${new_folder_name//-data/}"  # remove -data if present
-
+          if [[ "$remote_path" == *metrics ]]; then
+            suffix="-metrics"
+          else
+            suffix="-result"
+          fi
           echo "Saving $remote_path from $pod..."
-          kubectl cp "$pod:$remote_path" "$results_root/$pod_type/${new_folder_name}" -c $container || echo "Warning: Failed to copy $remote_path from $pod"
+          kubectl cp "$pod:$remote_path" "$results_root/$pod_type/${pod}${suffix}" -c $container || echo "Warning: Failed to copy $remote_path from $pod"
         done
       else
         echo "Skipping result save for $pod_type."
@@ -119,17 +122,14 @@ process_pods() {
         log_remote_path="${logs_paths[$i]}"
         echo "Saving logs from $log_remote_path in $pod..."
 
-        temp_log_dir=$(mktemp -d)
-        kubectl cp "$pod:$log_remote_path" "$temp_log_dir" -c "$container" || echo "Warning: Failed to copy logs from $pod"
+        tmp_log_dir=$(mktemp -d)
+        kubectl cp "$pod:$log_remote_path/." "$tmp_log_dir" -c $container || echo "Warning: Failed to copy logs from $pod"
 
-        log_files=($(find "$temp_log_dir" -type f))
-        if [ ${#log_files[@]} -eq 0 ]; then
-          echo "Warning: No log files found in $pod"
-        else
-          cat "${log_files[@]}" > "$logs_root/$pod_type/${pod}.log"
-        fi
-
-        rm -rf "$temp_log_dir"
+        for log_file in "$tmp_log_dir"/*; do
+          log_name=$(basename "$log_file")
+          mv "$log_file" "$logs_root/$pod_type/${pod}_${log_name}"
+        done
+        rm -rf "$tmp_log_dir"
       else
         echo "Skipping log save for $pod_type."
       fi
@@ -144,7 +144,6 @@ process_pods() {
 
       if [[ "$run_scripts" == "y" ]]; then
         echo "Force-killing any existing Python and shell script processes inside $pod before starting ./runsynthetic.sh ..."
-
         kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep python | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No python scripts found.'"
         kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No .sh scripts found.'"
 

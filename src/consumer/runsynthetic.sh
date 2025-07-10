@@ -68,5 +68,5 @@ python3 confluent_consumer.py \
     --consumerOutputDir "${consumer_output_dir}" \
     --enableAutoCommit "${auto_commit}" \
     --autoOffsetReset "${offset_reset}" \
-    &> "${log_path}/consumer_${pod_name}.log"
+    2>&1 | tee "${log_path}/consumer_${pod_name}.log" &
 

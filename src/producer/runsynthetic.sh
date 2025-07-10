@@ -56,4 +56,4 @@ python3 confluent_kafka_producer.py \
     --queueBufferingMaxMessages "$queue_buffering_max_messages" \
     --queueBufferingMaxKbytes "$queue_buffering_max_kbytes" \
     --targetRate "$target_rate" \
-    &> "$log_path/producer_${pod_name}.log"
+    2>&1 | tee "$log_path/producer_${pod_name}.log" &

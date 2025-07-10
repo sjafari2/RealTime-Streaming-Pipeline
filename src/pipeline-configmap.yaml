@@ -4,21 +4,25 @@ metadata:
   name: pipeline-configmap
   namespace: kafkastreamingdata
 data:
-  # Kafka Brokers/Topics Settings
+  # =============================
+  #  Kafka Brokers / Topics 
+  # =============================
   TOPIC_COUNT: "10"
-  TOPIC_TITLE: "base"
+  TOPIC_TITLE: "base_exp"
   NUM_PARTITIONS: "10"
   BROKER_COUNT: "3"
   REPLICATION_FACTOR: "1"
   MIN_INSYNC_REPLICAS: "1"
 
-  # Kafka Producer Settings
+  # =============================
+  #  Kafka Producer 
+  # =============================
   PRODUCER_COUNT: "1"
   PRODUCER_POD_COUNT: "2"
   PRODUCER_INPUT_PATH: "producer-data"
   DELAY_BETWEEN_MESSAGES: "0"
-  LINGER_MS: "5"
-  BATCH_SIZE: "8192"
+  LINGER_MS: "0"
+  BATCH_SIZE: "32768"
   COMPRESSION_TYPE: "lz4"
   MAX_REQUEST_SIZE: "2097152"
   ACKS: "1"
@@ -30,9 +34,11 @@ data:
   QUEUE_BUFFERING_MAX_KBYTES: "1048576"
   CLIENT_ID: "pipeline-producer"
   MESSAGE_SIZE_BYTES: "1024"
-  TARGET_RATE: "100"
+  TARGET_RATE: "1000"
 
-  # Kafka Consumer Settings
+  # =============================
+  #  Kafka Consumer 
+  # =============================
   CONSUMER_GROUP_ID: "consumer-group"
   CONSUMER_COUNT: "1"
   CONSUMER_POD_COUNT: "2"
@@ -45,23 +51,33 @@ data:
   FETCH_MAX_WAIT_MS: "100"
   CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
 
-  # Merge Pod Settings
+  # =============================
+  # Merge Pod
+  # =============================
   MERGE_COUNT: "1"
   MERGE_WAIT_TIME: "5"
   MERGE_WAIT_THRESHOLD: "5"
   MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
   MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
 
-  # Request Simulator (Optional)
+  # =============================
+  #  Request Simulator 
+  # =============================
   REQUEST_COUNT: "1"
   REQUEST_URL: "http://127.0.0.1:8080/"
   REQUEST_INPUT_PATH: "./request-data/simulator"
   REQUEST_OUTPUT_PATH: "./producer-data"
 
-  # Application Settings
+  # =============================
+  #  Application 
+  # =============================
   APPLICATION_WAIT_TIME: "5"
   APPLICATION_COUNT: "1"
 
-  # BSP/Monitoring
+  # =============================
+  #  BSP / Monitoring 
+  # =============================
   BSP_MODE: "true"
   PROMETHEUS_METRICS: "true"
+
+

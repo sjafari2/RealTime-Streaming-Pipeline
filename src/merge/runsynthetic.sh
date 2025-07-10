@@ -46,5 +46,5 @@ exec python3 confluent_merge.py \
     --metricsDir "$metrics_dir" \
     --minFiles "${MERGE_WAIT_THRESHOLD:-5}" \
     --intervalSec "${MERGE_WAIT_TIME:-5}" \
-    2>&1 | tee -a "$log_file"
+    2>&1 | tee "$log_file"
 
