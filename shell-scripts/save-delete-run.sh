@@ -16,6 +16,7 @@ declare -A pod_configs=(
   ["consumer"]="consumer-sts-0:consumer-container:/app/consumer-merge-data:./src/consumer"
   ["merge"]="merge-sts-0:merge-container:/app/merged-data:./src/merge"
 )
+
 ordered_keys=("producer" "consumer" "merge")
 file_extensions=("py" "sh" "yaml" "yml" "properties")
 
@@ -55,8 +56,13 @@ save_codes() {
 }
 
 process_pods() {
-  mkdir -p ./results/producer ./results/consumer ./results/merge
-  mkdir -p ./logs/producer ./logs/consumer ./logs/merge
+  # Create timestamped folders inside ./results and ./logs
+  timestamp=$(date +"%Y%m%d_%H%M%S")
+  results_root="./results/$timestamp"
+  logs_root="./logs/$timestamp"
+
+  mkdir -p "$results_root/producer" "$results_root/consumer" "$results_root/merge"
+  mkdir -p "$logs_root/producer" "$logs_root/consumer" "$logs_root/merge"
 
   read -n 1 -p "Save results before running the script? (y/n): " save_results
   echo
@@ -93,7 +99,7 @@ process_pods() {
         for remote_path in ${results_paths[$i]}; do
           base_name=$(basename $remote_path)
           echo "Saving $remote_path from $pod..."
-          kubectl cp "$pod:$remote_path" "./results/$pod_type/${pod}_${base_name}" -c $container || echo "Warning: Failed to copy $remote_path from $pod"
+          kubectl cp "$pod:$remote_path" "$results_root/$pod_type/${pod}_${base_name}" -c $container || echo "Warning: Failed to copy $remote_path from $pod"
         done
       else
         echo "Skipping result save for $pod_type."
@@ -111,7 +117,7 @@ process_pods() {
       if [[ "$save_logs" == "y" ]]; then
         log_remote_path="${logs_paths[$i]}"
         echo "Saving logs from $log_remote_path in $pod..."
-        kubectl cp "$pod:$log_remote_path" "./logs/$pod_type/${pod}_logs" -c $container || echo "Warning: Failed to copy logs from $pod"
+        kubectl cp "$pod:$log_remote_path" "$logs_root/$pod_type/${pod}_logs" -c $container || echo "Warning: Failed to copy logs from $pod"
       else
         echo "Skipping log save for $pod_type."
       fi
@@ -125,8 +131,13 @@ process_pods() {
       fi
 
       if [[ "$run_scripts" == "y" ]]; then
-        echo "Running ./runsynthetic.sh $pod_id inside $pod..."
-        if ! kubectl exec -c $container $pod -- nohup ./runsynthetic.sh "$pod_id" > /dev/null 2>&1; then
+        echo "Force-killing any existing Python and shell script processes inside $pod before starting ./runsynthetic.sh ..."
+
+        kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep python | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No python scripts found.'"
+        kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No .sh scripts found.'"
+
+        echo "Starting ./runsynthetic.sh $pod_id inside $pod in detached mode..."
+        if ! kubectl exec -c $container $pod -- sh -c "setsid ./runsynthetic.sh '$pod_id' > /dev/null 2>&1 < /dev/null &"; then
           echo "Warning: Failed to start ./runsynthetic.sh in $pod"
         fi
       else
@@ -137,6 +148,9 @@ process_pods() {
     done
     echo "==================================================================="
   done
+
+  echo "✅ Results are saved under: $results_root"
+  echo "✅ Logs are saved under: $logs_root"
 }
 
 ###############################
@@ -157,5 +171,5 @@ fi
 
 process_pods
 
-echo "All operations completed successfully."
+echo "==================== All operations completed successfully. ===================="
 

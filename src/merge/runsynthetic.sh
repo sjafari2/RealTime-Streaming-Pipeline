@@ -1,46 +1,50 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
+# ------------------- CONFIG & EXPERIMENT ID -------------------
+CONFIG_FILE="/config/pipeline-configmap.yaml"
 source parseYaml.sh
-eval $(parse_yaml /config/pipeline-configmap.yaml)
+eval $(parse_yaml "$CONFIG_FILE")
 
-pod_index=${1:-0}
+# Generate experiment ID with date-time and random suffix for uniqueness
+EXPERIMENT_ID="exp_$(date +%Y%m%d_%H%M%S_%3N)"
+export EXPERIMENT_ID
 
-watch_dir="${CONSUMER_OUTPUT_DIR}"    #:-"/app/consumer-merge-data/consumer-result"}"
-processed_dir="${CONSUMER_OUTPUT_DIR}/processed/"
-merged_dir="${MERGE_OUTPUT_DIR}"     #:-"./merge-result/"}"
-metrics_dir="${MERGE_METRICS_DIR}"   #:-"./merge-result/"}"
-min_files="${MERGE_MIN_FILES:-5}"
-interval_sec="${MERGE_INTERVAL:-10}"
+echo "[INIT] Experiment ID: $EXPERIMENT_ID"
 
+# ------------------- PATHS -------------------
+watch_dir="${CONSUMER_OUTPUT_DIR:-/app/consumer-merge-data/consumer-result}"
+processed_dir="${watch_dir}/processed/"
+merged_dir="${MERGE_OUTPUT_DIR:-/app/merged-data/merge-result}"
+metrics_dir="${MERGE_METRICS_DIR:-/app/merged-data/merge-metrics}"
+
+mkdir -p "$processed_dir" "$merged_dir" "$metrics_dir"
+
+# ------------------- LOGGING -------------------
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
-log_path="./logs/merge/${CURRENT_DATE}/${CURRENT_TIME}"
+log_path="./logs/merge/${EXPERIMENT_ID}_${CURRENT_DATE}_${CURRENT_TIME}"
 mkdir -p "$log_path"
-mkdir -p "$merged_dir"
-mkdir -p "$metrics_dir"
-
 log_file="${log_path}/merge.log"
 
 echo "[INIT] Starting merge process..." | tee -a "$log_file"
-echo "[INFO] Watch dir: $watch_dir" | tee -a "$log_file"
-echo "[INFO] Processed dir: $processed_dir" | tee -a "$log_file"
-echo "[INFO] Merged dir: $merged_dir" | tee -a "$log_file"
-echo "[INFO] Minimum files: $min_files, Interval: $interval_sec" | tee -a "$log_file"
-echo "[INFO] Logging to $log_file" | tee -a "$log_file"
+echo "[INFO] Experiment ID: $EXPERIMENT_ID" | tee -a "$log_file"
+echo "[INFO] Watch Dir: $watch_dir" | tee -a "$log_file"
+echo "[INFO] Processed Dir: $processed_dir" | tee -a "$log_file"
+echo "[INFO] Merged Dir: $merged_dir" | tee -a "$log_file"
+echo "[INFO] Metrics Dir: $metrics_dir" | tee -a "$log_file"
 
-# Trap clean shutdown on Ctrl+C or SIGTERM
+# ------------------- SIGNAL CLEANUP -------------------
 trap "echo '[INFO] Caught interrupt signal. Stopping merger.' | tee -a \"$log_file\"; exit 0" INT TERM
 
-# Use exec to replace shell with Python process for proper signal handling,
-# and redirect stdout/stderr to log file.
+# ------------------- EXECUTION -------------------
 exec python3 confluent_merge.py \
     --watchDir "$watch_dir" \
     --processedDir "$processed_dir" \
     --mergedDir "$merged_dir" \
     --metricsDir "$metrics_dir" \
-    --minFiles "$min_files" \
-    --intervalSec "$interval_sec" # \
-    #2>&1 | tee -a "$log_file"
+    --minFiles "${MERGE_WAIT_THRESHOLD:-5}" \
+    --intervalSec "${MERGE_WAIT_TIME:-5}" \
+    2>&1 | tee -a "$log_file"
 

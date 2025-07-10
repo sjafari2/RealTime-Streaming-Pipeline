@@ -23,6 +23,9 @@ request_timeout_ms=${REQUEST_TIMEOUT_MS}
 delivery_timeout_ms=${DELIVERY_TIMEOUT_MS}
 queue_buffering_max_messages=${QUEUE_BUFFERING_MAX_MESSAGES}
 queue_buffering_max_kbytes=${QUEUE_BUFFERING_MAX_KBYTES}
+retries=${RETRIES}
+min_insync_replicas=${MIN_INSYNC_REPLICAS}
+target_rate=${TARGET_RATE}
 
 # Logging
 log_path="./logs/producer"
@@ -46,8 +49,11 @@ python3 confluent_kafka_producer.py \
     --batchSize "$batch_size" \
     --maxRequestSize "$max_request_size" \
     --acks "$acks" \
+    --retries "$retries" \
+    --minInSync "$min_insync_replicas" \
     --requestTimeoutMs "$request_timeout_ms" \
     --deliveryTimeoutMs "$delivery_timeout_ms" \
     --queueBufferingMaxMessages "$queue_buffering_max_messages" \
-    --queueBufferingMaxKbytes "$queue_buffering_max_kbytes" #\
-    #&> "$log_path/producer_${pod_name}.log"
+    --queueBufferingMaxKbytes "$queue_buffering_max_kbytes" \
+    --targetRate "$target_rate" \
+    &> "$log_path/producer_${pod_name}.log"

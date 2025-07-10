@@ -4,31 +4,39 @@ metadata:
   name: pipeline-configmap
   namespace: kafkastreamingdata
 data:
-  # Kafka Producer Settings
+  # Kafka Brokers/Topics Settings
   TOPIC_COUNT: "10"
-  TOPIC_TITLE: "kube"
+  TOPIC_TITLE: "base"
   NUM_PARTITIONS: "10"
+  BROKER_COUNT: "3"
   REPLICATION_FACTOR: "1"
+  MIN_INSYNC_REPLICAS: "1"
+
+  # Kafka Producer Settings
   PRODUCER_COUNT: "1"
   PRODUCER_POD_COUNT: "2"
   PRODUCER_INPUT_PATH: "producer-data"
-  DELAY_BETWEEN_MESSAGES: "0"       
+  DELAY_BETWEEN_MESSAGES: "0"
   LINGER_MS: "5"
   BATCH_SIZE: "8192"
   COMPRESSION_TYPE: "lz4"
   MAX_REQUEST_SIZE: "2097152"
   ACKS: "1"
+  RETRIES: "5"
   RANDOM_RANGE: "50000"
   REQUEST_TIMEOUT_MS: "30000"
   DELIVERY_TIMEOUT_MS: "60000"
   QUEUE_BUFFERING_MAX_MESSAGES: "100000"
   QUEUE_BUFFERING_MAX_KBYTES: "1048576"
+  CLIENT_ID: "pipeline-producer"
+  MESSAGE_SIZE_BYTES: "1024"
+  TARGET_RATE: "100"
 
   # Kafka Consumer Settings
   CONSUMER_GROUP_ID: "consumer-group"
   CONSUMER_COUNT: "1"
   CONSUMER_POD_COUNT: "2"
-  MAX_MESSAGES: "500"                 
+  MAX_MESSAGES: "500"
   ENABLE_AUTO_COMMIT: "true"
   AUTO_OFFSET_RESET: "earliest"
   POLL_TIMEOUT: "3000"
@@ -50,11 +58,10 @@ data:
   REQUEST_INPUT_PATH: "./request-data/simulator"
   REQUEST_OUTPUT_PATH: "./producer-data"
 
-  # Application Settings (Optional for post-merge processing)
+  # Application Settings
   APPLICATION_WAIT_TIME: "5"
   APPLICATION_COUNT: "1"
 
   # BSP/Monitoring
   BSP_MODE: "true"
   PROMETHEUS_METRICS: "true"
-

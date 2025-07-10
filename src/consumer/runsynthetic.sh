@@ -67,6 +67,6 @@ python3 confluent_consumer.py \
     --fetchMaxWaitMs "${fetch_max_wait_ms}" \
     --consumerOutputDir "${consumer_output_dir}" \
     --enableAutoCommit "${auto_commit}" \
-    --autoOffsetReset "${offset_reset}" #\
-    #&> "${log_path}/consumer_${pod_name}.log"
+    --autoOffsetReset "${offset_reset}" \
+    &> "${log_path}/consumer_${pod_name}.log"
 

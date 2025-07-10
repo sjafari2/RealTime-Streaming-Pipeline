@@ -54,7 +54,7 @@ class MyProducer:
             'batch.size': args.batchSize,
             'message.max.bytes': args.maxRequestSize,
             'acks': args.acks,
-            'retries': 10,
+            'retries': args.retries,
             'request.timeout.ms': args.requestTimeoutMs,
             'delivery.timeout.ms': args.deliveryTimeoutMs,
             'queue.buffering.max.messages': args.queueBufferingMaxMessages,
@@ -70,7 +70,12 @@ class MyProducer:
         threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
 
     def create_topics_if_missing(self, base_topic, num_topics, num_partitions, replication_factor):
-        topics = [NewTopic(f"{base_topic}_{i}", num_partitions, replication_factor) for i in range(num_topics)]
+        topics = [NewTopic
+                  (f"{base_topic}_{i}", 
+                  num_partitions, 
+                  replication_factor,
+                  config={"min.insync.replicas": str(args.minInSync)}
+                  ) for i in range(num_topics)]
         fs = self.admin.create_topics(topics)
         for topic, f in fs.items():
             try:
@@ -146,7 +151,12 @@ class MyProducer:
                 ]
                 self.send_message(topic, payload, headers)
                 idx += 1
-                time.sleep(delay)
+                if args.targetRate:
+                    time_per_msg = 1 / args.targetRate
+                    time.sleep(time_per_msg)
+                else:
+                    time.sleep(args.delay)
+
         except KeyboardInterrupt:
             print("[INFO] Flushing and stopping producer...")
             self.stop()
@@ -180,10 +190,13 @@ if __name__ == "__main__":
     parser.add_argument('--batchSize', type=int, required=True)
     parser.add_argument('--maxRequestSize', type=int, required=True)
     parser.add_argument('--acks', required=True)
+    parser.add_argument('--retries', required=True)
+    parser.add_argument('--minInSync', required=True)
     parser.add_argument('--requestTimeoutMs', type=int, required=True)
     parser.add_argument('--deliveryTimeoutMs', type=int, required=True)
     parser.add_argument('--queueBufferingMaxMessages', type=int, required=True)
     parser.add_argument('--queueBufferingMaxKbytes', type=int, required=True)
+    parser.add_argument('--targetRate', type=int, help='Target message send rate (msg/sec)')
     args = parser.parse_args()
 
     producer_instance = MyProducer(args)
