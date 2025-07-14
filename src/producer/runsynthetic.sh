@@ -24,8 +24,13 @@ delivery_timeout_ms=${DELIVERY_TIMEOUT_MS}
 queue_buffering_max_messages=${QUEUE_BUFFERING_MAX_MESSAGES}
 queue_buffering_max_kbytes=${QUEUE_BUFFERING_MAX_KBYTES}
 retries=${RETRIES}
+retry_backoff_ms=${RETRY_BACKOFF_MS}
 min_insync_replicas=${MIN_INSYNC_REPLICAS}
 target_rate=${TARGET_RATE}
+connections_max_idle_ms=${CONNECTION_MAX_IDLE_MS}
+reconnect_backoff_max_ms=${RECONNECT_BACKOFF_MAX_MS}
+reconnect_backoff_ms=${RECONNECT_BACKOFF_MS}
+
 
 # Logging
 log_path="./logs/producer"
@@ -33,12 +38,12 @@ mkdir -p "$log_path"
 pod_name=$(hostname)
 
 # Kill old producer
-pkill -f confluent_kafka_producer.py || true
+#pkill -f confluent_kafka_producer.py || true
 #pkill -f runsynthetic.sh || true
 
 # Launch single producer per pod
 python3 confluent_kafka_producer.py \
-    --topicTitle "$topic_title" \
+    --topicTitle "${topic_title}" \
     --numTopics "$num_topics" \
     --delay "$delay" \
     --numPartitions "$num_partitions" \
@@ -50,10 +55,15 @@ python3 confluent_kafka_producer.py \
     --maxRequestSize "$max_request_size" \
     --acks "$acks" \
     --retries "$retries" \
+    --retryBackoffMs "$retry_backoff_ms" \
+    --reconnectBackoffMs "$reconnect_backoff_ms" \
+    --reconnectBackoffMaxMs "$reconnect_backoff_max_ms" \
     --minInSync "$min_insync_replicas" \
     --requestTimeoutMs "$request_timeout_ms" \
     --deliveryTimeoutMs "$delivery_timeout_ms" \
     --queueBufferingMaxMessages "$queue_buffering_max_messages" \
     --queueBufferingMaxKbytes "$queue_buffering_max_kbytes" \
     --targetRate "$target_rate" \
-    2>&1 | tee "$log_path/producer_${pod_name}.log" &
+    --connectionsMaxIdleMs "$connections_max_idle_ms" \
+    --socketKeepaliveEnable \
+     2>&1 | tee "$log_path/producer_${pod_name}.log" &

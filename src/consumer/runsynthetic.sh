@@ -17,10 +17,13 @@ topic_title="${TOPIC_TITLE}" #:?TOPIC_TITLE not defined in config}"
 group_id="${CONSUMER_GROUP_ID}"
 msg_max="${MAX_MESSAGES}"
 poll_timeout="${POLL_TIMEOUT}"
+max_pool_records="${MAX_POLL_RECORDS}"
+session_timeout_ms="${SESSION_TIMEOUT_MS}"
 fetch_max_bytes="${FETCH_MAX_BYTES}"
 fetch_min_bytes="${FETCH_MIN_BYTES}"
 fetch_max_wait_ms="${FETCH_MAX_WAIT_MS}"
 auto_commit="${ENABLE_AUTO_COMMIT}"
+auto_commit_interval_ms="${AUTO_COMMIT_INTERVAL_MS}"
 offset_reset="${AUTO_OFFSET_RESET}"
 consumer_output_dir="${CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
 mkdir -p "${consumer_output_dir}"
@@ -53,20 +56,23 @@ mkdir -p "${log_path}"
 pod_name=$(hostname)
 
 # === Kill old consumers safely ===
-pkill -f confluent_consumer.py || true
+#pkill -f confluent_consumer.py || true
 
 # === Launch consumer ===
 python3 confluent_consumer.py \
-    --topics "${MATCHED_TOPICS}" \
-    --uris "${server_uri}" \
-    --groupId "${group_id}" \
-    --maxMsg "${msg_max}" \
-    --pollTimeout "${poll_timeout}" \
-    --fetchMaxBytes "${fetch_max_bytes}" \
-    --fetchMinBytes "${fetch_min_bytes}" \
-    --fetchMaxWaitMs "${fetch_max_wait_ms}" \
-    --consumerOutputDir "${consumer_output_dir}" \
-    --enableAutoCommit "${auto_commit}" \
-    --autoOffsetReset "${offset_reset}" \
+    --topics ${MATCHED_TOPICS} \
+    --uris ${server_uri} \
+    --groupId ${group_id} \
+    --maxMsg ${msg_max} \
+    --maxPoolRecords ${max_pool_records} \
+    --pollTimeout ${poll_timeout} \
+    --sessionTimeoutMs ${session_timeout_ms} \
+    --fetchMaxBytes ${fetch_max_bytes} \
+    --fetchMinBytes ${fetch_min_bytes} \
+    --fetchMaxWaitMs ${fetch_max_wait_ms} \
+    --consumerOutputDir ${consumer_output_dir} \
+    --enableAutoCommit ${auto_commit} \
+    --autoCommitIntervalMs ${auto_commit_interval_ms} \
+    --autoOffsetReset ${offset_reset} \
     2>&1 | tee "${log_path}/consumer_${pod_name}.log" &
 

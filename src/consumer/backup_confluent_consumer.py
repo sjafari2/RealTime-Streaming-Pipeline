@@ -10,25 +10,21 @@ import helper
 import psutil
 from flask import Flask
 from prometheus_flask_exporter import PrometheusMetrics
-from prometheus_client import Counter, Gauge, Histogram
+from prometheus_client import Counter, Gauge
 import socket
 import threading
 import signal
 import sys
-import queue
 
 app = Flask(__name__)
 metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
 
 msg_consumed_counter = Counter('consumer_messages_consumed_total', 'Total messages consumed')
 msg_rate_gauge = Gauge('consumer_message_rate', 'Message consumption rate (msg/sec)')
-mb_rate_gauge = Gauge('consumer_mb_rate', 'Message throughput rate (MB/sec)')
+mb_rate_gauge = Gauge('consumer_mb_rate', 'Real throughput (MB/sec)')
 cpu_gauge = Gauge('consumer_cpu_percent', 'CPU percent usage')
 mem_gauge = Gauge('consumer_memory_percent', 'Memory percent usage')
 uptime_gauge = Gauge('consumer_uptime_seconds', 'Consumer uptime in seconds')
-consumer_latency_histogram = Histogram('consumer_latency_seconds', 'End-to-end latency (producer to consumer) in seconds', buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2])
-out_of_order_rate_gauge = Gauge('consumer_out_of_order_rate', 'Fraction of out-of-order messages')
-duplicate_rate_gauge = Gauge('consumer_duplicate_rate', 'Fraction of duplicate messages')
 
 class MetricConsumer:
     def __init__(self, topics, servers, group_id, max_messages, poll_timeout, fetch_max_bytes,
@@ -43,9 +39,6 @@ class MetricConsumer:
         self.msg_consumed = 0
         self.bytes_consumed = 0
         self.last_log_time = time.time()
-        self.save_queue = queue.Queue()
-        self.save_thread = threading.Thread(target=self.save_worker, daemon=True)
-        self.save_thread.start()
 
         config = helper.Tools().read_config('consumer.properties')
         jaas_config = config.get('sasl.jaas.config', '')
@@ -76,16 +69,15 @@ class MetricConsumer:
                 now = time.time()
 
                 if now - last_metrics_update >= 5:
-                    elapsed = now - self.start_time
                     cpu_gauge.set(psutil.cpu_percent(interval=1))
                     mem_gauge.set(psutil.virtual_memory().percent)
-                    uptime_gauge.set(elapsed)
-
+                    uptime_gauge.set(now - self.start_time)
+                    elapsed = now - self.start_time
                     msg_rate = self.msg_consumed / elapsed if elapsed > 0 else 0
                     mb_rate = (self.bytes_consumed / (1024 * 1024)) / elapsed if elapsed > 0 else 0
                     msg_rate_gauge.set(msg_rate)
                     mb_rate_gauge.set(mb_rate)
-
+                    print(f"[METRIC] Elapsed: {elapsed:.2f}s | Consumed: {self.msg_consumed} msgs | Rate: {msg_rate:.2f} msg/s | Real Throughput: {mb_rate:.4f} MB/s")
                     last_metrics_update = now
 
                 if now - self.last_log_time > 10:
@@ -103,83 +95,48 @@ class MetricConsumer:
                     headers = dict(msg.headers() or [])
                     index = headers.get('index')
                     producer_ts = headers.get('producer_timestamp')
-                    size_bytes = headers.get('size_bytes')
                     if index is None or producer_ts is None:
                         continue
                     index = index.decode()
-                    producer_ts = float(producer_ts.decode())
+                    producer_ts = producer_ts.decode()
 
-                    receive_ts = time.time()
-                    latency = receive_ts - producer_ts
-                    consumer_latency_histogram.observe(latency)
+                    receive_ts = str(time.time())
 
                     self.metrics_list.append({
                         "index": index,
                         "producer_timestamp": producer_ts,
-                        "consumer_receive_timestamp": receive_ts,
-                        "end_to_end_latency_seconds": latency,
-                        "size_bytes": size_bytes
+                        "consumer_receive_timestamp": receive_ts
                     })
 
-                    self.bytes_consumed += len(msg.value()) if msg.value() else 0
                     self.msg_consumed += 1
+                    self.bytes_consumed += len(msg.value()) if msg.value() else 0
                     msg_consumed_counter.inc()
-                    start_commit = time.time()
-                    self.consumer.commit(message=msg, asynchronous=True)
-                    commit_duration = time.time() - start_commit
 
-                    if commit_duration > 0.5:
-                        print(f"[WARN] Commit took {commit_duration:.3f} seconds!")
+                    self.consumer.commit(message=msg, asynchronous=False)
 
                     if len(self.metrics_list) >= self.max_messages:
-                        self.save_queue.put(self.metrics_list.copy())
+                        self.save_batch()
                         self.metrics_list.clear()
 
             except Exception as e:
                 print(f"[ERROR] Consume loop error: {e}")
                 time.sleep(1)
 
-    def save_worker(self):
-        while True:
-            try:
-                batch = self.save_queue.get()
-                self._save_batch_to_disk(batch)
-            except Exception as e:
-                print(f"[ERROR] Save worker failed: {e}")
-
-    def _save_batch_to_disk(self, batch):
-        df = pd.DataFrame(batch)
+    def save_batch(self):
+        df = pd.DataFrame(self.metrics_list)
         if df.empty:
             return
+
         now = datetime.now()
         timestamp = now.strftime("%Y%m%d_%H%M%S_%f")
         filename = f"batch_{self.pod_name}_{timestamp}.csv"
         tmp_path = os.path.join(self.consumer_output_dir, f".tmp_{filename}")
         final_path = os.path.join(self.consumer_output_dir, filename)
-        elapsed = time.time() - self.start_time
-
-        msg_rate = self.msg_consumed / elapsed if elapsed > 0 else 0
-        mb_rate = (self.bytes_consumed / (1024 * 1024)) / elapsed if elapsed > 0 else 0
-        df["msg_rate_per_sec"] = msg_rate
-        df["mb_rate_per_sec"] = mb_rate
-
-        df['index'] = pd.to_numeric(df['index'], errors='coerce')
-        idx_array = df['index'].dropna().astype(int).to_numpy()
-        out_of_order_flags = np.zeros(len(idx_array), dtype=bool)
-        out_of_order_flags[1:] = idx_array[1:] < idx_array[:-1]
-        df['is_out_of_order'] = False
-        df.loc[df['index'].dropna().index, 'is_out_of_order'] = out_of_order_flags
-        df['is_duplicate'] = df['index'].duplicated()
-
-        out_of_order_rate = df['is_out_of_order'].mean()
-        duplicate_rate = df['is_duplicate'].mean()
-        out_of_order_rate_gauge.set(out_of_order_rate)
-        duplicate_rate_gauge.set(duplicate_rate)
 
         try:
             df.to_csv(tmp_path, index=False)
             os.rename(tmp_path, final_path)
-            print(f"[INFO] Async saved: {final_path} with {len(df)} records")
+            print(f"[INFO] Saved batch: {final_path} with {len(df)} records")
         except Exception as e:
             print(f"[ERROR] Failed to save batch: {e}")
 
@@ -195,35 +152,33 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, graceful_shutdown)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--topics', type=str, required=True)
-    parser.add_argument('--uris', type=str, required=True)
-    parser.add_argument('--groupId', type=str, default="consumer-group")
-    parser.add_argument('--maxMsg', type=int, default=100)
-    parser.add_argument('--maxPoolRecords', type=int, default=500)
-    parser.add_argument('--pollTimeout', type=int, default=300)
-    parser.add_argument('--sessionTimeoutMs', type=int, default=10000)
-    parser.add_argument('--fetchMaxBytes', type=int, default=10485760)
-    parser.add_argument('--fetchMinBytes', type=int, default=1024)
-    parser.add_argument('--fetchMaxWaitMs', type=int, default=500)
-    parser.add_argument('--consumerOutputDir', type=str, required=True)
-    parser.add_argument('--enableAutoCommit', type=str, default="false")
-    parser.add_argument('--autoCommitIntervalMs', type=int, default=10000)
-    parser.add_argument('--autoOffsetReset', type=str, default="earliest")
+    parser.add_argument('--topics', nargs='+', required=True)
+    parser.add_argument('--servers', nargs='+', required=True)
+    parser.add_argument('--group_id', required=True)
+    parser.add_argument('--max_messages', type=int, default=500)
+    parser.add_argument('--poll_timeout', type=int, default=3000)
+    parser.add_argument('--fetch_max_bytes', type=int, default=10485760)
+    parser.add_argument('--fetch_min_bytes', type=int, default=1024)
+    parser.add_argument('--fetch_max_wait_ms', type=int, default=100)
+    parser.add_argument('--consumer_output_dir', required=True)
+    parser.add_argument('--enable_auto_commit', type=bool, default=True)
+    parser.add_argument('--auto_offset_reset', default='earliest')
     args = parser.parse_args()
 
-    consumer_instance = MetricConsumer(
-        topics=args.topics.split(','),
-        servers=[s.strip() for s in args.uris.split(',') if s.strip()],
-        group_id=args.groupId,
-        max_messages=args.maxMsg,
-        poll_timeout=args.pollTimeout,
-        fetch_max_bytes=args.fetchMaxBytes,
-        fetch_min_bytes=args.fetchMinBytes,
-        fetch_max_wait_ms=args.fetchMaxWaitMs,
-        consumer_output_dir=args.consumerOutputDir,
-        enable_auto_commit=args.enableAutoCommit.lower() == "true",
-        auto_offset_reset=args.autoOffsetReset
-    )
-
     threading.Thread(target=start_metrics_server, daemon=True).start()
-    consumer_instance.consume()
+
+    consumer = MetricConsumer(
+        topics=args.topics,
+        servers=args.servers,
+        group_id=args.group_id,
+        max_messages=args.max_messages,
+        poll_timeout=args.poll_timeout,
+        fetch_max_bytes=args.fetch_max_bytes,
+        fetch_min_bytes=args.fetch_min_bytes,
+        fetch_max_wait_ms=args.fetch_max_wait_ms,
+        consumer_output_dir=args.consumer_output_dir,
+        enable_auto_commit=args.enable_auto_commit,
+        auto_offset_reset=args.auto_offset_reset
+    )
+    consumer.consume()
+

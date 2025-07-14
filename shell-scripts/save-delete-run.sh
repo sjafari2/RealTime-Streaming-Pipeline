@@ -44,11 +44,11 @@ save_codes() {
     echo "Completed copying for $key."
   done
 
-  echo "Copying /config/pipeline-configmap.yaml explicitly from merge pod..."
-  if kubectl cp merge-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml -c merge-container 2>/dev/null; then
+  echo "Copying /config/pipeline-configmap.yaml explicitly from proudcer pod..."
+  if kubectl cp producer-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml -c producer-container 2>/dev/null; then
     echo "✅ Saved pipeline-configmap.yaml to ./src/pipeline-configmap.yaml"
   else
-    echo "⚠️ Warning: Failed to copy /config/pipeline-configmap.yaml from merge pod. Check if it is mounted."
+    echo "⚠️ Warning: Failed to copy /config/pipeline-configmap.yaml from proudcer pod. Check if it is mounted."
   fi
   echo "==================================================================="
 }
@@ -80,7 +80,11 @@ process_pods() {
 
   read -n 1 -p "Run ./runsynthetic.sh inside all pods now? (y/n): " run_scripts
   echo
-  [[ "$run_scripts" != "y" ]] && run_scripts="n"
+  if [[ "$run_scripts" != "y" ]]; then
+  	read -n 1 -p "Do you want to run only in producer and consumer pods? (y/n): " run_partial
+  	echo
+  	[[ "$run_partial" == "y" ]] && run_scripts="partial" || run_scripts="n"
+  fi
 
   for i in "${!pod_labels[@]}"; do
     label=${pod_labels[$i]}
@@ -142,7 +146,7 @@ process_pods() {
         echo "Skipping log deletion for $pod_type."
       fi
 
-      if [[ "$run_scripts" == "y" ]]; then
+        if [[ "$run_scripts" == "y" || ( "$run_scripts" == "partial" && "$pod_type" != "merge" ) ]]; then
         echo "Force-killing any existing Python and shell script processes inside $pod before starting ./runsynthetic.sh ..."
 
         kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep python | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No python scripts found.'"

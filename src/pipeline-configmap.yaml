@@ -1,3 +1,4 @@
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,7 +9,7 @@ data:
   #  Kafka Brokers / Topics 
   # =============================
   TOPIC_COUNT: "10"
-  TOPIC_TITLE: "base_exp"
+  TOPIC_TITLE: "kafka_exp"
   NUM_PARTITIONS: "10"
   BROKER_COUNT: "3"
   REPLICATION_FACTOR: "1"
@@ -21,12 +22,16 @@ data:
   PRODUCER_POD_COUNT: "2"
   PRODUCER_INPUT_PATH: "producer-data"
   DELAY_BETWEEN_MESSAGES: "0"
-  LINGER_MS: "0"
-  BATCH_SIZE: "32768"
+  LINGER_MS: "5"
+  BATCH_SIZE: "131072"
   COMPRESSION_TYPE: "lz4"
-  MAX_REQUEST_SIZE: "2097152"
+  MAX_REQUEST_SIZE: "1048576"
   ACKS: "1"
   RETRIES: "5"
+  RETRY_BACKOFF_MS: "100"
+  CONNECTION_MAX_IDLE_MS: "30000"
+  RECONNECT_BACKOFF_MS: "100"
+  RECONNECT_BACKOFF_MAX_MS: "1000"
   RANDOM_RANGE: "50000"
   REQUEST_TIMEOUT_MS: "30000"
   DELIVERY_TIMEOUT_MS: "60000"
@@ -34,21 +39,25 @@ data:
   QUEUE_BUFFERING_MAX_KBYTES: "1048576"
   CLIENT_ID: "pipeline-producer"
   MESSAGE_SIZE_BYTES: "1024"
-  TARGET_RATE: "1000"
+  TARGET_RATE: "400"
 
   # =============================
   #  Kafka Consumer 
   # =============================
+  
   CONSUMER_GROUP_ID: "consumer-group"
   CONSUMER_COUNT: "1"
   CONSUMER_POD_COUNT: "2"
   MAX_MESSAGES: "500"
-  ENABLE_AUTO_COMMIT: "true"
+  ENABLE_AUTO_COMMIT: "false"
   AUTO_OFFSET_RESET: "earliest"
-  POLL_TIMEOUT: "3000"
-  FETCH_MAX_BYTES: "10485760"
+  AUTO_COMMIT_INTERVAL_MS: "10000"
+  POLL_TIMEOUT: "1000"
+  FETCH_MAX_BYTES: "20971520"
   FETCH_MIN_BYTES: "1024"
-  FETCH_MAX_WAIT_MS: "100"
+  FETCH_MAX_WAIT_MS: "20"
+  MAX_POLL_RECORDS: "500"
+  SESSION_TIMEOUT_MS: "10000"
   CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
 
   # =============================
@@ -59,6 +68,8 @@ data:
   MERGE_WAIT_THRESHOLD: "5"
   MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
   MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
+  BSP_MODE: "true"
+  PROMETHEUS_METRICS: "true"
 
   # =============================
   #  Request Simulator 
@@ -79,5 +90,4 @@ data:
   # =============================
   BSP_MODE: "true"
   PROMETHEUS_METRICS: "true"
-
 
