@@ -1,0 +1,124 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"batch/v1","kind":"Job","metadata":{"annotations":{},"name":"runsynthetic-job","namespace":"kafkastreamingdata"},"spec":{"backoffLimit":2,"template":{"spec":{"containers":[{"args":["echo \"[INFO] Starting runsynthetic.sh inside producer and consumer pods...\"\n\nTIMESTAMP=$(date +\"%Y%m%d_%H%M%S\")\nmkdir -p /results/$TIMESTAMP/producer /results/$TIMESTAMP/consumer\n\nfor label in producer-sts consumer-sts; do\n  pods=$(kubectl get pods -l app=$label -o jsonpath='{.items[*].metadata.name}')\n  i=0\n  for pod in $pods; do\n    echo \"[INFO] Executing in $pod (index $i)...\"\n\n    kubectl exec $pod -c ${label%-sts}-container -- sh -c \"ps -eo pid,args | grep python | grep '\\.py' | grep -v grep | awk '{print \\$1}' | xargs -r kill -9 || true\"\n    kubectl exec $pod -c ${label%-sts}-container -- sh -c \"ps -eo pid,args | grep '\\.sh' | grep -v grep | awk '{print \\$1}' | xargs -r kill -9 || true\"\n\n    log_path=\"/app/${label%-sts}-merge-data/logs\"\n    kubectl exec $pod -c ${label%-sts}-container -- sh -c \"rm -rf ${log_path}/* || true\"\n\n    echo \"[INFO] Running ./runsynthetic.sh $i\"\n    kubectl exec $pod -c ${label%-sts}-container -- sh -c \"chmod +x ./runsynthetic.sh \u0026\u0026 ./runsynthetic.sh $i\" || echo \"[WARN] Failed to run in $pod\"\n\n    results_path=\"/app/${label%-sts}-merge-data/consumer-result\"\n    local_path=\"/results/$TIMESTAMP/${label%-sts}/$pod-result\"\n    mkdir -p \"$local_path\"\n    kubectl cp \"$pod:$results_path\" \"$local_path\" -c ${label%-sts}-container || echo \"[WARN] Failed to copy results from $pod\"\n\n    logs_path=\"/app/${label%-sts}-merge-data/logs\"\n    local_log_dir=\"/results/$TIMESTAMP/${label%-sts}/$pod-logs\"\n    mkdir -p \"$local_log_dir\"\n    kubectl cp \"$pod:$logs_path\" \"$local_log_dir\" -c ${label%-sts}-container || echo \"[WARN] Failed to copy logs from $pod\"\n\n    i=$((i+1))\n  done\ndone\n\necho \"[INFO] ✅ All scripts executed and results saved to /results/$TIMESTAMP\"\n"],"command":["/bin/bash","-c"],"image":"bitnami/kubectl:latest","name":"runner","resources":{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":"512m","memory":"512Mi"}},"volumeMounts":[{"mountPath":"/results","name":"results-volume"}]}],"restartPolicy":"Never","serviceAccountName":"pipeline-admin","volumes":[{"emptyDir":{},"name":"results-volume"}]}}}}
+  creationTimestamp: "2025-07-15T23:03:26Z"
+  generation: 1
+  labels:
+    batch.kubernetes.io/controller-uid: 98898451-1cf6-45a3-9204-6f2739b137fe
+    batch.kubernetes.io/job-name: runsynthetic-job
+    controller-uid: 98898451-1cf6-45a3-9204-6f2739b137fe
+    job-name: runsynthetic-job
+  name: runsynthetic-job
+  namespace: kafkastreamingdata
+  resourceVersion: "10792056345"
+  uid: 98898451-1cf6-45a3-9204-6f2739b137fe
+spec:
+  backoffLimit: 2
+  completionMode: NonIndexed
+  completions: 1
+  manualSelector: false
+  parallelism: 1
+  podReplacementPolicy: TerminatingOrFailed
+  selector:
+    matchLabels:
+      batch.kubernetes.io/controller-uid: 98898451-1cf6-45a3-9204-6f2739b137fe
+  suspend: false
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        batch.kubernetes.io/controller-uid: 98898451-1cf6-45a3-9204-6f2739b137fe
+        batch.kubernetes.io/job-name: runsynthetic-job
+        controller-uid: 98898451-1cf6-45a3-9204-6f2739b137fe
+        job-name: runsynthetic-job
+    spec:
+      containers:
+      - args:
+        - |
+          echo "[INFO] Starting runsynthetic.sh inside producer and consumer pods..."
+
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+          mkdir -p /results/$TIMESTAMP/producer /results/$TIMESTAMP/consumer
+
+          for label in producer-sts consumer-sts; do
+            pods=$(kubectl get pods -l app=$label -o jsonpath='{.items[*].metadata.name}')
+            i=0
+            for pod in $pods; do
+              echo "[INFO] Executing in $pod (index $i)..."
+
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "ps -eo pid,args | grep python | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+
+              log_path="/app/${label%-sts}-merge-data/logs"
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "rm -rf ${log_path}/* || true"
+
+              echo "[INFO] Running ./runsynthetic.sh $i"
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "chmod +x ./runsynthetic.sh && ./runsynthetic.sh $i" || echo "[WARN] Failed to run in $pod"
+
+              results_path="/app/${label%-sts}-merge-data/consumer-result"
+              local_path="/results/$TIMESTAMP/${label%-sts}/$pod-result"
+              mkdir -p "$local_path"
+              kubectl cp "$pod:$results_path" "$local_path" -c ${label%-sts}-container || echo "[WARN] Failed to copy results from $pod"
+
+              logs_path="/app/${label%-sts}-merge-data/logs"
+              local_log_dir="/results/$TIMESTAMP/${label%-sts}/$pod-logs"
+              mkdir -p "$local_log_dir"
+              kubectl cp "$pod:$logs_path" "$local_log_dir" -c ${label%-sts}-container || echo "[WARN] Failed to copy logs from $pod"
+
+              i=$((i+1))
+            done
+          done
+
+          echo "[INFO] ✅ All scripts executed and results saved to /results/$TIMESTAMP"
+        command:
+        - /bin/bash
+        - -c
+        image: bitnami/kubectl:latest
+        imagePullPolicy: Always
+        name: runner
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 512m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /results
+          name: results-volume
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: pipeline-admin
+      serviceAccountName: pipeline-admin
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: results-volume
+  ttlSecondsAfterFinished: 86400
+status:
+  completionTime: "2025-07-15T23:03:44Z"
+  conditions:
+  - lastProbeTime: "2025-07-15T23:03:44Z"
+    lastTransitionTime: "2025-07-15T23:03:44Z"
+    message: Reached expected number of succeeded pods
+    reason: CompletionsReached
+    status: "True"
+    type: SuccessCriteriaMet
+  - lastProbeTime: "2025-07-15T23:03:45Z"
+    lastTransitionTime: "2025-07-15T23:03:45Z"
+    message: Reached expected number of succeeded pods
+    reason: CompletionsReached
+    status: "True"
+    type: Complete
+  ready: 0
+  startTime: "2025-07-15T23:03:26Z"
+  succeeded: 1
+  terminating: 0
+  uncountedTerminatedPods: {}

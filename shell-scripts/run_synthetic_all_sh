@@ -28,7 +28,7 @@ run_for_pod() {
 producer_pods=$(kubectl get pods -l app=producer-sts -o jsonpath='{.items[*].metadata.name}')
 for pod in $producer_pods; do
     log_dir="results-all-pods/producer/$pod"
-    run_for_pod "$pod" "producer-container" "/app/request-producer-data" "$log_dir" &
+    run_for_pod "$pod" "producer-container" "/app/producer-data" "$log_dir" &
 done
 
 # Consumer
@@ -36,19 +36,19 @@ consumer_pods=$(kubectl get pods -l app=consumer-application-sts -o jsonpath='{.
 for pod in $consumer_pods; do
     # Consumer container
     log_dir="results-all-pods/consumer/$pod"
-    run_for_pod "$pod" "consumer-container" "/app/consumer-app-data" "$log_dir" &
+    run_for_pod "$pod" "consumer-container" "/app/consumer-merge-data" "$log_dir" &
 
     # Application container
-    app_log_dir="results-all-pods/application/$pod"
-    run_for_pod "$pod" "application-container" "/app/app-merge-data" "$app_log_dir" &
+    #app_log_dir="results-all-pods/application/$pod"
+    #run_for_pod "$pod" "application-container" "/app/app-merge-data" "$app_log_dir" &
 done
 
 # Merge
-merge_pods=$(kubectl get pods -l app=merge-sts -o jsonpath='{.items[*].metadata.name}')
-for pod in $merge_pods; do
-    log_dir="results-all-pods/merge/$pod"
-    run_for_pod "$pod" "merge-container" "/app/merged-data" "$log_dir" &
-done
+#merge_pods=$(kubectl get pods -l app=merge-sts -o jsonpath='{.items[*].metadata.name}')
+#for pod in $merge_pods; do
+#    log_dir="results-all-pods/merge/$pod"
+#    run_for_pod "$pod" "merge-container" "/app/merged-data" "$log_dir" &
+#done
 
 # Wait for all background jobs to finish
 wait

@@ -36,6 +36,7 @@ reconnect_backoff_ms=${RECONNECT_BACKOFF_MS}
 log_path="./logs/producer"
 mkdir -p "$log_path"
 pod_name=$(hostname)
+echo $pod_name
 
 # Kill old producer
 #pkill -f confluent_kafka_producer.py || true

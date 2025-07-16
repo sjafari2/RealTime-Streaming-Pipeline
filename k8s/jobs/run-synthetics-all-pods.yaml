@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: runsynthetic-job
+  namespace: kafkastreamingdata
+spec:
+  template:
+    spec:
+      containers:
+      - name: runner
+        image: bitnami/kubectl:latest
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          echo "[INFO] Starting runsynthetic.sh inside producer and consumer pods..."
+
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+          mkdir -p /results/$TIMESTAMP/producer /results/$TIMESTAMP/consumer
+
+          for label in producer-sts consumer-sts; do
+            pods=$(kubectl get pods -l app=$label -o jsonpath='{.items[*].metadata.name}')
+            i=0
+            for pod in $pods; do
+              echo "[INFO] Executing in $pod (index $i)..."
+
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "ps -eo pid,args | grep python | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+
+              log_path="/app/${label%-sts}-merge-data/logs"
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "rm -rf ${log_path}/* || true"
+
+              echo "[INFO] Running ./runsynthetic.sh $i"
+              kubectl exec $pod -c ${label%-sts}-container -- sh -c "chmod +x ./runsynthetic.sh && ./runsynthetic.sh $i" || echo "[WARN] Failed to run in $pod"
+
+              results_path="/app/${label%-sts}-merge-data/consumer-result"
+              local_path="/results/$TIMESTAMP/${label%-sts}/$pod-result"
+              mkdir -p "$local_path"
+              kubectl cp "$pod:$results_path" "$local_path" -c ${label%-sts}-container || echo "[WARN] Failed to copy results from $pod"
+
+              logs_path="/app/${label%-sts}-merge-data/logs"
+              local_log_dir="/results/$TIMESTAMP/${label%-sts}/$pod-logs"
+              mkdir -p "$local_log_dir"
+              kubectl cp "$pod:$logs_path" "$local_log_dir" -c ${label%-sts}-container || echo "[WARN] Failed to copy logs from $pod"
+
+              i=$((i+1))
+            done
+          done
+
+          echo "[INFO] ✅ All scripts executed and results saved to /results/$TIMESTAMP"
+        volumeMounts:
+        - name: results-volume
+          mountPath: /results
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: 1
+          requests:
+            memory: 512Mi
+            cpu: 512m
+      restartPolicy: Never
+      serviceAccountName: pipeline-admin  # REQUIRED if accessing other pods
+      volumes:
+      - name: results-volume
+        emptyDir: {}
+  backoffLimit: 2
+
