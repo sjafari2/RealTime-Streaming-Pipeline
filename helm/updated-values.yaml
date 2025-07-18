@@ -1,5 +1,5 @@
 global:
-  storageClass: "rook-cephfs-east"
+  storageClass: "rook-ceph-block-central"
 
 sasl:
   enabledMechanisms: PLAIN
@@ -49,8 +49,18 @@ controller:
     user: controlleruser
     password: "controller123"
   replicaCount: 3
-  nodeSelector:
-    kubernetes.io/hostname: gpu-04.nrp.mghpcc.org
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - kafka
+          topologyKey: "kubernetes.io/hostname"
+
   initContainers:
     - name: volume-permission-fix
       image: busybox
@@ -64,10 +74,10 @@ controller:
 
   persistence:
     enabled: true
-    storageClass: "rook-cephfs-east"
+    storageClass: "rook-ceph-block-central"
     accessModes:
       - ReadWriteOnce
-    size: 300Gi   
+    size: 300Gi
 
   extraEnvVars:
     - name: HOSTNAME
@@ -97,13 +107,19 @@ controller:
     listener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
     listener.name.external.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
 
-    # New cleanup and stability settings:
-    log.retention.ms=60000
+    # Performance tuning
+    log.retention.ms=180000
     log.retention.check.interval.ms=10000
-    log.segment.bytes=1048576
+    log.segment.bytes=134217728
     message.max.bytes=1048576
-    # Optional size-based retention:
-    #log.retention.bytes=10737418240
+    num.network.threads=8
+    num.io.threads=16
+    log.flush.interval.messages=1000000
+    log.flush.interval.ms=10000
+    queued.max.requests=5000
+    socket.request.max.bytes=104857600
+    replica.fetch.max.bytes=10485760
+    replica.fetch.response.max.bytes=10485760
 
   resources:
     limits:

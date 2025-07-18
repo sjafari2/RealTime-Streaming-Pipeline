@@ -2,30 +2,31 @@
 
 set -euo pipefail
 
-# === Load configuration ===
-source parseYaml.sh
-eval $(parse_yaml /config/pipeline-configmap.yaml)
-: "${TOPIC_TITLE:?TOPIC_TITLE not set in config}"
 trap "exit" INT TERM
 trap "kill 0" EXIT
+
+: "$(yq e '.TOPIC_TITLE' /config/pipeline-configmap.yaml)"  # check existence
 
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 
 # === Config values ===
-#topic_title="${data_TOPIC_TITLE}"
-topic_title="${TOPIC_TITLE}" #:?TOPIC_TITLE not defined in config}"
-group_id="${CONSUMER_GROUP_ID}"
-msg_max="${MAX_MESSAGES}"
-poll_timeout="${POLL_TIMEOUT}"
-max_pool_records="${MAX_POLL_RECORDS}"
-session_timeout_ms="${SESSION_TIMEOUT_MS}"
-fetch_max_bytes="${FETCH_MAX_BYTES}"
-fetch_min_bytes="${FETCH_MIN_BYTES}"
-fetch_max_wait_ms="${FETCH_MAX_WAIT_MS}"
-auto_commit="${ENABLE_AUTO_COMMIT}"
-auto_commit_interval_ms="${AUTO_COMMIT_INTERVAL_MS}"
-offset_reset="${AUTO_OFFSET_RESET}"
-consumer_output_dir="${CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
+topic_title=$(yq e '.TOPIC_TITLE' /config/pipeline-configmap.yaml)
+group_id=$(yq e '.CONSUMER_GROUP_ID' /config/pipeline-configmap.yaml)
+msg_max=$(yq e '.MAX_MESSAGES' /config/pipeline-configmap.yaml)
+poll_timeout=$(yq e '.POLL_TIMEOUT' /config/pipeline-configmap.yaml)
+max_pool_records=$(yq e '.MAX_POLL_RECORDS' /config/pipeline-configmap.yaml)
+session_timeout_ms=$(yq e '.SESSION_TIMEOUT_MS' /config/pipeline-configmap.yaml)
+socket_timeout_ms=$(yq e '.SOCKET_TIMEOUT_MS' /config/pipeline-configmap.yaml)
+fetch_max_bytes=$(yq e '.FETCH_MAX_BYTES' /config/pipeline-configmap.yaml)
+fetch_min_bytes=$(yq e '.FETCH_MIN_BYTES' /config/pipeline-configmap.yaml)
+fetch_max_wait_ms=$(yq e '.FETCH_MAX_WAIT_MS' /config/pipeline-configmap.yaml)
+queued_min_msg=$(yq e '.QUEUED_MIN_MESSAGES' /config/pipeline-configmap.yaml)
+max_poll_interval_ms=$(yq e '.MAX_POLL_INTERVAL_MS' /config/pipeline-configmap.yaml)
+auto_commit=$(yq e '.ENABLE_AUTO_COMMIT' /config/pipeline-configmap.yaml)
+auto_commit_interval_ms=$(yq e '.AUTO_COMMIT_INTERVAL_MS' /config/pipeline-configmap.yaml)
+offset_reset=$(yq e '.AUTO_OFFSET_RESET' /config/pipeline-configmap.yaml)
+consumer_output_dir="$(yq e '.CONSUMER_OUTPUT_DIR' /config/pipeline-configmap.yaml)/${CURRENT_DATE}"
+
 mkdir -p "${consumer_output_dir}"
 
 # === Get brokers ===
@@ -66,6 +67,9 @@ python3 confluent_consumer.py \
     --maxMsg ${msg_max} \
     --maxPoolRecords ${max_pool_records} \
     --pollTimeout ${poll_timeout} \
+    --maxPollIntervalMs ${max_poll_interval_ms} \
+    --queuedMinMessages ${queued_min_msg}
+    --socketTimeoutMs ${socket_timeout_ms} \
     --sessionTimeoutMs ${session_timeout_ms} \
     --fetchMaxBytes ${fetch_max_bytes} \
     --fetchMinBytes ${fetch_min_bytes} \
@@ -74,5 +78,5 @@ python3 confluent_consumer.py \
     --enableAutoCommit ${auto_commit} \
     --autoCommitIntervalMs ${auto_commit_interval_ms} \
     --autoOffsetReset ${offset_reset} \
-    2>&1 | tee "${log_path}/consumer_${pod_name}.log" &
+     2>&1 | tee "${log_path}/consumer_${pod_name}.log" &
 

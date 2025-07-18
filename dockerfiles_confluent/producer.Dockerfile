@@ -3,6 +3,9 @@ FROM sjafari2/kafkaconfluentbase:latest
 # Copy producer code to /code (bootstrapped later to persistent volume)
 COPY --chown=sjafari:sjafari ./src/producer/ /code/
 
+# Copy config files to /defaults
+COPY --chown=sjafari:sjafari ./src/config/ /defaults/
+
 # Switch to root to adjust script permissions
 USER root
 

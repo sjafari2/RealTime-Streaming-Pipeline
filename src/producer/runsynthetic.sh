@@ -2,34 +2,32 @@
 
 set -euo pipefail
 
-source parseYaml.sh
-eval $(parse_yaml /config/pipeline-configmap.yaml)
 trap "exit" INT TERM
 trap "kill 0" EXIT
 
-# Extract config
-num_topics=${TOPIC_COUNT}
-batch_size=${BATCH_SIZE}
-delay=${DELAY_BETWEEN_MESSAGES}
-topic_title=${TOPIC_TITLE}
-num_partitions=${NUM_PARTITIONS}
-replica=${REPLICATION_FACTOR}
-random_range=${RANDOM_RANGE}
-linger_ms=${LINGER_MS}
-compression_type=${COMPRESSION_TYPE}
-max_request_size=${MAX_REQUEST_SIZE}
-acks=${ACKS}
-request_timeout_ms=${REQUEST_TIMEOUT_MS}
-delivery_timeout_ms=${DELIVERY_TIMEOUT_MS}
-queue_buffering_max_messages=${QUEUE_BUFFERING_MAX_MESSAGES}
-queue_buffering_max_kbytes=${QUEUE_BUFFERING_MAX_KBYTES}
-retries=${RETRIES}
-retry_backoff_ms=${RETRY_BACKOFF_MS}
-min_insync_replicas=${MIN_INSYNC_REPLICAS}
-target_rate=${TARGET_RATE}
-connections_max_idle_ms=${CONNECTION_MAX_IDLE_MS}
-reconnect_backoff_max_ms=${RECONNECT_BACKOFF_MAX_MS}
-reconnect_backoff_ms=${RECONNECT_BACKOFF_MS}
+# Extract config from /config/pipeline-configmap.yaml using yq
+num_topics=$(yq e '.TOPIC_COUNT' /config/pipeline-configmap.yaml)
+batch_size=$(yq e '.BATCH_SIZE' /config/pipeline-configmap.yaml)
+delay=$(yq e '.DELAY_BETWEEN_MESSAGES' /config/pipeline-configmap.yaml)
+topic_title=$(yq e '.TOPIC_TITLE' /config/pipeline-configmap.yaml)
+num_partitions=$(yq e '.NUM_PARTITIONS' /config/pipeline-configmap.yaml)
+replica=$(yq e '.REPLICATION_FACTOR' /config/pipeline-configmap.yaml)
+random_range=$(yq e '.RANDOM_RANGE' /config/pipeline-configmap.yaml)
+linger_ms=$(yq e '.LINGER_MS' /config/pipeline-configmap.yaml)
+compression_type=$(yq e '.COMPRESSION_TYPE' /config/pipeline-configmap.yaml)
+max_request_size=$(yq e '.MAX_REQUEST_SIZE' /config/pipeline-configmap.yaml)
+acks=$(yq e '.ACKS' /config/pipeline-configmap.yaml)
+request_timeout_ms=$(yq e '.REQUEST_TIMEOUT_MS' /config/pipeline-configmap.yaml)
+delivery_timeout_ms=$(yq e '.DELIVERY_TIMEOUT_MS' /config/pipeline-configmap.yaml)
+queue_buffering_max_messages=$(yq e '.QUEUE_BUFFERING_MAX_MESSAGES' /config/pipeline-configmap.yaml)
+queue_buffering_max_kbytes=$(yq e '.QUEUE_BUFFERING_MAX_KBYTES' /config/pipeline-configmap.yaml)
+retries=$(yq e '.RETRIES' /config/pipeline-configmap.yaml)
+retry_backoff_ms=$(yq e '.RETRY_BACKOFF_MS' /config/pipeline-configmap.yaml)
+min_insync_replicas=$(yq e '.MIN_INSYNC_REPLICAS' /config/pipeline-configmap.yaml)
+target_rate=$(yq e '.TARGET_RATE' /config/pipeline-configmap.yaml)
+connections_max_idle_ms=$(yq e '.CONNECTION_MAX_IDLE_MS' /config/pipeline-configmap.yaml)
+reconnect_backoff_max_ms=$(yq e '.RECONNECT_BACKOFF_MAX_MS' /config/pipeline-configmap.yaml)
+reconnect_backoff_ms=$(yq e '.RECONNECT_BACKOFF_MS' /config/pipeline-configmap.yaml)
 
 
 # Logging
@@ -66,5 +64,5 @@ python3 confluent_kafka_producer.py \
     --queueBufferingMaxKbytes "$queue_buffering_max_kbytes" \
     --targetRate "$target_rate" \
     --connectionsMaxIdleMs "$connections_max_idle_ms" \
-    --socketKeepaliveEnable \
+    --socketKeepaliveEnable  \
      2>&1 | tee "$log_path/producer_${pod_name}.log" &

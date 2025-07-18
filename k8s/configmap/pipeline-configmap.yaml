@@ -2,69 +2,98 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pipeline-configmap
+  namespace: kafkastreamingdata
 data:
-  ############# KAFKA PROPERTIES #############################
-  KAFKA_TOPIC_COUNT: "10"
-  KAFKA_INSTALL_PATH: "/kafka/bin/"
+  pipeline-configmap.yaml: |
+    # =============================
+    #  Kafka Brokers / Topics 
+    # =============================
+    TOPIC_COUNT: "10"
+    TOPIC_TITLE: "kafka"
+    RETENTION_MS: "180000"
+    SEGMENT_MS: "30000"
+    CLEANUP_POLICY: "delete"
+    NUM_PARTITIONS: "10"
+    BROKER_COUNT: "3"
+    REPLICATION_FACTOR: "1"
+    MIN_INSYNC_REPLICAS: "1"
 
-  ############# PRODUCER PROPERTIES #############################
-  PRODUCER_COUNT: "2"
-  PRODUCER_TOPIC_COUNT: "10"
-  PRODUCER_INPUT_PATH: 'request-producer-data'
-  PRODUCER_POD_COUNT: "2"
-  WAITE_TIME: "10"
-  BATCH_SIZE: "100"
-  TOPIC_TITLE: "ukrain"
+    # =============================
+    #  Kafka Producer 
+    # =============================
+    PRODUCER_COUNT: "1"
+    PRODUCER_POD_COUNT: "2"
+    PRODUCER_INPUT_PATH: "producer-data"
+    DELAY_BETWEEN_MESSAGES: "0"
+    LINGER_MS: "5"
+    BATCH_SIZE: "131072"
+    COMPRESSION_TYPE: "lz4"
+    MAX_REQUEST_SIZE: "1048576"
+    ACKS: "1"
+    RETRIES: "5"
+    RETRY_BACKOFF_MS: "100"
+    CONNECTION_MAX_IDLE_MS: "30000"
+    RECONNECT_BACKOFF_MS: "100"
+    RECONNECT_BACKOFF_MAX_MS: "1000"
+    RANDOM_RANGE: "50000"
+    REQUEST_TIMEOUT_MS: "30000"
+    DELIVERY_TIMEOUT_MS: "60000"
+    QUEUE_BUFFERING_MAX_MESSAGES: "100000"
+    QUEUE_BUFFERING_MAX_KBYTES: "1048576"
+    CLIENT_ID: "pipeline-producer"
+    MESSAGE_SIZE_BYTES: "1024"
+    TARGET_RATE: "300"
 
+    # =============================
+    #  Kafka Consumer 
+    # =============================
+    CONSUMER_GROUP_ID: "consumer-group"
+    CONSUMER_COUNT: "1"
+    CONSUMER_POD_COUNT: "4"
+    MAX_MESSAGES: "500"
+    ENABLE_AUTO_COMMIT: "false"
+    AUTO_OFFSET_RESET: "earliest"
+    AUTO_COMMIT_INTERVAL_MS: "10000"
+    POLL_TIMEOUT: "1000"
+    FETCH_MAX_BYTES: "20971520"
+    FETCH_MIN_BYTES: "10240"
+    FETCH_MAX_WAIT_MS: "20"
+    MAX_POLL_RECORDS: "500"
+    SESSION_TIMEOUT_MS: "10000"
+    SOCKET_TIMEOUT_MS: "60000"
+    CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
 
-  ############# CONSUMER PROPERTIES #############################
-  auto_offset_reset: "earliest"
-  group_id: "StreamData"
-  max_in_flight_requests_per_connection: "1"
-  enable_auto_commit: "true"
-  auto_commit_interval_ms: "1000"
-  enable.idempotence: "true"
-  CONSUMER_POD_COUNT: "2"
-  CONSUMER_COUNT: "2"
-  CONSUMER_WINDOW_COUNT: "2"
+    # =============================
+    # Merge Pod
+    # =============================
+    MERGE_COUNT: "1"
+    MERGE_WAIT_TIME: "5"
+    MERGE_WAIT_THRESHOLD: "5"
+    MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
+    MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
+    BSP_MODE: "true"
+    PROMETHEUS_METRICS : "true"
 
- 
-  ############### ZIKA VARIABLES ##############################
-  ZIKA_DATA_ADDRESS: "./data/zika_data_only_hashtags.csv"
-  RARELIST_DATA_ADDRESS: "./data/rarelist.pkl"
+    # =============================
+    #  Request Simulator 
+    # =============================
+    REQUEST_COUNT: "1"
+    REQUEST_URL: "http://127.0.0.1:8080/"
+    REQUEST_INPUT_PATH: "./request-data/simulator"
+    REQUEST_OUTPUT_PATH: "./producer-data"
 
-  ############## PASCAL-G VARIABLES ########################
-  Column_Range: "500000"
-  Row_Range: "1000"
-  APPLICATION_COUNT: "1"
-  fps: "[ ]"
-  sim1: "dotsim"
-  sim2: "dotsim"
-  thr1: "0.3"
-  thr2: "0.3"
-  outliers_action: "remove"
-  thmls: "[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]"
-  thcls: "[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]"
-  edge_list_path: "./data/network_data/edges"
-  node_edges_path: "./data/network_data/node_edges"
-  log_path_findCl: "./logs/pascal-g/findProbCl"
-  log_path_mergeCl: "./logs/pascal-g/mergeProbFi"
-  csr_matrix_path: "./data/csr_matrix"
-  local_clstr_path: "./app-merge-data"
-  H5PY_PATH: "./consumer-app-data"
-  
-  ##### REQUEST POD VARIABLES ########################
-  REQUEST_COUNT: "1"
-  RequestURL: 'http://127.0.0.1:8000/'
-  RequestInputPath: "./request-data/simulator"
-  RequestOutputPath: "./request-producer-data"
-  StartDate : '2022-8-01-00'
-  EndDate : '2022-8-01-05'
-  RequestWindow : 'hour'
-  Wait : '10'
-  RqstPodMntPath: "requested-data"
-  RqstPodSharedPath: "request-producer-data"
+    # =============================
+    #  Application 
+    # =============================
+    APPLICATION_WAIT_TIME: "5"
+    APPLICATION_COUNT: "1"
 
-  ##### MERGE POD VARIABLES ##########################
-  MERGE_COUNT: "1"
-  merge_path: "./merged-clstr-data"
+    # =============================
+    #  BSP / Monitoring 
+    # =============================
+    BSP_MODE: "true"
+    PROMETHEUS_METRICS: "true"
+
+    USE_CLOCK_DRIFT_CORRECTION: "true"
+    DRIFT_ESTIMATE_SECONDS: "0.200"
+

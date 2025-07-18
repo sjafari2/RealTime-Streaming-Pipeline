@@ -30,25 +30,26 @@ spec:
               topologyKey: kubernetes.io/hostname
 
       initContainers:
-        - name: volume-permission-and-bootstrap
+        - name: bootstrap-producer
           image: sjafari2/kafkaconfluentproducer:latest
           command:
             - /bin/sh
             - -c
             - |
-              echo "[init] Setting permissions and bootstrapping code..."
+              echo "[init] Bootstrapping producer config and code..."
               mkdir -p /config
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+              echo "[init] Copying all config files from /defaults to /config..."
+              cd /defaults && tar -cf - . | (cd /config && tar -xf -)
+              chown -R 1000:1000 /config
+              chmod -R u+w /config
 
               if [ ! -f /app/producer-data/.code_initialized ]; then
-                echo "[init] Bootstrapping code from /code..."
+                echo "[init] Copying code to /app/producer-data"
                 cp -r /code/* /app/producer-data/
                 touch /app/producer-data/.code_initialized
-                chown -R 1000:1000 /app/producer-data
-                chmod -R u+w /app/producer-data
-                chown -R 1000:1000 /config
-                chmod -R u+w /config
               fi
+              chown -R 1000:1000 /app/producer-data
+              chmod -R u+w /app/producer-data
           securityContext:
             runAsUser: 0
           volumeMounts:
@@ -56,6 +57,8 @@ spec:
               mountPath: /app/producer-data
             - name: shared-config
               mountPath: /config
+            - name: config-default
+              mountPath: /defaults
 
       containers:
         - name: producer-container
@@ -77,8 +80,9 @@ spec:
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
-              echo "Contents of pipeline-configmap.yaml:"
-              cat /config/pipeline-configmap.yaml
+              echo "Listing config files in /config:"
+              ls -l /config
+              cat /config/pipeline-configmap.yaml || echo "pipeline-configmap.yaml not found"
               while true; do date > /tmp/healthy; sleep 10; done
 
           ports:
@@ -126,4 +130,7 @@ spec:
         - name: shared-config
           persistentVolumeClaim:
             claimName: pipeline-configmap-pvc
+        - name: config-default
+          configMap:
+            name: pipeline-configmap
 

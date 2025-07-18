@@ -17,6 +17,9 @@ import signal
 import sys
 import queue
 
+# Global variable to be set in __main__ and used in graceful_shutdown
+consumer_instance = None
+
 app = Flask(__name__)
 metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
 
@@ -29,10 +32,11 @@ uptime_gauge = Gauge('consumer_uptime_seconds', 'Consumer uptime in seconds')
 consumer_latency_histogram = Histogram('consumer_latency_seconds', 'End-to-end latency (producer to consumer) in seconds', buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2])
 out_of_order_rate_gauge = Gauge('consumer_out_of_order_rate', 'Fraction of out-of-order messages')
 duplicate_rate_gauge = Gauge('consumer_duplicate_rate', 'Fraction of duplicate messages')
+target_rate_gauge = Gauge('consumer_target_rate', 'Target message rate (msgs/sec)')  # <-- NEW
 
 class MetricConsumer:
     def __init__(self, topics, servers, group_id, max_messages, poll_timeout, fetch_max_bytes,
-                 fetch_min_bytes, fetch_max_wait_ms, consumer_output_dir, enable_auto_commit, auto_offset_reset):
+                 fetch_min_bytes, fetch_max_wait_ms, consumer_output_dir, enable_auto_commit, auto_offset_reset, socket_timeout_ms,max_poll_interval_ms, queued_min_messages):
         self.topics = topics
         self.metrics_list = []
         self.max_messages = max_messages
@@ -44,26 +48,29 @@ class MetricConsumer:
         self.bytes_consumed = 0
         self.last_log_time = time.time()
         self.save_queue = queue.Queue()
-        self.save_thread = threading.Thread(target=self.save_worker, daemon=True)
+        self.save_thread = threading.Thread(target=self.save_worker)
         self.save_thread.start()
 
         config = helper.Tools().read_config('consumer.properties')
         jaas_config = config.get('sasl.jaas.config', '')
         username = jaas_config.split('username=')[1].split(' ')[0].replace('"', '')
         password = jaas_config.split('password=')[1].replace('"', '').replace(';', '')
-
+       
         self.consumer = Consumer({
             'bootstrap.servers': ','.join(servers),
             'group.id': group_id,
             'enable.auto.commit': enable_auto_commit,
             'auto.offset.reset': auto_offset_reset,
+            'socket.timeout.ms': socket_timeout_ms,
             'security.protocol': config.get('security.protocol', 'PLAINTEXT'),
             'sasl.mechanism': config.get('sasl.mechanism', 'PLAIN'),
             'sasl.username': username,
             'sasl.password': password,
             'fetch.max.bytes': fetch_max_bytes,
             'fetch.min.bytes': fetch_min_bytes,
-            'fetch.wait.max.ms': fetch_max_wait_ms
+            'fetch.wait.max.ms': fetch_max_wait_ms,
+            'queued.min.messages': queued_min_messages,
+            'max.poll.interval.ms': max_poll_interval_ms
         })
 
         self.consumer.subscribe(topics)
@@ -104,10 +111,19 @@ class MetricConsumer:
                     index = headers.get('index')
                     producer_ts = headers.get('producer_timestamp')
                     size_bytes = headers.get('size_bytes')
+                    target_rate = headers.get('target_rate')
+
                     if index is None or producer_ts is None:
                         continue
+                    
                     index = index.decode()
                     producer_ts = float(producer_ts.decode())
+                    
+                    target_rate_value = float(target_rate.decode()) if target_rate else None  
+                    if target_rate_value is not None:
+                        target_rate_gauge.set(target_rate_value)
+                    else:
+                        print(f"[WARN] Missing target_rate in message with index {index}")
 
                     receive_ts = time.time()
                     latency = receive_ts - producer_ts
@@ -118,7 +134,8 @@ class MetricConsumer:
                         "producer_timestamp": producer_ts,
                         "consumer_receive_timestamp": receive_ts,
                         "end_to_end_latency_seconds": latency,
-                        "size_bytes": size_bytes
+                        "size_bytes": size_bytes,
+                        "target_rate": target_rate_value
                     })
 
                     self.bytes_consumed += len(msg.value()) if msg.value() else 0
@@ -132,7 +149,7 @@ class MetricConsumer:
                         print(f"[WARN] Commit took {commit_duration:.3f} seconds!")
 
                     if len(self.metrics_list) >= self.max_messages:
-                        self.save_queue.put(self.metrics_list.copy())
+                        self._save_batch_to_disk(self.metrics_list.copy())
                         self.metrics_list.clear()
 
             except Exception as e:
@@ -143,6 +160,9 @@ class MetricConsumer:
         while True:
             try:
                 batch = self.save_queue.get()
+                if not batch:
+                    print("[INFO] Save thread exiting cleanly.")
+                    break
                 self._save_batch_to_disk(batch)
             except Exception as e:
                 print(f"[ERROR] Save worker failed: {e}")
@@ -164,6 +184,7 @@ class MetricConsumer:
         df["mb_rate_per_sec"] = mb_rate
 
         df['index'] = pd.to_numeric(df['index'], errors='coerce')
+        df['target_rate'] = pd.to_numeric(df['target_rate'], errors='coerce')
         idx_array = df['index'].dropna().astype(int).to_numpy()
         out_of_order_flags = np.zeros(len(idx_array), dtype=bool)
         out_of_order_flags[1:] = idx_array[1:] < idx_array[:-1]
@@ -188,6 +209,9 @@ def start_metrics_server():
 
 def graceful_shutdown(signal_num, frame):
     print("[INFO] Shutting down gracefully...")
+    if consumer_instance:
+        consumer_instance.save_queue.put([])  # Send empty to signal termination
+        consumer_instance.save_thread.join()
     sys.exit(0)
 
 if __name__ == "__main__":
@@ -201,6 +225,9 @@ if __name__ == "__main__":
     parser.add_argument('--maxMsg', type=int, default=100)
     parser.add_argument('--maxPoolRecords', type=int, default=500)
     parser.add_argument('--pollTimeout', type=int, default=300)
+    parser.add_argument('--maxPollIntervalMs', type=int, default=300000)
+    parser.add_argument('--queuedMinMessages', type=int, default=1000)
+    parser.add_argument('--socketTimeoutMs', type=int, default=60000)
     parser.add_argument('--sessionTimeoutMs', type=int, default=10000)
     parser.add_argument('--fetchMaxBytes', type=int, default=10485760)
     parser.add_argument('--fetchMinBytes', type=int, default=1024)
@@ -222,7 +249,10 @@ if __name__ == "__main__":
         fetch_max_wait_ms=args.fetchMaxWaitMs,
         consumer_output_dir=args.consumerOutputDir,
         enable_auto_commit=args.enableAutoCommit.lower() == "true",
-        auto_offset_reset=args.autoOffsetReset
+        auto_offset_reset=args.autoOffsetReset,
+        socket_timeout_ms=args.socketTimeoutMs,
+        queued_min_messages=args.queuedMinMessages,
+        max_poll_interval_ms=args.maxPollIntervalMs
     )
 
     threading.Thread(target=start_metrics_server, daemon=True).start()

@@ -27,44 +27,35 @@ spec:
                     operator: In
                     values:
                       - consumer-sts
+                      - producer-sts
               topologyKey: kubernetes.io/hostname
 
       initContainers:
-        - name: bootstrap-consumer-code
+        - name: bootstrap-consumer
           image: sjafari2/kafkaconfluentconsumer:latest
           command:
             - /bin/sh
             - -c
             - |
-              echo "[init] Bootstrapping consumer code..."
+              echo "[init] Bootstrapping config and code..."
+              mkdir -p /config
+              echo "[init] Copying all files from /defaults to /config..."
+              cd /defaults && tar -cf - . | (cd /config && tar -xf -)
+              chown -R 1000:1000 /config
+              chmod -R u+w /config
+
               if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
+                echo "[init] Copying code to /app/consumer-merge-data..."
                 cp -r /code/* /app/consumer-merge-data/
                 touch /app/consumer-merge-data/.code_initialized
-                chown -R 1000:1000 /app/consumer-merge-data
-                chmod -R u+w /app/consumer-merge-data
-                chown -R 1000:1000 /config
-                chmod -R u+w /config
               fi
+              chown -R 1000:1000 /app/consumer-merge-data
+              chmod -R u+w /app/consumer-merge-data
           securityContext:
             runAsUser: 0
           volumeMounts:
             - name: consumer-merge-data
               mountPath: /app/consumer-merge-data
-
-        - name: config-bootstrap
-          image: sjafari2/kafkaconfluentconsumer:latest
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "[init] Copying configmap if not already present..."
-              mkdir -p /config
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
-              chown -R 1000:1000 /config
-              chmod -R u+w /config
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
             - name: shared-config
               mountPath: /config
             - name: config-default
@@ -90,8 +81,9 @@ spec:
               pod_name=$(hostname)
               ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
               echo "Pod ordinal value is: $ordinal"
-              echo "Loaded config file contents:"
-              cat /config/pipeline-configmap.yaml
+              echo "Loaded config files:"
+              ls -l /config
+              cat /config/pipeline-configmap.yaml || echo "Config file not found"
               while true; do date > /tmp/healthy; sleep 10; done
 
           ports:
@@ -142,7 +134,4 @@ spec:
         - name: config-default
           configMap:
             name: pipeline-configmap
-            items:
-              - key: pipeline-configmap.yaml
-                path: pipeline-configmap.yaml
 

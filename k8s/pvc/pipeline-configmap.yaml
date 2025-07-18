@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: grafana-pvc
+  name: pipeline-configmap-pvc
   namespace: kafkastreamingdata
 spec:
+  storageClassName: rook-cephfs-central
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 10Gi
-  storageClassName: rook-ceph-block-central
+      storage: 5Gi
+

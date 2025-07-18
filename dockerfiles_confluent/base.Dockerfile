@@ -35,6 +35,12 @@ RUN apt-get update && \
     lsof && \
     rm -rf /var/lib/apt/lists/*
 
+# Install yq - Mike Farah version (for YAML parsing)
+RUN curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+    -o /usr/bin/yq && \
+    chmod +x /usr/bin/yq && \
+    yq --version
+
 # Upgrade pip and install basic Python build tools
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
@@ -54,9 +60,12 @@ RUN mkdir -p /install && \
     chown -R sjafari:sjafari /kafka /install
 
 # Create writable working directories for derived images
-RUN mkdir -p /app /code && \
-    chown -R sjafari:sjafari /app /code && \
-    chmod -R u+w /app /code
+RUN mkdir -p /app /code /defaults && \
+    chown -R sjafari:sjafari /app /code /defaults && \
+    chmod -R u+w /app /code /defaults
+
+# Copy config files to /defaults
+COPY --chown=sjafari:sjafari ./src/config/ /defaults/
 
 # Set Kafka path and local pip path
 ENV KAFKA_INSTALL_PATH=/kafka/bin/
