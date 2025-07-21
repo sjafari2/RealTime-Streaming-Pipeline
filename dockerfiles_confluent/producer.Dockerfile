@@ -4,7 +4,8 @@ FROM sjafari2/kafkaconfluentbase:latest
 COPY --chown=sjafari:sjafari ./src/producer/ /code/
 
 # Copy config files to /defaults
-COPY --chown=sjafari:sjafari ./src/config/ /defaults/
+COPY --chown=sjafari:sjafari ./src/pipeline-configmap.yaml /defaults/
+RUN chmod 644 /defaults/pipeline-configmap.yaml
 
 # Switch to root to adjust script permissions
 USER root

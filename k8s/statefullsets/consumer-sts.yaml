@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: consumer-sts
-  replicas: 4
+  replicas: 1
   podManagementPolicy: Parallel
 
   template:
@@ -41,7 +41,7 @@ spec:
               echo "[init] Bootstrapping config and code..."
               mkdir -p /config
               echo "[init] Copying all files from /defaults to /config..."
-              cd /defaults && tar -cf - . | (cd /config && tar -xf -)
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
               chown -R 1000:1000 /config
               chmod -R u+w /config
 
@@ -85,46 +85,28 @@ spec:
               echo "Loaded config files:"
               ls -l /config
               cat /config/pipeline-configmap.yaml || echo "Config file not found"
-              python3 main.py  # <- Ensure your Flask app runs on 0.0.0.0:8080
-
+              sleep infinity
           ports:
             - containerPort: 8080
               name: consumer-port
             - containerPort: 9093
               name: cons-exp-port
 
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 20
-            timeoutSeconds: 5
-            failureThreshold: 3
-
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-
           resources:
             requests:
-              memory: "2Gi"
-              cpu: "2000m"
+              memory: "512Mi"
+              cpu: "1000m"
             limits:
-              memory: "4Gi"
-              cpu: "4000m"
+              memory: "1000Mi"
+              cpu: "2000m"
 
           volumeMounts:
             - name: consumer-merge-data
               mountPath: /app/consumer-merge-data
             - name: shared-config
               mountPath: /config
-
+            - name: config-default
+              mountPath: /defaults
       volumes:
         - name: consumer-merge-data
           persistentVolumeClaim:
@@ -135,4 +117,7 @@ spec:
         - name: config-default
           configMap:
             name: pipeline-configmap
+            items:
+              - key: pipeline-configmap.yaml
+                path: pipeline-configmap.yaml
 

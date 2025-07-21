@@ -36,7 +36,7 @@ target_rate_gauge = Gauge('consumer_target_rate', 'Target message rate (msgs/sec
 
 class MetricConsumer:
     def __init__(self, topics, servers, group_id, max_messages, poll_timeout, fetch_max_bytes,
-                 fetch_min_bytes, fetch_max_wait_ms, consumer_output_dir, enable_auto_commit, auto_offset_reset, socket_timeout_ms,max_poll_interval_ms, queued_min_messages):
+                 fetch_min_bytes, fetch_max_wait_ms, consumer_output_dir, enable_auto_commit, auto_offset_reset, socket_timeout_ms,max_poll_interval_ms):
         self.topics = topics
         self.metrics_list = []
         self.max_messages = max_messages
@@ -69,7 +69,6 @@ class MetricConsumer:
             'fetch.max.bytes':  int(fetch_max_bytes),
             'fetch.min.bytes':  int(fetch_min_bytes),
             'fetch.wait.max.ms':  int(fetch_max_wait_ms),
-            'queued.min.messages':  int(queued_min_messages),
             'max.poll.interval.ms':  int(max_poll_interval_ms),
             'security.protocol': "SASL_PLAINTEXT",
             'sasl.mechanism': "PLAIN",
@@ -232,7 +231,7 @@ if __name__ == "__main__":
     parser.add_argument('--maxPoolRecords', type=int, default=500)
     parser.add_argument('--pollTimeout', type=int, default=300)
     parser.add_argument('--maxPollIntervalMs', type=int, default=300000)
-    parser.add_argument('--queuedMinMessages', type=int, default=1000)
+    #parser.add_argument('--queuedMinMessages', type=int, default=1000)
     parser.add_argument('--socketTimeoutMs', type=int, default=60000)
     parser.add_argument('--sessionTimeoutMs', type=int, default=10000)
     parser.add_argument('--fetchMaxBytes', type=int, default=10485760)
@@ -257,7 +256,7 @@ if __name__ == "__main__":
         enable_auto_commit=args.enableAutoCommit.lower() == "true",
         auto_offset_reset=args.autoOffsetReset,
         socket_timeout_ms=args.socketTimeoutMs,
-        queued_min_messages=args.queuedMinMessages,
+        #queued_min_messages=args.queuedMinMessages,
         max_poll_interval_ms=args.maxPollIntervalMs
     )
 

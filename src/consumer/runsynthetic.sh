@@ -17,6 +17,7 @@ mkdir -p "${consumer_output_dir}"
 
 # === Get brokers ===
 server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr '\n' ',' | sed 's/,$//')
+echo Servers are $server_uri
 
 if [ -z "${data_TOPIC_TITLE}" ]; then
     echo "ERROR: TOPIC_TITLE is empty in ConfigMap."
@@ -51,7 +52,6 @@ python3 confluent_consumer.py \
     --maxPoolRecords "${data_MAX_POLL_RECORDS}" \
     --pollTimeout "${data_POLL_TIMEOUT}" \
     --maxPollIntervalMs "${data_MAX_POLL_INTERVAL_MS}" \
-    --queuedMinMessages "${data_QUEUED_MIN_MESSAGES}" \
     --socketTimeoutMs "${data_SOCKET_TIMEOUT_MS}" \
     --sessionTimeoutMs "${data_SESSION_TIMEOUT_MS}" \
     --fetchMaxBytes "${data_FETCH_MAX_BYTES}" \
@@ -60,6 +60,7 @@ python3 confluent_consumer.py \
     --consumerOutputDir "${consumer_output_dir}" \
     --enableAutoCommit "${data_ENABLE_AUTO_COMMIT}" \
     --autoCommitIntervalMs "${data_AUTO_COMMIT_INTERVAL_MS}" \
-    --autoOffsetReset "${data_AUTO_OFFSET_RESET}" \
-     2>&1 | tee "${log_path}/consumer_${pod_name}.log" 
+    --autoOffsetReset "${data_AUTO_OFFSET_RESET}" #\
+    # 2>&1 | tee "${log_path}/consumer_${pod_name}.log"
 
+wait

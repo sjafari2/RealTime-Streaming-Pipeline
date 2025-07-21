@@ -65,7 +65,7 @@ RUN mkdir -p /app /code /defaults && \
     chmod -R u+w /app /code /defaults
 
 # Copy config files to /defaults
-COPY --chown=sjafari:sjafari ./src/config/ /defaults/
+#COPY --chown=sjafari:sjafari ./src/config/ /defaults/
 
 # Set Kafka path and local pip path
 ENV KAFKA_INSTALL_PATH=/kafka/bin/
