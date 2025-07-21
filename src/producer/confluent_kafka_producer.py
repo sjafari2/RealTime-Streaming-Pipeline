@@ -14,6 +14,7 @@ import signal
 import sys
 import os
 from helper import Tools
+import socket
 
 shutdown_event = threading.Event()
 
@@ -57,27 +58,28 @@ class MyProducer:
         ])
 
         self.producer_config = {
-            'bootstrap.servers': bootstrap_servers,
+            'bootstrap.servers': "pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
             'compression.type': args.compressionType,
-            'linger.ms': args.lingerMs,
-            'batch.size': args.batchSize,
-            'message.max.bytes': args.maxRequestSize,
+            'linger.ms': int(args.lingerMs),
+            'batch.size': int(args.batchSize),
+            'message.max.bytes': int(args.maxRequestSize),
             'acks': args.acks,
-            'retries': args.retries,
-            'retry.backoff.ms': args.retryBackoffMs,
-            'reconnect.backoff.ms': args.reconnectBackoffMs,
-            'reconnect.backoff.max.ms': args.reconnectBackoffMaxMs,
-            'request.timeout.ms': args.requestTimeoutMs,
-            'delivery.timeout.ms': args.deliveryTimeoutMs,
-            'queue.buffering.max.messages': args.queueBufferingMaxMessages,
-            'queue.buffering.max.kbytes': args.queueBufferingMaxKbytes,
-            'connections.max.idle.ms': args.connectionsMaxIdleMs,
+            'retries': int(args.retries),
+            'retry.backoff.ms': int(args.retryBackoffMs),
+            'reconnect.backoff.ms': int(args.reconnectBackoffMs),
+            'reconnect.backoff.max.ms': int(args.reconnectBackoffMaxMs),
+            'request.timeout.ms': int(args.requestTimeoutMs),
+            'delivery.timeout.ms': int(args.deliveryTimeoutMs),
+            'queue.buffering.max.messages': int(args.queueBufferingMaxMessages),
+            'queue.buffering.max.kbytes': int(args.queueBufferingMaxKbytes),
+            'connections.max.idle.ms': int(args.connectionsMaxIdleMs),
             'socket.keepalive.enable': args.socketKeepaliveEnable,
-            'security.protocol': security_protocol,
-            'sasl.mechanism': sasl_mechanism,
-            'sasl.username': username,
-            'sasl.password': password,
-            'debug': 'security,broker'
+            'security.protocol': "SASL_PLAINTEXT",
+            'sasl.mechanism': "PLAIN",
+            'sasl.username': "user1",
+            'sasl.password': "5x4XjjbPod",
+            'debug': "security,broker",
+            'client.id': socket.gethostname() 
         }
 
         self.producer = Producer(self.producer_config)

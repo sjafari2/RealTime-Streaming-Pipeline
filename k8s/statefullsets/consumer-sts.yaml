@@ -28,6 +28,7 @@ spec:
                     values:
                       - consumer-sts
                       - producer-sts
+                      - pip-kafka-controller
               topologyKey: kubernetes.io/hostname
 
       initContainers:
@@ -84,7 +85,7 @@ spec:
               echo "Loaded config files:"
               ls -l /config
               cat /config/pipeline-configmap.yaml || echo "Config file not found"
-              while true; do date > /tmp/healthy; sleep 10; done
+              python3 main.py  # <- Ensure your Flask app runs on 0.0.0.0:8080
 
           ports:
             - containerPort: 8080
@@ -93,22 +94,22 @@ spec:
               name: cons-exp-port
 
           livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - "test -f /tmp/healthy"
+            httpGet:
+              path: /health
+              port: 8080
             initialDelaySeconds: 60
-            periodSeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
 
           readinessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - "test -f /tmp/healthy"
+            httpGet:
+              path: /ready
+              port: 8080
             initialDelaySeconds: 30
-            periodSeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
 
           resources:
             requests:

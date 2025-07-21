@@ -57,20 +57,26 @@ class MetricConsumer:
         password = jaas_config.split('password=')[1].replace('"', '').replace(';', '')
        
         self.consumer = Consumer({
-            'bootstrap.servers': ','.join(servers),
+            'bootstrap.servers': "pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
             'group.id': group_id,
             'enable.auto.commit': enable_auto_commit,
             'auto.offset.reset': auto_offset_reset,
-            'socket.timeout.ms': socket_timeout_ms,
-            'security.protocol': config.get('security.protocol', 'PLAINTEXT'),
-            'sasl.mechanism': config.get('sasl.mechanism', 'PLAIN'),
-            'sasl.username': username,
-            'sasl.password': password,
-            'fetch.max.bytes': fetch_max_bytes,
-            'fetch.min.bytes': fetch_min_bytes,
-            'fetch.wait.max.ms': fetch_max_wait_ms,
-            'queued.min.messages': queued_min_messages,
-            'max.poll.interval.ms': max_poll_interval_ms
+            'socket.timeout.ms': int(socket_timeout_ms),
+            #'security.protocol': config.get('security.protocol', 'PLAINTEXT'),
+            #'sasl.mechanism': config.get('sasl.mechanism', 'PLAIN'),
+            #'sasl.username': username,
+            #'sasl.password': password,
+            'fetch.max.bytes':  int(fetch_max_bytes),
+            'fetch.min.bytes':  int(fetch_min_bytes),
+            'fetch.wait.max.ms':  int(fetch_max_wait_ms),
+            'queued.min.messages':  int(queued_min_messages),
+            'max.poll.interval.ms':  int(max_poll_interval_ms),
+            'security.protocol': "SASL_PLAINTEXT",
+            'sasl.mechanism': "PLAIN",
+            'sasl.username': "user1",
+            'sasl.password': "5x4XjjbPod",
+            'debug': "security,broker",
+            'client.id': socket.gethostname()
         })
 
         self.consumer.subscribe(topics)
