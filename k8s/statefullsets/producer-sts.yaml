@@ -19,17 +19,26 @@ spec:
         app: producer-sts
     spec:
       affinity:
-        podAntiAffinity:
+        nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - producer-sts
-                      - consumer-sts
-                      - pip-kafka-controller
-              topologyKey: kubernetes.io/hostname
+                      - patternlab.calit2.optiputer.net
+          #affinity:
+          #podAntiAffinity:
+          #requiredDuringSchedulingIgnoredDuringExecution:
+          # - labelSelector:
+          #      matchExpressions:
+          #        - key: app
+          #          operator: In
+          #          values:
+          #            - producer-sts
+          #            - consumer-sts
+          #            - pip-kafka-controller
+          #    topologyKey: kubernetes.io/hostname
 
       initContainers:
         - name: bootstrap-producer

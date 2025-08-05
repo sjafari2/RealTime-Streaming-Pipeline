@@ -40,9 +40,13 @@ listeners:
     sslClientAuth: ""
 
 kraft:
+  enabled: false
+
+zookeeper:
   enabled: true
-  controllerListenerNames: CONTROLLER
-  processRoles: controller,broker
+  replicaCount: 3
+  auth:
+    enabled: false
 
 controller:
   jaas:
@@ -84,21 +88,14 @@ controller:
       valueFrom:
         fieldRef:
           fieldPath: metadata.name
-    - name: KAFKA_CFG_NODE_ID
-      value: "{{ .StatefulSetOrdinal }}"
-    - name: KAFKA_CFG_ADVERTISED_LISTENERS
-      value: >-
-        CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,
-        INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
-        EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
-    - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-      value: "0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093"
-
+    - name: KAFKA_ENABLE_KRAFT
+      value: "false"
   extraConfig: |
     delete.topic.enable=true
     auto.create.topics.enable=true
     listener.security.protocol.map=CLIENT:SASL_PLAINTEXT,CONTROLLER:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
     listeners=CLIENT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9095
+    advertised.listeners=CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
     inter.broker.listener.name=INTERNAL
     sasl.enabled.mechanisms=PLAIN
     sasl.mechanism.inter.broker.protocol=PLAIN
@@ -142,5 +139,4 @@ auth:
       jaas:
         user: user1
         password: 5x4XjjbPod
-
 

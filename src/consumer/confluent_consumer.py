@@ -48,18 +48,18 @@ class MetricConsumer:
         self.bytes_consumed = 0
         self.last_log_time = time.time()
         self.save_queue = queue.Queue()
-        self.save_thread = threading.Thread(target=self.save_worker)
-        self.save_thread.start()
+        #self.save_thread = threading.Thread(target=self.save_worker)
+        #self.save_thread.start()
 
-        config = helper.Tools().read_config('consumer.properties')
-        jaas_config = config.get('sasl.jaas.config', '')
-        username = jaas_config.split('username=')[1].split(' ')[0].replace('"', '')
-        password = jaas_config.split('password=')[1].replace('"', '').replace(';', '')
+        #config = helper.Tools().read_config('consumer.properties')
+        #jaas_config = config.get('sasl.jaas.config', '')
+        #username = jaas_config.split('username=')[1].split(' ')[0].replace('"', '')
+        #password = jaas_config.split('password=')[1].replace('"', '').replace(';', '')
        
         self.consumer = Consumer({
             'bootstrap.servers': "pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
             'group.id': group_id,
-            'enable.auto.commit': enable_auto_commit,
+            'enable.auto.commit': 'true' if enable_auto_commit else 'false',
             'auto.offset.reset': auto_offset_reset,
             'socket.timeout.ms': int(socket_timeout_ms),
             #'security.protocol': config.get('security.protocol', 'PLAINTEXT'),
@@ -70,10 +70,13 @@ class MetricConsumer:
             'fetch.min.bytes':  int(fetch_min_bytes),
             'fetch.wait.max.ms':  int(fetch_max_wait_ms),
             'max.poll.interval.ms':  int(max_poll_interval_ms),
-            'security.protocol': "SASL_PLAINTEXT",
-            'sasl.mechanism': "PLAIN",
-            'sasl.username': "user1",
-            'sasl.password': "5x4XjjbPod",
+            'heartbeat.interval.ms': 3000,
+            'session.timeout.ms': 10000,
+            'topic.metadata.refresh.interval.ms': 30000,
+            #'security.protocol': "SASL_PLAINTEXT",
+            #'sasl.mechanism': "PLAIN",
+            #'sasl.username': "user1",
+            #'sasl.password': "5x4XjjbPod",
             'debug': "security,broker",
             'client.id': socket.gethostname()
         })
@@ -146,8 +149,20 @@ class MetricConsumer:
                     self.bytes_consumed += len(msg.value()) if msg.value() else 0
                     self.msg_consumed += 1
                     msg_consumed_counter.inc()
+    
+                    # Commit every 100 messages asynchronously
+                    if self.msg_consumed % 100 == 0:
+                        try:
+                            self.consumer.commit(asynchronous=True)
+                            self.consumer.poll(0)  # give librdkafka a chance to flush internal queue
+                        except Exception as e:
+                            print(f"[WARN] Async commit failed at {self.msg_consumed} msgs: {e}")
+
+                    # allow time for background work and reduce CPU pressure
+                    if self.msg_consumed % 200 == 0:
+                        time.sleep(0.05)
+
                     start_commit = time.time()
-                    self.consumer.commit(message=msg, asynchronous=True)
                     commit_duration = time.time() - start_commit
 
                     if commit_duration > 0.5:
@@ -217,6 +232,20 @@ def graceful_shutdown(signal_num, frame):
     if consumer_instance:
         consumer_instance.save_queue.put([])  # Send empty to signal termination
         consumer_instance.save_thread.join()
+        
+        #  Final offset commit
+        print("[INFO] Final commit before shutdown...")
+        try:
+            consumer_instance.consumer.commit(asynchronous=False)
+        except Exception as e:
+            print(f"[WARN] Final commit failed: {e}")
+
+        #  Properly close the consumer
+        try:
+            consumer_instance.consumer.close()
+            print("[INFO] Consumer closed cleanly.")
+        except Exception as e:
+            print(f"[WARN] Error while closing consumer: {e}")
     sys.exit(0)
 
 if __name__ == "__main__":
@@ -242,6 +271,7 @@ if __name__ == "__main__":
     parser.add_argument('--autoCommitIntervalMs', type=int, default=10000)
     parser.add_argument('--autoOffsetReset', type=str, default="earliest")
     args = parser.parse_args()
+    enable_auto_commit = args.enableAutoCommit.lower() == 'true'
 
     consumer_instance = MetricConsumer(
         topics=args.topics.split(','),
@@ -253,12 +283,13 @@ if __name__ == "__main__":
         fetch_min_bytes=args.fetchMinBytes,
         fetch_max_wait_ms=args.fetchMaxWaitMs,
         consumer_output_dir=args.consumerOutputDir,
-        enable_auto_commit=args.enableAutoCommit.lower() == "true",
+        enable_auto_commit= enable_auto_commit, # Pass boolean
         auto_offset_reset=args.autoOffsetReset,
         socket_timeout_ms=args.socketTimeoutMs,
         #queued_min_messages=args.queuedMinMessages,
         max_poll_interval_ms=args.maxPollIntervalMs
     )
-
-    threading.Thread(target=start_metrics_server, daemon=True).start()
+    print(args)
+    #threading.Thread(target=start_metrics_server, daemon=True).start()
+    time.sleep(5)  #delay to avoid rejoin race after pod restart
     consumer_instance.consume()

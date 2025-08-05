@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: consumer-sts
-  replicas: 1
+  replicas: 2
   podManagementPolicy: Parallel
 
   template:
@@ -19,17 +19,14 @@ spec:
         app: consumer-sts
     spec:
       affinity:
-        podAntiAffinity:
+        nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - consumer-sts
-                      - producer-sts
-                      - pip-kafka-controller
-              topologyKey: kubernetes.io/hostname
+                      - patternlab.calit2.optiputer.net
 
       initContainers:
         - name: bootstrap-consumer

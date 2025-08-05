@@ -96,17 +96,13 @@ python3 simple_consumer.py \
     --uris "${server_uri}" \
     --groupId "${data_CONSUMER_GROUP_ID}" \
     --maxMsg "${data_MAX_MESSAGES}" \
-    #--maxPoolRecords "${data_MAX_POLL_RECORDS}" \
     --pollTimeout "${data_POLL_TIMEOUT}" \
-    --maxPollIntervalMs "${data_MAX_POLL_INTERVAL_MS}" \
-    --socketTimeoutMs "${data_SOCKET_TIMEOUT_MS}" \
-    #--sessionTimeoutMs "${data_SESSION_TIMEOUT_MS}" \
     --fetchMaxBytes "${data_FETCH_MAX_BYTES}" \
     --fetchMinBytes "${data_FETCH_MIN_BYTES}" \
     --fetchMaxWaitMs "${data_FETCH_MAX_WAIT_MS}" \
-    --consumerOutputDir "${consumer_output_dir}" \
+    --maxPollIntervalMs "${data_MAX_POLL_INTERVAL_MS}" \
+    --socketTimeoutMs "${data_SOCKET_TIMEOUT_MS}" \
     --enableAutoCommit "${data_ENABLE_AUTO_COMMIT}" \
-    #--autoCommitIntervalMs "${data_AUTO_COMMIT_INTERVAL_MS}" \
     --autoOffsetReset "${data_AUTO_OFFSET_RESET}" \
-    2>&1 | tee "${log_path}/consumer_${pod_name}.log"
+    --consumerOutputDir "${consumer_output_dir}" 
 

@@ -4,7 +4,7 @@ set -euo pipefail
 
 # === CONFIG ===
 CONFIGMAP_PATH="/config/pipeline-configmap.yaml"
-COMMAND_CONFIG="./consumer.properties"         
+#COMMAND_CONFIG="./consumer.properties"         
 KAFKA_TOPICS="${KAFKA_INSTALL_PATH}/kafka-topics.sh"
 
 # === Extract values from ConfigMap ===
@@ -32,7 +32,6 @@ for topic in "${topic_names[@]}"; do
   echo "[INFO] Creating topic: $topic"
   $KAFKA_TOPICS --create \
     --bootstrap-server "$BOOTSTRAP_SERVERS" \
-    --command-config "$COMMAND_CONFIG" \
     --topic "$topic" \
     --partitions "$NUM_PARTITIONS" \
     --replication-factor 1 \
@@ -49,7 +48,6 @@ for topic in "${topic_names[@]}"; do
   echo "[INFO] Topic: $topic"
   $KAFKA_TOPICS --describe \
     --bootstrap-server "$BOOTSTRAP_SERVERS" \
-    --command-config "$COMMAND_CONFIG" \
     --topic "$topic"
 done
 

@@ -40,13 +40,17 @@ for i in "${!pod_labels[@]}"; do
         echo "Checking pod: $pod ($container)..."
 
         for proc in "${processes_to_kill[@]}"; do
-            echo "Attempting to stop process: $proc in $pod..."
-            if kubectl exec -c $container $pod -- pkill -f "$proc" 2>/dev/null; then
-                echo "Stopped $proc in $pod."
-            else
-                echo "No $proc process found or could not stop in $pod."
-            fi
-        done
+            echo "Checking for process: $proc in $pod..."
+	    kubectl exec -c $container $pod -- sh -c "ps aux | grep '$proc' | grep -v grep" > /dev/null
+
+	   if [ $? -eq 0 ]; then
+    		echo "Killing $proc with -9 in $pod..."
+    		kubectl exec -c $container $pod -- sh -c "ps aux | grep '$proc' | grep -v grep | awk '{print \$2}' | xargs -r kill -9"
+    		echo "Forcefully killed $proc in $pod."
+	   else
+    		echo "No matching $proc process found in $pod."
+	   fi
+       done
 
     done
 done

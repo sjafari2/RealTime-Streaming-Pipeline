@@ -8,7 +8,7 @@ server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr
 echo "[INFO] Using bootstrap servers: ${server_uri}"
 
 echo "[INFO] Listing all topics..."
-topics=$(${KAFKA_INSTALL_PATH}/kafka-topics.sh --list --bootstrap-server "${server_uri}" --command-config ./consumer.properties)
+topics=$(${KAFKA_INSTALL_PATH}/kafka-topics.sh --list --bootstrap-server "${server_uri}")
 
 if [[ -z "$topics" ]]; then
   echo "[INFO] No topics found. Nothing to delete."
@@ -18,16 +18,20 @@ fi
 echo "[INFO] Topics found:"
 echo "$topics"
 
-# Loop and delete
+# Loop and delete all non-internal topics
 for topic in $topics; do
+  if [[ "$topic" == __* ]]; then
+    echo "[SKIP] Preserving internal/system topic: $topic"
+    continue
+  fi
+
   echo "[INFO] Deleting topic: $topic"
   output=$(${KAFKA_INSTALL_PATH}/kafka-topics.sh --bootstrap-server "${server_uri}" \
-          --command-config ./consumer.properties \
           --delete --topic "$topic" 2>&1)
 
   echo "[INFO] Delete command output for $topic:"
   echo "$output"
 done
 
-echo "[SUCCESS] All topics processed."
+echo "[SUCCESS] All non-internal topics deleted."
 

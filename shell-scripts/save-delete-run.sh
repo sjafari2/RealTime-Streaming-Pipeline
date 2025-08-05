@@ -1,94 +1,175 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# CONFIG
-NAMESPACE="kafkastreamingdata"
-PRODUCER_POD="producer-0"
-CONSUMER_POD="consumer-0"
-PRODUCER_COUNT=2
-CONSUMER_COUNT=2
-CHECK_CMD="pgrep -f runsynthetic.sh"
-SCRIPT_CMD="/runsynthetic.sh"
-LOG_DIR="/mnt/shared/logs"  # Replace with actual mount if needed
-MAX_RETRIES=2
+set -e
 
-# --- Step 0: Check OIDC Token Expiration ---
-echo "[INFO] Checking OIDC token expiration..."
-TOKEN_PATH="${HOME}/.kube/cache/oidc-login/oidc-token.json"
-if [ -f "$TOKEN_PATH" ]; then
-    EXPIRY=$(jq -r '.status.expirationTimestamp' "$TOKEN_PATH")
-    if [ -n "$EXPIRY" ]; then
-        EXPIRY_EPOCH=$(date -d "$EXPIRY" +%s)
-        NOW_EPOCH=$(date +%s)
-        SECONDS_LEFT=$((EXPIRY_EPOCH - NOW_EPOCH))
-        MIN_LEFT=$((SECONDS_LEFT / 60))
-        if [ "$MIN_LEFT" -lt 15 ]; then
-            echo "[⚠️ WARNING] OIDC token expires in $MIN_LEFT minutes. Consider refreshing:"
-            echo "kubectl oidc-login setup --oidc-issuer-url=... --oidc-client-id=..."
-        else
-            echo "[✅] OIDC token is valid for $MIN_LEFT more minutes."
-        fi
-    else
-        echo "[WARN] Could not parse token expiration."
-    fi
-else
-    echo "[WARN] OIDC token file not found. You might not be authenticated."
-fi
+###############################
+## Configuration
+###############################
 
-# --- Step 1: Ask User to Save & Delete Logs ---
-read -p "Do you want to archive logs and results? [y/N]: " save_confirm
-if [[ "$save_confirm" =~ ^[Yy]$ ]]; then
-    echo "[INFO] Saving logs from $PRODUCER_POD and $CONSUMER_POD..."
+pod_labels=("app=producer-sts" "app=consumer-sts" "app=merge-sts")
+containers=("producer-container" "consumer-container" "merge-container")
+results_paths=("" "/app/consumer-merge-data/consumer-result" "/app/merged-data/merge-result /app/merged-data/merge-metrics")
+logs_paths=("/app/producer-data/logs" "/app/consumer-merge-data/logs" "/app/merged-data/logs")
 
-    kubectl exec -n "$NAMESPACE" "$PRODUCER_POD" -- bash -c "mkdir -p $LOG_DIR/backup && cp -r $LOG_DIR/* $LOG_DIR/backup/"
-    kubectl exec -n "$NAMESPACE" "$CONSUMER_POD" -- bash -c "mkdir -p $LOG_DIR/backup && cp -r $LOG_DIR/* $LOG_DIR/backup/"
+declare -A pod_configs=(
+  ["producer"]="producer-sts-0:producer-container:/app/producer-data:./src/producer"
+  ["consumer"]="consumer-sts-0:consumer-container:/app/consumer-merge-data:./src/consumer"
+  ["merge"]="merge-sts-0:merge-container:/app/merged-data:./src/merge"
+)
 
-    echo "[✅] Logs saved."
-fi
+ordered_keys=("producer" "consumer" "merge")
+file_extensions=("py" "sh" "yaml" "yml" "properties")
 
-read -p "Do you want to delete existing logs/results before running scripts? [y/N]: " delete_confirm
-if [[ "$delete_confirm" =~ ^[Yy]$ ]]; then
-    echo "[INFO] Deleting logs from shared volume..."
+###############################
+## Functions
+###############################
 
-    kubectl exec -n "$NAMESPACE" "$PRODUCER_POD" -- bash -c "rm -rf $LOG_DIR/*"
-    kubectl exec -n "$NAMESPACE" "$CONSUMER_POD" -- bash -c "rm -rf $LOG_DIR/*"
+save_codes() {
+  echo "==================== Saving Codes from All Pods ===================="
+  mkdir -p ./src/producer ./src/consumer ./src/merge
 
-    echo "[✅] Logs deleted."
-fi
-
-# --- Step 2: Function to Run Script and Confirm It Ran ---
-run_and_check() {
-    local pod=$1
-    local type=$2
-
-    echo "[INFO] Running script in $type pod: $pod"
-    attempt=0
-    while [ $attempt -lt $MAX_RETRIES ]; do
-        kubectl exec -n "$NAMESPACE" "$pod" -- bash -c "$SCRIPT_CMD"
-        sleep 2
-        echo "[INFO] Checking if script ran on $pod..."
-        if kubectl exec -n "$NAMESPACE" "$pod" -- bash -c "$CHECK_CMD" >/dev/null; then
-            echo "[✅] Script is running on $pod"
-            return 0
-        else
-            echo "[⚠️] Script not detected on $pod. Retrying... ($((attempt + 1))/$MAX_RETRIES)"
-        fi
-        attempt=$((attempt + 1))
+  for key in "${ordered_keys[@]}"; do
+    IFS=':' read -r pod container src_path dst_path <<< "${pod_configs[$key]}"
+    echo "Copying from $pod (container: $container, path: $src_path) to $dst_path"
+    mkdir -p "$dst_path"
+    for ext in "${file_extensions[@]}"; do
+      files=$(kubectl exec "$pod" -c "$container" -- find "$src_path" -type f -name "*.${ext}" 2>/dev/null || true)
+      for file in $files; do
+        rel_path="${file#$src_path/}"
+        local_dir="$dst_path/$(dirname "$rel_path")"
+        mkdir -p "$local_dir"
+        kubectl cp "$pod:$file" "$dst_path/$rel_path" -c "$container" 2>/dev/null || echo "Warning: Failed to copy $file"
+      done
     done
-    echo "[❌] Failed to confirm script ran on $pod after $MAX_RETRIES attempts."
-    return 1
+    echo "Completed copying for $key."
+  done
+
+  echo "Copying pipeline-configmap.yaml..."
+  kubectl cp merge-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml 2>/dev/null || true
+
+  if [ -f ./src/pipeline-configmap.yaml ]; then
+    echo "Saved pipeline-configmap.yaml to ./src/pipeline-configmap.yaml"
+  else
+    echo "Warning: Failed to copy pipeline-configmap.yaml. Check if it is mounted."
+  fi
+  echo "==================================================================="
 }
 
-# --- Step 3: Run in Producer Pods Sequentially ---
-echo "[🔁] Starting on producer pods..."
-for i in $(seq 0 $((PRODUCER_COUNT - 1))); do
-    run_and_check "producer-$i" "producer"
-done
+process_pods() {
+  # Create timestamped folders inside ./results and ./logs
+  timestamp=$(date +"%Y%m%d_%H%M%S")
+  results_root="./results/$timestamp"
+  logs_root="./logs/$timestamp"
 
-# --- Step 4: Run in Consumer Pods Sequentially ---
-echo "[🔁] Starting on consumer pods..."
-for i in $(seq 0 $((CONSUMER_COUNT - 1))); do
-    run_and_check "consumer-$i" "consumer"
-done
+  mkdir -p "$results_root/producer" "$results_root/consumer" "$results_root/merge"
+  mkdir -p "$logs_root/producer" "$logs_root/consumer" "$logs_root/merge"
 
-echo "[✅ DONE] All pods processed."
+  read -n 1 -p "Save results before running the script? (y/n): " save_results
+  echo
+  [[ "$save_results" != "y" ]] && save_results="n"
+
+  read -n 1 -p "Delete results before running the script? (y/n): " delete_results
+  echo
+  [[ "$delete_results" != "y" ]] && delete_results="n"
+
+  read -n 1 -p "Save logs before running the script? (y/n): " save_logs
+  echo
+  [[ "$save_logs" != "y" ]] && save_logs="n"
+
+  read -n 1 -p "Delete logs before running the script? (y/n): " delete_logs
+  echo
+  [[ "$delete_logs" != "y" ]] && delete_logs="n"
+
+  read -n 1 -p "Run ./runsynthetic.sh inside all pods now? (y/n): " run_scripts
+  echo
+  [[ "$run_scripts" != "y" ]] && run_scripts="n"
+
+  for i in "${!pod_labels[@]}"; do
+    label=${pod_labels[$i]}
+    container=${containers[$i]}
+    pod_type=$(echo $label | cut -d= -f2 | cut -d- -f1)
+    echo "==================== Processing $pod_type Pods ===================="
+
+    pods=$(kubectl get pods -l $label -o jsonpath='{.items[*].metadata.name}')
+    pod_id=0
+    for pod in $pods; do
+      echo "Pod: $pod ($container)"
+
+      if [[ "$save_results" == "y" && -n "${results_paths[$i]}" ]]; then
+        for remote_path in ${results_paths[$i]}; do
+          base_name=$(basename $remote_path)
+          echo "Saving $remote_path from $pod..."
+          kubectl cp "$pod:$remote_path" "$results_root/$pod_type/${pod}_${base_name}" -c $container || echo "Warning: Failed to copy $remote_path from $pod"
+        done
+      else
+        echo "Skipping result save for $pod_type."
+      fi
+
+      if [[ "$delete_results" == "y" && -n "${results_paths[$i]}" ]]; then
+        for remote_path in ${results_paths[$i]}; do
+          echo "Deleting $remote_path in $pod..."
+          kubectl exec -c $container $pod -- rm -rf "$remote_path" || echo "Warning: Failed to delete $remote_path in $pod"
+        done
+      else
+        echo "Skipping result deletion for $pod_type."
+      fi
+
+      if [[ "$save_logs" == "y" ]]; then
+        log_remote_path="${logs_paths[$i]}"
+        echo "Saving logs from $log_remote_path in $pod..."
+        kubectl cp "$pod:$log_remote_path" "$logs_root/$pod_type/${pod}_logs" -c $container || echo "Warning: Failed to copy logs from $pod"
+      else
+        echo "Skipping log save for $pod_type."
+      fi
+
+      if [[ "$delete_logs" == "y" ]]; then
+        log_remote_path="${logs_paths[$i]}"
+        echo "Deleting logs in $log_remote_path in $pod..."
+        kubectl exec -c $container $pod -- rm -rf "$log_remote_path/*" || echo "Warning: Failed to delete logs in $pod"
+      else
+        echo "Skipping log deletion for $pod_type."
+      fi
+
+      if [[ "$run_scripts" == "y" ]]; then
+        echo "Force-killing any existing Python and shell script processes inside $pod before starting ./runsynthetic.sh ..."
+
+        kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep python | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No python scripts found.'"
+        kubectl exec -c $container $pod -- sh -c "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || echo 'No .sh scripts found.'"
+
+        echo "Starting ./runsynthetic.sh $pod_id inside $pod in detached mode..."
+        if ! kubectl exec -c $container $pod -- sh -c "setsid ./runsynthetic.sh '$pod_id' > /dev/null 2>&1 < /dev/null &"; then
+          echo "Warning: Failed to start ./runsynthetic.sh in $pod"
+        fi
+      else
+        echo "Skipping ./runsynthetic.sh for $pod_type."
+      fi
+
+      pod_id=$((pod_id+1))
+    done
+    echo "==================================================================="
+  done
+
+  echo "✅ Results are saved under: $results_root"
+  echo "✅ Logs are saved under: $logs_root"
+}
+
+###############################
+## Main Execution
+###############################
+
+echo "==================== Starting Code Backup and Pod Processing ===================="
+
+read -n 1 -p "Save codes from all pods before running the script? (y/n): " save_codes_choice
+echo
+[[ "$save_codes_choice" != "y" ]] && save_codes_choice="n"
+
+if [[ "$save_codes_choice" == "y" ]]; then
+    save_codes
+else
+    echo "Skipping code backup step."
+fi
+
+process_pods
+
+echo "==================== All operations completed successfully. ===================="
 

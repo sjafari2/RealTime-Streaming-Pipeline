@@ -12,7 +12,8 @@ eval $(
   yq eval '.data | to_entries | map("export data_" + .key + "=" + (.value | @sh)) | .[]' "$CONFIG_FILE"
 )
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
-log_path="./logs/producer/${CURRENT_DATE}"
+CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
+log_path="./logs/producer/${CURRENT_DATE}/${CURRENT_TIME}"
 mkdir -p "$log_path"
 pod_name=$(hostname)
 echo "$pod_name"
@@ -28,7 +29,7 @@ python3 confluent_kafka_producer.py \
     --lingerMs "${data_LINGER_MS}" \
     --compressionType "${data_COMPRESSION_TYPE}" \
     --batchSize "${data_BATCH_SIZE}" \
-    --maxRequestSize "${data_MAX_REQUEST_SIZE}" \
+    --msgMaxBytes "${data_MSG_MAX_BYTES}" \
     --acks "${data_ACKS}" \
     --retries "${data_RETRIES}" \
     --retryBackoffMs "${data_RETRY_BACKOFF_MS}" \

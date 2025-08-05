@@ -1,0 +1,12 @@
+server:
+  global:
+    scrape_interval: 5s
+
+  service:
+    type: ClusterIP
+
+  extraScrapeConfigs:
+    - job_name: 'producer'
+      static_configs:
+        - targets: ['producer-sts-0.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8000']
+

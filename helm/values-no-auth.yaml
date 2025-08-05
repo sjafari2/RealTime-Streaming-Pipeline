@@ -2,41 +2,39 @@ global:
   storageClass: "rook-ceph-block-central"
 
 sasl:
-  enabledMechanisms: PLAIN
-  interBrokerMechanism: PLAIN
-  controllerMechanism: PLAIN
+  enabledMechanisms: ""
+  interBrokerMechanism: ""
+  controllerMechanism: ""
   interbroker:
-    user: interbrokeruser
-    password: "inter123"
+    user: ""
+    password: ""
   controller:
-    user: controlleruser
-    password: "controller123"
+    user: ""
+    password: ""
   client:
-    users:
-      - user1
-    passwords:
-      - "5x4XjjbPod"
+    users: []
+    passwords: []
 
 listeners:
   client:
     name: CLIENT
     containerPort: 9092
-    protocol: SASL_PLAINTEXT
+    protocol: PLAINTEXT
     sslClientAuth: ""
   controller:
     name: CONTROLLER
     containerPort: 9093
-    protocol: SASL_PLAINTEXT
+    protocol: PLAINTEXT
     sslClientAuth: ""
   interbroker:
     name: INTERNAL
     containerPort: 9094
-    protocol: SASL_PLAINTEXT
+    protocol: PLAINTEXT
     sslClientAuth: ""
   external:
     name: EXTERNAL
     containerPort: 9095
-    protocol: SASL_PLAINTEXT
+    protocol: PLAINTEXT
     sslClientAuth: ""
 
 kraft:
@@ -45,9 +43,6 @@ kraft:
   processRoles: controller,broker
 
 controller:
-  jaas:
-    user: controlleruser
-    password: "controller123"
   replicaCount: 3
 
   affinity:
@@ -59,6 +54,8 @@ controller:
                 operator: In
                 values:
                   - kafka
+                  - producer
+                  - consumer
           topologyKey: "kubernetes.io/hostname"
 
   initContainers:
@@ -86,26 +83,21 @@ controller:
           fieldPath: metadata.name
     - name: KAFKA_CFG_NODE_ID
       value: "{{ .StatefulSetOrdinal }}"
+    - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+      value: "0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093"
     - name: KAFKA_CFG_ADVERTISED_LISTENERS
       value: >-
         CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,
         INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
         EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
-    - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-      value: "0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093"
 
   extraConfig: |
     delete.topic.enable=true
     auto.create.topics.enable=true
-    listener.security.protocol.map=CLIENT:SASL_PLAINTEXT,CONTROLLER:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
+    listener.security.protocol.map=CLIENT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
     listeners=CLIENT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9095
+    advertised.listeners=CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
     inter.broker.listener.name=INTERNAL
-    sasl.enabled.mechanisms=PLAIN
-    sasl.mechanism.inter.broker.protocol=PLAIN
-    listener.name.controller.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="controlleruser" password="controller123";
-    listener.name.internal.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="interbrokeruser" password="inter123";
-    listener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
-    listener.name.external.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user1" password="5x4XjjbPod";
 
     # Performance tuning
     log.retention.ms=180000
@@ -121,7 +113,15 @@ controller:
     socket.request.max.bytes=104857600
     replica.fetch.max.bytes=10485760
     replica.fetch.response.max.bytes=10485760
-
+    replication.factor=2
+    min.insync.replicas=1
+    offsets.topic.replication.factor=2
+    # Metadata refresh & retry handling
+    connections.max.idle.ms=300000
+    metadata.max.age.ms=300000                    
+    request.timeout.ms=30000
+    retries=5
+    retry.backoff.ms=1000                         
   resources:
     limits:
       cpu: 8
@@ -132,15 +132,7 @@ controller:
 
 auth:
   sasl:
-    enabled: true
-    interBroker:
-      protocol: PLAIN
-    controller:
-      protocol: PLAIN
-    client:
-      mechanism: PLAIN
-      jaas:
-        user: user1
-        password: 5x4XjjbPod
+    enabled: false
 
-
+zookeeper:
+  enabled: false
