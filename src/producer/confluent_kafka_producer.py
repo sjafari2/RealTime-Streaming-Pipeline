@@ -24,9 +24,9 @@ import random
 import argparse
 import threading
 import psutil
-from flask import Flask
+from flask import Flask, Response
 from prometheus_flask_exporter import PrometheusMetrics
-from prometheus_client import Counter, Gauge, Histogram
+from prometheus_client import Counter, Gauge, Histogram, start_http_server, generate_latest, CONTENT_TYPE_LATEST
 from confluent_kafka import Producer, KafkaException
 from confluent_kafka.admin import AdminClient, NewTopic
 import socket
@@ -38,8 +38,18 @@ import socket
 
 shutdown_event = threading.Event()
 
-app = Flask(__name__)
-metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
+#start_http_server(9100)  # Starts a Prometheus metrics server on port 9100, exposing metrics to Prometheus
+app = Flask(__name__)  # Starts Flask app on port 8000
+
+@app.route("/")
+def hello():
+    return "This is my Kafka app"
+
+@app.route("/metrics")
+def metrics():
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+
+#metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
 
 msg_sent_counter = Counter('producer_messages_sent_total', 'Total messages sent')
 msg_rate_gauge = Gauge('producer_message_rate', 'Message send rate (msg/sec)')
@@ -48,6 +58,7 @@ cpu_gauge = Gauge('producer_cpu_percent', 'CPU percent usage')
 mem_gauge = Gauge('producer_memory_percent', 'Memory percent usage')
 uptime_gauge = Gauge('producer_uptime_seconds', 'Producer uptime in seconds')
 delivery_latency_histogram = Histogram('producer_delivery_latency_seconds', 'Per-message delivery latency in seconds', buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2])
+producer_latency_gauge = Gauge('producer_avg_delivery_latency_ms', 'Average producer delivery latency in milliseconds')
 target_rate_gauge = Gauge('producer_target_rate', 'Target message send rate (msg/sec)')
 avg_msg_size_gauge = Gauge('producer_avg_msg_size_bytes', 'Average message size in bytes')
 
@@ -115,7 +126,7 @@ class MyProducer:
         self.admin = AdminClient({'bootstrap.servers': bootstrap_servers})
         self.create_topics_if_missing(args.topicTitle, args.numTopics, args.numPartitions, args.replica)
 
-        #threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
+        threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
         threading.Thread(target=self.auto_flush, daemon=True).start()
         threading.Thread(target=self.monitor_buffer_metrics, daemon=True).start() 
 
@@ -139,7 +150,7 @@ class MyProducer:
                         exhausted = pm.get('buffer-exhausted-records')
                         available = pm.get('bufferpool-available-records')
                         print(f"[BUFFER] exhausted={int(exhausted)}, available={int(available)}")
-                        break  # Only need to check one broker
+                        break  
             except Exception as e:
                 print(f"[WARN] Could not read buffer metrics: {e}")
             time.sleep(interval)
@@ -147,10 +158,10 @@ class MyProducer:
     def update_metrics_periodically(self):
         while self.running:
             try:
-                #cpu_gauge.set(psutil.cpu_percent(interval=1))
-                #mem_gauge.set(psutil.virtual_memory().percent)
-                #uptime_gauge.set(time.time() - self.start_time)
-                #target_rate_gauge.set(self.dynamic_target_rate)
+                cpu_gauge.set(psutil.cpu_percent(interval=1))
+                mem_gauge.set(psutil.virtual_memory().percent)
+                uptime_gauge.set(time.time() - self.start_time)
+                target_rate_gauge.set(self.dynamic_target_rate)
 
                 elapsed = time.time() - self.start_time
                 if elapsed > 0 and self.msg_sent > 0:
@@ -158,13 +169,14 @@ class MyProducer:
                     mb_rate = (self.bytes_sent / (1024 * 1024)) / elapsed
                     avg_msg_size = self.bytes_sent / self.msg_sent
 
-                    #msg_rate_gauge.set(msg_rate)
-                    #mb_rate_gauge.set(mb_rate)
-                    #avg_msg_size_gauge.set(avg_msg_size)
+                    msg_rate_gauge.set(msg_rate)
+                    mb_rate_gauge.set(mb_rate)
+                    avg_msg_size_gauge.set(avg_msg_size)
 
                     if self.latency_count > 0:
                         current_latency = self.total_latency / self.latency_count
                         self.prev_latency = 0.8 * self.prev_latency + 0.2 * current_latency
+                        producer_latency_gauge.set(current_latency * 1000)  # in milliseconds
                         print(f"[DEBUG] current_latency={current_latency:.4f}, prev_latency={self.prev_latency:.4f}, target_rate={self.dynamic_target_rate}")
 
                         # Adjust target rate based on latency feedback
@@ -183,7 +195,7 @@ class MyProducer:
                 print(f"[ERROR] Metrics update error: {e}")
             time.sleep(1)
 
-    def auto_flush(self, interval=1):
+    def auto_flush(self, interval=0.1): # auto flush evry 100 ms
         while self.running:
             try:
                 self.producer.flush()
@@ -192,8 +204,8 @@ class MyProducer:
             time.sleep(interval)
 
     def send_message(self, topic, idx, headers=None):
-    # Fixed 64 KB payload
-        payload_size = 64 * 1024
+    # Fixed 32 KB payload
+        payload_size = 32 * 1024
         dummy_content = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=payload_size))
         message_bytes = dummy_content.encode('utf-8')
 
@@ -215,12 +227,11 @@ class MyProducer:
                 value=message_bytes,
                 headers=full_headers
             )
-            self.producer.flush()  # Force immediate delivery
 
             # Measure latency as time since send started
             latency = time.time() - send_time
-            #self.total_latency += latency
-            #self.latency_count += 1
+            self.total_latency += latency
+            self.latency_count += 1
             self.msg_sent += 1
             self.bytes_sent += len(message_bytes)
 
@@ -231,8 +242,7 @@ class MyProducer:
 
     def send_batch_messages(self, topic, idx, headers=None):
         delivered = False
-        # Generate random message body between 16 KB and 64 KB
-        payload_size = 64 * 1024 #random.randint(64 * 1024)  # Size in bytes
+        payload_size = 32 * 1024 #random.randint(64 * 1024)  # Size in bytes
         dummy_content = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=payload_size))
         message_bytes = dummy_content.encode('utf-8')
         while not delivered and self.running:
@@ -254,7 +264,7 @@ class MyProducer:
                     callback=self.ack_callback,
                     #partition=partition
                     )
-                self.producer.poll(0) # Non-blocking: process delivery reports after produce()
+                self.producer.poll(0) # 0 = Non-blocking: checks the internal response buffer for any pending delivery reports, processes them and triggers the on_delivery callbacks
                 delivered = True
                 self.msg_sent += 1
                 self.bytes_sent += len(message_bytes)
@@ -281,14 +291,14 @@ class MyProducer:
                 print("[WARN] Failed to parse send_time header:", e)
 
             latency = time.time() - send_time  # time taken from when a message is sent to when it is acknowledged by Kafka
-            #print(f"[ACK] Latency={latency:.3f}s | Target rate={self.dynamic_target_rate} msg/sec | In-flight={self.producer.outq_len()} | Msg #{self.msg_sent}")
+            print(f"[ACK] Latency={latency:.3f}s | Target rate={self.dynamic_target_rate} msg/sec | In-flight={self.producer.outq_len()} | Msg #{self.msg_sent}")
 
-            #self.total_latency += latency
-            #self.latency_count += 1
+            self.total_latency += latency  # sum of all message delivery latencies in a time window
+            self.latency_count += 1        # number of messages delivered in that window
             print("[DEBUG] Received headers:", headers)
 
             #queue_size = self.producer.len()
-            #delivery_latency_histogram.observe(latency)
+            delivery_latency_histogram.observe(latency)
             if self.msg_sent % 100 == 0:
                 print(f"[INFO] Delivered to {msg.topic()} | Latency={latency:.3f}s ") # | Target rate={self.dynamic_target_rate}")
 
@@ -312,7 +322,7 @@ class MyProducer:
                 self.send_message(topic, idx, headers)
                 idx += 1
                 time_per_msg = 1 / self.dynamic_target_rate
-                if shutdown_event.wait(timeout=time_per_msg):
+                if shutdown_event.wait(timeout=time_per_msg):  #waits for  time_per_msg sec unless shutdown happens earlier which happens when shutdown flag is set
                     break
         except KeyboardInterrupt:
             self.stop()
@@ -323,12 +333,12 @@ class MyProducer:
         print("[INFO] Producer stopped cleanly.")
 
 def start_metrics_server():
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000) # Starts a Flask web server, serves custom Flask routes 
 
 def graceful_shutdown(signal_num, frame):
     global producer_instance
     print(f"[INFO] Received shutdown signal ({signal_num}).")
-    shutdown_event.set()
+    shutdown_event.set() # Triggers shutdown (usually on SIGINT, SIGTERM) by raising the shutdown flag 
     if producer_instance:
         producer_instance.stop()
     sys.exit(0)
@@ -366,7 +376,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     producer_instance = MyProducer(args)
-    #threading.Thread(target=start_metrics_server, daemon=True).start()
+    threading.Thread(target=start_metrics_server, daemon=True).start()
 
     try:
         producer_instance.start_synthetic_stream(args.topicTitle, args.numTopics, args.delay, args.randomRange)

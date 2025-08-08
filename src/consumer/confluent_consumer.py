@@ -32,7 +32,7 @@ uptime_gauge = Gauge('consumer_uptime_seconds', 'Consumer uptime in seconds')
 consumer_latency_histogram = Histogram('consumer_latency_seconds', 'End-to-end latency (producer to consumer) in seconds', buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2])
 out_of_order_rate_gauge = Gauge('consumer_out_of_order_rate', 'Fraction of out-of-order messages')
 duplicate_rate_gauge = Gauge('consumer_duplicate_rate', 'Fraction of duplicate messages')
-target_rate_gauge = Gauge('consumer_target_rate', 'Target message rate (msgs/sec)')  # <-- NEW
+target_rate_gauge = Gauge('consumer_target_rate', 'Target message rate (msgs/sec)')  
 
 class MetricConsumer:
     def __init__(self, topics, servers, group_id, max_messages, poll_timeout, fetch_max_bytes,
@@ -48,8 +48,8 @@ class MetricConsumer:
         self.bytes_consumed = 0
         self.last_log_time = time.time()
         self.save_queue = queue.Queue()
-        #self.save_thread = threading.Thread(target=self.save_worker)
-        #self.save_thread.start()
+        self.save_thread = threading.Thread(target=self.save_worker)
+        self.save_thread.start()
 
         #config = helper.Tools().read_config('consumer.properties')
         #jaas_config = config.get('sasl.jaas.config', '')
@@ -87,7 +87,7 @@ class MetricConsumer:
         last_metrics_update = time.time()
         while True:
             try:
-                msgs = self.consumer.consume(num_messages=20, timeout=self.poll_timeout)
+                msgs = self.consumer.consume(num_messages=100, timeout=self.poll_timeout)
                 now = time.time()
 
                 if now - last_metrics_update >= 5:
@@ -126,15 +126,15 @@ class MetricConsumer:
                     
                     index = index.decode()
                     producer_ts = float(producer_ts.decode())
-                    
+                    receive_ts = time.time()
+                    latency = receive_ts - producer_ts
+
                     target_rate_value = float(target_rate.decode()) if target_rate else None  
                     if target_rate_value is not None:
                         target_rate_gauge.set(target_rate_value)
                     else:
                         print(f"[WARN] Missing target_rate in message with index {index}")
 
-                    receive_ts = time.time()
-                    latency = receive_ts - producer_ts
                     consumer_latency_histogram.observe(latency)
 
                     self.metrics_list.append({
@@ -290,6 +290,6 @@ if __name__ == "__main__":
         max_poll_interval_ms=args.maxPollIntervalMs
     )
     print(args)
-    #threading.Thread(target=start_metrics_server, daemon=True).start()
-    time.sleep(5)  #delay to avoid rejoin race after pod restart
+    threading.Thread(target=start_metrics_server, daemon=True).start()
+    #time.sleep(5)  #delay to avoid rejoin race after pod restart
     consumer_instance.consume()

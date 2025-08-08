@@ -32,7 +32,9 @@ RUN apt-get update && \
     telnet \
     procps \
     curl \
-    lsof && \
+    lsof \
+    xsel \
+    xclip && \
     rm -rf /var/lib/apt/lists/*
 
 # Install yq - Mike Farah version (for YAML parsing)

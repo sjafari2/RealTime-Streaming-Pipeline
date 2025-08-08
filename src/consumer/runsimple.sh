@@ -13,7 +13,7 @@ eval $(
 
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
-consumer_output_dir="${data_CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}/${CURRENT_TIME}"
+consumer_output_dir="${data_CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}/${CURRENT_TIME}-TR-${data_TARGET_RATE}"
 mkdir -p "${consumer_output_dir}"
 
 # === Get brokers ===
@@ -66,30 +66,32 @@ fi
 log_path="./logs/consumer"
 mkdir -p "${log_path}"
 
+
 # === Kill any running Python (.py) or Shell (.sh) scripts ===
-echo "[INFO] Searching for and terminating any running .py or .sh scripts"
+#echo "[INFO] Searching for and terminating any running .py or .sh scripts"
 
 # Get current script PID and parent PID
-SELF_PID=$$
-PARENT_PID=$(ps -o ppid= -p "$SELF_PID" | tr -d ' ')
+#SELF_PID=$$
+#PARENT_PID=$(ps -o ppid= -p "$SELF_PID" | tr -d ' ')
 
 # Kill Python (.py) scripts except this one
-for pid in $(pgrep -f '\.py'); do
-  if [[ "$pid" != "$SELF_PID" && "$pid" != "$PARENT_PID" ]]; then
-    echo "[INFO] Killing Python script PID $pid"
-    kill -9 "$pid" || echo "[WARN] Failed to kill PID $pid"
-  fi
-done
+#for pid in $(pgrep -f '\.py'); do
+#  if [[ "$pid" != "$SELF_PID" && "$pid" != "$PARENT_PID" ]]; then
+#    echo "[INFO] Killing Python script PID $pid"
+#    kill -9 "$pid" || echo "[WARN] Failed to kill PID $pid"
+#  fi
+#done
 
 # Kill Shell (.sh) scripts except this one
-for pid in $(pgrep -f '\.sh'); do
-  if [[ "$pid" != "$SELF_PID" && "$pid" != "$PARENT_PID" ]]; then
-    echo "[INFO] Killing Shell script PID $pid"
-    kill -9 "$pid" || echo "[WARN] Failed to kill PID $pid"
-  fi
-done
-pod_name=$(hostname)
+#for pid in $(pgrep -f '\.sh'); do
+#  if [[ "$pid" != "$SELF_PID" && "$pid" != "$PARENT_PID" ]]; then
+#    echo "[INFO] Killing Shell script PID $pid"
+#    kill -9 "$pid" || echo "[WARN] Failed to kill PID $pid"
+#  fi
+#done
 
+pod_name=$(hostname)
+echo Start running consumer 
 # === Launch consumer ===
 python3 simple_consumer.py \
     --topics "${JOINED_TOPICS}" \
@@ -104,5 +106,6 @@ python3 simple_consumer.py \
     --socketTimeoutMs "${data_SOCKET_TIMEOUT_MS}" \
     --enableAutoCommit "${data_ENABLE_AUTO_COMMIT}" \
     --autoOffsetReset "${data_AUTO_OFFSET_RESET}" \
-    --consumerOutputDir "${consumer_output_dir}" 
+    --consumerOutputDir "${consumer_output_dir}" \
+    2>&1 | tee "${log_path}/consumer_${pod_name}_tr_${data_TARGET_RATE}.log" 
 
