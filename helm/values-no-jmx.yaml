@@ -79,18 +79,6 @@ controller:
       volumeMounts:
         - name: data
           mountPath: /bitnami/kafka
-    - name: download-jmx-agent
-      image: bitnami/minideb
-      command:
-        - bash
-        - -c
-        - >
-          apt update && apt install -y wget && \
-          wget -O /jmx-exporter/jmx_prometheus_javaagent.jar \
-          https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.20.0/jmx_prometheus_javaagent-0.20.0.jar
-      volumeMounts:
-        - name: jmx-exporter
-          mountPath: /jmx-exporter
   persistence:
     enabled: true
     storageClass: "rook-ceph-block-central"
@@ -117,19 +105,6 @@ controller:
         INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
         EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
     
-    - name: KAFKA_OPTS
-      value: >-
-        -javaagent:/opt/jmx-exporter/jmx_prometheus_javaagent.jar=7071:/opt/jmx-exporter/kafka-config.yaml
-
-  extraVolumeMounts:
-    - name: jmx-exporter
-      emptyDir: {}
-  
-  extraVolumes:
-    - name: jmx-exporter
-      configMap:
-        name: kafka-jmx-configmap
-
   extraConfig: |
     delete.topic.enable=true
     auto.create.topics.enable=true

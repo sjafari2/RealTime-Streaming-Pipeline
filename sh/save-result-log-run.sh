@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
-
-set -e
+set -euo pipefail
 
 ###############################
 ## Configuration
 ###############################
 
-pod_labels=("app=producer-sts" "app=consumer-sts") 
+pod_labels=("app=producer-sts" "app=consumer-sts")  # order matters for indices
 containers=("producer-container" "consumer-container")
-results_paths=("" "/app/consumer-merge-data/consumer-result" )
+
+# Results dirs (space-separated when multiple); empty string means "none"
+results_paths=("" "/app/consumer-merge-data/consumer-result")
+
+# LOGS: must have same length/order as pod_labels
 logs_paths=("/app/producer-data/logs" "/app/consumer-merge-data/logs")
 
 declare -A pod_configs=(
@@ -16,17 +19,53 @@ declare -A pod_configs=(
   ["consumer"]="consumer-sts-0:consumer-container:/app/consumer-merge-data:./src/consumer"
 )
 
-ordered_keys=("producer" "consumer")  
+ordered_keys=("producer" "consumer")
 file_extensions=("py" "sh" "yaml" "yml" "properties")
+
+SINGLE_FOR_COPY="${SINGLE_FOR_COPY:-1}"  # 1 = do save/delete on first pod per type only
+
+###############################
+## Helpers
+###############################
+
+save_dir_stream() {
+  local pod="$1" c="$2" rdir="$3" ldir="$4"
+  mkdir -p "$ldir"
+  if ! kubectl exec -c "$c" "$pod" -- sh -lc "test -d '$rdir'"; then
+    echo "Skip: $rdir not found in $pod"
+    return 0
+  fi
+  echo "Saving $pod:$rdir -> $ldir ..."
+  kubectl exec -c "$c" "$pod" -- sh -lc "
+    cd '$rdir' 2>/dev/null || exit 3
+    if command -v pigz >/dev/null 2>&1; then
+      tar -cf - . | pigz -1
+    else
+      tar -czf - .
+    fi
+  " | tar -C "$ldir" -xzf - || echo 'Warning: stream copy failed'
+}
+
+delete_dir_cephsafe() {
+  local pod="$1" c="$2" rdir="$3"
+  if ! kubectl exec -c "$c" "$pod" -- sh -lc "test -d '$rdir'"; then
+    echo "Skip: $rdir not found in $pod"
+    return 0
+  fi
+  echo "Deleting (Ceph-safe) $pod:$rdir ..."
+  kubectl exec -c "$c" "$pod" -- sh -lc "
+    find '$rdir' -type f -delete
+    find '$rdir' -depth -type d -empty -delete
+  " || echo 'Warning: delete failed'
+}
 
 ###############################
 ## Functions
 ###############################
 
 save_codes() {
-  echo "==================== Saving Codes from Producer and Consumer Pods ===================="
+  echo "==================== Saving Codes from All Pods ===================="
   mkdir -p ./src/producer ./src/consumer
-
   for key in "${ordered_keys[@]}"; do
     IFS=':' read -r pod container src_path dst_path <<< "${pod_configs[$key]}"
     echo "Copying from $pod (container: $container, path: $src_path) to $dst_path"
@@ -35,8 +74,7 @@ save_codes() {
       files=$(kubectl exec "$pod" -c "$container" -- find "$src_path" -type f -name "*.${ext}" 2>/dev/null || true)
       for file in $files; do
         rel_path="${file#$src_path/}"
-        local_dir="$dst_path/$(dirname "$rel_path")"
-        mkdir -p "$local_dir"
+        mkdir -p "$dst_path/$(dirname "$rel_path")"
         kubectl cp "$pod:$file" "$dst_path/$rel_path" -c "$container" 2>/dev/null || echo "Warning: Failed to copy $file"
       done
     done
@@ -45,120 +83,147 @@ save_codes() {
 
   echo "Copying pipeline-configmap.yaml..."
   kubectl cp producer-sts-0:/config/pipeline-configmap.yaml ./src/pipeline-configmap.yaml 2>/dev/null || true
-
-  if [ -f ./src/pipeline-configmap.yaml ]; then
-    echo "Saved pipeline-configmap.yaml to ./src/pipeline-configmap.yaml"
-  else
-    echo "Warning: Failed to copy pipeline-configmap.yaml. Check if it is mounted."
-  fi
+  [[ -f ./src/pipeline-configmap.yaml ]] && echo "Saved pipeline-configmap.yaml" || echo "Warning: Failed to copy pipeline-configmap.yaml."
   echo "==================================================================="
 }
 
 process_pods() {
+  local timestamp results_root logs_root
   timestamp=$(date +"%Y%m%d_%H%M%S")
   results_root="./results/$timestamp"
   logs_root="./logs/$timestamp"
-
-  mkdir -p "$results_root/consumer"
+  mkdir -p "$results_root/producer" "$results_root/consumer"
   mkdir -p "$logs_root/producer" "$logs_root/consumer"
 
-  read -n 1 -p "Save results before running the script? (y/n): " save_results
-  echo
+  read -n 1 -p "Save results before running the script? (y/n): " save_results; echo
   [[ "$save_results" != "y" ]] && save_results="n"
-
-  read -n 1 -p "Delete results before running the script? (y/n): " delete_results
-  echo
+  read -n 1 -p "Delete results before running the script? (y/n): " delete_results; echo
   [[ "$delete_results" != "y" ]] && delete_results="n"
-
-  read -n 1 -p "Save logs before running the script? (y/n): " save_logs
-  echo
+  read -n 1 -p "Save logs before running the script? (y/n): " save_logs; echo
   [[ "$save_logs" != "y" ]] && save_logs="n"
-
-  read -n 1 -p "Delete logs before running the script? (y/n): " delete_logs
-  echo
+  read -n 1 -p "Delete logs before running the script? (y/n): " delete_logs; echo
   [[ "$delete_logs" != "y" ]] && delete_logs="n"
-
-  read -n 1 -p "Run ./runsynthetic.sh or ./runsimple.sh inside all pods now? (y/n): " run_scripts
-  echo
+  read -n 1 -p "Run ./runsynthetic.sh inside pods? (y/n): " run_scripts; echo
   [[ "$run_scripts" != "y" ]] && run_scripts="n"
 
-  for i in "${!pod_labels[@]}"; do
-    label=${pod_labels[$i]}
-    container=${containers[$i]}
-    pod_type=$(echo $label | cut -d= -f2 | cut -d- -f1)
-    echo "==================== Processing $pod_type Pods ===================="
+  # ===== Save/Delete phase (per type; once per type if SINGLE_FOR_COPY=1) =====
+  for idx in "${!pod_labels[@]}"; do
+    local label="${pod_labels[$idx]}"
+    local container="${containers[$idx]}"
+    local pod_type
+    pod_type=$(echo "$label" | cut -d= -f2 | cut -d- -f1)
+    echo "==================== Processing $pod_type (save/delete) ===================="
 
-    pods=$(kubectl get pods -l $label -o jsonpath='{.items[*].metadata.name}')
-    pod_id=0
+    local pods did_save_results did_delete_results did_save_logs did_delete_logs
+    pods=$(kubectl get pods -l "$label" -o jsonpath='{.items[*].metadata.name}')
+    did_save_results=0; did_delete_results=0; did_save_logs=0; did_delete_logs=0
+
     for pod in $pods; do
-      echo "Pod: $pod ($container)"
+      [[ -z "$pod" ]] && continue
 
-      # Save results (only consumer)
-      if [[ "$save_results" == "y" && -n "${results_paths[$i]}" ]]; then
-        for remote_path in ${results_paths[$i]}; do
-          base_name=$(basename $remote_path)
-          echo "Saving $remote_path from $pod..."
-          kubectl cp "$pod:$remote_path" "$results_root/$pod_type/${pod}_${base_name}" -c $container || echo "Warning: Failed to copy $remote_path from $pod"
-        done
+      if [[ "$save_results" == "y" && -n "${results_paths[$idx]}" ]]; then
+        if [[ "$SINGLE_FOR_COPY" == "1" && "$did_save_results" -eq 1 ]]; then
+          echo "Skip results save for $pod_type (already saved)."
+        else
+          for remote_path in ${results_paths[$idx]}; do
+            [[ -z "$remote_path" ]] && continue
+            local_dir="$results_root/$pod_type/${pod}_$(basename "$remote_path")"
+            save_dir_stream "$pod" "$container" "$remote_path" "$local_dir"
+          done
+          did_save_results=1
+        fi
       else
         echo "Skipping result save for $pod_type."
       fi
 
-      # Delete results (only consumer)
-      if [[ "$delete_results" == "y" && -n "${results_paths[$i]}" ]]; then
-        for remote_path in ${results_paths[$i]}; do
-          echo "Deleting $remote_path in $pod..."
-          kubectl exec -c $container $pod -- rm -rf "$remote_path" || echo "Warning: Failed to delete $remote_path in $pod"
-        done
+      if [[ "$delete_results" == "y" && -n "${results_paths[$idx]}" ]]; then
+        if [[ "$SINGLE_FOR_COPY" == "1" && "$did_delete_results" -eq 1 ]]; then
+          echo "Skip results deletion for $pod_type (already deleted)."
+        else
+          for remote_path in ${results_paths[$idx]}; do
+            [[ -z "$remote_path" ]] && continue
+            delete_dir_cephsafe "$pod" "$container" "$remote_path"
+          done
+          did_delete_results=1
+        fi
       else
         echo "Skipping result deletion for $pod_type."
       fi
 
-      # Save logs ( producer and consumer)
-      if [[ "$save_logs" == "y" && -n "${logs_paths[$i]}" ]]; then
-        log_remote_path="${logs_paths[$i]}"
-        echo "Saving logs from $log_remote_path in $pod..."
-        kubectl cp "$pod:$log_remote_path" "$logs_root/$pod_type/${pod}_logs" -c $container || echo "Warning: Failed to copy logs from $pod"
+      if [[ "$save_logs" == "y" && -n "${logs_paths[$idx]}" ]]; then
+        if [[ "$SINGLE_FOR_COPY" == "1" && "$did_save_logs" -eq 1 ]]; then
+          echo "Skip log save for $pod_type (already saved)."
+        else
+          local_dir="$logs_root/$pod_type/${pod}_logs"
+          save_dir_stream "$pod" "$container" "${logs_paths[$idx]}" "$local_dir"
+          did_save_logs=1
+        fi
       else
         echo "Skipping log save for $pod_type."
       fi
 
-      # Delete logs ( producer and consumer)
-      if [[ "$delete_logs" == "y" && -n "${logs_paths[$i]}" ]]; then
-        log_remote_path="${logs_paths[$i]}"
-        echo "Deleting logs in $log_remote_path in $pod..."
-        kubectl exec -c $container $pod -- rm -rf "$log_remote_path/*" || echo "Warning: Failed to delete logs in $pod"
+      if [[ "$delete_logs" == "y" && -n "${logs_paths[$idx]}" ]]; then
+        if [[ "$SINGLE_FOR_COPY" == "1" && "$did_delete_logs" -eq 1 ]]; then
+          echo "Skip log deletion for $pod_type (already deleted)."
+        else
+          delete_dir_cephsafe "$pod" "$container" "${logs_paths[$idx]}"
+          did_delete_logs=1
+        fi
       else
         echo "Skipping log deletion for $pod_type."
       fi
 
-      # Kill previous processes and run scripts
-      if [[ "$run_scripts" == "y" ]]; then
-        echo "Force-killing any .py and .sh processes in $pod..."
-
-        kubectl exec -c $container $pod -- sh -c "ps -eo pid,cmd | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
-        kubectl exec -c $container $pod -- sh -c "ps -eo pid,cmd | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
-
-        echo "Starting script in $pod..."
-
-        if [[ "$pod_type" == "producer" ]]; then
-          kubectl exec -c $container $pod -- sh -c "setsid ./runsynthetic.sh '$pod_id' > /dev/null 2>&1 < /dev/null &" || echo "Warning: Failed to start ./runsynthetic.sh in $pod"
-        elif [[ "$pod_type" == "consumer" ]]; then
-          kubectl exec -c $container $pod -- sh -c "setsid ./runsimple.sh '$pod_id' > /dev/null 2>&1 < /dev/null &" || echo "Warning: Failed to start ./runsimple.sh in $pod"
-        else
-          echo "Skipping script run for $pod_type pod."
-        fi
-      else
-        echo "Skipping script run for $pod_type."
+      # Only first pod if SINGLE_FOR_COPY=1
+      if [[ "$SINGLE_FOR_COPY" == "1" && ( "$did_save_results" -eq 1 || "$did_delete_results" -eq 1 || "$did_save_logs" -eq 1 || "$did_delete_logs" -eq 1 ) ]]; then
+        break
       fi
-
-      pod_id=$((pod_id+1))
     done
     echo "==================================================================="
   done
 
-  echo "Results are saved under: $results_root"
-  echo "Logs are saved under: $logs_root"
+  # ===== Run phase: consumers first, then producers =====
+  if [[ "$run_scripts" == "y" ]]; then
+    echo "===== Running scripts for all consumer pods first ====="
+    for idx in "${!pod_labels[@]}"; do
+      if [[ "${pod_labels[$idx]}" == "app=consumer-sts" ]]; then
+        local container="${containers[$idx]}"
+        local pods pod_id
+        pods=$(kubectl get pods -l "${pod_labels[$idx]}" -o jsonpath='{.items[*].metadata.name}')
+        pod_id=0
+        for pod in $pods; do
+          echo "Force-killing processes in consumer pod: $pod"
+          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
+          kubectl exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
+          pod_id=$((pod_id+1))
+        done
+      fi
+    done
+
+    echo "===== Running scripts for all producer pods next ====="
+    for idx in "${!pod_labels[@]}"; do
+      if [[ "${pod_labels[$idx]}" == "app=producer-sts" ]]; then
+        local container="${containers[$idx]}"
+        local pods pod_id
+        pods=$(kubectl get pods -l "${pod_labels[$idx]}" -o jsonpath='{.items[*].metadata.name}')
+        pod_id=0
+        for pod in $pods; do
+          echo "Force-killing processes in producer pod: $pod"
+          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
+          kubectl exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
+          pod_id=$((pod_id+1))
+        done
+      fi
+    done
+  else
+    echo "Skipping script run."
+  fi
+
+  echo "✅ Results saved under: $results_root"
+  echo "✅ Logs saved under: $logs_root"
 }
 
 ###############################
@@ -167,14 +232,12 @@ process_pods() {
 
 echo "==================== Starting Code Backup and Pod Processing ===================="
 
-read -n 1 -p "Save codes from all pods before running the script? (y/n): " save_codes_choice
-echo
+read -n 1 -p "Save codes from all pods before running the script? (y/n): " save_codes_choice; echo
 [[ "$save_codes_choice" != "y" ]] && save_codes_choice="n"
-
 if [[ "$save_codes_choice" == "y" ]]; then
-    save_codes
+  save_codes
 else
-    echo "Skipping code backup step."
+  echo "Skipping code backup step."
 fi
 
 process_pods

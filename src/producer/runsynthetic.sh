@@ -30,6 +30,9 @@ python3 confluent_kafka_producer.py \
     --compressionType "${data_COMPRESSION_TYPE}" \
     --batchSize "${data_BATCH_SIZE}" \
     --msgMaxBytes "${data_MSG_MAX_BYTES}" \
+    --metadataMaxAgeMs "${data_METADATA_MAX_AGE_MS}" \
+    --topicMetadataRefreshIntervalMs "${data_TOPIC_METADATA_REFRESH_INTERVAL_MS}" \
+    --maxInFlightRequestsPerConnection "${data_MAX_IN_FLIGHT_REQUEST_PER_CONNECTION}" \
     --acks "${data_ACKS}" \
     --retries "${data_RETRIES}" \
     --retryBackoffMs "${data_RETRY_BACKOFF_MS}" \

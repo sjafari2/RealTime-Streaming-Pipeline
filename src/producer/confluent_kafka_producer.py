@@ -76,6 +76,7 @@ class MyProducer:
         self.prev_latency = 0.1  # Initial guess
         self.total_latency = 0.0
         self.latency_count = 0
+        self.last_latency = 0
  
         #t = Tools()
         #config = t.read_config('producer.properties')
@@ -112,12 +113,12 @@ class MyProducer:
             #'sasl.mechanism': "PLAIN",
             #'sasl.username': "user1",
             #'sasl.password': "5x4XjjbPod",
-            'debug': "protocol,broker",
+            #'debug': "protocol,broker",
             'client.id': socket.gethostname(),
-            'metadata.max.age.ms': 60000,
-            'topic.metadata.refresh.interval.ms': 60000,
-            'max.in.flight.requests.per.connection': 1,
-            'queue.buffering.max.ms': 1 
+            'metadata.max.age.ms': int(args.metadataMaxAgeMs),
+            'topic.metadata.refresh.interval.ms': int(args.topicMetadataRefreshIntervalMs),
+            'max.in.flight.requests.per.connection': int(args.maxInFlightRequestsPerConnection),
+            #'queue.buffering.max.ms': 1  # removed in Confluent Kafka
             #'socket.keepalive.enable': True,
 
         }
@@ -172,7 +173,7 @@ class MyProducer:
                     msg_rate_gauge.set(msg_rate)
                     mb_rate_gauge.set(mb_rate)
                     avg_msg_size_gauge.set(avg_msg_size)
-
+                    '''
                     if self.latency_count > 0:
                         current_latency = self.total_latency / self.latency_count
                         self.prev_latency = 0.8 * self.prev_latency + 0.2 * current_latency
@@ -188,6 +189,7 @@ class MyProducer:
                         # Reset for next interval
                         self.total_latency = 0.0  # adds up all latencies in the last interval
                         self.latency_count = 0    # counts how many messages were acknowledged
+                    '''
                     print(f" Target rate: {self.dynamic_target_rate} msg/sec")
 
                     print(f"[METRIC] Elapsed: {elapsed:.2f}s | Sent: {self.msg_sent} msgs | Rate: {msg_rate:.2f} msg/s | Throughput: {mb_rate:.4f} MB/s | Avg Msg Size: {avg_msg_size:.2f} bytes")
@@ -215,10 +217,11 @@ class MyProducer:
         full_headers.extend([
             ("index", str(idx).encode()),
             ("producer_timestamp", str(send_time).encode()),
-            ("producer_pod_name", self.pod_name.encode()),
+            #("producer_pod_name", self.pod_name.encode()),
             ("size_bytes", str(len(message_bytes)).encode()),
             ("target_rate", str(self.dynamic_target_rate).encode())
         ])
+        #print(f"[DEBUG] Setting headers: {full_headers}")
 
         try:
             self.producer.produce(
@@ -227,6 +230,8 @@ class MyProducer:
                 value=message_bytes,
                 headers=full_headers
             )
+
+            self.producer.poll(0) # immediately serve delivery callbacks and free space in the queue
 
             # Measure latency as time since send started
             latency = time.time() - send_time
@@ -237,6 +242,12 @@ class MyProducer:
 
             if self.msg_sent % 100 == 0:
                 print(f"[INFO] Sent #{self.msg_sent} | Latency={latency:.3f}s") # | Target rate={self.dynamic_target_rate}")
+        
+        except BufferError:
+            print("[WARN] Local queue is full, retrying...")
+            self.producer.poll(1)  # block and free space
+            time.sleep(0.1)
+        
         except KafkaException as e:
             print(f"[ERROR] Send failed: {e}")
 
@@ -269,12 +280,13 @@ class MyProducer:
                 self.msg_sent += 1
                 self.bytes_sent += len(message_bytes)
                 msg_sent_counter.inc()
-                print("[DEBUG] Sending headers:", full_headers)
+                #print("[DEBUG] Sending headers:", full_headers)
 
             except BufferError:
-                self.dynamic_target_rate = max(int(self.dynamic_target_rate * 0.9), 10)
+                #self.dynamic_target_rate = max(int(self.dynamic_target_rate * 0.9), 10)
                 self.producer.poll(1)  # Blocking: wait up to 1s to flush buffer when full
                 time.sleep(0.2)
+            
             except KafkaException as e:
                 print(f"[ERROR] Send failed: {e}")
                 break
@@ -285,22 +297,33 @@ class MyProducer:
         else:
             headers = dict(msg.headers() or [])
             try:
+                
+                # Extract and decode the 'send_time' header
                 send_time = float(headers.get("send_time").decode())
-            except Exception as e:
-                send_time = time.time()
-                print("[WARN] Failed to parse send_time header:", e)
+                latency = time.time() - send_time  # time taken from when a message is sent to when it is acknowledged by Kafka
 
-            latency = time.time() - send_time  # time taken from when a message is sent to when it is acknowledged by Kafka
-            print(f"[ACK] Latency={latency:.3f}s | Target rate={self.dynamic_target_rate} msg/sec | In-flight={self.producer.outq_len()} | Msg #{self.msg_sent}")
+                # Record latency in histogram
+                delivery_latency_histogram.observe(latency)
+               
+                # Update internal tracking for average latency
+                self.total_latency += latency  # sum of all message delivery latencies in a time window
+                self.latency_count += 1        # number of messages delivered in that window
+                self.last_latency = latency  # Store for later use
+                #print(f"[ACK] Latency={latency:.3f}s | Target rate={self.dynamic_target_rate} msg/sec | In-flight={self.producer.outq_len()} | Msg #{self.msg_sent}")
+                print(f"[ACK] Latency={latency:.5f}s | Target rate={self.dynamic_target_rate} msg/sec | Send Time={send_time_str}")
 
-            self.total_latency += latency  # sum of all message delivery latencies in a time window
-            self.latency_count += 1        # number of messages delivered in that window
-            print("[DEBUG] Received headers:", headers)
-
-            #queue_size = self.producer.len()
-            delivery_latency_histogram.observe(latency)
+            except (KeyError, ValueError, AttributeError) as e:
+                print(f"[WARN] Latency calculation failed: {e}, headers={headers}, send_time_str={send_time_str if 'send_time_str' in locals() else 'N/A'}")
+           
+           #queue_size = self.producer.len()
             if self.msg_sent % 100 == 0:
-                print(f"[INFO] Delivered to {msg.topic()} | Latency={latency:.3f}s ") # | Target rate={self.dynamic_target_rate}")
+                latency_to_log = getattr(self, 'last_latency', 0.000)  # Default to 0 if not set
+                #print(f"[INFO] Delivered to {msg.topic()} | Latency={latency:.3f}s ") # | Target rate={self.dynamic_target_rate}")
+                print(f"[INFO] Sent #{self.msg_sent} | Latency={latency_to_log:.5f}s | Callback Latency Available={latency is not None}")
+            #excepstit Exception as e:
+            #    send_time = time.time()
+            #    print("[WARN] Failed to parse send_time header:", e)
+
 
     def start_synthetic_stream(self, topic_title, num_topics, delay, random_range):
         idx = 0
@@ -360,6 +383,9 @@ if __name__ == "__main__":
     parser.add_argument('--compressionType', type=str, required=True)
     parser.add_argument('--batchSize', type=int, required=True)
     parser.add_argument('--msgMaxBytes', type=int, required=True)
+    parser.add_argument('--metadataMaxAgeMs', type=int, required=True)
+    parser.add_argument('--topicMetadataRefreshIntervalMs', type=int, required=True)
+    parser.add_argument('--maxInFlightRequestsPerConnection', type=int, required=True)
     parser.add_argument('--acks', type=str, required=True)
     parser.add_argument('--retries', type=int, required=True)
     parser.add_argument('--retryBackoffMs', type=int, required=True)

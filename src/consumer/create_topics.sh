@@ -42,14 +42,14 @@ for topic in "${topic_names[@]}"; do
 done
 
 # === Then: Describe topics
-echo -e "\n[INFO] Describing all created topics:"
-for topic in "${topic_names[@]}"; do
-  echo -e "\n-----------------------------"
-  echo "[INFO] Topic: $topic"
-  $KAFKA_TOPICS --describe \
-    --bootstrap-server "$BOOTSTRAP_SERVERS" \
-    --topic "$topic"
-done
+#echo -e "\n[INFO] Describing all created topics:"
+#for topic in "${topic_names[@]}"; do
+#  echo -e "\n-----------------------------"
+#  echo "[INFO] Topic: $topic"
+#  $KAFKA_TOPICS --describe \
+#    --bootstrap-server "$BOOTSTRAP_SERVERS" \
+#    --topic "$topic"
+#done
 
 echo -e "\n[SUCCESS] Topic creation and verification completed."
 

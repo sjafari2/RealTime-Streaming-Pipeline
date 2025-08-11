@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-jmx-configmap
+  namespace: kafkastreamingdata
+data:
+  kafka-config.yaml: |
+    startDelaySeconds: 0
+    hostPort: 9999
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    rules:
+      - pattern: "kafka.server<type=(.+), name=(.+)><>Value"
+        name: kafka_$1_$2
+        type: GAUGE
+

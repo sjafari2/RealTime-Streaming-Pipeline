@@ -22,4 +22,10 @@ data:
               - producer-headless-svc:8000
               - consumer-headless-svc:8000
               - merge-headless-svc:8000
-
+      
+      - job_name: 'kafka-brokers'
+        static_configs:
+          - targets:
+            - pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:7071
+            - pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:7071
+            - pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:7071
