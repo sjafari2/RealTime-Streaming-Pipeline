@@ -5,21 +5,22 @@ set -euo pipefail
 ## Configuration
 ###############################
 
-pod_labels=("app=producer-sts" "app=consumer-sts")  # order matters for indices
-containers=("producer-container" "consumer-container")
+pod_labels=("app=producer-sts" "app=consumer-sts" "app=merge-sts")  # order matters for indices
+containers=("producer-container" "consumer-container" "merge-container")
 
 # Results dirs (space-separated when multiple); empty string means "none"
-results_paths=("" "/app/consumer-merge-data/consumer-result")
+results_paths=("" "/app/consumer-merge-data/consumer-result" "/app/merged-data/merge-metrics")
 
 # LOGS: must have same length/order as pod_labels
-logs_paths=("/app/producer-data/logs" "/app/consumer-merge-data/logs")
+logs_paths=("/app/producer-data/logs" "/app/consumer-merge-data/logs" "/app/merged-data/logs")
 
 declare -A pod_configs=(
   ["producer"]="producer-sts-0:producer-container:/app/producer-data:./src/producer"
   ["consumer"]="consumer-sts-0:consumer-container:/app/consumer-merge-data:./src/consumer"
+  ["merge"]="merge-sts-0:merge-container:/app/merged-data:./src/merge"
 )
 
-ordered_keys=("producer" "consumer")
+ordered_keys=("producer" "consumer" "merge")
 file_extensions=("py" "sh" "yaml" "yml" "properties")
 
 SINGLE_FOR_COPY="${SINGLE_FOR_COPY:-1}"  # 1 = do save/delete on first pod per type only
@@ -65,7 +66,7 @@ delete_dir_cephsafe() {
 
 save_codes() {
   echo "==================== Saving Codes from All Pods ===================="
-  mkdir -p ./src/producer ./src/consumer
+  mkdir -p ./src/producer ./src/consumer ./src/merge
   for key in "${ordered_keys[@]}"; do
     IFS=':' read -r pod container src_path dst_path <<< "${pod_configs[$key]}"
     echo "Copying from $pod (container: $container, path: $src_path) to $dst_path"
@@ -92,8 +93,8 @@ process_pods() {
   timestamp=$(date +"%Y%m%d_%H%M%S")
   results_root="./results/$timestamp"
   logs_root="./logs/$timestamp"
-  mkdir -p "$results_root/producer" "$results_root/consumer"
-  mkdir -p "$logs_root/producer" "$logs_root/consumer"
+  mkdir -p "$results_root/producer" "$results_root/consumer" "$results_root/merge"
+  mkdir -p "$logs_root/producer" "$logs_root/consumer" "$logs_root/merge"
 
   read -n 1 -p "Save results before running the script? (y/n): " save_results; echo
   [[ "$save_results" != "y" ]] && save_results="n"
@@ -191,9 +192,9 @@ process_pods() {
         pods=$(kubectl get pods -l "${pod_labels[$idx]}" -o jsonpath='{.items[*].metadata.name}')
         pod_id=0
         for pod in $pods; do
-          echo "Force-killing processes in consumer pod: $pod"
-          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
-          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          #echo "Force-killing processes in consumer pod: $pod"
+          #kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          #kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
           echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
           kubectl exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
           pod_id=$((pod_id+1))
@@ -209,9 +210,26 @@ process_pods() {
         pods=$(kubectl get pods -l "${pod_labels[$idx]}" -o jsonpath='{.items[*].metadata.name}')
         pod_id=0
         for pod in $pods; do
-          echo "Force-killing processes in producer pod: $pod"
-          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
-          kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          #echo "Force-killing processes in producer pod: $pod"
+          #kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          #kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
+          kubectl exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
+          pod_id=$((pod_id+1))
+        done
+      fi
+    done
+    echo "===== Running scripts for merge pod next ====="
+    for idx in "${!pod_labels[@]}"; do
+      if [[ "${pod_labels[$idx]}" == "app=merge-sts" ]]; then
+        local container="${containers[$idx]}"
+        local pods pod_id
+        pods=$(kubectl get pods -l "${pod_labels[$idx]}" -o jsonpath='{.items[*].metadata.name}')
+        pod_id=0
+        for pod in $pods; do
+          #echo "Force-killing processes in producer pod: $pod"
+          #kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.py' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
+          #kubectl exec -c "$container" "$pod" -- sh -lc "ps -eo pid,args | grep '\.sh' | grep -v grep | awk '{print \$1}' | xargs -r kill -9 || true"
           echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
           kubectl exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
           pod_id=$((pod_id+1))

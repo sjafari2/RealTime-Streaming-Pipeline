@@ -1,9 +1,15 @@
 # Data and scientific computing
-pandas
+pandas>=2.1
 numpy
-scipy
+scipy>=1.11
 h5py
 lz4
+
+# Parquet / columnar IO (engines + common compressions)
+pyarrow>=14
+fastparquet>=2024.2.0
+python-snappy>=0.6.1
+zstandard>=0.22.0
 
 # NLP
 spacy
@@ -37,6 +43,9 @@ cachetools    # Lightweight memoization or TTL cache
 authlib       # OAuth2/OpenID Connect client + server utilities
 attrs         # Declarative class data structures, cleaner than dataclasses
 
-
+# Web + metrics
 flask
 prometheus_flask_exporter
+prometheus-client
+psutil
+

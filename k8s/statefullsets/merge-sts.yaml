@@ -18,6 +18,15 @@ spec:
       labels:
         app: merge-sts
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - patternlab.calit2.optiputer.net
       initContainers:
         - name: volume-permission-and-bootstrap
           image: sjafari2/kafkaconfluentmerge:latest
@@ -120,7 +129,8 @@ spec:
               mountPath: /app/merged-data
             - name: shared-config
               mountPath: /config
-
+            - name: config-default
+              mountPath: /defaults
       volumes:
         - name: consumer-merge-data
           persistentVolumeClaim:

@@ -17,7 +17,9 @@ consumer_output_dir="${data_CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}/${CURRENT_TIME}
 mkdir -p "${consumer_output_dir}"
 
 # === Get brokers ===
-server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr '\n' ',' | sed 's/,$//')
+#server_uri=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr '\n' ',' | sed 's/,$//')
+server_uri='pip-kafka:9092'
+
 echo Servers are $server_uri
 
 if [ -z "${data_TOPIC_TITLE}" ]; then
@@ -108,5 +110,8 @@ python3 confluent_consumer.py \
   --autoOffsetReset "${data_AUTO_OFFSET_RESET}" \
   --lagQueryTimeout "${data_LAG_QUERY_TIMEOUT}" \
   --lagQueryInterval "${data_LAG_QUERY_INTERVAL}" \
+  --appDelayMinMs "${data_APP_DELAY_MIN_MS}" \
+  --appDelayMaxMs "${data_APP_DELAY_MAX_MS}" \
+  --appDelayMode "${data_APP_DELAY_MODE}" \
   2>&1 | tee "${log_path}/${pod_name}_tr_${data_TARGET_RATE}.log"
 set +x

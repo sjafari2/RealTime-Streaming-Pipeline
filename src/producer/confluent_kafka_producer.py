@@ -109,6 +109,9 @@ class MyProducer:
             'queue.buffering.max.kbytes': int(args.queueBufferingMaxKbytes),
             'connections.max.idle.ms': int(args.connectionsMaxIdleMs),
             'socket.keepalive.enable': args.socketKeepaliveEnable,
+            'socket.send.buffer.bytes': 524288,
+            'socket.receive.buffer.bytes': 524288,
+            #'socket.request.max.bytes': 32*1024*1024, 
             #'security.protocol': "SASL_PLAINTEXT",
             #'sasl.mechanism': "PLAIN",
             #'sasl.username': "user1",
@@ -128,7 +131,7 @@ class MyProducer:
         self.create_topics_if_missing(args.topicTitle, args.numTopics, args.numPartitions, args.replica)
 
         threading.Thread(target=self.update_metrics_periodically, daemon=True).start()
-        threading.Thread(target=self.auto_flush, daemon=True).start()
+        #threading.Thread(target=self.auto_flush, daemon=True).start()
         threading.Thread(target=self.monitor_buffer_metrics, daemon=True).start() 
 
     def create_topics_if_missing(self, base_topic, num_topics, num_partitions, replication_factor):
@@ -196,7 +199,7 @@ class MyProducer:
             except Exception as e:
                 print(f"[ERROR] Metrics update error: {e}")
             time.sleep(1)
-
+    '''
     def auto_flush(self, interval=0.1): # auto flush evry 100 ms
         while self.running:
             try:
@@ -204,7 +207,7 @@ class MyProducer:
             except Exception as e:
                 print(f"[WARN] Periodic flush failed: {e}")
             time.sleep(interval)
-
+    '''
     def send_message(self, topic, idx, headers=None):
     # Fixed 32 KB payload
         payload_size = 32 * 1024

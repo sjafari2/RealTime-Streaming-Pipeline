@@ -4,10 +4,10 @@ metadata:
   name: merged-data
   namespace: kafkastreamingdata
 spec:
-  storageClassName: rook-cephfs-block
+  storageClassName: rook-cephfs-central
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 400Gi
+      storage: 50Gi
 
