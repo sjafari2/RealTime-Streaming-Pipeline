@@ -8,7 +8,7 @@ data:
   #  Kafka Brokers / Topics 
   # =============================
   TOPIC_COUNT: "1"
-  TOPIC_TITLE: "rgun"
+  TOPIC_TITLE: "gevrun"
   RETENTION_MS: "180000"
   SEGMENT_MS: "30000"
   CLEANUP_POLICY: "delete"
@@ -44,7 +44,7 @@ data:
   METADATA_MAX_AGE_MS: "120000"
   TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"
   MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "1"
-  TARGET_RATE: "250"
+  TARGET_RATE: "125"
 
   # =============================
   #  Kafka Consumer 
@@ -68,7 +68,7 @@ data:
   LAG_QUERY_TIMEOUT: "5.0"
   LAG_QUERY_INTERVAL: "15"
   PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"
-  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result/"
+  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result/2025-08-31"
  
   # =============================
   #  Application
@@ -84,7 +84,7 @@ data:
  
   MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
   MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
-  MIN_BLOCKS_FOR_GEV: "50"
+  MIN_BLOCKS_FOR_GEV: "20"
   FIT_GEV_INTERNAL_SEC: "60"
   ENABLE_PARQUET: "true"
   GEV_METRIC: "application_consumer"

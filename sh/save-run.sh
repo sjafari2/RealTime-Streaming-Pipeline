@@ -293,7 +293,7 @@ process_pods() {
       for pod in $pods; do
         pod_id="$(pod_ordinal "$pod")"
         echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
-        k exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
+        k exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh  >/dev/null 2>&1 < /dev/null &"
       done
     }
   else

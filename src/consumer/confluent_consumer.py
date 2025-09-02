@@ -28,11 +28,37 @@ metrics_exporter = PrometheusMetrics(app, defaults_prefix=None)
 # ===== Prometheus metrics (with labels) =====
 COMMON_LABELS = ['pod', 'group', 'client_id']
 
-e2e_latency_summary = Summary(
-    'end_to_end_latency_ms',
-    'End-to-end latency in ms (includes application processing delay)',
+# End-to-end latency (per-pod, Summary in ms)
+e2e_latency_per_pod = Summary(
+    'e2e_latency_per_pod_ms',
+    'End-to-end latency per pod in milliseconds (producer->consumer + application)',
     COMMON_LABELS
 )
+
+# End-to-end latency (aggregatable across pods, Histogram in seconds)
+e2e_latency_across_pods = Histogram(
+    'e2e_latency_across_pods_seconds',
+    'End-to-end latency in seconds (producer->consumer + application), aggregatable across pods',
+    COMMON_LABELS,
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2]
+)
+
+# Producer -> Consumer (network/broker path only)
+net_latency_histogram = Histogram(
+    'consumer_net_latency_seconds',
+    'Producer→consumer latency (network/broker path only)',
+    COMMON_LABELS,
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2]
+)
+
+# Application-only delay
+app_delay_histogram = Histogram(
+    'consumer_application_delay_seconds',
+    'Application processing delay only (simulated or realistic)',
+    COMMON_LABELS,
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2]
+)
+
 msg_consumed_counter = Counter(
     'consumer_messages_consumed_total',
     'Total messages consumed',
@@ -63,12 +89,7 @@ uptime_gauge = Gauge(
     'Consumer uptime in seconds',
     COMMON_LABELS
 )
-consumer_latency_histogram = Histogram(
-    'consumer_latency_seconds',
-    'End-to-end latency (producer to consumer + application delay)',
-    COMMON_LABELS,
-    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2]
-)
+
 out_of_order_rate_gauge = Gauge(
     'consumer_out_of_order_rate',
     'Fraction of out-of-order messages',
@@ -88,6 +109,16 @@ consumer_lag_gauge = Gauge(
     'consumer_lag',
     'Consumer lag (latest offset - committed offset)',
     COMMON_LABELS + ['topic', 'partition']
+)
+
+# Config/state “freeze” gauges so each run is self-describing
+fetch_min_bytes_gauge  = Gauge('consumer_cfg_fetch_min_bytes', 'fetch.min.bytes', COMMON_LABELS)
+fetch_wait_ms_gauge    = Gauge('consumer_cfg_fetch_wait_ms', 'fetch.wait.max.ms', COMMON_LABELS)
+poll_timeout_ms_gauge  = Gauge('consumer_cfg_poll_timeout_ms', 'poll timeout ms', COMMON_LABELS)
+assigned_partitions_gauge = Gauge(
+    'consumer_assigned_partitions',
+    'Number of partitions assigned to this consumer',
+    COMMON_LABELS
 )
 
 
@@ -118,7 +149,6 @@ class MetricConsumer:
         self.app_delay_mode = app_delay_mode.lower()
         if self.app_delay_mode not in ("simulated", "realistic"):
             raise ValueError("Invalid appDelayMode, must be 'simulated' or 'realistic'")
-
 
         # Simulated application delay range (seconds)
         self.app_delay_min_s = float(app_delay_min_s)
@@ -155,9 +185,17 @@ class MetricConsumer:
         # Ensure output dir exists
         os.makedirs(self.consumer_output_dir, exist_ok=True)
 
+        # Freeze config gauges (set once at init)
+        fetch_min_bytes_gauge.labels(**self.metric_labels).set(int(fetch_min_bytes))
+        fetch_wait_ms_gauge.labels(**self.metric_labels).set(int(fetch_max_wait_ms))
+        poll_timeout_ms_gauge.labels(**self.metric_labels).set(int(poll_timeout_ms))
+
     def update_consumer_lag(self):
         try:
             assignments = self.consumer.assignment()
+            # track assigned partitions
+            assigned_partitions_gauge.labels(**self.metric_labels).set(len(assignments or []))
+
             if not assignments:
                 return
 
@@ -202,10 +240,14 @@ class MetricConsumer:
                         continue
 
                     headers = dict(msg.headers() or [])
+                    producer_pod_hdr = headers.get('producer_pod')
                     index = headers.get('index')
                     producer_ts = headers.get('producer_timestamp')
                     size_bytes = headers.get('size_bytes')
                     target_rate = headers.get('target_rate')
+                    producer_pod = headers.get('producer_pod_name')
+                    producer_pod = (producer_pod.decode() if isinstance(producer_pod, (bytes, bytearray)) else producer_pod) if producer_pod else None
+                    consumer_pod = self.pod_name
 
                     if index is None or producer_ts is None:
                         continue
@@ -229,9 +271,14 @@ class MetricConsumer:
                     application_ts = receive_ts + app_delay
                     end_to_end_latency_sec = network_latency_sec + app_delay
 
-                    # Metrics (record latency including application delay)
-                    e2e_latency_summary.labels(**self.metric_labels).observe(end_to_end_latency_sec * 1000.0)
-                    consumer_latency_histogram.labels(**self.metric_labels).observe(end_to_end_latency_sec)
+                    # Metrics (component-wise + e2e)
+                    net_latency_histogram.labels(**self.metric_labels).observe(network_latency_sec)
+                    app_delay_histogram.labels(**self.metric_labels).observe(app_delay)
+
+                    # Summary in ms (per pod)
+                    e2e_latency_per_pod.labels(**self.metric_labels).observe(end_to_end_latency_sec * 1000.0)
+                    # Histogram in seconds (aggregatable)
+                    e2e_latency_across_pods.labels(**self.metric_labels).observe(end_to_end_latency_sec)
 
                     if target_rate:
                         try:
@@ -239,6 +286,11 @@ class MetricConsumer:
                             target_rate_gauge.labels(**self.metric_labels).set(target_rate_val)
                         except Exception:
                             pass
+                    producer_pod_val = None
+                    if producer_pod_hdr is not None:
+                        producer_pod_val = (producer_pod_hdr.decode()
+                                        if isinstance(producer_pod_hdr, (bytes, bytearray))
+                                        else str(producer_pod_hdr))
 
                     # Append lightweight record for async save
                     self.metrics_list.append({
@@ -252,7 +304,11 @@ class MetricConsumer:
                         "target_rate": (float(target_rate.decode()) if isinstance(target_rate, (bytes, bytearray)) else None) if target_rate else None,
                         "topic": msg.topic(),
                         "partition": msg.partition(),
-                        "offset": msg.offset()
+                        "offset": msg.offset(),
+                        "producer_pod": producer_pod,
+                        "consumer_pod": consumer_pod,
+                        "producer_pod": producer_pod_val,
+                        "consumer_pod": self.pod_name,
                     })
 
                     # Counters/bytes
@@ -295,13 +351,24 @@ class MetricConsumer:
         df = pd.DataFrame(batch)
         if df.empty:
             return
+        # Ensure pod columns exist and are strings
+        if 'producer_pod' not in df.columns:
+            df['producer_pod'] = None
+        if 'consumer_pod' not in df.columns:
+            df['consumer_pod'] = self.pod_name
+        
+        # force string dtype so pyarrow doesn’t drop all-null columns weirdly
+        df['producer_pod'] = df['producer_pod'].astype('string')
+        df['consumer_pod'] = df['consumer_pod'].astype('string')
+        
         now = datetime.now()
         filename = f"batch_{self.pod_name}_{now.strftime('%Y%m%d_%H%M%S_%f')}.parquet"
         tmp_path = os.path.join(self.consumer_output_dir, f".tmp_{filename}")
         final_path = os.path.join(self.consumer_output_dir, filename)
         df.to_parquet(tmp_path, index=False)  # fast + compressed
         os.replace(tmp_path, final_path)
-
+    
+    
     def _save_batch_to_disk(self, batch):
         """Optional CSV saver (not used by default)."""
         df = pd.DataFrame(batch)
@@ -401,7 +468,7 @@ if __name__ == "__main__":
 
     # application processing delay range (ms) and mode 
     parser.add_argument('--appDelayMinMs', type=float, default=1.0, help="Minimum simulated application delay in milliseconds (default: 1)")
-    parser.add_argument('--appDelayMaxMs', type=float, default=100.0,help="Maximum simulated application delay in milliseconds (default: 100)")
+    parser.add_argument('--appDelayMaxMs', type=float, default=100.0, help="Maximum simulated application delay in milliseconds (default: 100)")
     parser.add_argument('--appDelayMode', type=str, default="simulated", help="Delay mode: 'simulated' (no sleep, just record) or 'realistic' (sleep before marking processed)")
 
     args = parser.parse_args()

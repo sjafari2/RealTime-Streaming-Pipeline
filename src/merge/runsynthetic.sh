@@ -18,6 +18,8 @@ watch_dir="${CONSUMER_OUTPUT_DIR:-/app/consumer-merge-data/consumer-result}"
 processed_dir="${watch_dir}/processed/"
 merged_dir="${MERGE_OUTPUT_DIR:-/app/merged-data/merge-result}"
 metrics_dir="${MERGE_METRICS_DIR:-/app/merged-data/merge-metrics}"
+block_scope="${MERGE_BLOCK_SCOPE:- global}"
+## Block Scope can be either global or per_pod
 
 mkdir -p "$processed_dir" "$merged_dir" "$metrics_dir"
 
@@ -28,11 +30,11 @@ log_path="./logs/merge/${EXPERIMENT_ID}_${CURRENT_DATE}_${CURRENT_TIME}"
 mkdir -p "$log_path"
 log_file="${log_path}/merge.log"
 
-echo "[INIT] Starting merge process..." | tee -a "$log_file"
-echo "[INFO] Experiment ID: $EXPERIMENT_ID" | tee -a "$log_file"
-echo "[INFO] Watch Dir: $watch_dir" | tee -a "$log_file"
-echo "[INFO] Processed Dir: $processed_dir" | tee -a "$log_file"
-echo "[INFO] Merged Dir: $merged_dir" | tee -a "$log_file"
+#echo "[INIT] Starting merge process..." | tee -a "$log_file"
+#echo "[INFO] Experiment ID: $EXPERIMENT_ID" | tee -a "$log_file"
+#echo "[INFO] Watch Dir: $watch_dir" | tee -a "$log_file"
+#echo "[INFO] Processed Dir: $processed_dir" | tee -a "$log_file"
+#echo "[INFO] Merged Dir: $merged_dir" | tee -a "$log_file"
 echo "[INFO] Metrics Dir: $metrics_dir" | tee -a "$log_file"
 
 # ------------------- SIGNAL CLEANUP -------------------
@@ -45,8 +47,9 @@ exec python3 confluent_merge.py \
     --mergedDir "$merged_dir" \
     --metricsDir "$metrics_dir" \
     --enableParquet true \
-    --gevMetric application_consumer \
+    #--gevMetric application_consumer \
     --minBlocksForGEV 20 \
     --fitGEVIntervalSec 60 \
+    --blockScope "$block_scope" \
     2>&1 | tee -a "$log_file"
 
