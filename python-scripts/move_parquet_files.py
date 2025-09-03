@@ -2,7 +2,7 @@ import os
 from typing import Tuple
 
 # ---------- Config ----------
-TOP_PROCESSED = "results/20250902_073309/consumer/consumer-sts-0_consumer-result/processed"
+TOP_PROCESSED = "results/20250902_194416/consumer/consumer-sts-0_consumer-result/2025-09-02"
 # Set this to your top-level "consumer-result/processed" path
 # ---------------------------
 

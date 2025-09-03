@@ -8,7 +8,7 @@ data:
   #  Kafka Brokers / Topics 
   # =============================
   TOPIC_COUNT: "1"
-  TOPIC_TITLE: "rgun"
+  TOPIC_TITLE: "ol"
   RETENTION_MS: "180000"
   SEGMENT_MS: "30000"
   CLEANUP_POLICY: "delete"
@@ -44,7 +44,7 @@ data:
   METADATA_MAX_AGE_MS: "120000"
   TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"
   MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "1"
-  TARGET_RATE: "250"
+  TARGET_RATE: "1000"
 
   # =============================
   #  Kafka Consumer 
@@ -69,7 +69,7 @@ data:
   LAG_QUERY_INTERVAL: "15"
   PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"
   CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result/"
- 
+  PROCESSED_DIR: "/app/consumer-merge-data/consumer-result/processed/" 
   # =============================
   #  Application
   # =============================

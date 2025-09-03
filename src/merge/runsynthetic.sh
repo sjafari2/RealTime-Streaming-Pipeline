@@ -15,7 +15,7 @@ echo "[INIT] Experiment ID: $EXPERIMENT_ID"
 
 # ------------------- PATHS -------------------
 watch_dir="${CONSUMER_OUTPUT_DIR:-/app/consumer-merge-data/consumer-result}"
-processed_dir="${watch_dir}/processed/"
+processed_dir="${PROCESSED_DIR:-/app/consumer-merge-data/consumer-result/processed}"
 merged_dir="${MERGE_OUTPUT_DIR:-/app/merged-data/merge-result}"
 metrics_dir="${MERGE_METRICS_DIR:-/app/merged-data/merge-metrics}"
 block_scope="${MERGE_BLOCK_SCOPE:- global}"
