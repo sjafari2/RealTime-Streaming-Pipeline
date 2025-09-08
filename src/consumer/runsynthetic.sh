@@ -13,7 +13,7 @@ eval $(
 
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
-consumer_output_dir="${data_CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}/${CURRENT_TIME}"
+consumer_output_dir="${data_CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
 mkdir -p "${consumer_output_dir}"
 
 # === Get brokers ===

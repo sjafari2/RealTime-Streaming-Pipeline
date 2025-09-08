@@ -254,23 +254,33 @@ class HybridMerger:
 
     # ---------- Parquet helpers (tolerant schema) ----------
     def _get_unprocessed_parquet_files(self):
-        return sorted(
-            os.path.join(root, f)
-            for root, _, files in os.walk(self.watch_dir)
-            for f in files
-            if f.endswith('.parquet') and not f.startswith('.tmp_')
-        )
-
+        watch = os.path.abspath(self.watch_dir)
+        processed = os.path.abspath(self.processed_dir)
+        out = []
+        for root, dirs, files in os.walk(watch, topdown=True):
+            # prune processed subtree
+            abs_root = os.path.abspath(root)
+            # If processed is under watch, remove it from traversal
+            dirs[:] = [d for d in dirs if os.path.abspath(os.path.join(root, d)) != processed]
+            # Also skip if we're already inside processed (safety)
+            if abs_root.startswith(processed):
+                continue
+            for f in files:
+                if f.endswith(".parquet") and not f.startswith(".tmp_"):
+                    out.append(os.path.join(root, f))
+        return sorted(out)
+    
+    
     def _seen_keys(self):
         """Return set of ( metric, scope, pod) already written to block_maxima.csv to avoid duplicates."""
         if not os.path.exists(self.block_maxima_csv):
             return set()
         try:
             df = pd.read_csv(self.block_maxima_csv)
-            needed = {'metric','scope','pod'}
+            needed = {'file_name', 'metric','scope','pod'}
             if not needed.issubset(df.columns):
                 return set()
-            return set(zip( #df['block_id'].astype(str),
+            return set(zip(df['file_name'].astype(str),
                            df['metric'].astype(str),
                            df['scope'].astype(str),
                            df['pod'].fillna('').astype(str)))
@@ -630,13 +640,21 @@ class HybridMerger:
         Move a processed file from watch_dir to processed_dir, preserving its
         relative subfolder structure. Append a microsecond timestamp on collisions.
         """
-        rel = os.path.relpath(src_path, self.watch_dir)
-        dest = os.path.join(self.processed_dir, rel)
+        src_abs = os.path.abspath(src_path)
+        watch_abs = os.path.abspath(self.watch_dir)
+        proc_abs  = os.path.abspath(self.processed_dir)
+
+        # If file is already inside processed_dir, don't move it again
+        if src_abs.startswith(proc_abs + os.sep):
+            return src_abs
+
+        rel = os.path.relpath(src_abs, watch_abs)
+        dest = os.path.join(proc_abs, rel)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if os.path.exists(dest):
             base, ext = os.path.splitext(dest)
             dest = f"{base}_{int(time.time()*1e6)}{ext}"
-        shutil.move(src_path, dest)
+        shutil.move(src_abs, dest)
         return dest
 
 # ---------------- runner / wiring ----------------

@@ -26,7 +26,7 @@ mkdir -p "$processed_dir" "$merged_dir" "$metrics_dir"
 # ------------------- LOGGING -------------------
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
-log_path="./logs/merge/${EXPERIMENT_ID}_${CURRENT_DATE}_${CURRENT_TIME}"
+log_path="./logs/merge/${CURRENT_DATE}_${CURRENT_TIME}"
 mkdir -p "$log_path"
 log_file="${log_path}/merge.log"
 
