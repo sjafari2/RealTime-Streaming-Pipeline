@@ -1,0 +1,234 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\froman\fcharset0 Times-Roman;
+\f3\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red64\green11\blue217;
+}
+{\*\expandedcolortbl;;\csgray\c0;\cssrgb\c0\c0\c0;\cssrgb\c32309\c18666\c88229;
+}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 fio --name=seqwrite --rw=write --bs=1M \\\
+    --ioengine=io_uring --iodepth=32 --numjobs=4 \\\
+    --direct=1 --ramp_time=10 \\\
+    --filename=/data/testfile --size=8G \\\
+    --time_based --runtime=120 --group_reporting\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf2 \CocoaLigature0 kubectl get nodes -o json | jq -r '.items[].metadata | \{name: .name, labels: .labels["topology.kubernetes.io/region", "topology.kubernetes.io/zone"]\}' | grep ucsd\
+\
+\
+helm upgrade --reuse-values <release> bitnami/kafka -n kafkastreamingdata\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs24 \cf0 \expnd0\expndtw0\kerning0
+\CocoaLigature1 kubectl top pods
+\f1\fs22 \cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\
+apiVersion: v1\
+kind: ConfigMap\
+metadata:\
+  name: pipeline-configmap\
+  namespace: kafkastreamingdata\
+data:\
+  # =============================\
+  #  Kafka Brokers / Topics \
+  # =============================\
+  TOPIC_COUNT: "1"\
+  TOPIC_TITLE: "tr"\
+  RETENTION_MS: "1800000"\
+  SEGMENT_MS: "600000"\
+  CLEANUP_POLICY: "delete"\
+  NUM_PARTITIONS: "36"\
+  BROKER_COUNT: "5"\
+  REPLICATION_FACTOR: "1"\
+  MIN_INSYNC_REPLICAS: "1"\
+\
+  # =============================\
+  #  Kafka Producer \
+  # =============================\
+  PRODUCER_COUNT: "1"\
+  PRODUCER_POD_COUNT: "2"\
+  PRODUCER_INPUT_PATH: "producer-data"\
+  DELAY_BETWEEN_MESSAGES: "0"\
+  LINGER_MS: "5"\
+  BATCH_SIZE: "262144"\
+  COMPRESSION_TYPE: "lz4"\
+  MAX_REQUEST_SIZE: "1048576"\
+  ACKS: "0"\
+  RETRIES: "2"\
+  RETRY_BACKOFF_MS: "5"\
+  CONNECTION_MAX_IDLE_MS: "30000"\
+  RECONNECT_BACKOFF_MS: "100"\
+  RECONNECT_BACKOFF_MAX_MS: "1000"\
+  RANDOM_RANGE: "1000"\
+  REQUEST_TIMEOUT_MS: "10000"\
+  DELIVERY_TIMEOUT_MS: "120000"\
+  QUEUE_BUFFERING_MAX_MESSAGES: "200000"\
+  QUEUE_BUFFERING_MAX_KBYTES: "2097152"\
+  CLIENT_ID: "pipeline-producer"\
+  MSG_MAX_BYTES: "1048576"\
+  METADATA_MAX_AGE_MS: "120000"\
+  TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"\
+  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "10"\
+  TARGET_RATE: "250"\
+\
+  # =============================\
+  #  Kafka Consumer \
+  # =============================\
+  CONSUMER_GROUP_ID: "consgroup"\
+  CONSUMER_COUNT: "1"\
+  CONSUMER_POD_COUNT: "12"\
+  MAX_MESSAGES: "5000"\
+  ENABLE_AUTO_COMMIT: "true"\
+  AUTO_OFFSET_RESET: "earliest"\
+  AUTO_COMMIT_INTERVAL_MS: "1000"\
+  POLL_TIMEOUT: "500"\
+  FETCH_MAX_BYTES: "5242880"\
+  FETCH_MIN_BYTES: "16384"\
+  FETCH_MAX_WAIT_MS: "5"\
+  MAX_POLL_RECORDS: "500"\
+  MAX_POLL_INTERVAL_MS: "120000"\
+  SESSION_TIMEOUT_MS: "20000"\
+  HEARTBEAT_INTERVAL_MS: "1000"\
+  SOCKET_TIMEOUT_MS: "30000"\
+  LAG_QUERY_TIMEOUT: "5.0"\
+  LAG_QUERY_INTERVAL: "15"\
+  PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"\
+  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/"\
+  PROCESSED_DIR: "/app/consumer-merge-data/processed/" \
+  # =============================\
+  #  Application\
+  # =============================\
+  \
+  APP_DELAY_MIN_MS: "10"\
+  APP_DELAY_MAX_MS: "20"\
+  APP_DELAY_MODE: "simulated" \
+ \
+  # =============================\
+  #  Merge\
+  # =============================\
+ \
+  MERGE_OUTPUT_DIR: "/app/merge-result"\
+  MERGE_METRICS_DIR: "/app/merge-metrics"\
+  MIN_BLOCKS_FOR_GEV: "100"\
+  FIT_GEV_INTERVAL_SEC: "120"\
+  STOP_AT_BLOCKS: "5000"\
+  ENABLE_PARQUET: "true"\
+  GEV_METRIC: "application_consumer"\
+  MERGE_BLOCK_SCOPE: "global"\
+\
+\
+apiVersion: v1\
+kind: ConfigMap\
+metadata:\
+  name: pipeline-configmap\
+  namespace: kafkastreamingdata\
+data:\
+  # =============================\
+  #  Kafka Brokers / Topics \
+  # =============================\
+  TOPIC_COUNT: "1"\
+  TOPIC_TITLE: "tr"\
+  RETENTION_MS: "1800000"\
+  SEGMENT_MS: "600000"\
+  CLEANUP_POLICY: "delete"\
+  NUM_PARTITIONS: "36"\
+  BROKER_COUNT: "5"\
+  REPLICATION_FACTOR: "1"\
+  MIN_INSYNC_REPLICAS: "1"\
+\
+  # =============================\
+  #  Kafka Producer \
+  # =============================\
+  PRODUCER_COUNT: "1"\
+  PRODUCER_POD_COUNT: "2"\
+  PRODUCER_INPUT_PATH: "producer-data"\
+  DELAY_BETWEEN_MESSAGES: "0"\
+  LINGER_MS: "5"\
+  BATCH_SIZE: "262144"\
+  COMPRESSION_TYPE: "lz4"\
+  MAX_REQUEST_SIZE: "1048576"\
+  ACKS: "0"\
+  RETRIES: "2"\
+  RETRY_BACKOFF_MS: "5"\
+  CONNECTION_MAX_IDLE_MS: "30000"\
+  RECONNECT_BACKOFF_MS: "100"\
+  RECONNECT_BACKOFF_MAX_MS: "1000"\
+  RANDOM_RANGE: "1000"\
+  REQUEST_TIMEOUT_MS: "10000"\
+  DELIVERY_TIMEOUT_MS: "120000"\
+  QUEUE_BUFFERING_MAX_MESSAGES: "200000"\
+  QUEUE_BUFFERING_MAX_KBYTES: "2097152"\
+  CLIENT_ID: "pipeline-producer"\
+  MSG_MAX_BYTES: "1048576"\
+  METADATA_MAX_AGE_MS: "120000"\
+  TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"\
+  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "10"\
+  TARGET_RATE: "250"\
+\
+  # =============================\
+  #  Kafka Consumer \
+  # =============================\
+  CONSUMER_GROUP_ID: "consgroup"\
+  CONSUMER_COUNT: "1"\
+  CONSUMER_POD_COUNT: "12"\
+  MAX_MESSAGES: "100"\
+  ENABLE_AUTO_COMMIT: "true"\
+  AUTO_OFFSET_RESET: "earliest"\
+  AUTO_COMMIT_INTERVAL_MS: "1000"\
+  POLL_TIMEOUT: "500"\
+  FETCH_MAX_BYTES: "5242880"\
+  FETCH_MIN_BYTES: "16384"\
+  FETCH_MAX_WAIT_MS: "5"\
+  MAX_POLL_RECORDS: "500"\
+  MAX_POLL_INTERVAL_MS: "120000"\
+  SESSION_TIMEOUT_MS: "20000"\
+  HEARTBEAT_INTERVAL_MS: "1000"\
+  SOCKET_TIMEOUT_MS: "30000"\
+  LAG_QUERY_TIMEOUT: "5.0"\
+  LAG_QUERY_INTERVAL: "15"\
+  PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"\
+  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/
+\f3\b \cf4 consumer-merge-data/
+\f1\b0 \cf2 \'93\
+  PROCESSED_DIR: "/app/consumer-merge-data/
+\f3\b \cf4 consumer-merge-data/
+\f1\b0 \cf2 processed/" \
+  # =============================\
+  #  Application\
+  # =============================\
+  \
+  APP_DELAY_MIN_MS: "10"\
+  APP_DELAY_MAX_MS: "20"\
+  APP_DELAY_MODE: "simulated" \
+ \
+  # =============================\
+  #  Merge\
+  # =============================\
+ \
+  MERGE_OUTPUT_DIR: "/app/merge-result"\
+  MERGE_METRICS_DIR: "/app/merge-metrics"\
+  MIN_BLOCKS_FOR_GEV: "100"\
+  FIT_GEV_INTERVAL_SEC: "120"\
+  STOP_AT_BLOCKS: "5000"\
+  ENABLE_PARQUET: "true"\
+  GEV_METRIC: "application_consumer"\
+  MERGE_BLOCK_SCOPE: "global"\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \CocoaLigature1 os.environ["OPENAI_API_BASE"] = "https://ellm.nrp-nautilus.io/v1"\
+os.environ["OPENAI_API_KEY"] = "kuFJcX214wxNwRfl4Qgee23zuBFLAL9M"\
+%%ai openai-chat-custom:gemma3\
+%%ai openai-chat-custom:deepseek-r1 -f math\
+quadratic equation
+\f1\fs22 \cf2 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\
+\
+}

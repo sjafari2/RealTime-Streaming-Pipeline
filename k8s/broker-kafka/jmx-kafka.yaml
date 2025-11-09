@@ -1,0 +1,49 @@
+# kafka-jmx-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-jmx-config
+data:
+  kafka-jmx.yml: |
+    lowercaseOutputName: true
+    rules:
+      # --- Broker request handler threads (CPU bound if ~0) ---
+      - pattern: 'kafka.server<type=KafkaRequestHandlerPool, name=RequestHandlerAvgIdlePercent><>Value'
+        name: kafka_request_handler_avg_idle_percent
+        type: GAUGE
+
+      # --- Network processor threads (network bound if ~0) ---
+      - pattern: 'kafka.network<type=Processor, name=IdlePercent, networkProcessor=(.+)><>Value'
+        name: kafka_network_processor_idle_percent
+        labels:
+          network_processor: "$1"
+        type: GAUGE
+
+      # --- Request / Response queue times (queuing in broker if high) ---
+      - pattern: 'kafka.network<type=RequestMetrics, name=RequestQueueTimeMs, request=(.+)><>Mean'
+        name: kafka_request_queue_time_ms_mean
+        labels:
+          request: "$1"
+        type: GAUGE
+      - pattern: 'kafka.network<type=RequestMetrics, name=ResponseQueueTimeMs, request=(.+)><>Mean'
+        name: kafka_response_queue_time_ms_mean
+        labels:
+          request: "$1"
+        type: GAUGE
+
+      # --- Broker bytes in/out (should approach infra headroom when saturated) ---
+      - pattern: 'kafka.server<type=BrokerTopicMetrics, name=BytesInPerSec><>OneMinuteRate'
+        name: kafka_broker_bytes_in_per_sec
+        type: GAUGE
+      - pattern: 'kafka.server<type=BrokerTopicMetrics, name=BytesOutPerSec><>OneMinuteRate'
+        name: kafka_broker_bytes_out_per_sec
+        type: GAUGE
+
+      # --- Disk / log flush time (storage bound if high) ---
+      - pattern: 'kafka.log<type=LogFlushStats, name=LogFlushRateAndTimeMs><>Mean'
+        name: kafka_log_flush_time_ms_mean
+        type: GAUGE
+      - pattern: 'kafka.log<type=LogFlushStats, name=LogFlushRateAndTimeMs><>95thPercentile'
+        name: kafka_log_flush_time_ms_p95
+        type: GAUGE
+

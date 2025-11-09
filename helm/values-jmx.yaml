@@ -1,0 +1,222 @@
+global:
+  storageClass: "rook-ceph-block"
+
+# -------------------- Metrics (JMX + Kafka Exporter) --------------------
+metrics:
+  jmx:
+    enabled: true
+    existingConfigmap: kafka-jmx-config
+    containerPorts:
+      metrics: 5556
+    service:
+      ports:
+        metrics: 5556
+    serviceMonitor:
+      enabled: true
+      namespace: kafkastreamingdata
+      interval: 30s
+      scrapeTimeout: 10s
+
+  kafka:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: kafkastreamingdata
+
+# -------------------- Security (PLAINTEXT for experiments) --------------------
+sasl:
+  enabledMechanisms: ""
+  interBrokerMechanism: ""
+  controllerMechanism: ""
+  interbroker:
+    user: ""
+    password: ""
+  controller:
+    user: ""
+    password: ""
+  client:
+    users: []
+    passwords: []
+
+# -------------------- Listeners --------------------
+listeners:
+  client:
+    name: CLIENT
+    containerPort: 9092
+    protocol: PLAINTEXT
+  controller:
+    name: CONTROLLER
+    containerPort: 9093
+    protocol: PLAINTEXT
+  interbroker:
+    name: INTERNAL
+    containerPort: 9094
+    protocol: PLAINTEXT
+  external:
+    name: EXTERNAL
+    containerPort: 9095
+    protocol: PLAINTEXT
+
+# -------------------- KRaft --------------------
+kraft:
+  enabled: true
+  controllerListenerNames: CONTROLLER
+  processRoles: controller,broker
+
+# We use a single StatefulSet that runs BOTH roles (controller+broker) on each pod.
+# Scale this to increase broker parallelism.
+controller:
+  replicaCount: 3
+
+  # Spreading across UCSD hosts and keep all pods in us-west/UCSD zones.
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: kafka
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values: ["kafka","producer-sts","consumer-sts","merge-sts"]
+
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          preference:
+            matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: ["ucsd","ucsd-sdsc","ucsd-nrp"]
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: topology.kubernetes.io/region
+                operator: In
+                values: ["us-west"]
+
+  # using emptyDir for logs to avoid Ceph latency during experiments
+  persistence:
+    enabled: false
+
+  # Environment overrides
+  extraEnvVars:
+    - name: HOSTNAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+
+    - name: KAFKA_CFG_NODE_ID
+      value: "{{ .StatefulSetOrdinal }}"
+
+    # IMPORTANT: quorum voters must enumerate ALL controller pods (0..4)
+    - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+      value: >-
+        0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,
+        1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,
+        2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,
+
+    - name: KAFKA_CFG_ADVERTISED_LISTENERS
+      value: >-
+        CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,
+        INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
+        EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
+
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    
+    - name: KAFKA_ENABLE_JMX
+      value: "true"
+    - name: KAFKA_JMX_PORT
+      value: "5555"
+    - name: KAFKA_JMX_HOSTNAME
+      value: "127.0.0.1"
+    
+    - name: KAFKA_OPTS
+      value: >-
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.local.only=false
+        -Djava.rmi.server.hostname=127.0.0.1
+        -Dcom.sun.management.jmxremote.port=5555
+        -Dcom.sun.management.jmxremote.rmi.port=5555
+  # -------------------- Broker/server tuning --------------------
+  extraConfig: |
+    delete.topic.enable=true
+    auto.create.topics.enable=true
+    listener.security.protocol.map=CLIENT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+    listeners=CLIENT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9095
+    advertised.listeners=CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
+    inter.broker.listener.name=INTERNAL
+
+    # --- Performance knobs (experiment-friendly) ---
+    # replicas = 1 for ephemeral tests to avoid cross-broker IO.
+    default.replication.factor=1
+    min.insync.replicas=1
+    offsets.topic.replication.factor=1
+    transaction.state.log.replication.factor=1
+    transaction.state.log.min.isr=1
+
+    # Threads & queues
+    num.network.threads=8
+    num.io.threads=16
+    num.replica.fetchers=2
+    queued.max.requests=8000
+
+    # Socket buffers (broker side) 
+    socket.request.max.bytes=104857600
+    socket.send.buffer.bytes=1048576
+    socket.receive.buffer.bytes=1048576
+
+    # Fetch / replication paths
+    replica.fetch.max.bytes=10485760
+    replica.fetch.response.max.bytes=10485760
+    replica.fetch.wait.max.ms=50
+
+    # Segments & retention (small to force more frequent rolls during tests)
+    log.segment.bytes=134217728
+    log.roll.ms=360000  # 1 hour, when the time (or the size limit) is reached, the broker “rolls” (closes) the file and starts a new one.
+    log.retention.ms=180000
+    log.retention.check.interval.ms=10000
+
+    # Flush policy (async; don’t force flush every message)
+    #log.flush.interval.messages=1000000
+    #log.flush.interval.ms=10000
+
+    # Size limits (align with your producer MAX_REQUEST_SIZE and message size)
+    message.max.bytes=1048576
+
+    # Timeouts & retries
+    connections.max.idle.ms=300000
+    metadata.max.age.ms=300000
+    request.timeout.ms=30000
+    retries=5
+    retry.backoff.ms=1000
+
+  resources:
+    limits:
+      cpu: 8
+      memory: 16Gi
+    requests:
+      cpu: 4
+      memory: 8Gi
+
+auth:
+  sasl:
+    enabled: false
+
+zookeeper:
+  enabled: false
+

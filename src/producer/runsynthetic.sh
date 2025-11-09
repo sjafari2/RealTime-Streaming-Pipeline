@@ -46,5 +46,8 @@ python3 confluent_kafka_producer.py \
     --targetRate "${data_TARGET_RATE}" \
     --connectionsMaxIdleMs "${data_CONNECTION_MAX_IDLE_MS}" \
     --socketKeepaliveEnable \
+    #--trafficMode "${data_TRAFFIC_MODE}" \
+    #--skewPartition "${SKEW_PARTITION}" \
+    #--skewFraction "${SKEW_FRACTION}" \
     2>&1 | tee "$log_path/producer_${pod_name}.log" 
 

@@ -5,129 +5,133 @@ metadata:
   namespace: kafkastreamingdata
   labels:
     app: producer-sts
+    app.kubernetes.io/name: producer-sts
 spec:
   serviceName: producer-headless-svc
   selector:
     matchLabels:
       app: producer-sts
-  replicas: 4
+  replicas: 1
   podManagementPolicy: Parallel
-
   template:
     metadata:
       labels:
         app: producer-sts
+        app.kubernetes.io/name: producer-sts
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+      # Keep near UCSD in us-west
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - patternlab.calit2.optiputer.net
-          #affinity:
-          #podAntiAffinity:
-          #requiredDuringSchedulingIgnoredDuringExecution:
-          # - labelSelector:
-          #      matchExpressions:
-          #        - key: app
-          #          operator: In
-          #          values:
-          #            - producer-sts
-          #            - consumer-sts
-          #            - pip-kafka-controller
-          #    topologyKey: kubernetes.io/hostname
+            - matchExpressions:
+              - key: topology.kubernetes.io/region
+                operator: In
+                values: ["us-west"]
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: ["ucsd"]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: kafka
 
       initContainers:
-        - name: bootstrap-producer
-          image: sjafari2/kafkaconfluentproducer:latest
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "[init] Bootstrapping producer config and code..."
-              mkdir -p /config
-              echo "[init] Copying all config files from /defaults to /config..."
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
-              chown -R 1000:1000 /config
-              chmod -R u+w /config
+      - name: bootstrap-producer
+        image: sjafari2/kafkaconfluentproducer:latest
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            echo "[init] Bootstrapping producer config and code..."
+            mkdir -p /config
+            if [ ! -f /config/pipeline-configmap.yaml ]; then
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+              echo "[init] Seeded /config/pipeline-configmap.yaml"
+            fi
+            chown -R 1000:1000 /config
+            chmod -R u+w /config
 
-              if [ ! -f /app/producer-data/.code_initialized ]; then
-                echo "[init] Copying code to /app/producer-data"
-                cp -r /code/* /app/producer-data/
-                touch /app/producer-data/.code_initialized
-              fi
-              chown -R 1000:1000 /app/producer-data
-              chmod -R u+w /app/producer-data
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: producer-data
-              mountPath: /app/producer-data
-            - name: shared-config
-              mountPath: /config
-            - name: config-default
-              mountPath: /defaults
+            if [ ! -f /app/producer-data/.code_initialized ]; then
+              cp -r /code/* /app/producer-data/
+              touch /app/producer-data/.code_initialized
+            fi
+            chown -R 1000:1000 /app/producer-data
+            chmod -R u+w /app/producer-data
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: producer-data
+          mountPath: /app/producer-data
+        - name: pipeline-shared-config
+          mountPath: /config
+        - name: config-default
+          mountPath: /defaults
 
       containers:
-        - name: producer-container
-          image: sjafari2/kafkaconfluentproducer:latest
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-          workingDir: /app/producer-data
-          env:
-            - name: POD_ORDINAL
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              rm -rf ./logs/*
-              mkdir -p ./logs
-              pod_name=$(hostname)
-              ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
-              echo "Pod ordinal value is: $ordinal"
-              echo "Listing config files in /config:"
-              ls -l /config
-              cat /config/pipeline-configmap.yaml || echo "pipeline-configmap.yaml not found"
-              #tail -f /dev/null
-              sleep infinity
-          ports:
-            - containerPort: 8080
-              name: producer-port
-            - containerPort: 9093
-              name: prod-exp-port
-          
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "1000m"
-            limits:
-              memory: "1000Mi"
-              cpu: "2000m"
-
-          volumeMounts:
-            - name: producer-data
-              mountPath: /app/producer-data
-            - name: shared-config
-              mountPath: /config
-            - name: config-default
-              mountPath: /defaults
-      volumes:
+      - name: producer-container
+        image: sjafari2/kafkaconfluentproducer:latest
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        workingDir: /app/producer-data
+        env:
+        - name: PIPELINE_CONFIG
+          value: /config/pipeline-configmap.yaml
+        - name: POD_ORDINAL
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        command: ["/bin/bash","-c"]
+        args:
+          - |
+            rm -rf ./logs/* || true
+            mkdir -p ./logs
+            echo "Pod: $(hostname)"
+            echo "Using config at $PIPELINE_CONFIG"
+            ls -l /config || true
+            head -n 40 "$PIPELINE_CONFIG" || true
+            #./runsynthetic.sh
+            tail -f /dev/null
+        ports:
+        - name: metrics
+          containerPort: 8000
+        - name: prod-exp-port
+          containerPort: 9093
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "1"
+          limits:
+            memory: "1Gi"
+            cpu: "2"
+        volumeMounts:
         - name: producer-data
-          persistentVolumeClaim:
-            claimName: producer-data
-        - name: shared-config
-          persistentVolumeClaim:
-            claimName: pipeline-configmap-pvc
+          mountPath: /app/producer-data
+        - name: pipeline-shared-config
+          mountPath: /config
         - name: config-default
-          configMap:
-            name: pipeline-configmap
-            items:
-              - key: pipeline-configmap.yaml
-                path: pipeline-configmap.yaml
+          mountPath: /config-default
+          readOnly: true
+
+      volumes:
+      - name: producer-data
+        emptyDir:
+          sizeLimit: "10Gi"
+      - name: pipeline-shared-config
+        persistentVolumeClaim:
+          claimName: pipeline-shared-config
+      - name: config-default
+        configMap:
+          name: pipeline-configmap
+          items:
+          - key: pipeline-configmap.yaml
+            path: pipeline-configmap.yaml
 

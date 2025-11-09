@@ -10,12 +10,12 @@ spec:
   selector:
     app: consumer-sts
   ports:
-    - name: consumer-port
-      port: 80
-      targetPort: 8080
-    - name: application-port
-      port: 81
-      targetPort: 8081
+    #- name: consumer-port
+    #  port: 80
+    #  targetPort: 8080
+    #- name: application-port
+    #  port: 81
+    #  targetPort: 8081
     - name: metrics
-      port: 8000
-      targetPort: 8000
+      port: 8000       # what Prometheus dials
+      targetPort: 8000  # must match app's listening port

@@ -1,55 +1,73 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
-# === CONFIG ===
-CONFIGMAP_PATH="/config/pipeline-configmap.yaml"
-#COMMAND_CONFIG="./consumer.properties"         
-KAFKA_TOPICS="${KAFKA_INSTALL_PATH}/kafka-topics.sh"
+CONFIGMAP_PATH="${CONFIGMAP_PATH:-/config/pipeline-configmap.yaml}"
 
-# === Extract values from ConfigMap ===
-TOPIC_COUNT=$(grep 'TOPIC_COUNT:' "$CONFIGMAP_PATH" | awk -F '"' '{print $2}')
-TOPIC_TITLE=$(grep 'TOPIC_TITLE:' "$CONFIGMAP_PATH" | awk -F '"' '{print $2}')
-RETENTION_MS=$(grep 'RETENTION_MS:' "$CONFIGMAP_PATH" | awk -F '"' '{print $2}')
-SEGMENT_MS=$(grep 'SEGMENT_MS:' "$CONFIGMAP_PATH" | awk -F '"' '{print $2}')
-CLEANUP_POLICY=$(grep 'CLEANUP_POLICY:' "$CONFIGMAP_PATH" | awk -F '"' '{print $2}')
-NUM_PARTITIONS=$(grep 'NUM_PARTITIONS:' "$CONFIGMAP_PATH" | awk -F '"' '{print $2}')
+# Read config with yq if available, else grep/awk
+get_cfg() {
+  local key="$1" default="${2:-}"
+  if command -v yq >/dev/null 2>&1 && [[ -f "${CONFIGMAP_PATH}" ]]; then
+    val="$(yq -r ".data.${key} // empty" "${CONFIGMAP_PATH}" || true)"
+    [[ -n "${val}" ]] && { echo -n "${val}"; return; }
+  fi
+  if [[ -f "${CONFIGMAP_PATH}" ]]; then
+    val="$(grep -E "^ *${key}:" "${CONFIGMAP_PATH}" | awk -F\" '{print $2}' | head -n1 || true)"
+    [[ -n "${val}" ]] && { echo -n "${val}"; return; }
+  fi
+  echo -n "${default}"
+}
 
+TOPIC_COUNT="$(get_cfg TOPIC_COUNT 1)"
+TOPIC_TITLE="$(get_cfg TOPIC_TITLE topic)"
+RETENTION_MS="$(get_cfg RETENTION_MS 1800000)"
+SEGMENT_MS="$(get_cfg SEGMENT_MS 600000)"
+CLEANUP_POLICY="$(get_cfg CLEANUP_POLICY delete)"
+NUM_PARTITIONS="$(get_cfg NUM_PARTITIONS 36)"
+REPLICATION_FACTOR="$(get_cfg REPLICATION_FACTOR 1)"
 
-# === Get Kafka bootstrap servers ===
-echo "[INFO] Resolving Kafka bootstrap servers..."
-BOOTSTRAP_SERVERS=$(bash get_kafka_consumer_dns.sh | sed 's/\[\|\]//g' | tr -d '"' | tr '\n' ',' | sed 's/,$//')
-echo "[INFO] Bootstrap servers: $BOOTSTRAP_SERVERS"
+# Locate kafka-topics.sh
+KAFKA_TOPICS="${KAFKA_TOPICS:-}"
+if [[ -z "${KAFKA_TOPICS}" ]]; then
+  if [[ -n "${KAFKA_INSTALL_PATH:-}" && -x "${KAFKA_INSTALL_PATH}/kafka-topics.sh" ]]; then
+    KAFKA_TOPICS="${KAFKA_INSTALL_PATH}/kafka-topics.sh"
+  elif command -v kafka-topics.sh >/dev/null 2>&1; then
+    KAFKA_TOPICS="$(command -v kafka-topics.sh)"
+  elif [[ -x "/opt/bitnami/kafka/bin/kafka-topics.sh" ]]; then
+    KAFKA_TOPICS="/opt/bitnami/kafka/bin/kafka-topics.sh"
+  else
+    echo "[ERROR] kafka-topics.sh not found. Set KAFKA_INSTALL_PATH or add to PATH." >&2
+    exit 1
+  fi
+fi
 
-# === Build topic list
-declare -a topic_names
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BOOTSTRAP_SERVERS="$("${SCRIPT_DIR}/get_bootstrap_servers.sh")"
+echo "[INFO] Bootstrap servers: ${BOOTSTRAP_SERVERS}"
+
+# Build topic list
+declare -a topic_names=()
 for i in $(seq 0 $((TOPIC_COUNT - 1))); do
   topic_names+=("${TOPIC_TITLE}_${i}")
 done
 
-# === First: Create topics
+# Create topics (idempotent)
 for topic in "${topic_names[@]}"; do
-  echo "[INFO] Creating topic: $topic"
-  $KAFKA_TOPICS --create \
-    --bootstrap-server "$BOOTSTRAP_SERVERS" \
-    --topic "$topic" \
-    --partitions "$NUM_PARTITIONS" \
-    --replication-factor 1 \
-    --config retention.ms="$RETENTION_MS" \
-    --config segment.ms="$SEGMENT_MS" \
-    --config cleanup.policy="$CLEANUP_POLICY" \
-    || echo "[WARN] Topic $topic may already exist"
+  echo "[INFO] Creating topic: ${topic}"
+  set +e
+  "${KAFKA_TOPICS}" --create \
+    --bootstrap-server "${BOOTSTRAP_SERVERS}" \
+    --topic "${topic}" \
+    --partitions "${NUM_PARTITIONS}" \
+    --replication-factor "${REPLICATION_FACTOR}" \
+    --config retention.ms="${RETENTION_MS}" \
+    --config segment.ms="${SEGMENT_MS}" \
+    --config cleanup.policy="${CLEANUP_POLICY}"
+  rc=$?
+  set -e
+  if [[ $rc -ne 0 ]]; then
+    echo "[WARN] Create returned non-zero (topic may already exist): ${topic}"
+  fi
 done
 
-# === Then: Describe topics
-#echo -e "\n[INFO] Describing all created topics:"
-#for topic in "${topic_names[@]}"; do
-#  echo -e "\n-----------------------------"
-#  echo "[INFO] Topic: $topic"
-#  $KAFKA_TOPICS --describe \
-#    --bootstrap-server "$BOOTSTRAP_SERVERS" \
-#    --topic "$topic"
-#done
-
-echo -e "\n[SUCCESS] Topic creation and verification completed."
+echo "[SUCCESS] Topic creation completed."
 

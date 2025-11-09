@@ -11,9 +11,9 @@ spec:
   selector:
     app: producer-sts
   ports:
-    - name: producer-port
-      port: 80
-      targetPort: 8080
+    #- name: producer-port
+    #  port: 80
+    #  targetPort: 8080
     - name: metrics
-      port: 8000
-      targetPort: 8000
+      port: 8000        # what Prometheus dials
+      targetPort: 8000  # must match app's listening port

@@ -5,6 +5,7 @@ metadata:
   namespace: kafkastreamingdata
   labels:
     app: merge-sts
+    app.kubernetes.io/name: merge-sts
 spec:
   serviceName: merge-headless-svc
   selector:
@@ -12,139 +13,166 @@ spec:
       app: merge-sts
   replicas: 1
   podManagementPolicy: Parallel
-
   template:
     metadata:
       labels:
         app: merge-sts
+        app.kubernetes.io/name: merge-sts
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - patternlab.calit2.optiputer.net
+            - matchExpressions:
+              - key: topology.kubernetes.io/region
+                operator: In
+                values: ["us-west"]
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: ["ucsd"]
+
       initContainers:
-        - name: volume-permission-and-bootstrap
-          image: sjafari2/kafkaconfluentmerge:latest
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "[init] Setting permissions on target dirs..."
-              chown -R 1000:1000 /app/consumer-merge-data && chmod -R u+w /app/consumer-merge-data
-              chown -R 1000:1000 /app/merged-data && chmod -R u+w /app/merged-data
+      # 1) Seed the shared config PVC from the default ConfigMap (first run only)
+      - name: seed-config
+        image: busybox:1.36
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            set -e
+            mkdir -p /config
+            if [ ! -f /config/pipeline-configmap.yaml ]; then
+              echo "[init] Seeding /config/pipeline-configmap.yaml from ConfigMap defaults"
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
+            fi
+            chown -R 1000:1000 /config
+        volumeMounts:
+        - name: pipeline-shared-config
+          mountPath: /config
+        - name: config-default
+          mountPath: /defaults
 
-              echo "[init] Bootstrapping config if needed..."
-              if [ ! -f /config/pipeline-configmap.yaml ]; then
-                cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
-              fi
-              chown -R 1000:1000 /config
-              chmod -R u+w /config
+      # 2) Prepare subPath directories on the shared CephFS PVC
+      - name: prep-cephfs
+        image: busybox:1.36
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            set -e
+            mkdir -p /mnt/cephfs/consumer-merge-data /mnt/cephfs/merged-data
+            chown -R 1000:1000 /mnt/cephfs/consumer-merge-data /mnt/cephfs/merged-data
+        volumeMounts:
+        - name: consumer-merge-cephfs
+          mountPath: /mnt/cephfs
 
-              echo "[init] Bootstrapping merge code if not present..."
-              if [ ! -f /app/merged-data/.code_initialized ]; then
-                cp -r /code/* /app/merged-data/
-                touch /app/merged-data/.code_initialized
-                chown -R 1000:1000 /app/merged-data
-                chmod -R u+w /app/merged-data
-              fi
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: consumer-merge-data
-              mountPath: /app/consumer-merge-data
-            - name: merged-data
-              mountPath: /app/merged-data
-            - name: shared-config
-              mountPath: /config
-            - name: config-default
-              mountPath: /defaults
+      # 3) Copy code from the image (/code) into a shared emptyDir at /app
+      #    so you can see everything directly under /app when you shell in.
+      - name: bootstrap-merge
+        image: sjafari2/kafkaconfluentmerge:latest
+        securityContext:
+          runAsUser: 0
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            set -e
+            echo "[init] Bootstrapping code into /app ..."
+            mkdir -p /app
+            # Only seed once per pod restart (emptyDir persists only for pod lifetime)
+            if [ ! -f /app/.code_initialized ]; then
+              cp -r /code/* /app/ || true
+              # Create mount points for subPath volumes:
+              mkdir -p /app/consumer-merge-data /app/merged-data
+              touch /app/.code_initialized
+            fi
+            chown -R 1000:1000 /app
+        volumeMounts:
+        - name: app-workdir
+          mountPath: /app
 
       containers:
-        - name: merge-container
-          image: sjafari2/kafkaconfluentmerge:latest
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-          env:
-            - name: POD_ORDINAL
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          workingDir: /app/merged-data
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              rm -rf ./logs/*
-              mkdir -p ./logs
-              pod_name=$(hostname)
-              ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
-              echo "Pod ordinal value is: $ordinal"
-              echo "Loaded config file contents:"
-              cat /config/pipeline-configmap.yaml
-              # Create /tmp/healthy periodically for probe success
-              while true; do date > /tmp/healthy; sleep 10; done
+      - name: merge-container
+        image: sjafari2/kafkaconfluentmerge:latest
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        workingDir: /app
+        env:
+        - name: CONSUMER_DATA_ROOT
+          value: /app/consumer-merge-data/consumer-result
+        - name: MERGE_OUTPUT_DIR
+          value: /app/merged-data/merge-result
+        - name: MERGE_METRICS_DIR
+          value: /app/merged-data/merge-metrics
+        - name: PIPELINE_CONFIG
+          value: /config/pipeline-configmap.yaml
+        command: ["/bin/bash","-c"]
+        args:
+          - |
+            set -e
+            rm -rf ./logs/* || true
+            mkdir -p ./logs
+            echo "Using shared config at $PIPELINE_CONFIG"
+            ls -l /config || true
+            head -n 50 "$PIPELINE_CONFIG" || true
 
-          ports:
-            - containerPort: 8080
-              name: merge-port
-            - containerPort: 9093
-              name: merge-exp-port
+            # Heartbeat so probes pass
+            ( while true; do date > /tmp/healthy; sleep 10; done ) &
 
-          # Liveness and readiness probes for stability
-          livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - "test -f /tmp/healthy"
-            initialDelaySeconds: 60
-            periodSeconds: 30
-
-          readinessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - "test -f /tmp/healthy"
-            initialDelaySeconds: 30
-            periodSeconds: 15
-
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu: "2000m"
-            limits:
-              memory: "4Gi"
-              cpu: "4000m"
-
-          volumeMounts:
-            - name: consumer-merge-data
-              mountPath: /app/consumer-merge-data
-            - name: merged-data
-              mountPath: /app/merged-data
-            - name: shared-config
-              mountPath: /config
-            - name: config-default
-              mountPath: /defaults
-      volumes:
-        - name: consumer-merge-data
-          persistentVolumeClaim:
-            claimName: consumer-merge-data
-        - name: merged-data
-          persistentVolumeClaim:
-            claimName: merged-data
-        - name: shared-config
-          persistentVolumeClaim:
-            claimName: pipeline-configmap-pvc
+            # python merge.py --config "$PIPELINE_CONFIG"
+            tail -f /dev/null
+            #./runsynthetic.sh
+        ports:
+        - name: metrics
+          containerPort: 8000
+        livenessProbe:
+          exec:
+            command: ["/bin/bash","-c","test -f /tmp/healthy"]
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          exec:
+            command: ["/bin/bash","-c","test -f /tmp/healthy"]
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        resources:
+          requests: { cpu: "500m", memory: "512Mi" }
+          limits:   { cpu: "1000m", memory: "1Gi" }
+        volumeMounts:
+        # Code lives on an emptyDir mounted at /app (seeded by initContainer)
+        - name: app-workdir
+          mountPath: /app
+        # Data still comes from the shared CephFS PVC via subPaths:
+        - name: consumer-merge-cephfs
+          mountPath: /app/consumer-merge-data
+          #subPath: consumer-merge-data
+        - name: consumer-merge-cephfs
+          mountPath: /app/merged-data
+          subPath: merged-data
+        - name: pipeline-shared-config
+          mountPath: /config
         - name: config-default
-          configMap:
-            name: pipeline-configmap
-            items:
-              - key: pipeline-configmap.yaml
-                path: pipeline-configmap.yaml
+          mountPath: /defaults
+          readOnly: true
+
+      volumes:
+      # Holds code under /app so you can ls it directly after shelling in
+      - name: app-workdir
+        emptyDir: {}
+
+      # Shared data/config volumes (unchanged)
+      - name: consumer-merge-cephfs
+        persistentVolumeClaim:
+          claimName: consumer-merge-cephfs     # RWX CephFS shared with consumers
+      - name: pipeline-shared-config
+        persistentVolumeClaim:
+          claimName: pipeline-shared-config    # RWX CephFS for shared config file
+      - name: config-default
+        configMap:
+          name: pipeline-configmap
+          items:
+          - key: pipeline-configmap.yaml
+            path: pipeline-configmap.yaml
 

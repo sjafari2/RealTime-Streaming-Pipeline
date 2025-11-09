@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-configmap
+  namespace: kafkastreamingdata
+data:
+  prometheus.yml: |
+    global:
+      # Match your Helm values (fast loops help tail-latency studies)
+      scrape_interval: 5s
+      evaluation_interval: 15s
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      # App pods (Flask/Prometheus exporter) — services expose 8000/TCP
+      - job_name: 'kafka-pipeline'
+        metrics_path: /metrics
+        scrape_interval: 5s
+        static_configs:
+          - targets:
+              - producer-headless-svc.kafkastreamingdata.svc.cluster.local:8000
+              - consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8000
+              - merge-headless-svc.kafkastreamingdata.svc.cluster.local:8000
+
+      # Kafka JMX exporter (from Bitnami chart) — HTTP metrics on 5556
+      - job_name: 'kafka-brokers'
+        scrape_interval: 10s
+        static_configs:
+          - targets:
+              - pip-kafka-jmx-metrics.kafkastreamingdata.svc.cluster.local:5556
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: []  # fill if you deploy Alertmanager
+
+    rule_files:
+      - /etc/prometheus/alert.rules.yml
+
+  alert.rules.yml: |
+    groups:
+      - name: kafka-pipeline-alerts
+        rules:
+          - alert: NoMerges
+            expr: time() - max(prometheus_tsdb_last_scrape_duration_seconds) > 300
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "No merges detected for over 5 minutes"
+              description: "No data merges have been processed in the last 5 minutes. Check pipeline health."
+
+          - alert: HighPodCPU
+            expr: avg(rate(process_cpu_seconds_total[1m])) by (instance) * 100 > 80
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage detected"
+              description: "Pod CPU usage is above 80% for 2 minutes."
+
+          - alert: HighLateArrivalRate
+            expr: merge_late_arrival_rate > 0.1
+            for: 3m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High late arrival rate in pipeline"
+              description: "More than 10% of messages are arriving late. Check producer and consumer timing."
+

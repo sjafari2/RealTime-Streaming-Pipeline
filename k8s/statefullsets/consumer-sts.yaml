@@ -5,116 +5,143 @@ metadata:
   namespace: kafkastreamingdata
   labels:
     app: consumer-sts
+    app.kubernetes.io/name: consumer-sts
 spec:
   serviceName: consumer-headless-svc
   selector:
     matchLabels:
       app: consumer-sts
-  replicas: 12
+  replicas: 3
   podManagementPolicy: Parallel
-
   template:
     metadata:
       labels:
         app: consumer-sts
+        app.kubernetes.io/name: consumer-sts
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+      # Keep consumers near Kafka brokers (UCSD / us-west)
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - patternlab.calit2.optiputer.net
+            - matchExpressions:
+              - key: topology.kubernetes.io/region
+                operator: In
+                values: ["us-west"]
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: ["ucsd"]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: consumer-sts
+
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: consumer-sts
 
       initContainers:
-        - name: bootstrap-consumer
-          image: sjafari2/kafkaconfluentconsumer:latest
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "[init] Bootstrapping config and code..."
-              mkdir -p /config
-              echo "[init] Copying all files from /defaults to /config..."
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
-              chown -R 1000:1000 /config
-              chmod -R u+w /config
+      - name: bootstrap-consumer
+        image: sjafari2/kafkaconfluentconsumer:latest
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            echo "[init] Bootstrapping config and code..."
+            mkdir -p /config
+            # Seed shared config only if missing
+            if [ ! -f /config/pipeline-configmap.yaml ]; then
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+              echo "[init] Seeded /config/pipeline-configmap.yaml"
+            fi
+            chown -R 1000:1000 /config
+            chmod -R u+w /config
 
-              if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
-                echo "[init] Copying code to /app/consumer-merge-data..."
-                cp -r /code/* /app/consumer-merge-data/
-                touch /app/consumer-merge-data/.code_initialized
-              fi
-              chown -R 1000:1000 /app/consumer-merge-data
-              chmod -R u+w /app/consumer-merge-data
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: consumer-merge-data
-              mountPath: /app/consumer-merge-data
-            - name: shared-config
-              mountPath: /config
-            - name: config-default
-              mountPath: /defaults
+            if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
+              cp -r /code/* /app/consumer-merge-data/
+              touch /app/consumer-merge-data/.code_initialized
+            fi
+            chown -R 1000:1000 /app/consumer-merge-data
+            chmod -R u+w /app/consumer-merge-data
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: consumer-merge-data
+          mountPath: /app/consumer-merge-data
+        - name: pipeline-shared-config
+          mountPath: /config
+        - name: config-default
+          mountPath: /defaults
 
       containers:
-        - name: consumer-container
-          image: sjafari2/kafkaconfluentconsumer:latest
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-          workingDir: /app/consumer-merge-data
-          env:
-            - name: POD_ORDINAL
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              rm -rf ./logs/*
-              mkdir -p ./logs
-              pod_name=$(hostname)
-              ordinal=$(echo "$pod_name" | rev | cut -d '-' -f 1 | rev)
-              echo "Pod ordinal value is: $ordinal"
-              echo "Loaded config files:"
-              ls -l /config
-              cat /config/pipeline-configmap.yaml || echo "Config file not found"
-              sleep infinity
-          ports:
-            - containerPort: 8080
-              name: consumer-port
-            - containerPort: 9093
-              name: cons-exp-port
+      - name: consumer-container
+        image: sjafari2/kafkaconfluentconsumer:latest
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        workingDir: /app/consumer-merge-data
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: PIPELINE_CONFIG
+          value: /config/pipeline-configmap.yaml
+        command: ["/bin/bash","-c"]
+        args:
+          - |
+            mkdir -p ./logs
+            echo "Pod: $POD_NAME"
+            echo "Using config at $PIPELINE_CONFIG"
+            ls -l /config || true
+            head -n 50 "$PIPELINE_CONFIG" || true
 
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "1000m"
-            limits:
-              memory: "1000Mi"
-              cpu: "2000m"
-
-          volumeMounts:
-            - name: consumer-merge-data
-              mountPath: /app/consumer-merge-data
-            - name: shared-config
-              mountPath: /config
-            - name: config-default
-              mountPath: /defaults
-      volumes:
+            # Each consumer writes to its own subdir → no file contention
+            export CONSUMER_OUTPUT_DIR="/app/consumer-merge-data/consumer-result"
+            export PROCESSED_DIR="${CONSUMER_OUTPUT_DIR}/processed"
+            mkdir -p "$CONSUMER_OUTPUT_DIR" "$PROCESSED_DIR"
+            #./runsynthetic.sh
+            tail -f /dev/null
+        ports:
+        - name: metrics
+          containerPort: 8000
+        resources:
+          requests:
+            cpu: "2"
+            memory: "16Gi"
+          limits:
+            cpu: "4"
+            memory: "32Gi"
+        volumeMounts:
         - name: consumer-merge-data
-          persistentVolumeClaim:
-            claimName: consumer-merge-data
-        - name: shared-config
-          persistentVolumeClaim:
-            claimName: pipeline-configmap-pvc
+          mountPath: /app/consumer-merge-data
+        - name: pipeline-shared-config
+          mountPath: /config
         - name: config-default
-          configMap:
-            name: pipeline-configmap
-            items:
-              - key: pipeline-configmap.yaml
-                path: pipeline-configmap.yaml
+          mountPath: /defaults
+
+      volumes:
+      - name: consumer-merge-data
+        persistentVolumeClaim:
+          claimName: consumer-merge-cephfs     # RWX CephFS (shared with merge)
+      - name: pipeline-shared-config
+        persistentVolumeClaim:
+          claimName: pipeline-shared-config    # RWX CephFS for shared config file
+      - name: config-default
+        configMap:
+          name: pipeline-configmap
+          items:
+          - key: pipeline-configmap.yaml
+            path: pipeline-configmap.yaml
 

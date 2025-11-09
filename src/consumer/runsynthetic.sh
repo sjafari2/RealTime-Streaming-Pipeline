@@ -5,12 +5,27 @@ trap "exit" INT TERM
 trap "kill 0" EXIT
 
 CONFIG_FILE="/config/pipeline-configmap.yaml"
+# --- Load ConfigMap .data into env as data_* variables (robust) ---
+if ! yq --version 2>/dev/null | grep -qi 'github.com/mikefarah/yq'; then
+  echo "[WARN] Non-mikefarah yq or unknown version; using compatibility mode."
+fi
 
-# Export all config variables as data_<KEY>=<value>
-eval $(
-  yq eval '.data | to_entries | map("export data_" + .key + "=" + (.value | @sh)) | .[]' "$CONFIG_FILE"
-)
+# Get all keys under .data
+mapfile -t __CFG_KEYS < <(yq e -r '.data | keys | .[]' "$CONFIG_FILE")
 
+for __rawkey in "${__CFG_KEYS[@]}"; do
+  # sanitize key to a valid env var name
+  __safekey="$(printf '%s' "$__rawkey" | sed 's/[^A-Za-z0-9_]/_/g')"
+  # read value, coalesce nulls to empty string, force string output
+  __val="$(yq e -r ".data[\"$__rawkey\"] // \"\"" "$CONFIG_FILE")"
+  # export as data_<SAFEKEY> with proper shell quoting
+  printf -v __line 'export data_%s=%q' "$__safekey" "$__val"
+  eval "$__line"
+done
+unset __CFG_KEYS __rawkey __safekey __val __line
+# --- end loader ---
+
+# Require mikefarah yq v4 (not python yq)
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
 consumer_output_dir="${data_CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
@@ -65,7 +80,7 @@ else
 fi
 
 # === Logging setup ===
-log_path="./logs/consumer/${CURRENT_DATE}/${CURRENT_TIME}"
+log_path="./logs/consumer/${CURRENT_DATE}"
 mkdir -p "${log_path}"
 
 # === Kill any running Python (.py) or Shell (.sh) scripts ===
@@ -98,10 +113,14 @@ python3 confluent_consumer.py \
   --groupId "${data_CONSUMER_GROUP_ID}" \
   --maxMsg "${data_MAX_MESSAGES}" \
   --pollTimeout "${data_POLL_TIMEOUT}" \
+  --pollMaxMsg "${data_POLL_MAX_MSG}" \
   --maxPollIntervalMs "${data_MAX_POLL_INTERVAL_MS}" \
   --heartbeatIntervalMs "${data_HEARTBEAT_INTERVAL_MS}" \
   --sessionTimeoutMs "${data_SESSION_TIMEOUT_MS}" \
   --socketTimeoutMs "${data_SOCKET_TIMEOUT_MS}" \
+  --socketSendBufferBytes "${data_SOCKET_SEND_BUFFER_BYTES}" \
+  --socketReceiveBufferBytes "${data_SOCKET_RECEIVE_BUFFER_BYTES}" \
+  --maxPartitionFetchBytes "${data_MAX_PARTITION_FETCH_BYTES}" \
   --fetchMaxBytes "${data_FETCH_MAX_BYTES}" \
   --fetchMinBytes "${data_FETCH_MIN_BYTES}" \
   --fetchMaxWaitMs "${data_FETCH_MAX_WAIT_MS}" \

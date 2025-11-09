@@ -1,0 +1,13 @@
+# pipeline-shared-config-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pipeline-shared-config
+  namespace: kafkastreamingdata
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: rook-cephfs-ucsd   # RWX, low-latency (UCSD)
+

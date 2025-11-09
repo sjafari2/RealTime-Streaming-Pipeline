@@ -10,9 +10,9 @@ spec:
   selector:
     app: merge-sts
   ports:
-    - name: merge-port
-      port: 80         # Service port
-      targetPort: 8080 # Matches containerPort in StatefulSet
+    #- name: merge-port
+    #  port: 80         # Service port
+    #  targetPort: 8080 # Matches containerPort in StatefulSet
     - name: metrics
-      port: 8000
-      targetPort: 8000
+      port: 8000       # what Prometheus dials
+      targetPort: 8000 # must match app's listening port

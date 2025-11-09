@@ -7,12 +7,14 @@ data:
   # =============================
   #  Kafka Brokers / Topics 
   # =============================
+  RELEASE_NAME: "pip"
+  NAMESPACE: "kafkastreamingdata" 
   TOPIC_COUNT: "1"
-  TOPIC_TITLE: "bv"
+  TOPIC_TITLE: "ae"
   RETENTION_MS: "1800000"
   SEGMENT_MS: "600000"
   CLEANUP_POLICY: "delete"
-  NUM_PARTITIONS: "36"
+  NUM_PARTITIONS: "72"
   BROKER_COUNT: "3"
   REPLICATION_FACTOR: "1"
   MIN_INSYNC_REPLICAS: "1"
@@ -20,15 +22,16 @@ data:
   # =============================
   #  Kafka Producer 
   # =============================
+  
   PRODUCER_COUNT: "1"
-  PRODUCER_POD_COUNT: "4"
+  PRODUCER_POD_COUNT: "1"
   PRODUCER_INPUT_PATH: "producer-data"
   DELAY_BETWEEN_MESSAGES: "0"
-  LINGER_MS: "1"
-  BATCH_SIZE: "65536"
-  COMPRESSION_TYPE: "lz4"
+  LINGER_MS: "0"
+  BATCH_SIZE: "524288"
+  COMPRESSION_TYPE: "none"
   MAX_REQUEST_SIZE: "1048576"
-  ACKS: "1"
+  ACKS: "0"
   RETRIES: "2"
   RETRY_BACKOFF_MS: "5"
   CONNECTION_MAX_IDLE_MS: "30000"
@@ -38,44 +41,60 @@ data:
   REQUEST_TIMEOUT_MS: "10000"
   DELIVERY_TIMEOUT_MS: "120000"
   QUEUE_BUFFERING_MAX_MESSAGES: "200000"
-  QUEUE_BUFFERING_MAX_KBYTES: "2097152"
+  QUEUE_BUFFERING_MAX_KBYTES: "131072"
   CLIENT_ID: "pipeline-producer"
   MSG_MAX_BYTES: "1048576"
   METADATA_MAX_AGE_MS: "120000"
   TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"
-  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "5"
-  TARGET_RATE: "250"
+  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "4"
+  TARGET_RATE: "1000"
+  
+  # =============================
+  # optional burst pacing
+  # =============================
 
+  #PACING_MODE: "burst"  
+  PACING_MODE: "per_message"    
+  PACING_TICK_SEC: "0.005"        
+  MIN_BURST: "1"                 
+  MAX_BURST: "2000"              
+  
   # =============================
   #  Kafka Consumer 
   # =============================
+  
   CONSUMER_GROUP_ID: "consgroup"
   CONSUMER_COUNT: "1"
-  CONSUMER_POD_COUNT: "12"
-  MAX_MESSAGES: "5000"
+  CONSUMER_POD_COUNT: "3"
+  MAX_MESSAGES: "100"
   ENABLE_AUTO_COMMIT: "true"
   AUTO_OFFSET_RESET: "earliest"
   AUTO_COMMIT_INTERVAL_MS: "1000"
-  POLL_TIMEOUT: "500"
+  POLL_TIMEOUT: "10"
+  POLL_MAX_MSG: "1000" 
   FETCH_MAX_BYTES: "5242880"
-  FETCH_MIN_BYTES: "16384"
-  FETCH_MAX_WAIT_MS: "5"
-  MAX_POLL_RECORDS: "50"
+  FETCH_MIN_BYTES: "1"
+  FETCH_MAX_WAIT_MS: "1"
+  MAX_POLL_RECORDS: "1000"
   MAX_POLL_INTERVAL_MS: "120000"
   SESSION_TIMEOUT_MS: "20000"
   HEARTBEAT_INTERVAL_MS: "1000"
   SOCKET_TIMEOUT_MS: "30000"
   LAG_QUERY_TIMEOUT: "5.0"
   LAG_QUERY_INTERVAL: "15"
+  MAX_PARTITION_FETCH_BYTES: "4194304"
+  SOCKET_SEND_BUFFER_BYTES: "524288"
+  SOCKET_RECEIVE_BUFFER_BYTES: "524288"
   PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"
-  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result/"
-  PROCESSED_DIR: "/app/consumer-merge-data/consumer-result/processed/" 
+  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
+  PROCESSED_DIR: "/app/consumer-merge-data/consumer-result/processed" 
+  
   # =============================
   #  Application
   # =============================
   
-  APP_DELAY_MIN_MS: "10"
-  APP_DELAY_MAX_MS: "20"
+  APP_DELAY_MIN_MS: "1"
+  APP_DELAY_MAX_MS: "10"
   APP_DELAY_MODE: "simulated" 
  
   # =============================
@@ -84,9 +103,32 @@ data:
  
   MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
   MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
-  MIN_BLOCKS_FOR_GEV: "50"
-  FIT_GEV_INTERNAL_SEC: "60"
+  MIN_BLOCKS_FOR_GEV: "100"
+  FIT_GEV_INTERVAL_SEC: "120"
+  STOP_AT_BLOCKS: "5000"
   ENABLE_PARQUET: "true"
   GEV_METRIC: "application_consumer"
   MERGE_BLOCK_SCOPE: "global"
+
+  # Ports
+
+  PRODUCER_HTTP_PORT: "8001"
+  CONSUMER_HTTP_PORT: "8002"
+  MERGE_HTTP_PORT:    "8003"
+
+  # Experiment identity (used in filenames)
+  EXP_ID: "S0_skew_baseline"
+
+  # Workload intensity (pick one of 500 | 1000 | 5000)
+  STEADY_RATE_MSGS: "1000"
+
+  # Traffic shape
+  TRAFFIC_MODE: "skew"        
+  SKEW_PARTITION: "0"           
+  SKEW_FRACTION: "0.7"          
+
+  # Duration + metrics port
+  EXP_DURATION_SEC: "900"
+  METRICS_PORT: "8000"
+
 
