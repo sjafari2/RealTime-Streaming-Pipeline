@@ -1,6 +1,18 @@
 global:
   storageClass: "rook-ceph-block-central"
+  security:
+    allowInsecureImages: true
 
+image:
+  repository: bitnamilegacy/kafka
+
+volumePermissions:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamicharts/os-shell
+    tag: latest   
+    pullPolicy: IfNotPresent
 sasl:
   enabledMechanisms: ""
   interBrokerMechanism: ""
@@ -68,17 +80,17 @@ controller:
                 values:
                   - patternlab.calit2.optiputer.net
 
-  initContainers:
-
-    - name: volume-permission-fix
-      image: busybox
-      command:
-        - sh
-        - -c
-        - chown -R 1001:1001 /bitnami/kafka
-      volumeMounts:
-        - name: data
-          mountPath: /bitnami/kafka
+  #initContainers:
+  #
+  #  - name: volume-permission-fix
+  #    image: busybox
+  #    command:
+  #      - sh
+  #      - -c
+  #      - chown -R 1001:1001 /bitnami/kafka
+  #    volumeMounts:
+  #      - name: data
+  #        mountPath: /bitnami/kafka
   persistence:
     enabled: true
     storageClass: "rook-ceph-block-central"

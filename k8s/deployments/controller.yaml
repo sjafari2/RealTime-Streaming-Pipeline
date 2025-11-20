@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lag-controller
+  namespace: kafkastreamingdata
+  labels:
+    app: lag-controller
+    app.kubernetes.io/name: lag-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lag-controller 
+  template:
+    metadata:
+      labels:
+        app: lag-controller
+        app.kubernetes.io/name: lag-controller
+    spec:
+      containers:
+        - name: lag-controller-container
+          image: sjafari2/kafkaconfluentcontroller:latest
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: PIPELINE_CONFIG
+            value: /config/pipeline-configmap.yaml
+            #command: ["/bin/bash","-c"]
+            #args:
+            #  - |
+            #    mkdir -p ./logs
+            #    echo "Pod: $POD_NAME"
+            #    tail -f /dev/null
+          volumeMounts:
+          #- name: lag_controller-data
+          #  mountPath: /app/lag-controller-data
+          - name: pipeline-shared-config
+            mountPath: /config
+          - name: config-default
+            mountPath: /defaults
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+      - name: pipeline-shared-config
+        persistentVolumeClaim:
+          claimName: pipeline-shared-config
+      - name: config-default
+        configMap:
+          name: pipeline-configmap
+          items:
+          - key: pipeline-configmap.yaml
+            path: pipeline-configmap.yaml
+      #- name: lag-controller-data
+      #  persistentVolumeClaim:
+      #    claimName: lag-controller-data

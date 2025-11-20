@@ -11,7 +11,7 @@ spec:
   selector:
     matchLabels:
       app: producer-sts
-  replicas: 1
+  replicas: 2
   podManagementPolicy: Parallel
   template:
     metadata:

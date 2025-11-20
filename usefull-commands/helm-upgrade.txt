@@ -1,0 +1,12 @@
+helm upgrade pip-kafka \
+  oci://registry-1.docker.io/bitnamicharts/kafka \
+  --version 32.4.3 \
+  --namespace kafkastreamingdata \
+  --set global.security.allowInsecureImages=true \
+  --set image.registry=docker.io \
+  --set image.repository=bitnamilegacy/kafka \
+  --set image.tag=4.0.0-debian-12-r10 \
+  --set image.pullPolicy=IfNotPresent \
+  --set clusterId=$CLUSTER_ID \
+  -f helm/values-no-jmx.yaml
+

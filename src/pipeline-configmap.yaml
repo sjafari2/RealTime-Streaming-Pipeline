@@ -14,7 +14,7 @@ data:
   RETENTION_MS: "1800000"
   SEGMENT_MS: "600000"
   CLEANUP_POLICY: "delete"
-  NUM_PARTITIONS: "72"
+  NUM_PARTITIONS: "144"
   BROKER_COUNT: "3"
   REPLICATION_FACTOR: "1"
   MIN_INSYNC_REPLICAS: "1"
@@ -24,7 +24,7 @@ data:
   # =============================
   
   PRODUCER_COUNT: "1"
-  PRODUCER_POD_COUNT: "1"
+  PRODUCER_POD_COUNT: "2"
   PRODUCER_INPUT_PATH: "producer-data"
   DELAY_BETWEEN_MESSAGES: "0"
   LINGER_MS: "0"
@@ -47,7 +47,7 @@ data:
   METADATA_MAX_AGE_MS: "120000"
   TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"
   MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "4"
-  TARGET_RATE: "1000"
+  TARGET_RATE: "500"
   
   # =============================
   # optional burst pacing
@@ -65,7 +65,7 @@ data:
   
   CONSUMER_GROUP_ID: "consgroup"
   CONSUMER_COUNT: "1"
-  CONSUMER_POD_COUNT: "3"
+  CONSUMER_POD_COUNT: "8"
   MAX_MESSAGES: "100"
   ENABLE_AUTO_COMMIT: "true"
   AUTO_OFFSET_RESET: "earliest"
@@ -131,4 +131,6 @@ data:
   EXP_DURATION_SEC: "900"
   METRICS_PORT: "8000"
 
-
+  # Controller 
+  CONTROLLER_INTERVAL_SEC: "15"
+  ASSIGNMENT_STRATEGY: "cooperative-sticky"
