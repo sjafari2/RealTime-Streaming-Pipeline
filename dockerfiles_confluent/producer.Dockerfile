@@ -7,12 +7,17 @@ COPY --chown=sjafari:sjafari ./src/producer/ /code/
 COPY --chown=sjafari:sjafari ./src/pipeline-configmap.yaml /defaults/
 RUN chmod 644 /defaults/pipeline-configmap.yaml
 
+# Copy experiments.yaml file to /defaults
+COPY --chown=sjafari:sjafari ./src/experiments.yaml /defaults/
+RUN chmod 644 /defaults/experiments.yaml
+
+
 # Switch to root to adjust script permissions
 USER root
 
 # Make critical scripts executable
-RUN chmod 755 /code/runproducer.sh && \
-    chmod 755 /code/runsynthetic.sh
+RUN chmod 755 /code/run.sh 
+    
 
 # Create logs folder inside target persistent volume path (used in volume mount later)
 RUN mkdir -p /app/producer-data/logs && \

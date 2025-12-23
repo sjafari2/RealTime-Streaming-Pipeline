@@ -23,7 +23,7 @@ BROKER_COUNT="${BROKER_COUNT:-$(get_val BROKER_COUNT)}"
 # Sensible defaults if still empty
 RELEASE_NAME="${RELEASE_NAME:-pip}"
 NAMESPACE="${NAMESPACE:-kafkastreamingdata}"
-BROKER_COUNT="${BROKER_COUNT:-3}"
+BROKER_COUNT="${BROKER_COUNT:-5}"
 
 # 2) Build per-pod controller+broker client endpoints (9092)
 servers=()

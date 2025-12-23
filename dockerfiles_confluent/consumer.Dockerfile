@@ -7,8 +7,7 @@ COPY --chown=sjafari:sjafari ./src/consumer/ /code/
 USER root
 
 # Make sure main scripts are executable before being copied to the persistent volume
-RUN chmod 755 /code/runconsumer.sh && \
-    chmod 755 /code/runsynthetic.sh
+RUN chmod 755 /code/run.sh 
 
 # Create logs folder inside target persistent volume path (used in volume mount later)
 RUN mkdir -p /app/consumer-merge-data/logs && \

@@ -11,9 +11,9 @@ pod_labels=("app=producer-sts" "app=consumer-sts" "app=merge-sts")
 containers=("producer-container" "consumer-container" "merge-container")
 
 # Define processes to kill for each pod type
-processes_producer=("runsynthetic.sh" "confluent_kafka_producer.py")
-processes_consumer=("runsynthetic.sh" "confluent_consumer.py")
-processes_merge=("runsynthetic.sh" "confluent_merge.py")
+processes_producer=("run.sh" "producer.py")
+processes_consumer=("run.sh" "consumer.py")
+processes_merge=("run.sh" "confluent_merge.py")
 
 # Iterate over all pod types
 for i in "${!pod_labels[@]}"; do

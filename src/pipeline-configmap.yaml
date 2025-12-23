@@ -4,133 +4,78 @@ metadata:
   name: pipeline-configmap
   namespace: kafkastreamingdata
 data:
-  # =============================
-  #  Kafka Brokers / Topics 
-  # =============================
-  RELEASE_NAME: "pip"
-  NAMESPACE: "kafkastreamingdata" 
-  TOPIC_COUNT: "1"
-  TOPIC_TITLE: "ae"
-  RETENTION_MS: "1800000"
-  SEGMENT_MS: "600000"
-  CLEANUP_POLICY: "delete"
-  NUM_PARTITIONS: "144"
-  BROKER_COUNT: "3"
-  REPLICATION_FACTOR: "1"
-  MIN_INSYNC_REPLICAS: "1"
-
-  # =============================
-  #  Kafka Producer 
-  # =============================
-  
-  PRODUCER_COUNT: "1"
-  PRODUCER_POD_COUNT: "2"
-  PRODUCER_INPUT_PATH: "producer-data"
-  DELAY_BETWEEN_MESSAGES: "0"
-  LINGER_MS: "0"
-  BATCH_SIZE: "524288"
-  COMPRESSION_TYPE: "none"
-  MAX_REQUEST_SIZE: "1048576"
-  ACKS: "0"
-  RETRIES: "2"
-  RETRY_BACKOFF_MS: "5"
-  CONNECTION_MAX_IDLE_MS: "30000"
-  RECONNECT_BACKOFF_MS: "100"
-  RECONNECT_BACKOFF_MAX_MS: "1000"
-  RANDOM_RANGE: "1000"
-  REQUEST_TIMEOUT_MS: "10000"
-  DELIVERY_TIMEOUT_MS: "120000"
-  QUEUE_BUFFERING_MAX_MESSAGES: "200000"
-  QUEUE_BUFFERING_MAX_KBYTES: "131072"
-  CLIENT_ID: "pipeline-producer"
-  MSG_MAX_BYTES: "1048576"
-  METADATA_MAX_AGE_MS: "120000"
-  TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"
-  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "4"
-  TARGET_RATE: "500"
-  
-  # =============================
-  # optional burst pacing
-  # =============================
-
-  #PACING_MODE: "burst"  
-  PACING_MODE: "per_message"    
-  PACING_TICK_SEC: "0.005"        
-  MIN_BURST: "1"                 
-  MAX_BURST: "2000"              
-  
-  # =============================
-  #  Kafka Consumer 
-  # =============================
-  
-  CONSUMER_GROUP_ID: "consgroup"
-  CONSUMER_COUNT: "1"
-  CONSUMER_POD_COUNT: "8"
-  MAX_MESSAGES: "100"
-  ENABLE_AUTO_COMMIT: "true"
-  AUTO_OFFSET_RESET: "earliest"
-  AUTO_COMMIT_INTERVAL_MS: "1000"
-  POLL_TIMEOUT: "10"
-  POLL_MAX_MSG: "1000" 
-  FETCH_MAX_BYTES: "5242880"
-  FETCH_MIN_BYTES: "1"
-  FETCH_MAX_WAIT_MS: "1"
-  MAX_POLL_RECORDS: "1000"
-  MAX_POLL_INTERVAL_MS: "120000"
-  SESSION_TIMEOUT_MS: "20000"
-  HEARTBEAT_INTERVAL_MS: "1000"
-  SOCKET_TIMEOUT_MS: "30000"
-  LAG_QUERY_TIMEOUT: "5.0"
-  LAG_QUERY_INTERVAL: "15"
-  MAX_PARTITION_FETCH_BYTES: "4194304"
-  SOCKET_SEND_BUFFER_BYTES: "524288"
-  SOCKET_RECEIVE_BUFFER_BYTES: "524288"
-  PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"
-  CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
-  PROCESSED_DIR: "/app/consumer-merge-data/consumer-result/processed" 
-  
-  # =============================
-  #  Application
-  # =============================
-  
-  APP_DELAY_MIN_MS: "1"
-  APP_DELAY_MAX_MS: "10"
-  APP_DELAY_MODE: "simulated" 
- 
-  # =============================
-  #  Merge
-  # =============================
- 
-  MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
-  MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
-  MIN_BLOCKS_FOR_GEV: "100"
-  FIT_GEV_INTERVAL_SEC: "120"
-  STOP_AT_BLOCKS: "5000"
-  ENABLE_PARQUET: "true"
-  GEV_METRIC: "application_consumer"
-  MERGE_BLOCK_SCOPE: "global"
-
-  # Ports
-
-  PRODUCER_HTTP_PORT: "8001"
-  CONSUMER_HTTP_PORT: "8002"
-  MERGE_HTTP_PORT:    "8003"
-
-  # Experiment identity (used in filenames)
-  EXP_ID: "S0_skew_baseline"
-
-  # Workload intensity (pick one of 500 | 1000 | 5000)
-  STEADY_RATE_MSGS: "1000"
-
-  # Traffic shape
-  TRAFFIC_MODE: "skew"        
-  SKEW_PARTITION: "0"           
-  SKEW_FRACTION: "0.7"          
-
-  # Duration + metrics port
-  EXP_DURATION_SEC: "900"
-  METRICS_PORT: "8000"
-
-  # Controller 
-  CONTROLLER_INTERVAL_SEC: "15"
-  ASSIGNMENT_STRATEGY: "cooperative-sticky"
+  RELEASE_NAME: pip
+  NAMESPACE: kafkastreamingdata
+  TOPIC_COUNT: '1'
+  RETENTION_MS: '1800000'
+  SEGMENT_MS: '600000'
+  CLEANUP_POLICY: delete
+  NUM_PARTITIONS: '100'
+  BROKER_COUNT: '3'
+  REPLICATION_FACTOR: '1'
+  MIN_INSYNC_REPLICAS: '1'
+  PRODUCER_POD_COUNT: '3'
+  ACKS: '1'
+  COMPRESSION_TYPE: none
+  PRODUCER_INPUT_PATH: producer-data
+  DELAY_BETWEEN_MESSAGES: '0'
+  LINGER_MS: '0'
+  BATCH_SIZE: '524288'
+  MAX_REQUEST_SIZE: '1048576'
+  RETRIES: '2'
+  RETRY_BACKOFF_MS: '5'
+  CONNECTION_MAX_IDLE_MS: '30000'
+  RECONNECT_BACKOFF_MS: '100'
+  RECONNECT_BACKOFF_MAX_MS: '1000'
+  RANDOM_RANGE: '1000'
+  REQUEST_TIMEOUT_MS: '10000'
+  DELIVERY_TIMEOUT_MS: '120000'
+  QUEUE_BUFFERING_MAX_MESSAGES: '200000'
+  QUEUE_BUFFERING_MAX_KBYTES: '131072'
+  CLIENT_ID: pipeline-producer
+  MSG_MAX_BYTES: '1048576'
+  METADATA_MAX_AGE_MS: '120000'
+  TOPIC_METADATA_REFRESH_INTERVAL_MS: '120000'
+  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: '4'
+  CONSUMER_GROUP_ID: consgroup
+  CONSUMER_POD_COUNT: '8'
+  PARTITION_ASSIGNMENT_STRATEGY: cooperative-sticky
+  MAX_MESSAGES: '100'
+  ENABLE_AUTO_COMMIT: 'false'
+  AUTO_OFFSET_RESET: earliest
+  AUTO_COMMIT_INTERVAL_MS: '0'
+  POLL_TIMEOUT: '1'
+  POLL_MAX_MSG: '1000'
+  FETCH_MAX_BYTES: '5242880'
+  FETCH_MIN_BYTES: '1'
+  FETCH_MAX_WAIT_MS: '1'
+  MAX_POLL_RECORDS: '1000'
+  MAX_POLL_INTERVAL_MS: '120000'
+  SESSION_TIMEOUT_MS: '20000'
+  HEARTBEAT_INTERVAL_MS: '1000'
+  SOCKET_TIMEOUT_MS: '30000'
+  LAG_QUERY_TIMEOUT: '5.0'
+  LAG_QUERY_INTERVAL: '15'
+  MAX_PARTITION_FETCH_BYTES: '4194304'
+  SOCKET_SEND_BUFFER_BYTES: '524288'
+  SOCKET_RECEIVE_BUFFER_BYTES: '524288'
+  CONSUMER_OUTPUT_DIR: /app/consumer-merge-data/consumer-result
+  PROCESSED_DIR: /app/consumer-merge-data/consumer-result/processed
+  APP_DELAY_MODE: none
+  APP_DELAY_MIN_MS: '0'
+  APP_DELAY_MAX_MS: '0'
+  PACING_MODE: per_message
+  PACING_TICK_SEC: '0.005'
+  MIN_BURST: '1'
+  MAX_BURST: '2000'
+  MITIGATION_POLICY: none
+  ENABLE_HPA: 'false'
+  ENABLE_CONTROLLER: 'false'
+  ENABLE_KEDA: 'false'
+  SLA: '99'
+  EXP_ID: B0_500
+  TOPIC_TITLE: B0_500
+  TRAFFIC_MODE: balanced
+  TARGET_RATE: '500'
+  SKEW_FRACTION: '0.0'
+  SKEW_PARTITION: '-1'

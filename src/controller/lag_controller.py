@@ -1,438 +1,486 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Lag-Sensitive Partition-Aware Autoscaling Controller (LS-PAK)
+Lag-sensitive Kafka autoscaling controller.
 
-This controller runs as an external Kubernetes microservice.
-It:
-  - Reads configuration from /config/pipeline-configmap.yaml
-  - Connects to Kafka via AdminClient
-  - Periodically collects per-partition lag for a target consumer group
-  - Classifies the system state (stable / broad pressure / skewed)
-  - Applies a least-intrusive-first policy:
-        1) Scale consumers (via log/placeholder hook)
-        2) Targeted reassignment of hot partitions (placeholder hook)
-        3) Publish hot-key bucketing rules (control topic / config)
-        4) Suggest partition-count increases
-All "actions" are implemented as explicit functions with clear hooks for
-integrating with Kubernetes API and real control topics.
+Runs inside a dedicated Kubernetes pod and periodically:
+  - measures per-partition lag using kafka-consumer-groups.sh,
+  - computes total backlog, skew ratio, and lag growth rate,
+  - decides whether to:
+        * scale out consumers (broad backlog),
+        * attempt targeted reassignment (skewed backlog),
+        * escalate to producer-side key splitting,
+  - publishes hot-key rules via a Kubernetes ConfigMap.
+
+Configuration:
+  All configuration is passed via environment variables, which are populated
+  from /config/pipeline-configmap.yaml by run_lag_controller.sh using `yq`,
+  exactly like the producer setup.
 """
 
 import os
 import time
 import json
-import logging
 import subprocess
-from typing import Dict, List, Tuple
+import logging
+from collections import deque, defaultdict
 
-import yaml
-from confluent_kafka import AdminClient, KafkaException, TopicPartition
+from kubernetes import client, config
 
+# ---------------------------------------------------------------------------
+# Helper: get env with optional default
+# ---------------------------------------------------------------------------
 
-# =========================
-# Config and logging
-# =========================
+def getenv_int(name: str, default: int) -> int:
+    val = os.getenv(name)
+    try:
+        return int(val) if val is not None else default
+    except ValueError:
+        return default
 
-CONFIG_PATH = os.environ.get("PIPELINE_CONFIG_PATH", "/config/pipeline-configmap.yaml")
+def getenv_float(name: str, default: float) -> float:
+    val = os.getenv(name)
+    try:
+        return float(val) if val is not None else default
+    except ValueError:
+        return default
+
+# ---------------------------------------------------------------------------
+# Load config from environment (exported by run_lag_controller.sh)
+# ---------------------------------------------------------------------------
+
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+NAMESPACE = os.getenv("NAMESPACE", "kafkastreamingdata")
+RELEASE_NAME = os.getenv("RELEASE_NAME", "pip")
+CONSUMER_GROUP_ID = os.getenv("CONSUMER_GROUP_ID", "consgroup")
+
+# This is the consumer StatefulSet name; override via env if needed
+CONSUMER_STS_NAME = os.getenv("CONSUMER_STS_NAME", "consumer")
+
+# From pipeline config: target rate is used to set LAG_MIN_THRESHOLD
+STEADY_RATE = getenv_int("TARGET_RATE", 1000)
+
+# Path to Kafka CLI (from base image)
+KAFKA_INSTALL_PATH = os.getenv("KAFKA_INSTALL_PATH", "/kafka/bin")
+
+# Optional SASL/security properties file, if you use one
+KAFKA_CLIENT_CONFIG = os.getenv("KAFKA_CLIENT_CONFIG")
+
+# Controller timing/threshold parameters
+DELTA_SECONDS        = getenv_int("DELTA_SECONDS", 15)          # monitoring interval
+SKEW_THRESHOLD       = getenv_float("SKEW_THRESHOLD", 10.0)     # skew_ratio threshold
+COOLDOWN_SECONDS     = getenv_int("COOLDOWN_SECONDS", 60)       # cooldown after action
+WINDOW_SIZE          = getenv_int("WINDOW_SIZE", 4)             # sliding window length
+PERSISTENCE_THRESHOLD = getenv_int("PERSISTENCE_THRESHOLD", 3)  # entries needed
+
+EPSILON = 1.0  # avoid division by zero
+
+# LAG_MIN_THRESHOLD ≈ R * Δ (ignore very small backlogs)
+LAG_MIN_THRESHOLD    = getenv_int("LAG_MIN_THRESHOLD", STEADY_RATE * DELTA_SECONDS)
+
+# Hot-key splitting parameters
+SPLIT_COUNT_DEFAULT  = getenv_int("SPLIT_COUNT", 4)             # typical split_count 2–8
+RULE_TTL_SECONDS     = getenv_int("RULE_TTL_SECONDS", 6 * DELTA_SECONDS)
+HOTKEY_CONFIGMAP_NAME = os.getenv("HOTKEY_CONFIGMAP_NAME", "hotkey-rules")
+
+# Reassignment retries
+MAX_REASSIGN_RETRIES = getenv_int("MAX_REASSIGN_RETRIES", 3)
+
+# ----------------------------------------------------------------------------
+# Logging
+# ----------------------------------------------------------------------------
 
 logging.basicConfig(
-    level=os.environ.get("LOG_LEVEL", "INFO"),
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
+logger = logging.getLogger("lag_controller")
 
+# ----------------------------------------------------------------------------
+# Kubernetes clients
+# ----------------------------------------------------------------------------
 
-def load_config(path: str) -> Dict[str, str]:
+def init_k8s_clients():
+    """Initialize Kubernetes API clients using in-cluster config (or local for debug)."""
+    try:
+        config.load_incluster_config()
+    except config.ConfigException:
+        config.load_kube_config()
+    apps_v1 = client.AppsV1Api()
+    core_v1 = client.CoreV1Api()
+    return apps_v1, core_v1
+
+APPS_V1, CORE_V1 = init_k8s_clients()
+
+# ----------------------------------------------------------------------------
+# Kafka helpers – lag collection via kafka-consumer-groups.sh
+# ----------------------------------------------------------------------------
+
+def get_bootstrap_server() -> str:
     """
-    Load the pipeline configmap YAML and return a flat dict of key -> value.
-    Works if the file is a full ConfigMap manifest or a simple key-value YAML.
+    Derive the Kafka bootstrap server.
+
+    Prefer KAFKA_BOOTSTRAP_SERVERS if set; otherwise use the default
+    Bitnami-style service name based on RELEASE_NAME and NAMESPACE.
     """
-    with open(path, "r") as f:
-        doc = yaml.safe_load(f)
-
-    # If this is a full ConfigMap manifest, use .data
-    if isinstance(doc, dict) and "data" in doc:
-        data = doc["data"]
-    else:
-        data = doc
-
-    # Normalize all keys/values to strings
-    cfg = {str(k): str(v) for k, v in data.items()}
-    return cfg
-
-
-def build_bootstrap_servers(cfg: Dict[str, str]) -> str:
-    """
-    Build the Kafka bootstrap.servers string.
-
-    Option 1: Use an explicit env/override if present.
-    Option 2: Use your existing naming scheme: pip-kafka.<ns>.svc.cluster.local:9092
-    Option 3: Optionally call get_kafka_consumer_dns.sh if mounted.
-    """
-    # Explicit override
-    env_bootstrap = os.environ.get("KAFKA_BOOTSTRAP_SERVERS")
+    env_bootstrap = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
     if env_bootstrap:
         return env_bootstrap
 
-    release = cfg.get("RELEASE_NAME", "pip")
-    namespace = cfg.get("NAMESPACE", "kafkastreamingdata")
-
-    # Default Bitnami-style service
-    inferred = f"{release}-kafka.{namespace}.svc.cluster.local:9092"
-
-    # Optional: use helper script if available
-    helper = "/scripts/get_kafka_consumer_dns.sh"
-    if os.path.exists(helper):
-        try:
-            out = subprocess.check_output([helper], text=True).strip()
-            # Expect something like ["host:9092"]
-            hosts = json.loads(out)
-            if isinstance(hosts, list) and hosts:
-                return ",".join(hosts)
-        except Exception as e:
-            logging.warning("Failed to run %s: %s; falling back to inferred bootstrap %s",
-                            helper, e, inferred)
-
-    return inferred
+    # Default: <release>-kafka.<namespace>.svc.cluster.local:9092
+    return f"{RELEASE_NAME}-kafka.{NAMESPACE}.svc.cluster.local:9092"
 
 
-# =========================
-# Signals and helpers
-# =========================
-
-class Signals:
+def get_partition_lags() -> dict:
     """
-    Container for metrics at a single snapshot.
-    """
-    def __init__(self, partition_lag: Dict[Tuple[str, int], int]):
-        self.partition_lag = partition_lag
-
-    @property
-    def total_lag(self) -> int:
-        return sum(self.partition_lag.values())
-
-    @property
-    def mean_lag(self) -> float:
-        if not self.partition_lag:
-            return 0.0
-        return self.total_lag / float(len(self.partition_lag))
-
-    @property
-    def max_lag_item(self) -> Tuple[Tuple[str, int], int]:
-        if not self.partition_lag:
-            return (("none", -1), 0)
-        k = max(self.partition_lag, key=self.partition_lag.get)
-        return k, self.partition_lag[k]
-
-    @property
-    def coeff_variation(self) -> float:
-        """
-        Coefficient of variation (std / mean) as a skew indicator.
-        """
-        import math
-
-        if not self.partition_lag:
-            return 0.0
-        mean = self.mean_lag
-        if mean <= 0.0:
-            return 0.0
-        vals = list(self.partition_lag.values())
-        var = sum((x - mean) ** 2 for x in vals) / float(len(vals))
-        std = math.sqrt(var)
-        return std / mean
-
-
-def persistent(flags: List[bool], min_count: int) -> bool:
-    """
-    Returns True if 'True' appears at least min_count times in the buffer.
-    """
-    return sum(1 for f in flags if f) >= min_count
-
-
-# =========================
-# Lag collection from Kafka
-# =========================
-
-def get_group_lag(
-    admin: AdminClient,
-    group_id: str,
-    timeout: float = 5.0,
-) -> Dict[Tuple[str, int], int]:
-    """
-    Compute per-partition lag for a consumer group using AdminClient.
-
-    Requires:
-      - list_consumer_group_offsets (group offsets)
-      - list_offsets (for END offsets)
+    Query Kafka for per-partition lag using kafka-consumer-groups.sh.
 
     Returns:
-      dict[(topic, partition)] = lag (>= 0)
+        dict[(topic, partition)] -> lag (int)
     """
+    bootstrap = get_bootstrap_server()
+    kafka_cmd = os.path.join(KAFKA_INSTALL_PATH, "kafka-consumer-groups.sh")
+
+    cmd = [
+        kafka_cmd,
+        "--bootstrap-server",
+        bootstrap,
+        "--group",
+        CONSUMER_GROUP_ID,
+        "--describe",
+    ]
+    if KAFKA_CLIENT_CONFIG:
+        cmd += ["--command-config", KAFKA_CLIENT_CONFIG]
+
     try:
-        # 1) Get committed offsets for the group
-        grp_offsets = admin.list_consumer_group_offsets(
-            group_id,
-            request_timeout=timeout,
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True,
         )
-        tp_to_committed = grp_offsets.result()
-
-        if not tp_to_committed:
-            logging.warning("No committed offsets for group %s", group_id)
-            return {}
-
-        # 2) Build request for END offsets
-        # confluent_kafka expects {TopicPartition: OffsetSpec}
-        from confluent_kafka.admin import OffsetSpec
-
-        end_spec = {tp: OffsetSpec.latest() for tp in tp_to_committed.keys()}
-        end_offsets = admin.list_offsets(end_spec, request_timeout=timeout)
-
-        partition_lag = {}
-        for tp, committed_meta in tp_to_committed.items():
-            committed = committed_meta.offset
-            if committed < 0:
-                # Uninitialized; treat as lag 0 for now
-                continue
-
-            end_meta = end_offsets.get(tp, None)
-            if end_meta is None or end_meta.offset < 0:
-                continue
-
-            lag = max(end_meta.offset - committed, 0)
-            partition_lag[(tp.topic, tp.partition)] = lag
-
-        return partition_lag
-
-    except KafkaException as e:
-        logging.error("Error computing lag for group %s: %s", group_id, e)
-        return {}
-    except Exception as e:
-        logging.error("Unexpected error in get_group_lag: %s", e)
+    except subprocess.CalledProcessError as e:
+        logger.error("Failed to run kafka-consumer-groups.sh: %s", e.stderr)
         return {}
 
+    lags = {}
+    for line in result.stdout.splitlines():
+        line = line.strip()
+        if not line or line.startswith("GROUP") or line.startswith("Consumer group"):
+            continue
+        # Format:
+        # GROUP TOPIC PARTITION CURRENT-OFFSET LOG-END-OFFSET LAG CONSUMER-ID HOST CLIENT-ID
+        parts = line.split()
+        if len(parts) < 6:
+            continue
+        group, topic, partition, curr_offset, log_end, lag_str = parts[:6]
+        try:
+            partition = int(partition)
+            lag_val = int(lag_str)
+        except ValueError:
+            continue
+        lags[(topic, partition)] = lag_val
 
-# =========================
-# Actions (hooks)
-# =========================
+    return lags
 
-def scale_consumers(new_replicas: int):
+# ----------------------------------------------------------------------------
+# Sliding window and persistence checks
+# ----------------------------------------------------------------------------
+
+from collections import deque, defaultdict
+
+class SlidingWindow:
+    """Sliding window over recent total_lag and skew_ratio measurements."""
+
+    def __init__(self, size: int):
+        self.size = size
+        self.total_lag = deque(maxlen=size)
+        self.skew_ratio = deque(maxlen=size)
+
+    def add(self, total_lag: int, skew_ratio: float):
+        self.total_lag.append(total_lag)
+        self.skew_ratio.append(skew_ratio)
+
+    def is_persistent_high_backlog(self) -> bool:
+        """High backlog is persistent if most entries exceed LAG_MIN_THRESHOLD."""
+        if len(self.total_lag) < self.size:
+            return False
+        flags = [val >= LAG_MIN_THRESHOLD for val in self.total_lag]
+        return sum(flags) >= PERSISTENCE_THRESHOLD
+
+    def is_persistent_skew(self) -> bool:
+        """Skew is persistent if most entries exceed SKEW_THRESHOLD."""
+        if len(self.skew_ratio) < self.size:
+            return False
+        flags = [val >= SKEW_THRESHOLD for val in self.skew_ratio]
+        return sum(flags) >= PERSISTENCE_THRESHOLD
+
+
+WINDOW = SlidingWindow(WINDOW_SIZE)
+REASSIGN_RETRIES = defaultdict(int)
+RULE_VERSION = 0
+last_action_time = 0.0
+
+# ----------------------------------------------------------------------------
+# Kubernetes actions: scale consumers and publish hot-key rules
+# ----------------------------------------------------------------------------
+
+def scale_consumers(delta: int):
     """
-    Placeholder hook to scale consumer StatefulSet.
-
-    In production:
-      - Call Kubernetes API, or
-      - Use 'kubectl scale' via subprocess in a pod with proper RBAC.
-
-    Here we just log the intent.
+    Scale the consumer StatefulSet by delta replicas (delta > 0 for scale-out).
     """
-    logging.info("[ACTION] Scale consumers to %d replicas (hook only).", new_replicas)
-
-
-def targeted_reassign(hot_partitions: List[Tuple[str, int]]):
-    """
-    Placeholder for targeted reassignment using CooperativeStickyAssignor.
-
-    NOTE:
-    Implementing a true external incremental reassignment requires integration with
-    Kafka's group management or a custom assignor. For now, we log the intention.
-    """
-    if not hot_partitions:
-        return False
-    logging.info("[ACTION] Targeted reassignment for: %s (hook only).", hot_partitions)
-    return True
-
-
-def publish_hotkey_rules(hot_items: List[Tuple[str, int]], control_path: str):
-    """
-    Write a simple JSON hot-key rule file that producers can watch/mount.
-
-    In a real deployment:
-      - This could be a control topic.
-      - Or a shared ConfigMap/volume.
-
-    Here:
-      - We write to a shared path (if provided).
-    """
-    if not control_path:
-        logging.info("[ACTION] Hot-key rules requested, but no control path configured.")
+    if delta <= 0:
+        logger.info("scale_consumers called with non-positive delta (%d); ignoring.", delta)
         return
 
-    rules = {
-        "version": int(time.time()),
-        "ttl_sec": 300,
-        "hot_partitions": [
-            {"topic": t, "partition": p, "buckets": 4}
-            for (t, p) in hot_items
-        ],
-    }
     try:
-        os.makedirs(os.path.dirname(control_path), exist_ok=True)
-        with open(control_path, "w") as f:
-            json.dump(rules, f)
-        logging.info("[ACTION] Wrote hot-key rules to %s: %s", control_path, rules)
-    except Exception as e:
-        logging.error("Failed to write hot-key rules to %s: %s", control_path, e)
+        sts = APPS_V1.read_namespaced_stateful_set(
+            name=CONSUMER_STS_NAME,
+            namespace=NAMESPACE,
+        )
+    except client.exceptions.ApiException as e:
+        logger.error("Failed to read StatefulSet %s: %s", CONSUMER_STS_NAME, e)
+        return
+
+    current_replicas = sts.spec.replicas or 0
+    new_replicas = current_replicas + delta
+
+    body = {"spec": {"replicas": new_replicas}}
+    try:
+        APPS_V1.patch_namespaced_stateful_set(
+            name=CONSUMER_STS_NAME,
+            namespace=NAMESPACE,
+            body=body,
+        )
+        logger.info("Scaled consumers from %d to %d replicas.", current_replicas, new_replicas)
+    except client.exceptions.ApiException as e:
+        logger.error("Failed to scale StatefulSet %s: %s", CONSUMER_STS_NAME, e)
 
 
-def maybe_increase_partitions(topic: str, new_count: int):
+def publish_hotkey_rules(key: str, split_count: int, version: int, ttl: int):
     """
-    Placeholder for increasing topic partitions.
+    Publish a hot-key splitting rule via a ConfigMap.
 
-    In production:
-      - Use AdminClient.create_partitions.
-    Here:
-      - Log the intent only.
+    The rule format is:
+        {
+            "key": key,
+            "split_count": split_count,
+            "version": version,
+            "ttl_seconds": ttl
+        }
+    Producers periodically read this ConfigMap and apply only the latest rule.
     """
-    logging.info("[ACTION] Suggest increasing partitions for %s to %d (hook only).",
-                 topic, new_count)
+    rule = {
+        "key": key,
+        "split_count": int(split_count),
+        "version": int(version),
+        "ttl_seconds": int(ttl),
+    }
 
+    data = {"rules.json": json.dumps(rule)}
+    metadata = client.V1ObjectMeta(name=HOTKEY_CONFIGMAP_NAME, namespace=NAMESPACE)
+    body = client.V1ConfigMap(api_version="v1", kind="ConfigMap", metadata=metadata, data=data)
 
-# =========================
-# Controller main loop
-# =========================
+    try:
+        CORE_V1.replace_namespaced_config_map(
+            name=HOTKEY_CONFIGMAP_NAME,
+            namespace=NAMESPACE,
+            body=body,
+        )
+        logger.info("Updated hotkey ConfigMap %s with rule: %s", HOTKEY_CONFIGMAP_NAME, rule)
+    except client.exceptions.ApiException as e:
+        if e.status == 404:
+            CORE_V1.create_namespaced_config_map(namespace=NAMESPACE, body=body)
+            logger.info("Created hotkey ConfigMap %s with rule: %s", HOTKEY_CONFIGMAP_NAME, rule)
+        else:
+            logger.error("Failed to publish hotkey rules: %s", e)
 
-def run_controller():
-    cfg = load_config(CONFIG_PATH)
+# ----------------------------------------------------------------------------
+# Targeted reassignment (still a stub, as discussed)
+# ----------------------------------------------------------------------------
 
-    group_id = cfg.get("CONSUMER_GROUP_ID", "consgroup")
-    topic_title = cfg.get("TOPIC_TITLE", "ae")
-    lag_query_interval = int(cfg.get("LAG_QUERY_INTERVAL", "15"))
-    lag_query_timeout = float(cfg.get("LAG_QUERY_TIMEOUT", "5.0"))
+def targeted_reassign(hot_partition, move_quota=1, assignor="cooperative-sticky") -> bool:
+    """
+    Placeholder for lag-aware targeted reassignment.
 
-    # Policy parameters (tune as needed or expose via ConfigMap)
-    N = 4  # persistence window (snapshots)
-    tau_var = 0.5  # CV threshold for declaring skew
-    tau_hot = 0.5  # hot partition holds >= 50% of total lag
-    cooldown_sec = 60
-    max_retries_before_hotkey = 3
+    In the current prototype, this function only logs that a reassignment would be
+    performed. A full implementation would require consumer-side support (e.g.,
+    a control topic or HTTP API) so that consumers can adjust their assignments
+    using the Kafka client's 'assign()' call.
 
-    hotkey_rules_path = os.environ.get(
-        "HOTKEY_RULES_PATH",
-        "/config/hotkey-rules.json"
+    Returns:
+        False to indicate no reassignment actually happened.
+    """
+    logger.info(
+        "targeted_reassign called for partition %s (quota=%d, assignor=%s) [stub only]",
+        hot_partition,
+        move_quota,
+        assignor,
+    )
+    return False
+
+# ----------------------------------------------------------------------------
+# Aggregates and hot partition selection
+# ----------------------------------------------------------------------------
+
+def compute_aggregates(lags: dict):
+    """
+    Compute total_lag, max_lag, mean_lag, skew_ratio, and the hot partition key.
+
+    Args:
+        lags: dict[(topic, partition)] -> lag
+
+    Returns:
+        total_lag (int),
+        max_lag (int),
+        mean_lag (float),
+        skew_ratio (float),
+        hot_partition_key (str or None)
+    """
+    if not lags:
+        return 0, 0, 0.0, 0.0, None
+
+    lag_values = list(lags.values())
+    total_lag = sum(lag_values)
+    max_lag = max(lag_values)
+    mean_lag = total_lag / float(len(lag_values))
+
+    skew_ratio = max_lag / (mean_lag + EPSILON)
+
+    hot_topic_partition = max(lags.items(), key=lambda kv: kv[1])[0]
+    hot_partition_key = f"{hot_topic_partition[0]}:{hot_topic_partition[1]}"
+
+    return total_lag, max_lag, mean_lag, skew_ratio, hot_partition_key
+
+# ----------------------------------------------------------------------------
+# Main control loop
+# ----------------------------------------------------------------------------
+
+def main_loop():
+    global last_action_time, RULE_VERSION
+
+    last_total_lag = None
+    last_time = None
+
+    logger.info(
+        "Starting lag-sensitive controller loop (Δ=%ds, SKEW_THRESHOLD=%.1f, LAG_MIN_THRESHOLD=%d)...",
+        DELTA_SECONDS,
+        SKEW_THRESHOLD,
+        LAG_MIN_THRESHOLD,
     )
 
-    bootstrap_servers = build_bootstrap_servers(cfg)
-    logging.info("Using bootstrap.servers=%s", bootstrap_servers)
-
-    admin = AdminClient({"bootstrap.servers": bootstrap_servers})
-
-    # State
-    last_action_time = 0.0
-    last_state = "stable"
-    skew_retry_count = 0
-
-    cv_history: List[float] = []
-    broad_flags: List[bool] = []
-    skew_flags: List[bool] = []
-
-    # Simple consumer scale bounds
-    min_cons = int(cfg.get("CONSUMER_POD_COUNT", "3"))
-    max_cons = max(min_cons * 8, 64)
-
-    logging.info("Starting lag-sensitive controller for group=%s topic=%s", group_id, topic_title)
-
     while True:
-        start = time.time()
+        loop_start = time.time()
 
-        # 1) Snapshot metrics
-        partition_lag = get_group_lag(admin, group_id, timeout=lag_query_timeout)
-        sig = Signals(partition_lag)
+        # 1. Measure per-partition lag
+        lags = get_partition_lags()
+        total_lag, max_lag, mean_lag, skew_ratio, hot_partition_key = compute_aggregates(lags)
 
-        cv = sig.coeff_variation
-        cv_history.append(cv)
-        if len(cv_history) > N:
-            cv_history.pop(0)
-
-        # Define simple conditions
-        broad = (cv < tau_var) and (sig.mean_lag > 0)
-        skew = False
-        hot_items = []
-        if sig.total_lag > 0 and sig.partition_lag:
-            (hot_tp, hot_lag) = sig.max_lag_item
-            if hot_lag / float(sig.total_lag) >= tau_hot:
-                skew = True
-                hot_items = [hot_tp]
-
-        broad_flags.append(broad)
-        skew_flags.append(skew)
-        if len(broad_flags) > N:
-            broad_flags.pop(0)
-        if len(skew_flags) > N:
-            skew_flags.pop(0)
-
-        now = time.time()
-        if now - last_action_time < cooldown_sec:
-            # In cooldown: just log state and wait
-            logging.debug("In cooldown; cv=%.3f total_lag=%d", cv, sig.total_lag)
-            time.sleep(max(0, lag_query_interval - (time.time() - start)))
-            continue
-
-        # Decide state
-        state = "stable"
-        if persistent(broad_flags, N):
-            state = "broad_pressure"
-        elif persistent(skew_flags, N):
-            state = "skewed_pressure"
-
-        logging.info(
-            "Snapshot: state=%s total_lag=%d mean_lag=%.1f cv=%.3f hot=%s",
-            state, sig.total_lag, sig.mean_lag, cv,
-            hot_items[0] if hot_items else None,
+        logger.info(
+            "Measured total_lag=%d, max_lag=%d, mean_lag=%.2f, skew_ratio=%.2f",
+            total_lag,
+            max_lag,
+            mean_lag,
+            skew_ratio,
         )
 
-        # 2) Least-intrusive-first
+        # 2. Update sliding window
+        WINDOW.add(total_lag, skew_ratio)
 
-        if state == "stable":
-            skew_retry_count = 0
+        # 3. Ignore very small backlogs
+        if total_lag < LAG_MIN_THRESHOLD:
+            logger.info(
+                "Total lag (%d) below LAG_MIN_THRESHOLD (%d); no action.",
+                total_lag,
+                LAG_MIN_THRESHOLD,
+            )
+            time.sleep(max(0, DELTA_SECONDS - (time.time() - loop_start)))
+            continue
 
-        elif state == "broad_pressure":
-            # Scale up consumers slightly
-            # In real impl, query current replicas from env/K8s; here we approximate.
-            scale_to = min(max_cons, min_cons * 2)
-            scale_consumers(scale_to)
-            last_action_time = now
-            skew_retry_count = 0
+        now = time.time()
 
-        elif state == "skewed_pressure":
-            # Try targeted reassignment first (stateless assumption here)
-            if hot_items:
-                moved = targeted_reassign(hot_items[:1])
-                if moved:
-                    last_action_time = now
-                    skew_retry_count += 1
-                else:
-                    logging.info("No targeted move performed.")
+        # 4. Cooldown
+        if now - last_action_time < COOLDOWN_SECONDS:
+            remaining = COOLDOWN_SECONDS - (now - last_action_time)
+            logger.info("In cooldown period (%.1fs remaining); skipping action.", remaining)
+            time.sleep(max(0, DELTA_SECONDS - (time.time() - loop_start)))
+            continue
+
+        # 5. Lag growth rate (for logging / intuition)
+        if last_total_lag is not None and last_time is not None:
+            dt = now - last_time
+            lag_growth_rate = (total_lag - last_total_lag) / dt if dt > 0 else 0.0
+        else:
+            lag_growth_rate = 0.0
+
+        last_total_lag = total_lag
+        last_time = now
+
+        logger.info("Estimated lag_growth_rate = %.2f messages/sec", lag_growth_rate)
+
+        # 6. Case A: broad backlog -> scale consumers
+        if WINDOW.is_persistent_high_backlog() and skew_ratio < SKEW_THRESHOLD:
+            logger.info("Persistent high backlog with low skew; scaling consumers.")
+            scale_consumers(+1)
+            last_action_time = time.time()
+            time.sleep(max(0, DELTA_SECONDS - (time.time() - loop_start)))
+            continue
+
+        # 7. Case B: skewed backlog (one hot partition dominates)
+        if WINDOW.is_persistent_skew():
+            if hot_partition_key is None:
+                logger.warning("Skew detected but no hot partition identified.")
             else:
-                logging.info("Skewed state detected but no hot_items; skipping reassignment.")
+                logger.info(
+                    "Persistent skew detected (skew_ratio=%.2f); hot partition=%s",
+                    skew_ratio,
+                    hot_partition_key,
+                )
 
-            # Escalate to hot-key bucketing if repeated skew
-            if skew_retry_count >= max_retries_before_hotkey and hot_items:
-                publish_hotkey_rules(hot_items, hotkey_rules_path)
-                last_action_time = now
-                skew_retry_count = 0
+                moved = targeted_reassign(
+                    hot_partition=hot_partition_key,
+                    move_quota=1,
+                    assignor="cooperative-sticky",
+                )
+                if moved:
+                    logger.info("Targeted reassignment applied for %s.", hot_partition_key)
+                    last_action_time = time.time()
+                    time.sleep(max(0, DELTA_SECONDS - (time.time() - loop_start)))
+                    continue
 
-            # Potential further escalation: suggest more partitions if also globally hot
-            if sig.total_lag > 0 and sig.mean_lag > 0 and cv > tau_var:
-                # Example: suggest doubling partitions (hook only)
-                try:
-                    cur_parts = int(cfg.get("NUM_PARTITIONS", "72"))
-                except ValueError:
-                    cur_parts = 72
-                maybe_increase_partitions(topic_title, cur_parts * 2)
+                # Escalation: track retries
+                REASSIGN_RETRIES[hot_partition_key] += 1
+                attempts = REASSIGN_RETRIES[hot_partition_key]
 
-        last_state = state
+                if attempts >= MAX_REASSIGN_RETRIES:
+                    RULE_VERSION += 1
+                    logger.info(
+                        "Reassignment retries exhausted for %s (attempts=%d); "
+                        "publishing hot-key rules with version=%d.",
+                        hot_partition_key,
+                        attempts,
+                        RULE_VERSION,
+                    )
+                    publish_hotkey_rules(
+                        key=hot_partition_key,
+                        split_count=SPLIT_COUNT_DEFAULT,
+                        version=RULE_VERSION,
+                        ttl=RULE_TTL_SECONDS,
+                    )
+                    REASSIGN_RETRIES[hot_partition_key] = 0
+                    last_action_time = time.time()
+                    time.sleep(max(0, DELTA_SECONDS - (time.time() - loop_start)))
+                    continue
 
-        # Sleep until next interval
-        elapsed = time.time() - start
-        sleep_for = max(0, lag_query_interval - elapsed)
-        time.sleep(sleep_for)
+        # 8. Else: observe
+        logger.info("No action taken this interval; continuing to observe.")
+        time.sleep(max(0, DELTA_SECONDS - (time.time() - loop_start)))
 
 
 if __name__ == "__main__":
     try:
-        run_controller()
+        main_loop()
     except KeyboardInterrupt:
-        logging.info("Controller interrupted, shutting down.")
-    except Exception as e:
-        logging.exception("Fatal error in controller: %s", e)
-        raise
+        logger.info("Controller interrupted; exiting.")
 

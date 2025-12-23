@@ -175,7 +175,7 @@ process_pods() {
   [[ "$save_logs" != "y" ]] && save_logs="n"
   read -n 1 -p "Delete logs before running the script? (y/n): " delete_logs; echo
   [[ "$delete_logs" != "y" ]] && delete_logs="n"
-  read -n 1 -p "Run ./runsynthetic.sh inside pods? (y/n): " run_scripts; echo
+  read -n 1 -p "Run ./run.sh inside pods? (y/n): " run_scripts; echo
   [[ "$run_scripts" != "y" ]] && run_scripts="n"
 
   # ===== Save/Delete phase =====
@@ -268,8 +268,8 @@ process_pods() {
       pods=$(list_pods_by_role "$role")
       for pod in $pods; do
         pod_id="$(pod_ordinal "$pod")"
-        echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
-        k exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
+        echo "Starting ./run.sh $pod_id in $pod ..."
+        k exec -c "$container" "$pod" -- sh -lc "setsid ./run.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
       done
     }
 
@@ -280,8 +280,8 @@ process_pods() {
       pods=$(list_pods_by_role "$role")
       for pod in $pods; do
         pod_id="$(pod_ordinal "$pod")"
-        echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
-        k exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
+        echo "Starting ./run.sh $pod_id in $pod ..."
+        k exec -c "$container" "$pod" -- sh -lc "setsid ./run.sh '$pod_id' >/dev/null 2>&1 < /dev/null &"
       done
     }
 
@@ -292,8 +292,8 @@ process_pods() {
       pods=$(list_pods_by_role "$role")
       for pod in $pods; do
         pod_id="$(pod_ordinal "$pod")"
-        echo "Starting ./runsynthetic.sh $pod_id in $pod ..."
-        k exec -c "$container" "$pod" -- sh -lc "setsid ./runsynthetic.sh  >/dev/null 2>&1 < /dev/null &"
+        echo "Starting ./run.sh $pod_id in $pod ..."
+        k exec -c "$container" "$pod" -- sh -lc "setsid ./run.sh  >/dev/null 2>&1 < /dev/null &"
       done
     }
   else

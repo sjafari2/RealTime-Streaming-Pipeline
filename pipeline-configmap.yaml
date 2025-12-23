@@ -7,28 +7,31 @@ data:
   # =============================
   #  Kafka Brokers / Topics 
   # =============================
+  RELEASE_NAME: "pip"
+  NAMESPACE: "kafkastreamingdata" 
   TOPIC_COUNT: "1"
-  TOPIC_TITLE: "op"
+  TOPIC_TITLE: "B0"
   RETENTION_MS: "1800000"
   SEGMENT_MS: "600000"
   CLEANUP_POLICY: "delete"
-  NUM_PARTITIONS: "36"
-  BROKER_COUNT: "5"
+  NUM_PARTITIONS: "100"
+  BROKER_COUNT: "3"
   REPLICATION_FACTOR: "1"
   MIN_INSYNC_REPLICAS: "1"
 
   # =============================
   #  Kafka Producer 
   # =============================
+  
   PRODUCER_COUNT: "1"
-  PRODUCER_POD_COUNT: "2"
+  PRODUCER_POD_COUNT: "3"
   PRODUCER_INPUT_PATH: "producer-data"
   DELAY_BETWEEN_MESSAGES: "0"
-  LINGER_MS: "10"           # was 5; 10ms is a good batching baseline
-  BATCH_SIZE: "262144"      # 256 KiB
-  COMPRESSION_TYPE: "lz4"
+  LINGER_MS: "0"
+  BATCH_SIZE: "524288"
+  COMPRESSION_TYPE: "none"
   MAX_REQUEST_SIZE: "1048576"
-  ACKS: "0"
+  ACKS: "1"
   RETRIES: "2"
   RETRY_BACKOFF_MS: "5"
   CONNECTION_MAX_IDLE_MS: "30000"
@@ -38,62 +41,127 @@ data:
   REQUEST_TIMEOUT_MS: "10000"
   DELIVERY_TIMEOUT_MS: "120000"
   QUEUE_BUFFERING_MAX_MESSAGES: "200000"
-  QUEUE_BUFFERING_MAX_KBYTES: "2097152"
+  QUEUE_BUFFERING_MAX_KBYTES: "131072"
   CLIENT_ID: "pipeline-producer"
   MSG_MAX_BYTES: "1048576"
   METADATA_MAX_AGE_MS: "120000"
   TOPIC_METADATA_REFRESH_INTERVAL_MS: "120000"
-  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "10"
-  TARGET_RATE: "250"
-
+  MAX_IN_FLIGHT_REQUEST_PER_CONNECTION: "4"
+    
   # =============================
-  # optional burst pacing (defaults preserve old behavior)
+  # optional burst pacing
   # =============================
-  PACING_MODE: "per_message"     # per_message | burst
-  PACING_TICK_SEC: "0.01"        # used only when PACING_MODE=burst
-  MIN_BURST: "1"
-  MAX_BURST: "2000"
 
+  #PACING_MODE: "burst"  
+  PACING_MODE: "per_message"    
+  PACING_TICK_SEC: "0.005"        
+  MIN_BURST: "1"                 
+  MAX_BURST: "2000"              
+  
   # =============================
   #  Kafka Consumer 
   # =============================
+  
   CONSUMER_GROUP_ID: "consgroup"
   CONSUMER_COUNT: "1"
-  CONSUMER_POD_COUNT: "12"
+  CONSUMER_POD_COUNT: "8"
   MAX_MESSAGES: "100"
-  ENABLE_AUTO_COMMIT: "true"
+  ENABLE_AUTO_COMMIT: "false"
   AUTO_OFFSET_RESET: "earliest"
-  AUTO_COMMIT_INTERVAL_MS: "1000"
-  POLL_TIMEOUT: "500"
+  AUTO_COMMIT_INTERVAL_MS: "0"
+  POLL_TIMEOUT: "1"
+  POLL_MAX_MSG: "1000" 
   FETCH_MAX_BYTES: "5242880"
-  FETCH_MIN_BYTES: "16384"
-  FETCH_MAX_WAIT_MS: "5"
-  MAX_POLL_RECORDS: "500"
+  FETCH_MIN_BYTES: "1"
+  FETCH_MAX_WAIT_MS: "1"
+  MAX_POLL_RECORDS: "1000"
   MAX_POLL_INTERVAL_MS: "120000"
   SESSION_TIMEOUT_MS: "20000"
   HEARTBEAT_INTERVAL_MS: "1000"
   SOCKET_TIMEOUT_MS: "30000"
   LAG_QUERY_TIMEOUT: "5.0"
   LAG_QUERY_INTERVAL: "15"
+  MAX_PARTITION_FETCH_BYTES: "4194304"
+  SOCKET_SEND_BUFFER_BYTES: "524288"
+  SOCKET_RECEIVE_BUFFER_BYTES: "524288"
   PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"
   CONSUMER_OUTPUT_DIR: "/app/consumer-merge-data/consumer-result"
   PROCESSED_DIR: "/app/consumer-merge-data/consumer-result/processed" 
-
+  
   # =============================
   #  Application
   # =============================
-  APP_DELAY_MIN_MS: "10"
-  APP_DELAY_MAX_MS: "20"
-  APP_DELAY_MODE: "simulated" 
-
+  
+  APP_DELAY_MIN_MS: "0"
+  APP_DELAY_MAX_MS: "0"
+  APP_DELAY_MODE: "none" 
+  #"simulated" 
+ 
   # =============================
   #  Merge
   # =============================
-  MERGE_OUTPUT_DIR: "/app/merge-result"
-  MERGE_METRICS_DIR: "/app/merge-metrics"
+ 
+  MERGE_OUTPUT_DIR: "/app/merged-data/merge-result"
+  MERGE_METRICS_DIR: "/app/merged-data/merge-metrics"
   MIN_BLOCKS_FOR_GEV: "100"
   FIT_GEV_INTERVAL_SEC: "120"
   STOP_AT_BLOCKS: "5000"
   ENABLE_PARQUET: "true"
   GEV_METRIC: "application_consumer"
   MERGE_BLOCK_SCOPE: "global"
+  
+  # =============================
+  #  Experiments
+  # =============================
+ 
+  TARGET_RATE: "500"
+
+  # Experiment identity (used in filenames)
+  
+  EXP_ID: "B0"
+  #EXP_ID: B0, S0, S1, S2, S3, S4, S5
+  
+  # Traffic Behavior
+
+  TRAFFIC_MODE: "balanced"        
+  #TRAFFIC_MODE: {balanced (B0), skew (S0, S1), burst}
+  #TRAFFIC_MODE: {uniform_random, hot_key, oscillating, custom} 
+   
+   
+  # Workload intensity (pick one of 500 | 1000 | 5000)
+  SKEW_PARTITION: "-1"           
+  SKEW_FRACTION: "0"          
+
+  # Duration + metrics port
+  EXP_DURATION_SEC: "900"
+  METRICS_PORT: "8000"
+  SLA: "99"
+  
+  # =============================
+  #  Mitigation / Autoscaling Policy
+  # =============================
+  
+  MITIGATION_POLICY: "none"
+  # {none, hpa, lag_sensitive}
+  
+  ENABLE_CONTROLLER: "false" 
+  # explicit gate for external controller
+  
+  ENABLE_HPA: "false" 
+  # explicit gate for HPA baseline
+  
+  ENABLE_CC: "false"           
+  #  Cruise Control
+  
+  ENABLE_KEDA: "false" 
+  # KEDA
+  
+  # =============================
+  #  Ports
+  # =============================
+ 
+  PRODUCER_HTTP_PORT: "8001"
+  CONSUMER_HTTP_PORT: "8002"
+  MERGE_HTTP_PORT:    "8003"
+
+  
