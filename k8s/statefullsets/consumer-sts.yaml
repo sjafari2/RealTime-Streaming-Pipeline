@@ -58,13 +58,13 @@ spec:
         command: ["/bin/sh","-c"]
         args:
           - |
+            set -e
             echo "[init] Bootstrapping config and code..."
             mkdir -p /config
             # Seed shared config only if missing
-            if [ ! -f /config/pipeline-configmap.yaml ]; then
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
-              echo "[init] Seeded /config/pipeline-configmap.yaml"
-            fi
+            cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml 
+            echo "[init] Seeded /config/pipeline-configmap.yaml"
+          
             chown -R 1000:1000 /config
             chmod -R u+w /config
 
@@ -92,30 +92,41 @@ spec:
           runAsGroup: 1000
         workingDir: /app/consumer-merge-data
         env:
+        - name: PIPELINE_ROLE
+          value: consumer
+        - name: CONSUMER_HTTP_PORT
+          value: "8002"
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
         - name: PIPELINE_CONFIG
           value: /config/pipeline-configmap.yaml
-        command: ["/bin/bash","-c"]
+        command: ["/bin/bash","-lc"]
         args:
           - |
             mkdir -p ./logs
+            set -e
             echo "Pod: $POD_NAME"
             echo "Using config at $PIPELINE_CONFIG"
+            
             ls -l /config || true
             head -n 50 "$PIPELINE_CONFIG" || true
-
+            
+            #align metrics port with your Service/Prometheus expectations
+            #export CONSUMER_HTTP_PORT=8002
+            
             # Each consumer writes to its own subdir → no file contention
             export CONSUMER_OUTPUT_DIR="/app/consumer-merge-data/consumer-result"
             export PROCESSED_DIR="${CONSUMER_OUTPUT_DIR}/processed"
             mkdir -p "$CONSUMER_OUTPUT_DIR" "$PROCESSED_DIR"
-            #./runsynthetic.sh
-            tail -f /dev/null
+            chmod +x ./run.sh
+            exec ./run.sh
+            #./run.sh
+            #tail -f /dev/null
         ports:
         - name: metrics
-          containerPort: 8000
+          containerPort: 8002
         resources:
           requests:
             cpu: "2"

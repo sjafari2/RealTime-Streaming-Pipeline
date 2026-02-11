@@ -52,10 +52,10 @@ spec:
           - |
             echo "[init] Bootstrapping producer config and code..."
             mkdir -p /config
-            if [ ! -f /config/pipeline-configmap.yaml ]; then
-              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
-              echo "[init] Seeded /config/pipeline-configmap.yaml"
-            fi
+            #if [ ! -f /config/pipeline-configmap.yaml ]; then
+            cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
+            echo "[init] Seeded /config/pipeline-configmap.yaml"
+            #fi
             chown -R 1000:1000 /config
             chmod -R u+w /config
 
@@ -74,7 +74,7 @@ spec:
           mountPath: /config
         - name: config-default
           mountPath: /defaults
-
+          readOnly: true
       containers:
       - name: producer-container
         image: sjafari2/kafkaconfluentproducer:latest
@@ -83,23 +83,35 @@ spec:
           runAsGroup: 1000
         workingDir: /app/producer-data
         env:
+        - name: PIPELINE_ROLE
+          value: producer
         - name: PIPELINE_CONFIG
           value: /config/pipeline-configmap.yaml
+        - name: METRICS_PORT
+          value: "8000"
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         - name: POD_ORDINAL
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        command: ["/bin/bash","-c"]
+        command: ["/bin/bash","-lc"]
         args:
           - |
             rm -rf ./logs/* || true
             mkdir -p ./logs
+            set -e
+            echo "[main] Pod: ${POD_NAME}"
+            echo "[main] Using config: ${PIPELINE_CONFIG}"
             echo "Pod: $(hostname)"
-            echo "Using config at $PIPELINE_CONFIG"
             ls -l /config || true
             head -n 40 "$PIPELINE_CONFIG" || true
-            #./runsynthetic.sh
-            tail -f /dev/null
+            chmod +x ./run.sh
+            ./run.sh
+            #tail -f /dev/null
         ports:
         - name: metrics
           containerPort: 8000

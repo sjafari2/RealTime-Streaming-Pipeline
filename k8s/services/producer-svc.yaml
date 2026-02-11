@@ -4,7 +4,7 @@ metadata:
   name: producer-headless-svc
   namespace: kafkastreamingdata
   labels:
-    app: producer       # 👈 metadata label (informational only)
+    app: producer-sts       # 👈 metadata label (informational only)
 
 spec:
   clusterIP: None  # ← Headless!

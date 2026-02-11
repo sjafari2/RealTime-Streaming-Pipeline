@@ -17,5 +17,6 @@ spec:
     #  port: 81
     #  targetPort: 8081
     - name: metrics
-      port: 8000       # what Prometheus dials
-      targetPort: 8000  # must match app's listening port
+      port: 8002       # what Prometheus dials
+      targetPort: 8002  # same as name metrics or  containerPort in consumer-sts----must match app's listening port
+

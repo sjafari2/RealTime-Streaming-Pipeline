@@ -1,0 +1,48 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: consumer-keda-hpa
+  namespace: kafkastreamingdata
+spec:
+  scaleTargetRef:
+    kind: StatefulSet
+    name: consumer-sts
+
+  # Same bounds you already use conceptually (8 baseline, autoscale up to 24)
+  minReplicaCount: 8
+  maxReplicaCount: 24
+
+  pollingInterval: 15        # seconds (how often KEDA checks)
+  cooldownPeriod: 90         # seconds Keda waits before another scale down decision
+
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus.kafkastreamingdata.svc.cluster.local:9090
+      metricName: consumer_group_total_lag
+      # TODO: replace this query with your real lag metric name and labels
+      query: |
+        sum(<YOUR_LAG_METRIC>{group="consgroup"})
+      threshold: "5000"
+  
+  # HPA behavior    
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          # respond immediately to increases
+          stabilizationWindowSeconds: 0
+          policies:
+          # increase replicas by at most 2 pods per 60 seconds
+          - type: Pods
+            value: 2
+            periodSeconds: 60
+        # decrease replicas by at most 1 pod per 60 seconds
+        scaleDown:
+          # only scale down if the system has consistently wanted fewer replicas for 2 minutes
+          stabilizationWindowSeconds: 120
+          policies:
+          - type: Pods
+            value: 1
+            periodSeconds: 60
+

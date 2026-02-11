@@ -4,7 +4,7 @@ set -euo pipefail
 trap "exit" INT TERM
 trap "kill 0" EXIT
 
-CONFIG_FILE="/config/pipeline-configmap.yaml"
+CONFIG_FILE="${PIPELINE_CONFIG:-/config/pipeline-configmap.yaml}"
 
 # ============================================================
 #  Load ALL ConfigMap keys under .data into plain env variables
@@ -18,18 +18,20 @@ eval "$(
 #  Prepare logging/output directories
 # ============================================================
 
+export CONSUMER_HTTP_PORT="${CONSUMER_HTTP_PORT:-8002}"
+
 CURRENT_DATE=$(TZ=America/Denver date +"%Y-%m-%d")
 CURRENT_TIME=$(TZ=America/Denver date +"%H-%M-%S")
 
+POD_NAME="${POD_NAME:-$(hostname)}"
 CONSUMER_DIR="${CONSUMER_OUTPUT_DIR}/${CURRENT_DATE}"
 mkdir -p "${CONSUMER_DIR}"
 
-LOG_DIR="./logs/consumer/${CURRENT_DATE}"
+LOG_DIR="./logs/consumer/${CURRENT_DATE}/${CURRENT_TIME}"
 mkdir -p "${LOG_DIR}"
 
-pod_name=$(hostname)
 
-echo "[INFO] Consumer pod: ${pod_name}"
+echo "[INFO] Consumer pod: ${POD_NAME}"
 echo "[INFO] EXP_ID=${EXP_ID:-unknown}, TRAFFIC_MODE=${TRAFFIC_MODE:-balanced}"
 
 # ============================================================

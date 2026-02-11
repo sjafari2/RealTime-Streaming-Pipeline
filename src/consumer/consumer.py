@@ -52,7 +52,7 @@ COMMON_LABELS = ["pod", "group", "client_id"]
 
 e2e_latency_summary = Summary(
     "end_to_end_latency_ms",
-    "End-to-end latency in ms (includes application processing delay)",
+    "End-to-End latency in ms",
     COMMON_LABELS,
 )
 
@@ -64,13 +64,13 @@ msg_consumed_counter = Counter(
 
 msg_rate_gauge = Gauge(
     "consumer_message_rate",
-    "Message consumption rate (msg/sec)",
+    "Message Throughput Rate (msg/sec)",
     COMMON_LABELS,
 )
 
 mb_rate_gauge = Gauge(
     "consumer_mb_rate",
-    "Message throughput rate (MB/sec)",
+    "Message consumption rate (MB/sec)",
     COMMON_LABELS,
 )
 
@@ -94,7 +94,7 @@ uptime_gauge = Gauge(
 
 consumer_latency_histogram = Histogram(
     "consumer_latency_seconds",
-    "End-to-end latency (producer to consumer + application delay)",
+    "End-to-end latency in sec (producer to consumer)",
     COMMON_LABELS,
     buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2],
 )
@@ -178,7 +178,7 @@ class MetricConsumer:
         }
 
         # --- Topics + bootstrap servers ---
-        topic_title = getenv_str("TOPIC_TITLE", "ae")
+        topic_title = getenv_str("TOPIC_TITLE", "exp-balanced")
         topic_count = getenv_int("TOPIC_COUNT", 1)
         if topic_count < 1:
             topic_count = 1
@@ -382,47 +382,44 @@ class MetricConsumer:
                     )
                     receive_ts = time.time()
 
-                    network_latency_sec = receive_ts - producer_ts_val
-                    app_delay = random.uniform(
-                        self.app_delay_min_s, self.app_delay_max_s
-                    )
+                    #network_latency_sec = receive_ts - producer_ts_val
+                    #app_delay = random.uniform(
+                    #    self.app_delay_min_s, self.app_delay_max_s
+                    #)
 
-                    if self.app_delay_mode == "realistic":
-                        time.sleep(app_delay)
+                    #if self.app_delay_mode == "realistic":
+                    #    time.sleep(app_delay)
 
-                    application_ts = receive_ts + app_delay
-                    end_to_end_latency_sec = network_latency_sec + app_delay
+                    #application_ts = receive_ts + app_delay
+                    #end_to_end_latency_sec = network_latency_sec + app_delay
 
                     # Prometheus recording (e2e)
                     e2e_latency_summary.labels(
                         **self.metric_labels
-                    ).observe(end_to_end_latency_sec * 1000.0)
+                    ).observe(end_to_end_latency_ms)
                     consumer_latency_histogram.labels(
                         **self.metric_labels
-                    ).observe(end_to_end_latency_sec)
+                    ).observe(end_to_end_latency_ms)
 
-                    if target_rate:
-                        try:
-                            tr_val = float(
-                                target_rate.decode()
-                                if isinstance(target_rate, (bytes, bytearray))
-                                else target_rate
-                            )
-                            target_rate_gauge.labels(
-                                **self.metric_labels
-                            ).set(tr_val)
-                        except Exception:
-                            pass
+                    #if target_rate:
+                    #    try:
+                    #        tr_val = float(
+                    #            target_rate.decode()
+                    #            if isinstance(target_rate, (bytes, bytearray))
+                    #            else target_rate
+                    #        )
+                    #        target_rate_gauge.labels(
+                    #            **self.metric_labels
+                    #        ).set(tr_val)
+                    #    except Exception:
+                    #        pass
 
                     # Prepare record for async save
                     record = {
                         "index": index_val,
                         "producer_timestamp": producer_ts_val,
                         "consumer_receive_timestamp": receive_ts,
-                        "network_latency_seconds": network_latency_sec,
-                        "application_timestamp": application_ts,
-                        "application_latency_seconds": app_delay,
-                        "end_to_end_latency_seconds": end_to_end_latency_sec,
+                        "end_to_end_latency_ms": end_to_end_latency_ms,
                         "size_bytes": int(size_bytes.decode())
                         if isinstance(size_bytes, (bytes, bytearray))
                         else (int(size_bytes) if size_bytes is not None else None)
