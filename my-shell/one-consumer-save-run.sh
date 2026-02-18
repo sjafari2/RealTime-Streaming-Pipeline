@@ -8,9 +8,6 @@ set -euo pipefail
 NAMESPACE="${NAMESPACE:-}"
 SINGLE_FOR_COPY="${SINGLE_FOR_COPY:-1}"
 
-# Only read consumer metrics from consumer-sts-0..consumer-sts-7 (default)
-MAX_CONSUMER_ORDINAL="${MAX_CONSUMER_ORDINAL:-7}"
-
 # Save/delete processing order (run order is consumers then producers below)
 roles=("producer" "consumer")
 
@@ -24,10 +21,9 @@ declare -A role_to_container=(
   ["consumer"]="consumer-container"
 )
 
-# NOTE: consumer results moved to /tmp/metrics (per your request)
 declare -A role_to_results=(
   ["producer"]=""
-  ["consumer"]="/tmp/metrics"
+  ["consumer"]="/app/consumer-merge-data/metrics"
 )
 
 declare -A role_to_logs=(
@@ -97,46 +93,18 @@ delete_dir_cephsafe() {
     find '$rdir' -depth -type d -empty -delete 2>/dev/null || true
   " || echo 'Warning: delete failed'
 }
+
 list_pods_by_role() {
   local role="$1"
   local sel="${role_to_label[$role]}"
   [[ -z "$sel" ]] && return 0
-
-  # Get pod names (one per line)
-  local pods
-  pods=$(k get pods -l "$sel" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null || true)
-
-  # Sort by numeric ordinal suffix: <name>-<N>
-  local sorted
-  sorted=$(
-    printf "%s\n" "$pods" \
-    | awk '
-        NF {
-          n=$0
-          sub(/^.*-/, "", n)     # suffix after last "-"
-          if (n ~ /^[0-9]+$/) {
-            printf "%08d %s\n", n, $0
-          } else {
-            printf "%08d %s\n", 99999999, $0
-          }
-        }
-      ' \
-    | sort \
-    | cut -d" " -f2-
-  )
-
-  # Only for consumers: keep consumer-sts-0..consumer-sts-${MAX_CONSUMER_ORDINAL}
-  if [[ "$role" == "consumer" ]]; then
-    printf "%s\n" "$sorted" \
-    | awk -v max="${MAX_CONSUMER_ORDINAL}" '
-        NF {
-          n=$0
-          sub(/^.*-/, "", n)
-          if (n ~ /^[0-9]+$/ && (n+0) <= max) print
-        }
-      '
+  if sort -V </dev/null >/dev/null 2>&1; then
+    k get pods -l "$sel" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | sort -V
   else
-    printf "%s\n" "$sorted"
+    k get pods -l "$sel" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' \
+      | awk 'match($0,/-([0-9]+)$/,m){print m[1],$0}' \
+      | sort -k1,1n \
+      | cut -d' ' -f2-
   fi
 }
 
@@ -201,6 +169,9 @@ kill_processes_in_pod() {
   echo "[KILL] ${pod} (${role}) ..."
   k exec -c "$container" "$pod" -- sh -lc "
     set +e
+    # show what we are about to kill (optional)
+    # ps -ef | grep -E '[p]ython3|[r]un\.sh|consumer\.py|producer\.py' || true
+
     # Kill run.sh wrappers first (they may be parent jobs)
     pkill -f 'run\.sh' 2>/dev/null || true
     pkill -f '/app/.*/run\.sh' 2>/dev/null || true
@@ -306,7 +277,7 @@ start_role_pods() {
     log_file="${log_dir}/run_${pod}.log"
 
     echo "Starting $runsh in $pod ..."
-
+    
     set +e
 
     k exec -c "$container" "$pod" -- sh -lc "
@@ -344,6 +315,7 @@ start_role_pods() {
 
     if [[ $rc -ne 0 ]]; then
       echo "[WARN] start failed in $pod (rc=$rc). Continuing to next pod..."
+      # best-effort: try to show log tail (separate exec so the main one can fail)
       k exec -c "$container" "$pod" -- sh -lc "tail -n 80 '$log_file' 2>/dev/null || true" || true
       continue
     fi
@@ -401,8 +373,7 @@ process_pods() {
       [[ -z "$pod" ]] && continue
 
       if [[ "$save_results" == "y" && -n "${role_to_results[$role]}" ]]; then
-        # IMPORTANT: keep SINGLE_FOR_COPY behavior for non-consumer roles only.
-        if [[ "$role" != "consumer" && "$SINGLE_FOR_COPY" == "1" && "$did_save_results" -eq 1 ]]; then
+        if [[ "$SINGLE_FOR_COPY" == "1" && "$did_save_results" -eq 1 ]]; then
           echo "Skip results save for $role (already saved)."
         else
           for remote_path in ${role_to_results[$role]}; do
@@ -417,8 +388,7 @@ process_pods() {
       fi
 
       if [[ "$delete_results" == "y" && -n "${role_to_results[$role]}" ]]; then
-        # IMPORTANT: keep SINGLE_FOR_COPY behavior for non-consumer roles only.
-        if [[ "$role" != "consumer" && "$SINGLE_FOR_COPY" == "1" && "$did_delete_results" -eq 1 ]]; then
+        if [[ "$SINGLE_FOR_COPY" == "1" && "$did_delete_results" -eq 1 ]]; then
           echo "Skip results deletion for $role (already deleted)."
         else
           for remote_path in ${role_to_results[$role]}; do
@@ -454,8 +424,7 @@ process_pods() {
         echo "Skipping log deletion for $role."
       fi
 
-      # IMPORTANT: for consumers we NEVER break early, so we always process consumer-sts-0..7.
-      if [[ "$role" != "consumer" && "$SINGLE_FOR_COPY" == "1" && ( "$did_save_results" -eq 1 || "$did_delete_results" -eq 1 || "$did_save_logs" -eq 1 || "$did_delete_logs" -eq 1 ) ]]; then
+      if [[ "$SINGLE_FOR_COPY" == "1" && ( "$did_save_results" -eq 1 || "$did_delete_results" -eq 1 || "$did_save_logs" -eq 1 || "$did_delete_logs" -eq 1 ) ]]; then
         break
       fi
     done

@@ -23,7 +23,6 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
 
-      # Keep consumers near Kafka brokers (UCSD / us-west)
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -60,14 +59,26 @@ spec:
           - |
             set -e
             echo "[init] Bootstrapping config and code..."
+
+            # /config is a RWX PVC (writable). Ensure permissions.
             mkdir -p /config
-            # Seed shared config only if missing
-            cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml 
-            echo "[init] Seeded /config/pipeline-configmap.yaml"
-          
             chown -R 1000:1000 /config
             chmod -R u+w /config
+            
+            # Seed config files only if missing
+            if [ ! -f /config/pipeline-configmap.yaml ]; then
+              echo "[init] Seeding pipeline-configmap.yaml from /defaults"
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
+              chmod 644 /config/pipeline-configmap.yaml
+            fi
 
+            if [ ! -f /config/experiments.yaml ]; then
+              echo "[init] Seeding experiments.yaml from /defaults"
+              cp /defaults/experiments.yaml /config/experiments.yaml
+              chmod 644 /config/experiments.yaml
+            fi
+            
+            # Copy code into RWX CephFS once (keeps your existing workflow)
             if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
               cp -r /code/* /app/consumer-merge-data/
               touch /app/consumer-merge-data/.code_initialized
@@ -79,14 +90,13 @@ spec:
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data
-        - name: pipeline-shared-config
+        - name: pipeline-config
           mountPath: /config
-        - name: config-default
-          mountPath: /defaults
 
       containers:
       - name: consumer-container
         image: sjafari2/kafkaconfluentconsumer:latest
+        imagePullPolicy: Always
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -105,25 +115,14 @@ spec:
         command: ["/bin/bash","-lc"]
         args:
           - |
-            mkdir -p ./logs
             set -e
-            echo "Pod: $POD_NAME"
-            echo "Using config at $PIPELINE_CONFIG"
-            
+            mkdir -p ./logs
+            echo "[startup] Pod: $POD_NAME"
+            echo "[startup] Config: $PIPELINE_CONFIG"
             ls -l /config || true
-            head -n 50 "$PIPELINE_CONFIG" || true
-            
-            #align metrics port with your Service/Prometheus expectations
-            #export CONSUMER_HTTP_PORT=8002
-            
-            # Each consumer writes to its own subdir → no file contention
-            export CONSUMER_OUTPUT_DIR="/app/consumer-merge-data/consumer-result"
-            export PROCESSED_DIR="${CONSUMER_OUTPUT_DIR}/processed"
-            mkdir -p "$CONSUMER_OUTPUT_DIR" "$PROCESSED_DIR"
-            chmod +x ./run.sh
-            exec ./run.sh
-            #./run.sh
-            #tail -f /dev/null
+            # Do NOT start the workload yet; keep pod alive.
+            echo "[startup] Ready. Waiting for manual start."
+            tail -f /dev/null
         ports:
         - name: metrics
           containerPort: 8002
@@ -137,22 +136,17 @@ spec:
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data
-        - name: pipeline-shared-config
+        - name: pipeline-config
           mountPath: /config
-        - name: config-default
-          mountPath: /defaults
+        - name: metrics
+          mountPath: /tmp/metrics
 
       volumes:
       - name: consumer-merge-data
         persistentVolumeClaim:
-          claimName: consumer-merge-cephfs     # RWX CephFS (shared with merge)
-      - name: pipeline-shared-config
+          claimName: consumer-merge-cephfs
+      - name: pipeline-config
         persistentVolumeClaim:
-          claimName: pipeline-shared-config    # RWX CephFS for shared config file
-      - name: config-default
-        configMap:
-          name: pipeline-configmap
-          items:
-          - key: pipeline-configmap.yaml
-            path: pipeline-configmap.yaml
-
+          claimName: pipeline-configmap-pvc
+      - name: metrics
+        emptyDir: {}

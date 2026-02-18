@@ -47,18 +47,31 @@ spec:
       initContainers:
       - name: bootstrap-producer
         image: sjafari2/kafkaconfluentproducer:latest
+        imagePullPolicy: Always
         command: ["/bin/sh","-c"]
         args:
           - |
+            set -e
             echo "[init] Bootstrapping producer config and code..."
+
+            # /config is a RWX PVC (writable). Ensure permissions.
             mkdir -p /config
-            #if [ ! -f /config/pipeline-configmap.yaml ]; then
-            cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml || true
-            echo "[init] Seeded /config/pipeline-configmap.yaml"
-            #fi
             chown -R 1000:1000 /config
             chmod -R u+w /config
 
+            # Seed config files only if missing
+            if [ ! -f /config/pipeline-configmap.yaml ]; then
+              echo "[init] Seeding pipeline-configmap.yaml from /defaults"
+              cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml
+              chmod 644 /config/pipeline-configmap.yaml
+            fi
+
+            if [ ! -f /config/experiments.yaml ]; then
+              echo "[init] Seeding experiments.yaml from /defaults"
+              cp /defaults/experiments.yaml /config/experiments.yaml
+              chmod 644 /config/experiments.yaml
+            fi
+            # Copy code into /app/producer-data once
             if [ ! -f /app/producer-data/.code_initialized ]; then
               cp -r /code/* /app/producer-data/
               touch /app/producer-data/.code_initialized
@@ -70,11 +83,9 @@ spec:
         volumeMounts:
         - name: producer-data
           mountPath: /app/producer-data
-        - name: pipeline-shared-config
+        - name: pipeline-config
           mountPath: /config
-        - name: config-default
-          mountPath: /defaults
-          readOnly: true
+
       containers:
       - name: producer-container
         image: sjafari2/kafkaconfluentproducer:latest
@@ -87,34 +98,34 @@ spec:
           value: producer
         - name: PIPELINE_CONFIG
           value: /config/pipeline-configmap.yaml
-        - name: METRICS_PORT
-          value: "8000"
-        env:
+
+        # Match the Python producer code's expected env var
+        - name: PRODUCER_HTTP_PORT
+          value: "8001"
+
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        - name: POD_ORDINAL
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
+
         command: ["/bin/bash","-lc"]
         args:
           - |
-            rm -rf ./logs/* || true
-            mkdir -p ./logs
             set -e
+            mkdir -p ./logs
             echo "[main] Pod: ${POD_NAME}"
             echo "[main] Using config: ${PIPELINE_CONFIG}"
-            echo "Pod: $(hostname)"
             ls -l /config || true
-            head -n 40 "$PIPELINE_CONFIG" || true
+            head -n 40 "${PIPELINE_CONFIG}" || true
+
             chmod +x ./run.sh
-            ./run.sh
-            #tail -f /dev/null
+
+            # Do NOT start yet. You will start via your script across pods.
+            echo "[main] Ready. Waiting for manual start..."
+            tail -f /dev/null
         ports:
         - name: metrics
-          containerPort: 8000
+          containerPort: 8001
         - name: prod-exp-port
           containerPort: 9093
         resources:
@@ -127,23 +138,16 @@ spec:
         volumeMounts:
         - name: producer-data
           mountPath: /app/producer-data
-        - name: pipeline-shared-config
+        - name: pipeline-config
           mountPath: /config
-        - name: config-default
-          mountPath: /config-default
-          readOnly: true
 
       volumes:
       - name: producer-data
         emptyDir:
           sizeLimit: "10Gi"
-      - name: pipeline-shared-config
+
+      # Writable shared config PVC (no defaults)
+      - name: pipeline-config
         persistentVolumeClaim:
-          claimName: pipeline-shared-config
-      - name: config-default
-        configMap:
-          name: pipeline-configmap
-          items:
-          - key: pipeline-configmap.yaml
-            path: pipeline-configmap.yaml
+          claimName: pipeline-configmap-pvc
 

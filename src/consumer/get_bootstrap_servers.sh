@@ -1,36 +1,56 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CONFIG_FILE="${CONFIG_FILE:-/config/pipeline-configmap.yaml}"
+CONFIGMAP_PATH="${CONFIGMAP_PATH:-/config/pipeline-configmap.yaml}"
 
-# 1) Try to get RELEASE_NAME/NAMESPACE/BROKER_COUNT via yq, else grep, else defaults
-get_val() {
+trim() {
+  local s="$1"
+  s="${s#"${s%%[![:space:]]*}"}"
+  s="${s%"${s##*[![:space:]]}"}"
+  printf "%s" "$s"
+}
+
+get_cfg() {
   local key="$1"
-  if command -v yq >/dev/null 2>&1 && [[ -f "$CONFIG_FILE" ]]; then
-    yq -r ".data.${key} // empty" "$CONFIG_FILE" || true
-  elif [[ -f "$CONFIG_FILE" ]]; then
-    # fall back to grep (expects: KEY: "value")
-    grep -E "^ *${key}:" "$CONFIG_FILE" | awk -F\" '{print $2}' | head -n1 || true
+  local default="${2:-}"
+  local val=""
+
+  if [[ -f "${CONFIGMAP_PATH}" ]]; then
+    val="$(awk -v k="$key" '
+      BEGIN { in_data=0 }
+      /^[[:space:]]*data:[[:space:]]*$/ { in_data=1; next }
+      in_data==1 && /^[^[:space:]].*:[[:space:]]*$/ { exit }
+      in_data==1 {
+        if ($0 ~ "^[[:space:]]+" k ":[[:space:]]*") {
+          sub("^[[:space:]]+" k ":[[:space:]]*", "", $0)
+          print $0
+          exit
+        }
+      }
+    ' "${CONFIGMAP_PATH}" 2>/dev/null || true)"
+  fi
+
+  val="$(trim "${val}")"
+  if [[ "${val}" =~ ^\".*\"$ ]]; then val="${val:1:${#val}-2}"; fi
+  if [[ "${val}" =~ ^\'.*\'$ ]]; then val="${val:1:${#val}-2}"; fi
+
+  if [[ -n "${val}" ]]; then
+    printf "%s" "${val}"
   else
-    echo ""
+    printf "%s" "${default}"
   fi
 }
 
-RELEASE_NAME="${RELEASE_NAME:-$(get_val RELEASE_NAME)}"
-NAMESPACE="${NAMESPACE:-$(get_val NAMESPACE)}"
-BROKER_COUNT="${BROKER_COUNT:-$(get_val BROKER_COUNT)}"
+# You can store bootstrap servers either as BOOTSTRAP_SERVERS or KAFKA_BOOTSTRAP_SERVERS in the ConfigMap.
+bs="$(get_cfg BOOTSTRAP_SERVERS "")"
+if [[ -z "$bs" ]]; then
+  bs="$(get_cfg KAFKA_BOOTSTRAP_SERVERS "")"
+fi
 
-# Sensible defaults if still empty
-RELEASE_NAME="${RELEASE_NAME:-pip}"
-NAMESPACE="${NAMESPACE:-kafkastreamingdata}"
-BROKER_COUNT="${BROKER_COUNT:-3}"
+if [[ -z "$bs" ]]; then
+  echo "[ERROR] BOOTSTRAP_SERVERS not found in ${CONFIGMAP_PATH} (.data.BOOTSTRAP_SERVERS)" >&2
+  exit 1
+fi
 
-# 2) Build per-pod controller+broker client endpoints (9092)
-servers=()
-for ((i=0; i<${BROKER_COUNT}; i++)); do
-  servers+=("${RELEASE_NAME}-kafka-controller-${i}.${RELEASE_NAME}-kafka-controller-headless.${NAMESPACE}.svc.cluster.local:9092")
-done
-
-# Echo comma-separated list (suitable for --bootstrap-server)
-(IFS=,; echo "${servers[*]}")
+echo -n "$bs"
 

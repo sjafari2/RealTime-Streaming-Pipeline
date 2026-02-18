@@ -1,31 +1,21 @@
-# confluent_kafka_producer.py
-import json
+# producer.py
+import os
 import time
 import random
 import threading
-import psutil
-from flask import Flask, Response
-from prometheus_client import (
-    Counter,
-    Gauge,
-    Histogram,
-    generate_latest,
-    CONTENT_TYPE_LATEST,
-)
-from confluent_kafka import Producer, KafkaException
-from confluent_kafka.admin import AdminClient, NewTopic
 import socket
 import signal
 import sys
-import os
-import itertools
+import hashlib
+from typing import List, Optional
 
-# ============================================================
-#  Globals / Web App for Prometheus Metrics
-# ============================================================
+import psutil
+from flask import Flask, Response
+from prometheus_client import Counter, Gauge, generate_latest, CONTENT_TYPE_LATEST
+from confluent_kafka import Producer, KafkaException
 
+producer_instance = None
 shutdown_event = threading.Event()
-
 app = Flask(__name__)
 
 
@@ -39,35 +29,10 @@ def metrics():
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 
-# Prometheus metrics
-msg_sent_counter = Counter("producer_messages_sent_total", "Total messages sent")
-msg_rate_gauge = Gauge("producer_message_rate", "Message send rate (msg/sec)")
-mb_rate_gauge = Gauge("producer_mb_rate", "Throughput (MB/sec)")
-cpu_gauge = Gauge("producer_cpu_percent", "CPU percent usage")
-mem_gauge = Gauge("producer_memory_percent", "Memory percent usage")
-uptime_gauge = Gauge("producer_uptime_seconds", "Producer uptime in seconds")
-delivery_latency_histogram = Histogram(
-    "producer_delivery_latency_seconds",
-    "Per-message delivery latency in seconds",
-    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2],
-)
-target_rate_gauge = Gauge("producer_target_rate", "Target message send rate (msg/sec)")
-effective_rate_gauge = Gauge(
-    "producer_effective_rate", "Applied setpoint (msg/sec)"
-)
-observed_rate_gauge = Gauge(
-    "producer_observed_rate", "Observed msg/s over runtime"
-)
-avg_msg_size_gauge = Gauge(
-    "producer_avg_msg_size_bytes", "Average message size in bytes"
-)
+def getenv_str(name: str, default: str) -> str:
+    val = os.getenv(name)
+    return val if val is not None else default
 
-producer_instance = None
-
-
-# ============================================================
-#  Helper functions for env parsing
-# ============================================================
 
 def getenv_int(name: str, default: int) -> int:
     val = os.getenv(name)
@@ -85,399 +50,296 @@ def getenv_float(name: str, default: float) -> float:
         return default
 
 
-def getenv_str(name: str, default: str) -> str:
-    val = os.getenv(name)
-    return val if val is not None else default
+# Prometheus labels
+COMMON_LABELS = ["pod", "client_id", "exp_id", "run_id", "traffic_mode"]
 
+producer_cpu_percent = Gauge("producer_cpu_percent", "CPU usage percent", COMMON_LABELS)
+producer_memory_percent = Gauge("producer_memory_percent", "Memory usage percent", COMMON_LABELS)
+producer_uptime_seconds = Gauge("producer_uptime_seconds", "Producer uptime in seconds", COMMON_LABELS)
 
-# ============================================================
-#  Producer Class
-# ============================================================
+producer_messages_sent_total = Counter("producer_messages_sent_total", "Total messages enqueued for send", COMMON_LABELS)
+producer_bytes_sent_total = Counter("producer_bytes_sent_total", "Total bytes enqueued for send", COMMON_LABELS)
+producer_target_rate = Gauge("producer_target_rate", "Configured target send rate (msg/sec)", COMMON_LABELS)
+
+producer_delivery_ok_total = Counter("producer_delivery_ok_total", "Total deliveries acked by broker", COMMON_LABELS)
+producer_delivery_err_total = Counter("producer_delivery_err_total", "Total delivery errors", COMMON_LABELS)
+producer_outq_len = Gauge("producer_outq_len", "librdkafka outgoing queue length", COMMON_LABELS)
+
+producer_hot_partition_count = Gauge("producer_hot_partition_count", "Number of hot partitions used (skew mode)", COMMON_LABELS)
+producer_skew_fraction = Gauge("producer_skew_fraction", "Fraction of messages sent to hot partitions (skew mode)", COMMON_LABELS)
+
 
 class MyProducer:
     """
-    Synthetic Kafka producer for your thesis experiments.
+    Producer supports:
+      - balanced
+      - skew (SKEW_FRACTION messages go to hot partitions)
 
-    - Reads ALL configuration from environment variables (ConfigMap).
-    - Supports:
-        * EXP_ID        (e.g., B0, S0, S1, ...)
-        * TRAFFIC_MODE  ("balanced", "skew", "burst" [future])
-        * TARGET_RATE   (workload intensity in msgs/sec)
-    - Emits:
-        * Fixed 32KB messages
-        * Headers: index, producer_timestamp, producer_pod_name,
-                   size_bytes, target_rate, exp_id, traffic_mode
-        * Prometheus metrics via /metrics (Flask)
+    Topic naming (your current design):
+      - ConfigMap provides TOPIC_TITLE as the run-specific topic prefix,
+        e.g., TOPIC_TITLE="B0-R500-20260216-204006"
+      - Topics are: TOPIC_TITLE_0 .. TOPIC_TITLE_{TOPIC_COUNT-1}
+      - RUN_ID is used for metrics labeling/headers (optional but recommended).
     """
 
     def __init__(self):
-        self.start_time = time.time()
-        self.msg_sent = 0
-        self.bytes_sent = 0
         self.pod_name = socket.gethostname()
-        self.running = True
+        self.client_id = getenv_str("PRODUCER_CLIENT_ID", self.pod_name)
 
-        # --------------------------------------------
-        #  Core experiment configuration (env-only)
-        # --------------------------------------------
-        self.topic_title = getenv_str("TOPIC_TITLE", "ae")
-        self.num_topics = getenv_int("TOPIC_COUNT", 1)
-        self.num_partitions = getenv_int("NUM_PARTITIONS", 1)
-        self.replication_factor = getenv_int("REPLICATION_FACTOR", 1)
-        self.random_range = getenv_int("RANDOM_RANGE", 1000)
+        self.exp_id = getenv_str("EXP_ID", "B0")
+        self.traffic_mode = getenv_str("TRAFFIC_MODE", "balanced").strip().lower()
 
-        # Workload intensity (msg/s)
-        target_rate = os.getenv("TARGET_RATE")
-        if target_rate is None:
-            # optional backward-compat: STEADY_RATE_MSGS
-            target_rate = os.getenv("STEADY_RATE_MSGS", "1000")
-        self.original_target_rate = int(float(target_rate))
-        self.effective_rate = self.original_target_rate
-        self.dynamic_target_rate = self.effective_rate  # used for pacing
+        self.max_burst = int(os.getenv("MAX_BURST", "10"))
+        self.drop_catchup = (os.getenv("DROP_CATCHUP", "true").lower() == "true")
+        
+        tr_env = os.getenv("TARGET_RATE") or os.getenv("STEADY_RATE_MSGS") or "500"
+        self.target_rate = max(1.0, float(tr_env))
+        self.interval = 1.0 / self.target_rate
 
-        # Experiment ID (B0, S0, S1, ... or auto)
-        exp_id_env = os.getenv("EXP_ID")
-        traffic_mode_env = os.getenv("TRAFFIC_MODE", "balanced").lower()
+        # RUN_ID is useful for metrics/logging/headers. Not required for topic naming,
+        # but in your pipeline it should always exist after create_topics.sh.
+        self.run_id = getenv_str("RUN_ID", "").strip()
 
-        # Skew parameters (only meaningful when traffic_mode == "skew")
-        self.traffic_mode = traffic_mode_env  # "balanced" | "skew" | (future "burst")
-        self.skew_partition = getenv_int("SKEW_PARTITION", 0)
-        self.skew_fraction = max(
-            0.0, min(1.0, getenv_float("SKEW_FRACTION", 0.7))
-        )
-
-        # If EXP_ID not explicitly given, build a descriptive one
-        if exp_id_env:
-            self.exp_id = exp_id_env
-        else:
-            run_id = (
-                os.getenv("RUN_ID")
-                or os.getenv("POD_NAME")
-                or os.getenv("HOSTNAME")
-                or "local"
-            )
-            if self.traffic_mode == "skew":
-                skew_suffix = f"_p{self.skew_partition}_a{int(round(self.skew_fraction * 100))}"
-            else:
-                skew_suffix = ""
-            self.exp_id = f"{run_id}__{self.traffic_mode}__{self.effective_rate}mps{skew_suffix}"
-
-        # Make EXP_ID visible to any downstream tools (consumer, etc.)
-        os.environ.setdefault("EXP_ID", self.exp_id)
-
-        # Round-robin partition helpers
-        hot = self.skew_partition % max(1, self.num_partitions)
-        others = [p for p in range(self.num_partitions) if p != hot] or [hot]
-        self._rr_all_parts = itertools.cycle(range(self.num_partitions or 1))
-        self._rr_other = itertools.cycle(others)
-        self._rng = random.Random(42)
-
-        # Latency tracking (Kafka delivery)
-        self.prev_latency = 0.1
-        self.total_latency = 0.0
-        self.latency_count = 0
-        self.last_latency = 0.0
-
-        # --------------------------------------------
-        #  Kafka producer configuration from env
-        # --------------------------------------------
-        bootstrap_servers = getenv_str(
-            "BOOTSTRAP_SERVERS",
-            "pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092",
-        )
-
-        self.min_in_sync = getenv_int("MIN_INSYNC_REPLICAS", 1)
-
-        self.producer_config = {
-            "bootstrap.servers": bootstrap_servers,
-            "compression.type": getenv_str("COMPRESSION_TYPE", "none"),
-            "linger.ms": getenv_int("LINGER_MS", 0),
-            "batch.size": getenv_int("BATCH_SIZE", 524288),
-            "message.max.bytes": getenv_int("MSG_MAX_BYTES", 1048576),
-            "acks": getenv_str("ACKS", "0"),
-            "retries": getenv_int("RETRIES", 2),
-            "retry.backoff.ms": getenv_int("RETRY_BACKOFF_MS", 5),
-            "reconnect.backoff.ms": getenv_int("RECONNECT_BACKOFF_MS", 100),
-            "reconnect.backoff.max.ms": getenv_int("RECONNECT_BACKOFF_MAX_MS", 1000),
-            "request.timeout.ms": getenv_int("REQUEST_TIMEOUT_MS", 10000),
-            "delivery.timeout.ms": getenv_int("DELIVERY_TIMEOUT_MS", 120000),
-            "queue.buffering.max.messages": getenv_int(
-                "QUEUE_BUFFERING_MAX_MESSAGES", 200000
-            ),
-            "queue.buffering.max.kbytes": getenv_int(
-                "QUEUE_BUFFERING_MAX_KBYTES", 131072
-            ),
-            "connections.max.idle.ms": getenv_int(
-                "CONNECTION_MAX_IDLE_MS", 30000
-            ),
-            "socket.keepalive.enable": "true",
-            "socket.send.buffer.bytes": 524288,
-            "socket.receive.buffer.bytes": 524288,
-            "client.id": self.pod_name,
-            "metadata.max.age.ms": getenv_int("METADATA_MAX_AGE_MS", 120000),
-            "topic.metadata.refresh.interval.ms": getenv_int(
-                "TOPIC_METADATA_REFRESH_INTERVAL_MS", 120000
-            ),
-            "max.in.flight.requests.per.connection": getenv_int(
-                "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION", 4
-            ),
+        self.metric_labels = {
+            "pod": self.pod_name,
+            "client_id": self.client_id,
+            "exp_id": self.exp_id,
+            "run_id": (self.run_id if self.run_id else "unset"),
+            "traffic_mode": self.traffic_mode,
         }
 
-        self.producer = Producer(self.producer_config)
+        bootstrap_servers = getenv_str("BOOTSTRAP_SERVERS", "localhost:9092")
+        acks = getenv_str("ACKS", "1")
 
-        # Admin client for topic creation
-        self.admin = AdminClient({"bootstrap.servers": bootstrap_servers})
-        self.create_topics_if_missing(
-            self.topic_title,
-            self.num_topics,
-            self.num_partitions,
-            self.replication_factor,
+        self.producer = Producer(
+            {
+                "bootstrap.servers": bootstrap_servers,
+                "client.id": self.client_id,
+                "acks": acks,
+            }
         )
 
-        # Store a simple manifest for reproducibility
-        os.makedirs("./logs", exist_ok=True)
-        with open("./logs/producer_manifest.json", "w") as f:
-            json.dump(
-                {
-                    "exp_id": self.exp_id,
-                    "traffic_mode": self.traffic_mode,
-                    "original_target_rate_msgs_per_s": self.original_target_rate,
-                    "effective_rate_msgs_per_s": self.effective_rate,
-                    "skew_partition": self.skew_partition,
-                    "skew_fraction": self.skew_fraction,
-                    "pod_name": self.pod_name,
-                    "bootstrap_servers": bootstrap_servers,
-                },
-                f,
-                indent=2,
-            )
+        # ---- Topics derived ONLY from TOPIC_TITLE ----
+        topic_title = getenv_str("TOPIC_TITLE", "").strip()
+        if not topic_title:
+            raise RuntimeError("TOPIC_TITLE is required (run-specific topic prefix). Check ConfigMap/write-back.")
 
-        # Background metric threads
-        threading.Thread(
-            target=self.update_metrics_periodically, daemon=True
-        ).start()
-        threading.Thread(
-            target=self.monitor_buffer_metrics, daemon=True
-        ).start()
+        self.topic_prefix = topic_title
+        self.num_topics = max(1, getenv_int("TOPIC_COUNT", 1))
 
-    # --------------------------------------------------------
-    #  Topic creation
-    # --------------------------------------------------------
+        self.payload_size_bytes = getenv_int("PAYLOAD_SIZE_BYTES", 16 * 1024)
 
-    def create_topics_if_missing(
-        self, base_topic: str, num_topics: int, num_partitions: int, replication_factor: int
-    ):
-        topic_cfg = {"min.insync.replicas": str(self.min_in_sync)}
-        topics = [
-            NewTopic(f"{base_topic}_{i}", num_partitions, replication_factor, config=topic_cfg)
-            for i in range(num_topics)
-        ]
-        fs = self.admin.create_topics(topics)
-        for topic, f in fs.items():
-            try:
-                f.result()
-                print(f"[INFO] Created topic {topic}")
-            except KafkaException as e:
-                print(f"[INFO] Topic {topic} may already exist: {e}")
+        # Debug logging controls
+        self.debug_enabled = getenv_str("PRODUCER_DEBUG", "false").strip().lower() == "true"
+        self.debug_every_n = getenv_int("PRODUCER_DEBUG_EVERY_N", 0)
+        self.heartbeat_every_sec = getenv_float("PRODUCER_HEARTBEAT_SEC", 10.0)
+        if self.heartbeat_every_sec < 1.0:
+            self.heartbeat_every_sec = 10.0
+        self.last_heartbeat = 0.0
 
-    # --------------------------------------------------------
-    #  Metrics helpers
-    # --------------------------------------------------------
+        # Skew controls
+        self.skew_fraction = float(getenv_float("SKEW_FRACTION", 0.8))
+        self.skew_partition_spec = getenv_str("SKEW_PARTITION", "0.2").strip()
+        self.num_partitions = getenv_int("NUM_PARTITIONS", 0)
 
-    def monitor_buffer_metrics(self, interval: int = 10):
-        """Periodically print buffer usage from Kafka producer metrics."""
-        while self.running:
-            try:
-                metrics = self.producer.metrics()
-                for _, m in metrics.items():
-                    if "producer-metrics" in m:
-                        pm = m["producer-metrics"]
-                        exhausted = pm.get("buffer-exhausted-records")
-                        available = pm.get("bufferpool-available-records")
-                        if exhausted is not None and available is not None:
-                            print(
-                                f"[BUFFER] exhausted={int(exhausted)} available={int(available)}"
-                            )
-                        else:
-                            print("[BUFFER] metrics present but keys missing")
-                        break
-            except Exception as e:
-                print(f"[WARN] Could not read buffer metrics: {e}")
-            time.sleep(interval)
-
-    def update_metrics_periodically(self):
-        """Update Prometheus metrics once per second."""
-        while self.running:
-            try:
-                cpu_gauge.set(psutil.cpu_percent(interval=None))
-                mem_gauge.set(psutil.virtual_memory().percent)
-                uptime_gauge.set(time.time() - self.start_time)
-
-                elapsed = time.time() - self.start_time
-
-                target_rate_gauge.set(self.original_target_rate)
-                effective_rate_gauge.set(self.effective_rate)
-
-                if elapsed > 0:
-                    observed_rate_gauge.set(self.msg_sent / elapsed)
-
-                if elapsed > 0 and self.msg_sent > 0:
-                    msg_rate = self.msg_sent / elapsed
-                    mb_rate = (self.bytes_sent / (1024 * 1024)) / elapsed
-                    avg_msg_size = self.bytes_sent / self.msg_sent
-                    msg_rate_gauge.set(msg_rate)
-                    mb_rate_gauge.set(mb_rate)
-                    avg_msg_size_gauge.set(avg_msg_size)
-                    print(
-                        f"[METRIC] Elapsed: {elapsed:.2f}s | Sent: {self.msg_sent} msgs | "
-                        f"Rate: {msg_rate:.2f} msg/s | Throughput: {mb_rate:.4f} MB/s | "
-                        f"Avg Msg Size: {avg_msg_size:.2f} bytes | Target: {self.dynamic_target_rate} msg/s"
-                    )
-            except Exception as e:
-                print(f"[ERROR] Metrics update error: {e}")
-            time.sleep(1)
-
-    # --------------------------------------------------------
-    #  Sending messages
-    # --------------------------------------------------------
-
-    def _choose_partition(self) -> int:
-        """Partition selection based on traffic_mode and skew parameters."""
-        if not self.num_partitions or self.num_partitions <= 1:
-            return 0
-
+        self.hot_partitions: List[int] = []
         if self.traffic_mode == "skew":
-            # With probability skew_fraction, send to hot partition
-            if self._rng.random() < self.skew_fraction:
-                return self.skew_partition % self.num_partitions
-            # Otherwise distribute among non-hot partitions
-            return next(self._rr_other)
+            self.hot_partitions = self._resolve_hot_partitions()
 
-        # Default / balanced: round-robin across all partitions
-        return next(self._rr_all_parts)
+        producer_target_rate.labels(**self.metric_labels).set(self.target_rate)
+        producer_hot_partition_count.labels(**self.metric_labels).set(len(self.hot_partitions) if self.hot_partitions else 0)
+        producer_skew_fraction.labels(**self.metric_labels).set(self.skew_fraction if self.traffic_mode == "skew" else 0.0)
 
-    def send_message(self, topic: str, idx: int):
-        """Send a single synthetic message with fixed 32KB payload."""
-        payload_size = 32 * 1024
-        dummy_content = "".join(
-            random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", k=payload_size)
-        )
-        message_bytes = dummy_content.encode("utf-8")
+        self.start_time = time.time()
+        self.last_sys_update = 0.0
+        self.next_send_time = time.time()
+        self.idx = 0
+        self.running = True
 
+        print(f"[INFO] Producer pod={self.pod_name}")
+        print(f"[INFO] EXP_ID={self.exp_id} TARGET_RATE={self.target_rate} RUN_ID={self.run_id or 'unset'}")
+        print(f"[INFO] TRAFFIC_MODE={self.traffic_mode}")
+        print(f"[INFO] TOPIC_TITLE(prefix)={self.topic_prefix} TOPIC_COUNT={self.num_topics}")
+        if self.traffic_mode == "skew":
+            print(f"[INFO] SKEW_FRACTION={self.skew_fraction} hot_partitions={self.hot_partitions}")
+        print(f"[INFO] Payload={self.payload_size_bytes} bytes")
+
+    def _resolve_hot_partitions(self) -> List[int]:
+        spec = self.skew_partition_spec
+
+        if "," in spec:
+            parts = []
+            for tok in spec.split(","):
+                tok = tok.strip()
+                if tok:
+                    parts.append(int(tok))
+            return sorted(list(set(parts)))
+
+        try:
+            if spec.isdigit() or (spec.startswith("-") and spec[1:].isdigit()):
+                return [int(spec)]
+        except Exception:
+            pass
+
+        try:
+            frac = float(spec)
+            if not (0.0 < frac <= 1.0):
+                raise ValueError("SKEW_PARTITION fraction must be in (0, 1].")
+            if self.num_partitions <= 0:
+                raise ValueError("NUM_PARTITIONS must be set when SKEW_PARTITION is a fraction.")
+
+            k = max(1, int(round(frac * self.num_partitions)))
+
+            seed_source = (
+                f"{self.exp_id}-"
+                f"r{self.target_rate}-"
+                f"p{self.num_partitions}-"
+                f"alpha{self.skew_partition_spec}-"
+                f"f{self.skew_fraction}-"
+                f"run{self.run_id}"
+            )
+            seed_bytes = hashlib.sha256(seed_source.encode("utf-8")).digest()
+            seed_int = int.from_bytes(seed_bytes[:8], byteorder="big", signed=False)
+
+            rng = random.Random(seed_int)
+            hot = rng.sample(range(self.num_partitions), k)
+            return sorted(hot)
+
+        except Exception as e:
+            print(f"[WARN] Could not parse SKEW_PARTITION='{spec}'. Error: {e}. Falling back to [0].")
+            return [0]
+
+    def _make_payload(self) -> bytes:
+        return bytes(random.getrandbits(8) for _ in range(self.payload_size_bytes))
+
+    def _choose_partition_for_skew(self) -> Optional[int]:
+        if not self.hot_partitions:
+            return None
+        if random.random() < self.skew_fraction:
+            return random.choice(self.hot_partitions)
+        return None
+
+    def _delivery_report(self, err, msg):
+        if err is not None:
+            producer_delivery_err_total.labels(**self.metric_labels).inc()
+            if self.debug_enabled:
+                print(f"[DELIVERY_ERR] topic={msg.topic()} err={err}")
+            return
+
+        producer_delivery_ok_total.labels(**self.metric_labels).inc()
+
+        if self.debug_enabled and self.debug_every_n > 0 and (self.idx % self.debug_every_n) == 0:
+            print(f"[DELIVERY_OK] topic={msg.topic()} partition={msg.partition()} offset={msg.offset()}")
+
+    def send_one(self, topic: str, idx: int):
         send_time = time.time()
+        payload = self._make_payload()
 
         headers = [
             ("index", str(idx).encode()),
             ("producer_timestamp", str(send_time).encode()),
             ("producer_pod_name", self.pod_name.encode()),
-            ("size_bytes", str(len(message_bytes)).encode()),
-            ("target_rate", str(self.dynamic_target_rate).encode()),
+            ("size_bytes", str(len(payload)).encode()),
+            ("target_rate", str(self.target_rate).encode()),
             ("exp_id", self.exp_id.encode()),
+            ("run_id", (self.run_id or "unset").encode()),
             ("traffic_mode", self.traffic_mode.encode()),
         ]
 
         try:
-            partition = self._choose_partition()
+            if self.traffic_mode == "skew":
+                p = self._choose_partition_for_skew()
+                if p is None:
+                    self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
+                else:
+                    self.producer.produce(topic=topic, value=payload, headers=headers, partition=p, callback=self._delivery_report)
+            else:
+                self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
 
-            self.producer.produce(
-                topic=topic,
-                key=None,
-                value=message_bytes,
-                headers=headers,
-                partition=partition,
-                callback=self.ack_callback,
-            )
+            producer_messages_sent_total.labels(**self.metric_labels).inc()
+            producer_bytes_sent_total.labels(**self.metric_labels).inc(len(payload))
 
-            # Serve delivery callbacks and free queue space
             self.producer.poll(0)
 
-            self.msg_sent += 1
-            self.bytes_sent += len(message_bytes)
-            msg_sent_counter.inc()
+            if self.debug_enabled and self.debug_every_n > 0 and (idx % self.debug_every_n) == 0:
+                print(f"[ENQUEUE_OK] idx={idx} topic={topic} mode={self.traffic_mode}")
 
-            if self.msg_sent % 100 == 0:
-                print(f"[INFO] Sent #{self.msg_sent}")
         except BufferError:
-            print("[WARN] Local queue is full, retrying...")
             self.producer.poll(1)
-            time.sleep(0.1)
         except KafkaException as e:
-            print(f"[ERROR] Send failed: {e}")
+            print(f"[ERROR] Produce failed: {e}")
 
-    def ack_callback(self, err, msg):
-        """Delivery report callback."""
-        if err:
-            print(f"[ERROR] Delivery failed: {err}")
-            return
+    def run(self):
+        while self.running and not shutdown_event.is_set():
+            now = time.time()
 
-        headers = dict(msg.headers() or [])
+            if now - self.last_sys_update >= 10.0:
+                producer_cpu_percent.labels(**self.metric_labels).set(psutil.cpu_percent(interval=None))
+                producer_memory_percent.labels(**self.metric_labels).set(psutil.virtual_memory().percent)
+                producer_uptime_seconds.labels(**self.metric_labels).set(now - self.start_time)
+                self.last_sys_update = now
+
+            # HEARTBEAT
+            if now - self.last_heartbeat >= self.heartbeat_every_sec:
+                oq = -1.0
+                try:
+                    oq = float(self.producer.outq_len())
+                    producer_outq_len.labels(**self.metric_labels).set(oq)
+                except Exception:
+                    pass
+
+                if self.debug_enabled:
+                    print(f"[HEARTBEAT] sent={self.idx}") #outq_len={oq}")
+
+                self.last_heartbeat = now
+
+            if now < self.next_send_time:
+                time.sleep(min(0.001, self.next_send_time - now))
+                continue
+
+            behind = now - self.next_send_time
+            
+            # If we're behind by more than one interval, do NOT try to catch up.
+            if self.drop_catchup and behind > self.interval:
+
+                # latency-first: do NOT try to catch up; reset schedule
+                self.next_send_time = now
+                behind = 0
+
+            # compute how many sends we're allowed to do right now (catch-up), but cap it
+            due = int((now - self.next_send_time) / self.interval) + 1
+            # Cap the burst
+            if due < 1:
+                due = 1
+            elif due > self.max_burst:
+                due = self.max_burst
+
+            for _ in range(due):
+                topic = f"{self.topic_prefix}_{self.idx % self.num_topics}"
+                self.send_one(topic, self.idx)
+                self.idx += 1
+                self.next_send_time += self.interval
+ 
         try:
-            raw = headers.get("producer_timestamp") or headers.get("send_time")
-            if raw is None:
-                raise ValueError("Missing producer_timestamp/send_time header")
-            send_time = float(
-                raw.decode() if isinstance(raw, (bytes, bytearray)) else raw
-            )
-            latency = time.time() - send_time
-            delivery_latency_histogram.observe(latency)
-            self.total_latency += latency
-            self.latency_count += 1
-            self.last_latency = latency
+            self.producer.flush(10)
+        except Exception:
+            pass
 
-            if self.msg_sent % 100 == 0:
-                print(
-                    f"[ACK] Delivered #{self.msg_sent} | Latency={latency:.5f}s | "
-                    f"Target={self.dynamic_target_rate} msg/sec"
-                )
-        except Exception as e:
-            print(f"[WARN] Latency calculation failed: {e}, headers={headers}")
-
-    # --------------------------------------------------------
-    #  Main send loop
-    # --------------------------------------------------------
-
-    def start_synthetic_stream(self):
-        """Main synthetic workload loop."""
-        idx = 0
-        try:
-            while self.running and not shutdown_event.is_set():
-                topic = f"{self.topic_title}_{idx % self.num_topics}"
-
-                self.send_message(topic, idx)
-                idx += 1
-
-                # Simple pacing based on target_rate (workload intensity)
-                time_per_msg = 1.0 / max(self.dynamic_target_rate, 1.0)
-                if shutdown_event.wait(timeout=time_per_msg):
-                    break
-        except KeyboardInterrupt:
-            self.stop()
-
-    def stop(self):
+    def shutdown(self):
         self.running = False
-        try:
-            self.producer.flush()
-        except Exception as e:
-            print(f"[WARN] Flush on stop failed: {e}")
-        print("[INFO] Producer stopped cleanly.")
 
-
-# ============================================================
-#  Server / Shutdown wiring
-# ============================================================
 
 def start_metrics_server():
-    port = getenv_int("METRICS_PORT", 8000)
-    print(f"[INFO] Starting metrics server on port {port}")
+    port = getenv_int("PRODUCER_HTTP_PORT", 8001)
+    print(f"[INFO] Starting producer metrics server on port {port}")
     app.run(host="0.0.0.0", port=port)
 
 
 def graceful_shutdown(signal_num, frame):
-    global producer_instance
-    print(f"[INFO] Received shutdown signal ({signal_num}).")
+    print("[INFO] Shutting down producer gracefully...")
     shutdown_event.set()
     if producer_instance:
-        producer_instance.stop()
+        producer_instance.shutdown()
     sys.exit(0)
 
 
@@ -488,12 +350,5 @@ if __name__ == "__main__":
 
     producer_instance = MyProducer()
     threading.Thread(target=start_metrics_server, daemon=True).start()
-
-    try:
-        producer_instance.start_synthetic_stream()
-    except KeyboardInterrupt:
-        print("[INFO] KeyboardInterrupt caught. Shutting down...")
-        shutdown_event.set()
-        producer_instance.stop()
-        sys.exit(0)
+    producer_instance.run()
 
