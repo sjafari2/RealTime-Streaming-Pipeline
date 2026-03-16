@@ -140,6 +140,46 @@ list_pods_by_role() {
   fi
 }
 
+# Read TRAFFIC_MODE from the in-cluster ConfigMap file mounted at /config/pipeline-configmap.yaml
+# Returns: balanced | skew | <lowercased value> | unknown
+get_traffic_mode() {
+  local pod="${1:-producer-sts-0}"
+  local container="${2:-producer-container}"
+
+  local mode=""
+
+  # Prefer yq if available in the container
+  mode=$(
+    k exec -c "$container" "$pod" -- sh -lc "
+      if command -v yq >/dev/null 2>&1; then
+        yq eval -r '.data.TRAFFIC_MODE // \"\"' '${CONFIG_PATH_IN_POD}' 2>/dev/null || true
+      else
+        awk '/^[[:space:]]+TRAFFIC_MODE:/{gsub(/^[[:space:]]+TRAFFIC_MODE:[[:space:]]*/,\"\",\$0); gsub(/\"/,\"\",\$0); print \$0; exit}' '${CONFIG_PATH_IN_POD}' 2>/dev/null || true
+      fi
+    " 2>/dev/null || true
+  )
+
+  # Normalize
+  mode="$(echo "${mode}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')"
+  [[ -z "$mode" ]] && mode="unknown"
+
+  echo "$mode"
+}
+
+# Copy the exact pipeline-configmap.yaml used for the run into results folder (local machine)
+copy_pipeline_config_to_results() {
+  local dst_dir="$1"
+  mkdir -p "$dst_dir"
+  # Copy from a stable pod that has the mounted ConfigMap
+  if k get pod producer-sts-0 >/dev/null 2>&1; then
+    k cp producer-sts-0:"${CONFIG_PATH_IN_POD}" "${dst_dir}/pipeline-configmap.yaml" -c producer-container 2>/dev/null \
+      && echo "[OK] Copied pipeline-configmap.yaml -> ${dst_dir}/pipeline-configmap.yaml" \
+      || echo "[WARN] Failed to copy pipeline-configmap.yaml"
+  else
+    echo "[WARN] producer-sts-0 not found; cannot copy pipeline-configmap.yaml"
+  fi
+}
+
 ########################################
 # Code backup (optional) — EXCLUDES logs/results
 ########################################
@@ -359,15 +399,25 @@ start_role_pods() {
 process_pods() {
   local timestamp results_root logs_root
   timestamp=$(date +"%Y%m%d_%H%M%S")
-  results_root="./results/$timestamp"
+
+  # Read traffic mode from the mounted pipeline-configmap.yaml inside the cluster
+  traffic_mode="$(get_traffic_mode "producer-sts-0" "producer-container")"
+
+  # Put mode in the results folder name so you can identify runs just by path
+  results_root="./results/${timestamp}_${traffic_mode}"
   logs_root="./logs/$timestamp"
 
   mkdir -p "$results_root/consumer"
-  mkdir -p "$logs_root/producer" "$logs_root/consumer"
-
+  mkdir -p "$logs_root/producer" "$logs_root/consumer" 
+  
   read -n 1 -p "Save results before running the script? (y/n): " save_results; echo
   [[ "$save_results" != "y" ]] && save_results="n"
-
+  
+  # If we're saving results, also snapshot the exact config used for this run
+  if [[ "$save_results" == "y" ]]; then
+   copy_pipeline_config_to_results "$results_root/consumer"
+  fi
+  
   read -n 1 -p "Delete results before running the script? (y/n): " delete_results; echo
   [[ "$delete_results" != "y" ]] && delete_results="n"
 

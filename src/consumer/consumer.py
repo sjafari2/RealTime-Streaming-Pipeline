@@ -8,7 +8,7 @@ import sys
 import csv
 from collections import deque
 from typing import Deque, Tuple, List, Optional
-
+import random
 import psutil
 from confluent_kafka import Consumer, KafkaError
 from flask import Flask, Response
@@ -121,7 +121,18 @@ consumer_lag = Gauge(
 
 consumer_total_lag = Gauge("consumer_total_lag", "Sum of lag over assigned partitions", COMMON_LABELS)
 consumer_max_lag = Gauge("consumer_max_lag", "Max lag over assigned partitions", COMMON_LABELS)
-consumer_lag_skew_ratio = Gauge("consumer_lag_skew_ratio", "Max lag / mean lag over assigned partitions", COMMON_LABELS)
+consumer_lag_skew_ratio = Gauge("consumer_lag_skew_ratio", "Max lag / total lag over all partitions", COMMON_LABELS)
+consumer_hot_partition_lag = Gauge(
+    "consumer_hot_partition_lag",
+    "Lag of the configured hot partition",
+    COMMON_LABELS,
+)
+
+consumer_hot_partition_fraction = Gauge(
+    "consumer_hot_partition_fraction",
+    "Configured hot partition lag divided by total lag",
+    COMMON_LABELS,
+)
 
 
 class MetricConsumer:
@@ -153,6 +164,10 @@ class MetricConsumer:
 
         # IMPORTANT: avoid accidentally using producer CLIENT_ID
         self.client_id = getenv_str("CONSUMER_CLIENT_ID", self.pod_name)
+        
+        self.hot_partition = getenv_int("HOT_PARTITION", -1)
+        self.last_hot_partition_lag = 0.0
+        self.last_hot_partition_fraction = 0.0
 
         self.metric_labels = {
             "pod": self.pod_name,
@@ -205,11 +220,7 @@ class MetricConsumer:
         self.last_lag_update = 0.0
         self.running = True
 
-        # last known lag summaries (for CSV)
-        self.last_total_lag = 0.0
-        self.last_max_lag = 0.0
-        self.last_skew_ratio = 0.0
-
+               
         # Debug / heartbeat controls
         self.debug_enabled = getenv_str("CONSUMER_DEBUG", "false").strip().lower() == "true"
         self.debug_every_n = getenv_int("CONSUMER_DEBUG_EVERY_N", 0)
@@ -229,7 +240,28 @@ class MetricConsumer:
 
         run_tag = (self.run_id if self.run_id else "unset")
         self.csv_path = os.path.join(self.csv_dir, f"consumer_metrics_{run_tag}_{self.pod_name}.csv")
+        self.partition_lag_csv_path = os.path.join(self.csv_dir,f"consumer_partition_lag_{run_tag}_{self.pod_name}.csv")
+        self.partition_lag_enabled = getenv_bool("PARTITION_LAG_CSV_ENABLED", True)
+        
+        # last known lag summaries (for CSV)
+        self.last_total_lag = 0.0
+        self.last_max_lag = 0.0
+        self.last_skew_ratio = 0.0
+        self.last_hot_partition_lag = 0.0
+        self.last_hot_partition_fraction = 0.0
+        
+        self.per_msg_enabled = getenv_str("PER_MSG_LAT_ENABLED", "false").lower() == "true"
+        self.per_msg_sample_rate = getenv_float("PER_MSG_LAT_SAMPLE_RATE", 0.01)  # 1%
+        self.per_msg_flush_every_sec = getenv_float("PER_MSG_LAT_FLUSH_SEC", 5.0)
+        self.per_msg_max_buffer = getenv_int("PER_MSG_LAT_MAX_BUFFER", 20000)
 
+        self.per_msg_path = os.path.join(
+             self.csv_dir, f"per_message_latency_{run_tag}_{self.pod_name}.csv"
+        )
+
+        self._per_msg_buf = deque()          # holds rows to flush
+        self._per_msg_last_flush = time.time()
+        
         self._csv_thread = threading.Thread(target=self._csv_logger_loop, daemon=True)
 
         self.consumer = Consumer(
@@ -241,6 +273,9 @@ class MetricConsumer:
                 "auto.offset.reset": auto_offset_reset,
             }
         )
+        
+        self._init_partition_lag_csv()
+
         self.consumer.subscribe(self.topics)
 
         print(f"[INFO] Consumer pod={self.pod_name}")
@@ -287,6 +322,25 @@ class MetricConsumer:
         while self._lat_window and self._lat_window[0][0] < cutoff:
             self._lat_window.popleft()
 
+    # --------------------- Initialize CSV file for per-partition lag snapshots ---------------------------------
+    def _init_partition_lag_csv(self):
+        if not self.partition_lag_enabled:
+            return
+
+        if not os.path.exists(self.partition_lag_csv_path):
+            with open(self.partition_lag_csv_path, "w", newline="") as f:
+                w = csv.writer(f)
+                w.writerow([
+                    "ts_epoch",
+                    "pod",
+                    "traffic_mode",
+                    "topic",
+                    "partition",
+                    "current_offset",
+                    "high_watermark",
+                    "lag",
+                ])
+
     # --------------------- lag update ---------------------
 
     def update_consumer_lag(self):
@@ -303,30 +357,58 @@ class MetricConsumer:
                 base_offsets = {tp: p.offset for tp, p in zip(assignments, positions)}
 
             lags = []
+            hot_lag = 0.0
+            rows_to_append = []
+            now = time.time()
+
             for tp in assignments:
-                _, high = self.consumer.get_watermark_offsets(tp, timeout=self.lag_query_timeout)
+                low, high = self.consumer.get_watermark_offsets(tp, timeout=self.lag_query_timeout)
                 base = base_offsets.get(tp, KafkaError._NO_OFFSET)
                 if base == KafkaError._NO_OFFSET or base < 0:
                     continue
 
-                lag = max(0, high - base)
+                lag = max(0, high - base)  #lag = high_watermark - current_offset
                 lags.append(lag)
                 consumer_lag.labels(**self.metric_labels, topic=tp.topic, partition=str(tp.partition)).set(float(lag))
+            
+                if tp.partition == self.hot_partition:
+                    hot_lag = float(lag)
+            
+                # Save raw per-partition lag for offline analysis
+                rows_to_append.append([
+                    f"{now:.6f}",
+                    self.pod_name,
+                    self.traffic_mode,
+                    tp.topic,
+                    tp.partition,
+                    base,
+                    high,
+                    lag,
+                ])
 
             if lags:
                 total = float(sum(lags))
                 mx = float(max(lags))
-                mean = total / float(len(lags)) if len(lags) > 0 else 0.0
-                ratio = (mx / mean) if mean > 0 else 0.0
-
+                skew_ratio = (mx / total) if total > 0 else 0.0
+                hot_fraction = (hot_lag / total) if total > 0 else 0.0
+                
                 consumer_total_lag.labels(**self.metric_labels).set(total)
                 consumer_max_lag.labels(**self.metric_labels).set(mx)
-                consumer_lag_skew_ratio.labels(**self.metric_labels).set(ratio)
+                consumer_lag_skew_ratio.labels(**self.metric_labels).set(skew_ratio)
+                consumer_hot_partition_lag.labels(**self.metric_labels).set(hot_lag)
+                consumer_hot_partition_fraction.labels(**self.metric_labels).set(hot_fraction)
 
                 # save for CSV logging (no locks needed; floats are atomic enough in CPython)
                 self.last_total_lag = total
                 self.last_max_lag = mx
-                self.last_skew_ratio = ratio
+                self.last_skew_ratio = skew_ratio
+                self.last_hot_partition_lag = hot_lag
+                self.last_hot_partition_fraction = hot_fraction
+            
+            if self.partition_lag_enabled and rows_to_append:
+                with open(self.partition_lag_csv_path, "a", newline="") as f:
+                    w = csv.writer(f)
+                    w.writerows(rows_to_append)
 
         except Exception as e:
             if self.debug_enabled:
@@ -369,6 +451,9 @@ class MetricConsumer:
             "max_lag",
             "lag_skew_ratio",
             "consumed_total",
+            "hot_partition_lag",
+            "hot_partition_fraction",
+
         ]
 
         file_exists = os.path.exists(self.csv_path)
@@ -433,9 +518,36 @@ class MetricConsumer:
                         f"{self.last_max_lag:.3f}",
                         f"{self.last_skew_ratio:.6f}",
                         str(self.local_consumed),
+                        f"{self.last_hot_partition_lag:.3f}",
+                        f"{self.last_hot_partition_fraction:.6f}",
+
+
                     ]
 
                     w.writerow(row)
+
+                    # ---- flush per-message latency samples (batched) ----
+                    if getattr(self, "per_msg_enabled", False):
+                        # flush every PER_MSG_LAT_FLUSH_SEC seconds (default 5s)
+                        if (now - self._per_msg_last_flush) >= self.per_msg_flush_every_sec:
+                            rows = []
+                            while self._per_msg_buf:
+                                rows.append(self._per_msg_buf.popleft())
+
+                            if rows:
+                                new_file = not os.path.exists(self.per_msg_path)
+                                with open(self.per_msg_path, "a", newline="") as pf:
+                                    pw = csv.writer(pf)
+                                    if new_file:
+                                        pw.writerow([
+                                            "recv_ts", "producer_ts", "e2e_ms",
+                                            "topic", "partition", "offset",
+                                            "producer_pod", "index"
+                                        ])
+                                    pw.writerows(rows)
+
+                            self._per_msg_last_flush = now
+
                     f.flush()
 
         except Exception as e:
@@ -499,6 +611,40 @@ class MetricConsumer:
                     recv_ts = time.time()
                     e2e_seconds = max(0.0, recv_ts - producer_ts_val)
                     e2e_ms = e2e_seconds * 1000.0
+                    
+                    # ------------------ Simulated application work ------------------
+                    delay_ms = int(os.getenv("APP_DELAY_MS", "0"))
+                    if delay_ms > 0:
+                        time.sleep(delay_ms / 1000.0)
+                    # ---------------------------------------------------------------
+
+                    if self.per_msg_enabled and (random.random() < self.per_msg_sample_rate):
+                        # optional headers you already send
+                        prod_pod = headers.get("producer_pod_name")
+                        idx_hdr = headers.get("index")
+
+                        prod_pod_val = (
+                            prod_pod.decode() if isinstance(prod_pod, (bytes, bytearray)) else (prod_pod or "")
+                        )
+                        idx_val = (
+                            idx_hdr.decode() if isinstance(idx_hdr, (bytes, bytearray)) else (idx_hdr or "")
+                        )
+
+                        # Keep buffer bounded (drop oldest on overflow)
+                        if len(self._per_msg_buf) >= self.per_msg_max_buffer:
+                            self._per_msg_buf.popleft()
+
+                        self._per_msg_buf.append([
+                                recv_ts,                 # consumer receive time (epoch sec)
+                                producer_ts_val,         # producer send time (epoch sec)
+                                e2e_ms,                  # end-to-end ms
+                                msg.topic(),
+                                msg.partition(),
+                                msg.offset(),
+                                prod_pod_val,
+                                idx_val,
+                        ])
+
 
                     consumer_e2e_latency_seconds.labels(**self.metric_labels).observe(e2e_seconds)
                     consumer_messages_consumed_total.labels(**self.metric_labels).inc()

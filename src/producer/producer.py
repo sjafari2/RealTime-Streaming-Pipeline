@@ -100,6 +100,8 @@ class MyProducer:
         # but in your pipeline it should always exist after create_topics.sh.
         self.run_id = getenv_str("RUN_ID", "").strip()
 
+        self.max_messages = getenv_int("MAX_MESSAGES", 0)
+
         self.metric_labels = {
             "pod": self.pod_name,
             "client_id": self.client_id,
@@ -107,7 +109,7 @@ class MyProducer:
             "run_id": (self.run_id if self.run_id else "unset"),
             "traffic_mode": self.traffic_mode,
         }
-
+        
         bootstrap_servers = getenv_str("BOOTSTRAP_SERVERS", "localhost:9092")
         acks = getenv_str("ACKS", "1")
 
@@ -163,6 +165,7 @@ class MyProducer:
         if self.traffic_mode == "skew":
             print(f"[INFO] SKEW_FRACTION={self.skew_fraction} hot_partitions={self.hot_partitions}")
         print(f"[INFO] Payload={self.payload_size_bytes} bytes")
+        print(f"[INFO] MAX_MESSAGES={self.max_messages if self.max_messages > 0 else 'unlimited'}")
 
     def _resolve_hot_partitions(self) -> List[int]:
         spec = self.skew_partition_spec
@@ -232,6 +235,13 @@ class MyProducer:
             print(f"[DELIVERY_OK] topic={msg.topic()} partition={msg.partition()} offset={msg.offset()}")
 
     def send_one(self, topic: str, idx: int):
+        """
+        Send one Kafka message safely.
+        If the producer queue is full (BufferError),
+        the function waits and retries until the message
+        is successfully queued.
+        """
+        
         send_time = time.time()
         payload = self._make_payload()
 
@@ -245,32 +255,42 @@ class MyProducer:
             ("run_id", (self.run_id or "unset").encode()),
             ("traffic_mode", self.traffic_mode.encode()),
         ]
+        
+        while True:
 
-        try:
-            if self.traffic_mode == "skew":
-                p = self._choose_partition_for_skew()
-                if p is None:
-                    self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
+            try:
+                if self.traffic_mode == "skew":
+                    p = self._choose_partition_for_skew()
+                    if p is None:
+                        self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
+                    else:
+                        self.producer.produce(topic=topic, value=payload, headers=headers, partition=p, callback=self._delivery_report)
                 else:
-                    self.producer.produce(topic=topic, value=payload, headers=headers, partition=p, callback=self._delivery_report)
-            else:
-                self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
+                    self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
 
-            producer_messages_sent_total.labels(**self.metric_labels).inc()
-            producer_bytes_sent_total.labels(**self.metric_labels).inc(len(payload))
+                producer_messages_sent_total.labels(**self.metric_labels).inc()
+                producer_bytes_sent_total.labels(**self.metric_labels).inc(len(payload))
 
-            self.producer.poll(0)
+                self.producer.poll(0)
 
-            if self.debug_enabled and self.debug_every_n > 0 and (idx % self.debug_every_n) == 0:
-                print(f"[ENQUEUE_OK] idx={idx} topic={topic} mode={self.traffic_mode}")
+                if self.debug_enabled and self.debug_every_n > 0 and (idx % self.debug_every_n) == 0:
+                    print(f"[ENQUEUE_OK] idx={idx} topic={topic} mode={self.traffic_mode}")
+                
+                break
 
-        except BufferError:
-            self.producer.poll(1)
-        except KafkaException as e:
-            print(f"[ERROR] Produce failed: {e}")
+            except BufferError:
+                self.producer.poll(1)
+            except KafkaException as e:
+                print(f"[ERROR] Produce failed: {e}")
+                break
 
     def run(self):
         while self.running and not shutdown_event.is_set():
+            
+            if self.max_messages > 0 and self.idx >= self.max_messages:
+                print(f"[INFO] Reached MAX_MESSAGES={self.max_messages}. Stopping producer.")
+                break
+
             now = time.time()
 
             if now - self.last_sys_update >= 10.0:
@@ -315,6 +335,11 @@ class MyProducer:
                 due = self.max_burst
 
             for _ in range(due):
+                
+                if self.max_messages > 0 and self.idx >= self.max_messages:
+                    self.running = False
+                    break
+                
                 topic = f"{self.topic_prefix}_{self.idx % self.num_topics}"
                 self.send_one(topic, self.idx)
                 self.idx += 1
