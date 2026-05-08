@@ -129,10 +129,10 @@ spec:
         resources:
           requests:
             cpu: "2"
-            memory: "16Gi"
+            memory: "1Gi"
           limits:
             cpu: "4"
-            memory: "32Gi"
+            memory: "2Gi"
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data

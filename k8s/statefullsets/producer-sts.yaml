@@ -130,11 +130,11 @@ spec:
           containerPort: 9093
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "1"
-          limits:
             memory: "1Gi"
             cpu: "2"
+          limits:
+            memory: "2Gi"
+            cpu: "4"
         volumeMounts:
         - name: producer-data
           mountPath: /app/producer-data

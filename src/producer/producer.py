@@ -88,20 +88,46 @@ class MyProducer:
 
         self.exp_id = getenv_str("EXP_ID", "B0")
         self.traffic_mode = getenv_str("TRAFFIC_MODE", "balanced").strip().lower()
-
-        self.max_burst = int(os.getenv("MAX_BURST", "10"))
-        self.drop_catchup = (os.getenv("DROP_CATCHUP", "true").lower() == "true")
         
+        if self.traffic_mode not in {"balanced", "skew"}:
+            raise ValueError(f"Unsupported TRAFFIC_MODE='{self.traffic_mode}'. Use 'balanced' or 'skew'.")
+        
+        self.max_burst = getenv_int("MAX_BURST", 10)
+        self.min_burst = max(1, getenv_int("MIN_BURST", 1))
+        self.drop_catchup = getenv_str("DROP_CATCHUP", "true").strip().lower() == "true"
+
         tr_env = os.getenv("TARGET_RATE") or os.getenv("STEADY_RATE_MSGS") or "500"
         self.target_rate = max(1.0, float(tr_env))
         self.interval = 1.0 / self.target_rate
 
-        # RUN_ID is useful for metrics/logging/headers. Not required for topic naming,
-        # but in your pipeline it should always exist after create_topics.sh.
         self.run_id = getenv_str("RUN_ID", "").strip()
 
-        self.max_messages = getenv_int("MAX_MESSAGES", 0)
+        # Producer-only stop condition
+        self.max_messages = getenv_int("PRODUCER_MAX_MESSAGES", 0)
 
+        # Producer pacing / batching / transport settings
+        self.acks = getenv_str("ACKS", "1")
+        self.compression_type = getenv_str("COMPRESSION_TYPE", "none")
+        self.linger_ms = getenv_int("LINGER_MS", 0)
+        self.batch_size = getenv_int("BATCH_SIZE", 16384)
+        self.max_request_size = getenv_int("MAX_REQUEST_SIZE", 1048576)
+        self.retries = getenv_int("RETRIES", 3)
+        self.retry_backoff_ms = getenv_int("RETRY_BACKOFF_MS", 100)
+        self.connection_max_idle_ms = getenv_int("CONNECTION_MAX_IDLE_MS", 30000)
+        self.reconnect_backoff_ms = getenv_int("RECONNECT_BACKOFF_MS", 100)
+        self.reconnect_backoff_max_ms = getenv_int("RECONNECT_BACKOFF_MAX_MS", 1000)
+        self.request_timeout_ms = getenv_int("REQUEST_TIMEOUT_MS", 30000)
+        self.delivery_timeout_ms = getenv_int("DELIVERY_TIMEOUT_MS", 120000)
+        self.queue_buffering_max_messages = getenv_int("QUEUE_BUFFERING_MAX_MESSAGES", 100000)
+        self.queue_buffering_max_kbytes = getenv_int("QUEUE_BUFFERING_MAX_KBYTES", 1048576)
+        self.msg_max_bytes = getenv_int("MSG_MAX_BYTES", 1048576)
+        self.metadata_max_age_ms = getenv_int("METADATA_MAX_AGE_MS", 300000)
+        self.topic_metadata_refresh_interval_ms = getenv_int("TOPIC_METADATA_REFRESH_INTERVAL_MS", 300000)
+        self.max_in_flight = getenv_int("MAX_IN_FLIGHT_REQUEST_PER_CONNECTION", 1)
+        self.producer_http_port = getenv_int("PRODUCER_HTTP_PORT", 8001)
+
+        # Optional compatibility with old name if ever use PAYLOAD_SIZE_BYTES
+        #self.payload_size_bytes = getenv_int("MSG_MAX_BYTES", getenv_int("PAYLOAD_SIZE_BYTES", 16 * 1024))
         self.metric_labels = {
             "pod": self.pod_name,
             "client_id": self.client_id,
@@ -110,17 +136,34 @@ class MyProducer:
             "traffic_mode": self.traffic_mode,
         }
         
+        
         bootstrap_servers = getenv_str("BOOTSTRAP_SERVERS", "localhost:9092")
-        acks = getenv_str("ACKS", "1")
 
-        self.producer = Producer(
-            {
-                "bootstrap.servers": bootstrap_servers,
-                "client.id": self.client_id,
-                "acks": acks,
-            }
-        )
+        producer_conf = {
+            "bootstrap.servers": bootstrap_servers,
+            "client.id": self.client_id,
+            "acks": self.acks,
+            "compression.type": self.compression_type,
+            "linger.ms": self.linger_ms,
+            "batch.size": self.batch_size,
+            #"max.request.size": self.max_request_size,
+            "retries": self.retries,
+            "retry.backoff.ms": self.retry_backoff_ms,
+            "connections.max.idle.ms": self.connection_max_idle_ms,
+            "reconnect.backoff.ms": self.reconnect_backoff_ms,
+            "reconnect.backoff.max.ms": self.reconnect_backoff_max_ms,
+            "request.timeout.ms": self.request_timeout_ms,
+            "delivery.timeout.ms": self.delivery_timeout_ms,
+            "queue.buffering.max.messages": self.queue_buffering_max_messages,
+            "queue.buffering.max.kbytes": self.queue_buffering_max_kbytes,
+            "message.max.bytes": self.msg_max_bytes,
+            "metadata.max.age.ms": self.metadata_max_age_ms,
+            "topic.metadata.refresh.interval.ms": self.topic_metadata_refresh_interval_ms,
+            "max.in.flight.requests.per.connection": self.max_in_flight,
+        }
 
+        self.producer = Producer(producer_conf)
+        
         # ---- Topics derived ONLY from TOPIC_TITLE ----
         topic_title = getenv_str("TOPIC_TITLE", "").strip()
         if not topic_title:
@@ -141,7 +184,7 @@ class MyProducer:
 
         # Skew controls
         self.skew_fraction = float(getenv_float("SKEW_FRACTION", 0.8))
-        self.skew_partition_spec = getenv_str("SKEW_PARTITION", "0.2").strip()
+        self.hot_partitions_spec = getenv_str("HOT_PARTITIONS", "0.2").strip()
         self.num_partitions = getenv_int("NUM_PARTITIONS", 0)
 
         self.hot_partitions: List[int] = []
@@ -165,10 +208,10 @@ class MyProducer:
         if self.traffic_mode == "skew":
             print(f"[INFO] SKEW_FRACTION={self.skew_fraction} hot_partitions={self.hot_partitions}")
         print(f"[INFO] Payload={self.payload_size_bytes} bytes")
-        print(f"[INFO] MAX_MESSAGES={self.max_messages if self.max_messages > 0 else 'unlimited'}")
+        print(f"[INFO] PRODUCER_MAX_MESSAGES={self.max_messages if self.max_messages > 0 else 'unlimited'}")
 
     def _resolve_hot_partitions(self) -> List[int]:
-        spec = self.skew_partition_spec
+        spec = self.hot_partitions_spec
 
         if "," in spec:
             parts = []
@@ -197,7 +240,7 @@ class MyProducer:
                 f"{self.exp_id}-"
                 f"r{self.target_rate}-"
                 f"p{self.num_partitions}-"
-                f"alpha{self.skew_partition_spec}-"
+                f"alpha{self.hot_partitions_spec}-"
                 f"f{self.skew_fraction}-"
                 f"run{self.run_id}"
             )

@@ -236,27 +236,34 @@ save_codes() {
 kill_processes_in_pod() {
   local pod="$1" container="$2" role="$3"
 
-  # conservative patterns: python3, consumer.py/producer.py, and run.sh
-  # also kill "sh -lc /app/.../run.sh" style wrappers
   echo "[KILL] ${pod} (${role}) ..."
-  k exec -c "$container" "$pod" -- sh -lc "
-    set +e
-    # Kill run.sh wrappers first (they may be parent jobs)
-    pkill -f 'run\.sh' 2>/dev/null || true
-    pkill -f '/app/.*/run\.sh' 2>/dev/null || true
 
-    # Kill python workloads
-    pkill -f 'python3 .*consumer\.py' 2>/dev/null || true
-    pkill -f 'python3 .*producer\.py' 2>/dev/null || true
-    pkill -f 'python3' 2>/dev/null || true
+  if [[ "$role" == "consumer" ]]; then
+    local patterns=("consumer.py" "run.sh")
+  else
+    local patterns=("producer.py" "run.sh")
+  fi
 
-    # Give processes a moment, then hard-kill anything left
-    sleep 1
-    pkill -9 -f 'run\.sh' 2>/dev/null || true
-    pkill -9 -f 'python3' 2>/dev/null || true
+  for proc in "${patterns[@]}"; do
+    echo "  Attempting to kill: $proc in $pod..."
 
-    echo '[KILL] done'
-    exit 0
+    k exec -c "$container" "$pod" -- sh -c "
+      pids=\$(ps aux | grep '$proc' | grep -v grep | awk '{print \$2}' || true)
+
+      if [ -z \"\$pids\" ]; then
+        echo 'No running process found for $proc'
+        exit 0
+      fi
+
+      echo \"Found PIDs for $proc: \$pids\"
+      echo \"\$pids\" | xargs -r kill -9
+      echo 'Killed $proc'
+    " || true
+  done
+
+  echo "[VERIFY after kill]"
+  k exec -c "$container" "$pod" -- sh -c "
+    ps aux | grep -E 'consumer.py|producer.py|run.sh' | grep -v grep || true
   " || true
 }
 
@@ -292,9 +299,18 @@ run_create_topics_once() {
 
   k exec -c "${CREATE_TOPICS_CONTAINER}" "${CREATE_TOPICS_POD}" -- sh -lc "
     set -e
-    test -f '${CREATE_TOPICS_PATH}' || { echo '[ERROR] missing ${CREATE_TOPICS_PATH}'; exit 2; }
-    chmod +x '${CREATE_TOPICS_PATH}' || true
-    '${CREATE_TOPICS_PATH}'
+    
+    cd /app/consumer-merge-data
+
+    test -f './delete_all_topics.sh' || { echo '[ERROR] missing delete_all_topics.sh'; exit 2; }
+    test -f './create_topics.sh' || { echo '[ERROR] missing create_topics.sh'; exit 2; }
+
+    chmod +x ./delete_all_topics.sh ./create_topics.sh || true
+
+    ./delete_all_topics.sh
+    ./create_topics.sh
+
+  
 
     # Verify write-back (prefer yq)
     if command -v yq >/dev/null 2>&1; then
@@ -513,27 +529,26 @@ process_pods() {
     echo "==================================================================="
   done
 
-  # ===== Run phase: kill → create topics → consumers → producers =====
-  if [[ "$run_scripts" == "y" ]]; then
-    if [[ "$kill_first" == "y" ]]; then
-      kill_all_pods
-    else
-      echo "Skipping kill step."
-    fi
+# ===== Run phase: kill → create topics → consumers → producers =====
 
-    echo "===== Step 1: create topics (consumer-sts-0) ====="
-    run_create_topics_once
+if [[ "$kill_first" == "y" ]]; then
+  kill_all_pods
+else
+  echo "Skipping kill step."
+fi
 
-    echo "===== Step 2: start consumers ====="
-    start_role_pods "consumer"
+if [[ "$run_scripts" == "y" ]]; then
+  run_create_topics_once
 
-    echo "===== Step 3: start producers ====="
-    start_role_pods "producer"
-  else
-    echo "Skipping script run."
-  fi
+  echo "===== Step 2: start consumers ====="
+  start_role_pods "consumer"
+
+  echo "===== Step 3: start producers ====="
+  start_role_pods "producer"
+else
+  echo "Skipping script run."
+fi
 }
-
 ########################################
 # Main
 ########################################

@@ -25,6 +25,23 @@ eval "$(
   ' "$CONFIG_FILE"
 )"
 
+# ------------------------------------------------------------
+# Create default vim settings inside container
+# ------------------------------------------------------------
+cat > ~/.vimrc <<'EOF'
+set number
+syntax on
+filetype plugin indent on
+set autoindent
+set smartindent
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set backspace=indent,eol,start
+set showmatch
+EOF
+
 # ============================================================
 #  Hard requirements (must be set by your "general shell script")
 # ============================================================
@@ -94,7 +111,5 @@ python3 consumer.py "$@"
 rc=$?
 set +x
 echo "[DEBUG] python exited with code $rc"
-exit $rc
-
-#2>&1 | tee "${LOG_DIR}/${POD_NAME}_${EXP_ID}_${TARGET_RATE}.log"
+exit $rc #2>&1 | tee "${LOG_DIR}/${POD_NAME}_${EXP_ID}_${TARGET_RATE}.log"
 

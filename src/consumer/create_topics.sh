@@ -169,7 +169,8 @@ fi
 
 RUN_TS="${RUN_TS:-$(TZ=America/Denver date +"%Y%m%d-%H%M%S")}"
 RUN_ID="run-${RUN_TS}"
-TOPIC_TITLE="${EXP_ID}-R${TARGET_RATE}-${RUN_TS}"
+TRAFFIC_MODE="$(get_cfg TRAFFIC_MODE balanced)"
+TOPIC_TITLE="${EXP_ID}-${TRAFFIC_MODE}-R${TARGET_RATE}-${RUN_TS}"
 
 # --------------------------- kafka-topics.sh ----------------------------------
 
