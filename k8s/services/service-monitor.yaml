@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: producer-consumer-monitor
+  namespace: kafkastreamingdata
+spec:
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - producer-sts
+          - consumer-sts
+  namespaceSelector:
+    matchNames:
+      - kafkastreamingdata
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 10s

@@ -245,17 +245,17 @@ class MetricConsumer:
             raise RuntimeError("CONSUMER_OUTPUT_DIR is required for CSV logging.")
         
         run_folder = datetime.now(ZoneInfo("America/Denver")).strftime("%Y-%m-%d-%H-%M")
-        self.csv_dir = os.path.join(self.consumer_output_dir, run_folder)
-        os.makedirs(self.csv_dir, exist_ok=True)
+        #self.csv_dir = os.path.join(self.consumer_output_dir, run_folder)
+        #os.makedirs(self.csv_dir, exist_ok=True)
 
         run_tag = run_folder #(self.run_id if self.run_id else "unset")
-        self.csv_path = os.path.join(self.csv_dir, f"consumer_metrics_{run_tag}_{self.pod_name}.csv")
-        self.partition_lag_csv_path = os.path.join(self.csv_dir, f"consumer_partition_lag_{run_tag}_{self.pod_name}.csv")
+        #self.csv_path = os.path.join(self.csv_dir, f"consumer_metrics_{run_tag}_{self.pod_name}.csv")
+        #self.partition_lag_csv_path = os.path.join(self.csv_dir, f"consumer_partition_lag_{run_tag}_{self.pod_name}.csv")
         self.partition_lag_enabled = getenv_bool("PARTITION_LAG_CSV_ENABLED", True)
 
         # New: rebalance event CSV for HPA / group-change analysis
         self.rebalance_csv_enabled = getenv_bool("REBALANCE_CSV_ENABLED", True)
-        self.rebalance_csv_path = os.path.join(self.csv_dir, f"consumer_rebalance_events_{run_tag}_{self.pod_name}.csv")
+        #self.rebalance_csv_path = os.path.join(self.csv_dir, f"consumer_rebalance_events_{run_tag}_{self.pod_name}.csv")
 
         self.last_total_lag = 0.0
         self.last_max_lag = 0.0
@@ -267,12 +267,15 @@ class MetricConsumer:
         self.per_msg_sample_rate = getenv_float("PER_MSG_LAT_SAMPLE_RATE", 0.05)
         self.per_msg_flush_every_sec = getenv_float("PER_MSG_LAT_FLUSH_SEC", 10.0)
         self.per_msg_max_buffer = getenv_int("PER_MSG_LAT_MAX_BUFFER", 20000)
-        self.per_msg_path = os.path.join(self.csv_dir, f"per_message_latency_{run_tag}_{self.pod_name}.csv")
+        #self.per_msg_path = os.path.join(self.csv_dir, f"per_message_latency_{run_tag}_{self.pod_name}.csv")
 
         self._per_msg_buf = deque()
         self._per_msg_last_flush = time.time()
 
-        self._csv_thread = threading.Thread(target=self._csv_logger_loop, daemon=True)
+        self._last_csv_consumed = 0
+        self._last_csv_time = time.time()
+        
+        #self._csv_thread = threading.Thread(target=self._csv_logger_loop, daemon=True)
 
         consumer_conf = {
                 "bootstrap.servers": bootstrap_servers,
@@ -296,8 +299,8 @@ class MetricConsumer:
 
         self.consumer = Consumer(consumer_conf)
 
-        self._init_partition_lag_csv()
-        self._init_rebalance_csv()
+        #self._init_partition_lag_csv()
+        #self._init_rebalance_csv()
 
         self.consumer.subscribe(
                 self.topics,
@@ -313,13 +316,13 @@ class MetricConsumer:
         print(f"[INFO] TOPIC_TITLE(prefix)={self.topic_prefix} Topics={self.topics}")
         print(f"[INFO] SLO={self.slo_threshold_ms} ms, Window={self.slo_window_seconds} s")
         print(f"[INFO] ENABLE_AUTO_COMMIT={self.enable_auto_commit}")
-        print(f"[INFO] CSV logging: every {self.csv_log_interval_sec}s -> {self.csv_path}")
+        #print(f"[INFO] CSV logging: every {self.csv_log_interval_sec}s -> {self.csv_path}")
         print(f"[INFO] ASSIGNMENT_STRATEGY={self.partition_assignment_strategy}")
         print(f"[INFO] FETCH_MAX_BYTES={self.fetch_max_bytes} FETCH_MIN_BYTES={self.fetch_min_bytes} FETCH_MAX_WAIT_MS={self.fetch_max_wait_ms}")
         print(f"[INFO] MAX_PARTITION_FETCH_BYTES={self.max_partition_fetch_bytes}")
         print(f"[INFO] MAX_POLL_INTERVAL_MS={self.max_poll_interval_ms} SESSION_TIMEOUT_MS={self.session_timeout_ms} HEARTBEAT_INTERVAL_MS={self.heartbeat_interval_ms}")
 
-        self._csv_thread.start()
+        #self._csv_thread.start()
 
     # --------------------- sliding window (SLO) ---------------------
 
@@ -652,6 +655,7 @@ class MetricConsumer:
                     ]
 
             file_exists = os.path.exists(self.csv_path)
+            '''
             with open(self.csv_path, "a", newline="") as f:
                 w = csv.writer(f)
                 if not file_exists:
@@ -678,6 +682,7 @@ class MetricConsumer:
                         ])
                 w.writerow(row)
                 f.flush()
+                '''
         except Exception as e:
             print(f"[WARN] Failed to append final summary row: {e}")
 
@@ -721,12 +726,22 @@ class MetricConsumer:
 
                     wt = int(self._window_total)
                     wv = int(self._window_viol)
-                    mr = (float(wt) / float(self.slo_window_seconds)) if self.slo_window_seconds > 0 else 0.0
+                    
+                    delta_msgs = self.local_consumed - self._last_csv_consumed
+                    delta_time = now - self._last_csv_time
 
+                    mr = (delta_msgs / delta_time) if delta_time > 0 else 0.0
+
+                    self._last_csv_consumed = self.local_consumed
+                    self._last_csv_time = now
+                    
                     with self._lock:
                         self._lat_window_evict_old(now)
                         lat_vals = [ms for (_t, ms) in self._lat_window]
 
+                    if delta_msgs == 0 and len(lat_vals) == 0:
+                        continue
+                    
                     lat_vals.sort()
                     p95 = _percentile(lat_vals, 95.0)
                     p99 = _percentile(lat_vals, 99.0)

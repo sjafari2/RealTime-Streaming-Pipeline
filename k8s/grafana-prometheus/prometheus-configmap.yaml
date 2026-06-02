@@ -15,16 +15,29 @@ data:
         static_configs:
           - targets: ['localhost:9090']
 
-      # App pods (Flask/Prometheus exporter) — services expose 8000/TCP
+      # App pods (Flask/Prometheus exporter) — 
       - job_name: 'kafka-pipeline'
         metrics_path: /metrics
         scrape_interval: 5s
         static_configs:
+          # Producers
           - targets:
-              - producer-headless-svc.kafkastreamingdata.svc.cluster.local:8000
-              - consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8000
-              - merge-headless-svc.kafkastreamingdata.svc.cluster.local:8000
+              - producer-sts-0.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001
+              - producer-sts-1.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001
+              - producer-sts-2.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001
+            labels:
+              role: producer
 
+          # Consumers
+          - targets:
+              - consumer-sts-0.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
+              - consumer-sts-1.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
+              - consumer-sts-2.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
+              - consumer-sts-3.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
+              - consumer-sts-4.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
+              - consumer-sts-5.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
+            labels:
+              role: consumer
       # Kafka JMX exporter (from Bitnami chart) — HTTP metrics on 5556
       - job_name: 'kafka-brokers'
         scrape_interval: 10s

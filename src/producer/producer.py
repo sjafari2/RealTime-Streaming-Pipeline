@@ -93,7 +93,7 @@ class MyProducer:
             raise ValueError(f"Unsupported TRAFFIC_MODE='{self.traffic_mode}'. Use 'balanced' or 'skew'.")
         
         self.max_burst = getenv_int("MAX_BURST", 10)
-        self.min_burst = max(1, getenv_int("MIN_BURST", 1))
+        #self.min_burst = max(1, getenv_int("MIN_BURST", 1))
         self.drop_catchup = getenv_str("DROP_CATCHUP", "true").strip().lower() == "true"
 
         tr_env = os.getenv("TARGET_RATE") or os.getenv("STEADY_RATE_MSGS") or "500"
@@ -124,6 +124,7 @@ class MyProducer:
         self.metadata_max_age_ms = getenv_int("METADATA_MAX_AGE_MS", 300000)
         self.topic_metadata_refresh_interval_ms = getenv_int("TOPIC_METADATA_REFRESH_INTERVAL_MS", 300000)
         self.max_in_flight = getenv_int("MAX_IN_FLIGHT_REQUEST_PER_CONNECTION", 1)
+        #self.enable_idempotence = getenv_str("ENABLE_IDEMPOTENCE" , "true")
         self.producer_http_port = getenv_int("PRODUCER_HTTP_PORT", 8001)
 
         # Optional compatibility with old name if ever use PAYLOAD_SIZE_BYTES
@@ -160,6 +161,7 @@ class MyProducer:
             "metadata.max.age.ms": self.metadata_max_age_ms,
             "topic.metadata.refresh.interval.ms": self.topic_metadata_refresh_interval_ms,
             "max.in.flight.requests.per.connection": self.max_in_flight,
+            #"enable.idempotence": self.enable_idempotence,
         }
 
         self.producer = Producer(producer_conf)
@@ -194,13 +196,20 @@ class MyProducer:
         producer_target_rate.labels(**self.metric_labels).set(self.target_rate)
         producer_hot_partition_count.labels(**self.metric_labels).set(len(self.hot_partitions) if self.hot_partitions else 0)
         producer_skew_fraction.labels(**self.metric_labels).set(self.skew_fraction if self.traffic_mode == "skew" else 0.0)
+        
+        now = time.time()
+        
+        self.start_time = now
+        self.next_send_time = now
+        self.last_rate_time = now
+        self.last_sys_update = now
 
-        self.start_time = time.time()
-        self.last_sys_update = 0.0
-        self.next_send_time = time.time()
-        self.idx = 0
+        self.idx = 0  #total number of messages sent since producer started 
+        self.last_rate_idx = 0    #calculating actual producer throughput
+        
         self.running = True
-
+        
+                       
         print(f"[INFO] Producer pod={self.pod_name}")
         print(f"[INFO] EXP_ID={self.exp_id} TARGET_RATE={self.target_rate} RUN_ID={self.run_id or 'unset'}")
         print(f"[INFO] TRAFFIC_MODE={self.traffic_mode}")
@@ -351,9 +360,22 @@ class MyProducer:
                 except Exception:
                     pass
 
+                now_rate = time.time()
+                dt = now_rate - self.last_rate_time
+                di = self.idx - self.last_rate_idx
+                actual_rate = di / dt if dt > 0 else 0.0
+                
                 if self.debug_enabled:
-                    print(f"[HEARTBEAT] sent={self.idx}") #outq_len={oq}")
+                     print(
+                            f"[HEARTBEAT] "
+                            f"sent={self.idx} "
+                            f"actual_rate={actual_rate:.2f} msg/s "
+                            f"target_rate={self.target_rate:.2f} msg/s "
+                            f"outq_len={oq}"
+                        )
 
+                self.last_rate_time = now_rate
+                self.last_rate_idx = self.idx
                 self.last_heartbeat = now
 
             if now < self.next_send_time:
@@ -420,3 +442,4 @@ if __name__ == "__main__":
     threading.Thread(target=start_metrics_server, daemon=True).start()
     producer_instance.run()
 
+#

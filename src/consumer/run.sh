@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
-trap "exit" INT TERM
+#trap "exit" INT TERM
 #trap "kill 0" EXIT
 
 CONFIG_FILE="${PIPELINE_CONFIG:-/config/pipeline-configmap.yaml}"
+export metrics="../../tmp/metrics"
 
 cd /app/consumer-merge-data
 
@@ -85,9 +86,14 @@ CURRENT_TIME_FMT="${RUN_TS:9:2}-${RUN_TS:11:2}-${RUN_TS:13:2}"  # HH-MM-SS
 LOG_DIR="./logs/consumer/${CURRENT_DATE_FMT}/${CURRENT_TIME_FMT}"
 mkdir -p "${LOG_DIR}"
 
-echo "[consumer] pod=${POD_NAME}"
-echo "[consumer] EXP_ID=${EXP_ID:-unset} TRAFFIC_MODE=${TRAFFIC_MODE:-unset} TARGET_RATE=${TARGET_RATE:-unset}"
-echo "[consumer] Logs: ${LOG_DIR}"
+LOG_FILE="${LOG_DIR}/${POD_NAME}_${RUN_ID}.log"
+#LOG_FILE="${LOG_DIR}/consumer_${POD_NAME}_${EXP_ID:-EXP}_${TARGET_RATE:-RATE}_${RUN_TS}.log"
+
+echo "[consumer] Log file: ${LOG_FILE}"
+
+#echo "[consumer] pod=${POD_NAME}"
+#echo "[consumer] EXP_ID=${EXP_ID:-unset} TRAFFIC_MODE=${TRAFFIC_MODE:-unset} TARGET_RATE=${TARGET_RATE:-unset}"
+#echo "[consumer] Logs: ${LOG_DIR}"
 
 # ============================================================
 #  Stop leftover python processes in this container
@@ -95,7 +101,7 @@ echo "[consumer] Logs: ${LOG_DIR}"
 echo "[consumer] Terminating any running .py scripts in this container..."
 SELF_PID=$$
 PARENT_PID=$(ps -o ppid= -p "$SELF_PID" | tr -d ' ')
-for pid in $(pgrep -f '\.py' || true); do
+for pid in $(pgrep -f '\.py' || '\.sh' || true); do
   if [[ "$pid" != "$SELF_PID" && "$pid" != "$PARENT_PID" ]]; then
     kill -9 "$pid" 2>/dev/null || true
   fi
@@ -104,12 +110,30 @@ done
 # ============================================================
 #  Launch consumer (ENV-only)
 # ============================================================
+
 echo "[consumer] Starting consumer..."
 
 set -x
-python3 consumer.py "$@"
-rc=$?
-set +x
-echo "[DEBUG] python exited with code $rc"
-exit $rc #2>&1 | tee "${LOG_DIR}/${POD_NAME}_${EXP_ID}_${TARGET_RATE}.log"
 
+python3 consumer.py "$@" & # > >(tee "${LOG_FILE}") 2>&1 &
+child=$!
+
+cleanup() {
+  trap - INT TERM
+  echo "[consumer] Stopping consumer..." | tee -a "${LOG_FILE}"
+
+  kill -TERM "$child" 2>/dev/null || true
+  wait "$child" 2>/dev/null || true
+
+  exit 0
+}
+
+trap cleanup INT TERM
+
+wait "$child"
+rc=$?
+
+set +x
+echo "[DEBUG] python exited with code $rc"  | tee -a "${LOG_FILE}"
+
+exit "$rc"

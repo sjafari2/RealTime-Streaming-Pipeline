@@ -1,0 +1,108 @@
+auth:
+  sasl:
+    enabled: false
+controller:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - patternlab.calit2.optiputer.net
+  extraConfig: "delete.topic.enable=true\nauto.create.topics.enable=true\nlistener.security.protocol.map=CLIENT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT\nlisteners=CLIENT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9095\nadvertised.listeners=CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095\ninter.broker.listener.name=INTERNAL\n\n#
+    Performance tuning\nlog.retention.ms=180000\nlog.retention.check.interval.ms=10000\nlog.segment.bytes=134217728\nlog.segment.ms=30000\nmessage.max.bytes=1048576\nnum.network.threads=8\nnum.io.threads=16\nlog.flush.interval.messages=1000000\nlog.flush.interval.ms=10000\nqueued.max.requests=5000\nsocket.request.max.bytes=104857600\nreplica.fetch.max.bytes=10485760\nreplica.fetch.response.max.bytes=10485760\nreplication.factor=2\nmin.insync.replicas=1\noffsets.topic.replication.factor=2\n#
+    Metadata refresh & retry handling\nconnections.max.idle.ms=300000\nmetadata.max.age.ms=300000
+    \                   \nrequest.timeout.ms=30000\nretries=5\nretry.backoff.ms=1000
+    \                        \n"
+  extraEnvVars:
+  - name: HOSTNAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: KAFKA_CFG_NODE_ID
+    value: '{{ .StatefulSetOrdinal }}'
+  - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+    value: 0@pip-kafka-controller-0.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,1@pip-kafka-controller-1.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093,2@pip-kafka-controller-2.pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9093
+  - name: KAFKA_CFG_ADVERTISED_LISTENERS
+    value: CLIENT://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9092,
+      INTERNAL://$(HOSTNAME).pip-kafka-controller-headless.kafkastreamingdata.svc.cluster.local:9094,
+      EXTERNAL://$(HOSTNAME).pip-kafka-controller.kafkastreamingdata.svc.cluster.local:9095
+  persistence:
+    accessModes:
+    - ReadWriteOnce
+    enabled: true
+    size: 300Gi
+    storageClass: rook-ceph-block-central
+  replicaCount: 3
+  resources:
+    limits:
+      cpu: 8
+      memory: 16Gi
+    requests:
+      cpu: 4
+      memory: 8Gi
+global:
+  security:
+    allowInsecureImages: true
+  storageClass: rook-ceph-block-central
+image:
+  repository: bitnamilegacy/kafka
+kraft:
+  controllerListenerNames: CONTROLLER
+  enabled: true
+  processRoles: controller,broker
+listeners:
+  client:
+    containerPort: 9092
+    name: CLIENT
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+  controller:
+    containerPort: 9093
+    name: CONTROLLER
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+  external:
+    containerPort: 9095
+    name: EXTERNAL
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+  interbroker:
+    containerPort: 9094
+    name: INTERNAL
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+metrics:
+  jmx:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnami/jmx-exporter
+      tag: latest
+    kafkaJmxPort: 5555
+  serviceMonitor:
+    enabled: true
+sasl:
+  client:
+    passwords: []
+    users: []
+  controller:
+    password: ""
+    user: ""
+  controllerMechanism: ""
+  enabledMechanisms: ""
+  interBrokerMechanism: ""
+  interbroker:
+    password: ""
+    user: ""
+volumePermissions:
+  enabled: true
+  image:
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnamicharts/os-shell
+    tag: latest
+zookeeper:
+  enabled: false

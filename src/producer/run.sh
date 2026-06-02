@@ -86,7 +86,7 @@ LOG_FILE="${LOG_DIR}/producer_${POD_NAME}_${EXP_ID:-EXP}_${TARGET_RATE:-RATE}_${
 echo "[producer] Log file: ${LOG_FILE}"
 
 # Kill old python in this container (optional)
-# pkill -f 'producer\.py' 2>/dev/null || true
+pkill -f 'producer\.py' 2>/dev/null || true
 
 set -x
 python3 -u producer.py "$@" 2>&1 | tee "${LOG_FILE}"
@@ -95,3 +95,4 @@ set +x
 
 echo "[DEBUG] python exited with code $rc" | tee -a "${LOG_FILE}"
 exit "$rc"
+

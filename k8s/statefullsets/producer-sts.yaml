@@ -143,10 +143,8 @@ spec:
 
       volumes:
       - name: producer-data
-        emptyDir:
-          sizeLimit: "10Gi"
-
-      # Writable shared config PVC (no defaults)
+        persistentVolumeClaim:
+          claimName: producer-data
       - name: pipeline-config
         persistentVolumeClaim:
           claimName: pipeline-configmap-pvc

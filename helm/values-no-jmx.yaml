@@ -162,3 +162,14 @@ auth:
 
 zookeeper:
   enabled: false
+
+metrics:
+  jmx:
+    enabled: true
+    kafkaJmxPort: 5555
+    image:
+      registry: docker.io
+      repository: bitnami/jmx-exporter
+      tag: latest
+  serviceMonitor:
+    enabled: true
