@@ -23,24 +23,6 @@ load_config_to_env() {
 load_config_to_env
 
 # ------------------------------------------------------------
-# Create default vim settings inside container
-# ------------------------------------------------------------
-cat > ~/.vimrc <<'EOF'
-set number
-syntax on
-filetype plugin indent on
-set autoindent
-set smartindent
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
-set backspace=indent,eol,start
-set showmatch
-set cursorline
-EOF
-
-# ------------------------------------------------------------
 # Expect TOPIC_TITLE (run-specific topic prefix) to already be set
 # by create_topics.sh running elsewhere (consumer side or a Job).
 # ------------------------------------------------------------
@@ -82,17 +64,56 @@ echo "[producer] pod=${POD_NAME}"
 echo "[producer] EXP_ID=${EXP_ID:-unset} TRAFFIC_MODE=${TRAFFIC_MODE:-unset} TARGET_RATE=${TARGET_RATE:-unset}"
 echo "[producer] Logs: ${LOG_DIR}"
 
-LOG_FILE="${LOG_DIR}/producer_${POD_NAME}_${EXP_ID:-EXP}_${TARGET_RATE:-RATE}_${RUN_TS}.log"
-echo "[producer] Log file: ${LOG_FILE}"
-
 # Kill old python in this container (optional)
 pkill -f 'producer\.py' 2>/dev/null || true
 
 set -x
-python3 -u producer.py "$@" 2>&1 | tee "${LOG_FILE}"
-rc=${PIPESTATUS[0]}
-set +x
 
-echo "[DEBUG] python exited with code $rc" | tee -a "${LOG_FILE}"
-exit "$rc"
+# ------------------------------------------------------------
+# Define experiment window for Prometheus/Grafana export
+# ------------------------------------------------------------
+EXTRA_SECONDS="${EXPORT_EXTRA_SECONDS:-10}"
+
+EXP_START_EPOCH="$(date +%s)"
+EXP_END_EPOCH="$((EXP_START_EPOCH + EXP_DURATION_SEC + EXTRA_SECONDS))"
+
+EXP_START_ISO="$(date -u -d "@${EXP_START_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")"
+EXP_END_ISO="$(date -u -d "@${EXP_END_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")"
+
+echo "[producer] EXP_START_ISO=${EXP_START_ISO}"
+echo "[producer] EXP_END_ISO=${EXP_END_ISO}"
+
+POD_NAME="$(hostname)"
+
+METADATA_DIR="/app/${POD_NAME}"
+mkdir -p "${METADATA_DIR}"
+
+METADATA_FILE="${METADATA_DIR}/experiment_window.env"
+
+cat > "${METADATA_FILE}" <<EOF
+EXP_START_ISO="${EXP_START_ISO}"
+EXP_END_ISO="${EXP_END_ISO}"
+EXP_START_EPOCH="${EXP_START_EPOCH}"
+EXP_END_EPOCH="${EXP_END_EPOCH}"
+RUN_ID="${RUN_ID}"
+EXP_ID="${EXP_ID}"
+TARGET_RATE="${TARGET_RATE}"
+PRODUCER_POD_COUNT="${PRODUCER_POD_COUNT}"
+TRAFFIC_MODE="${TRAFFIC_MODE}"
+SKEW_FRACTION="${SKEW_FRACTION}"
+SKEW_PARTITION="${SKEW_PARTITION:-${HOT_PARTITIONS:-}}"
+EOF
+
+echo "[producer] Saved experiment metadata to ${METADATA_FILE}"
+echo "[producer] EXP_START_ISO=${EXP_START_ISO}"
+echo "[producer] EXP_END_ISO=${EXP_END_ISO}
+"
+
+python3 producer.py "$@"
+rc=$?
+set +x
+echo "[DEBUG] python exited with code $rc"
+exit $rc
+
+#2>&1 | tee "${LOG_DIR}/producer_${POD_NAME}_${EXP_ID:-EXP}_${TARGET_RATE:-RATE}_${RUN_TS}.log"
 

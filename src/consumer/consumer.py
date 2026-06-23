@@ -136,6 +136,11 @@ consumer_hot_partition_fraction = Gauge(
         COMMON_LABELS,
         )
 
+consumer_rebalances_total = Counter(
+    "consumer_rebalances_total",
+    "Total Kafka consumer rebalance events",
+    COMMON_LABELS + ["event_type"]
+)
 
 class MetricConsumer:
     """
@@ -226,6 +231,7 @@ class MetricConsumer:
         self._lock = threading.Lock()
 
         self.start_time = time.time()
+        self.exp_duration_sec = getenv_int("EXP_DURATION_SEC", 0)
         self.last_sys_update = 0.0
         self.last_lag_update = 0.0
         self.running = True
@@ -254,7 +260,8 @@ class MetricConsumer:
         self.partition_lag_enabled = getenv_bool("PARTITION_LAG_CSV_ENABLED", True)
 
         # New: rebalance event CSV for HPA / group-change analysis
-        self.rebalance_csv_enabled = getenv_bool("REBALANCE_CSV_ENABLED", True)
+        self.rebalance_csv_enabled = False
+        #self.rebalance_csv_enabled = getenv_bool("REBALANCE_CSV_ENABLED", True)
         #self.rebalance_csv_path = os.path.join(self.csv_dir, f"consumer_rebalance_events_{run_tag}_{self.pod_name}.csv")
 
         self.last_total_lag = 0.0
@@ -468,7 +475,23 @@ class MetricConsumer:
         if not partitions:
             return ""
         return ";".join([f"{tp.topic}:{tp.partition}" for tp in partitions])
+    
+    def _append_rebalance_event(self, event_type: str, partitions):
+        try:
+            count = len(partitions) if partitions else 0
 
+            consumer_assigned_partitions.labels(**self.metric_labels).set(float(count))
+
+            consumer_rebalances_total.labels(
+                **self.metric_labels,
+                event_type=event_type
+            ).inc()
+
+            print(f"[REBALANCE] {event_type} partitions={count}")
+
+        except Exception as e:
+            print(f"[WARN] Failed to record rebalance event: {e}")
+    '''
     def _append_rebalance_event(self, event_type: str, partitions):
         try:
             count = len(partitions) if partitions else 0
@@ -490,7 +513,7 @@ class MetricConsumer:
                     ])
         except Exception as e:
             print(f"[WARN] Failed to append rebalance event: {e}")
-
+    '''
     def _on_assign(self, consumer, partitions):
         self._append_rebalance_event("assign", partitions)
         try:
@@ -797,6 +820,10 @@ class MetricConsumer:
                 msgs = self.consumer.consume(num_messages=self.poll_max_msg, timeout=self.poll_timeout)
                 now = time.time()
                 elapsed = now - self.start_time
+
+                if self.exp_duration_sec > 0 and elapsed >= self.exp_duration_sec:
+                    print(f"[INFO] Reached EXP_DURATION_SEC={self.exp_duration_sec}. Stopping consumer.")
+                    break
 
                 if now - self.last_sys_update >= 10.0:
                     consumer_cpu_percent.labels(**self.metric_labels).set(psutil.cpu_percent(interval=None))

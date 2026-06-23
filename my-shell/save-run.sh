@@ -288,7 +288,6 @@ kill_all_pods() {
 ########################################
 # Run create_topics once (consumer-sts-0)
 ########################################
-
 run_create_topics_once() {
   echo "==================== Creating topics once in ${CREATE_TOPICS_POD} ===================="
 
@@ -297,35 +296,83 @@ run_create_topics_once() {
     return 1
   }
 
-  k exec -c "${CREATE_TOPICS_CONTAINER}" "${CREATE_TOPICS_POD}" -- sh -lc "
-    set -e
-    
-    cd /app/consumer-merge-data
+  k exec -i -c "${CREATE_TOPICS_CONTAINER}" "${CREATE_TOPICS_POD}" -- sh -s <<'EOF'
+  set -eu
+  echo "[DEBUG] inside run_create_topics_once on $(hostname)"
 
-    test -f './delete_all_topics.sh' || { echo '[ERROR] missing delete_all_topics.sh'; exit 2; }
-    test -f './create_topics.sh' || { echo '[ERROR] missing create_topics.sh'; exit 2; }
+CONFIG_PATH_IN_POD="/config/pipeline-configmap.yaml"
+cd /app/consumer-merge-data
 
-    chmod +x ./delete_all_topics.sh ./create_topics.sh || true
+test -f './delete_all_topics.sh' || { echo '[ERROR] missing delete_all_topics.sh'; exit 2; }
+test -f './create_topics.sh' || { echo '[ERROR] missing create_topics.sh'; exit 2; }
 
-    ./delete_all_topics.sh
-    ./create_topics.sh
+chmod +x ./delete_all_topics.sh ./create_topics.sh || true
 
-  
+get_cfg() {
+  key="$1"
+  default="$2"
 
-    # Verify write-back (prefer yq)
-    if command -v yq >/dev/null 2>&1; then
-      rid=\$(yq eval -r '.data.RUN_ID // \"\"' '${CONFIG_PATH_IN_POD}' 2>/dev/null || true)
-      ttl=\$(yq eval -r '.data.TOPIC_TITLE // \"\"' '${CONFIG_PATH_IN_POD}' 2>/dev/null || true)
-    else
-      rid=\$(awk '/^[[:space:]]+RUN_ID:/{gsub(/^[[:space:]]+RUN_ID:[[:space:]]*/,\"\",\$0); gsub(/\"/,\"\",\$0); print \$0; exit}' '${CONFIG_PATH_IN_POD}' || true)
-      ttl=\$(awk '/^[[:space:]]+TOPIC_TITLE:/{gsub(/^[[:space:]]+TOPIC_TITLE:[[:space:]]*/,\"\",\$0); gsub(/\"/,\"\",\$0); print \$0; exit}' '${CONFIG_PATH_IN_POD}' || true)
+  if command -v yq >/dev/null 2>&1; then
+    yq eval -r ".data.${key} // \"${default}\"" "$CONFIG_PATH_IN_POD"
+  else
+    awk -v k="$key" -v d="$default" '
+      $1 == k ":" {
+        gsub(/"/, "", $2)
+        print $2
+        found=1
+        exit
+      }
+      END {
+        if (!found) print d
+      }
+    ' "$CONFIG_PATH_IN_POD"
+  fi
+}
+
+NUM_PARTITIONS="$(get_cfg NUM_PARTITIONS 60)"
+TOPIC_COUNT="$(get_cfg TOPIC_COUNT 1)"
+
+echo "[TOPIC CONFIG] NUM_PARTITIONS=${NUM_PARTITIONS}"
+echo "[TOPIC CONFIG] TOPIC_COUNT=${TOPIC_COUNT}"
+
+export NUM_PARTITIONS
+export TOPIC_COUNT
+
+./delete_all_topics.sh
+./create_topics.sh
+
+TOPIC_TITLE="$(get_cfg TOPIC_TITLE "")"
+RUN_ID="$(get_cfg RUN_ID "")"
+
+echo "[VERIFY] RUN_ID=${RUN_ID}"
+echo "[VERIFY] TOPIC_TITLE=${TOPIC_TITLE}"
+
+test -n "$RUN_ID" || { echo '[ERROR] RUN_ID empty after create_topics.sh'; exit 10; }
+test -n "$TOPIC_TITLE" || { echo '[ERROR] TOPIC_TITLE empty after create_topics.sh'; exit 11; }
+for i in $(seq 0 $((TOPIC_COUNT - 1))); do
+  topic="${TOPIC_TITLE}_${i}"
+
+  echo "[VERIFY] Checking $topic"
+
+  ok=0
+  for attempt in 1 2 3 4 5 6 7 8 9 10; do
+    if ../../kafka/bin/kafka-topics.sh --bootstrap-server pip-kafka:9092 \
+      --describe \
+      --topic "$topic"; then
+      ok=1
+      break
     fi
 
-    echo \"[VERIFY] RUN_ID=\$rid\"
-    echo \"[VERIFY] TOPIC_TITLE=\$ttl\"
-    test -n \"\$rid\" || { echo '[ERROR] RUN_ID empty after create_topics.sh'; exit 10; }
-    test -n \"\$ttl\" || { echo '[ERROR] TOPIC_TITLE empty after create_topics.sh'; exit 11; }
-  "
+    echo "[WAIT] Topic not visible yet: $topic attempt=$attempt"
+    sleep 2
+  done
+
+  if [ "$ok" -ne 1 ]; then
+    echo "[ERROR] Topic still not visible after retries: $topic"
+    exit 12
+  fi
+done
+EOF
 
   echo "==================================================================="
 }
@@ -545,9 +592,58 @@ if [[ "$run_scripts" == "y" ]]; then
 
   echo "===== Step 3: start producers ====="
   start_role_pods "producer"
+  read -n 1 -p "Export Grafana/Prometheus CSV after starting run? (y/n): " export_csv; echo
+	[[ "$export_csv" != "y" ]] && export_csv="n"
+
+	if [[ "$export_csv" == "y" ]]; then
+  	  eval "$(
+    		k exec -c producer-container producer-sts-0 -- \
+    		sh -lc "cat /app/producer-sts-0/experiment_window.env"
+  		)"
+	  echo "[CSV] Waiting for experiment to finish..."
+          sleep "$((EXP_DURATION_SEC + 20))"
+	  export_grafana_csv
+	fi
+
 else
   echo "Skipping script run."
 fi
+}
+export_grafana_csv() {
+  local pod="producer-sts-0"
+  local container="producer-container"
+  local metadata_file="/app/${pod}/experiment_window.env"
+
+  echo "==================== Exporting Grafana/Prometheus CSV ===================="
+
+  echo "[CSV] Reading experiment metadata from ${pod}:${metadata_file}"
+
+  eval "$(
+    k exec -c "$container" "$pod" -- sh -lc "cat '${metadata_file}'"
+  )"
+
+  echo "[CSV] EXP_START_ISO=${EXP_START_ISO}"
+  echo "[CSV] EXP_END_ISO=${EXP_END_ISO}"
+  echo "[CSV] RUN_ID=${RUN_ID}"
+
+  OUT_PREFIX="${EXP_ID}-${TRAFFIC_MODE}-R${TARGET_RATE}-${RUN_ID}"
+
+  python3 export_grafana_dashboard_to_csv.py \
+    --dashboard-json "KafkaDashboardPerConsumerMetrics.json" \
+    --prom-url http://localhost:9090 \
+    --start "${EXP_START_ISO}" \
+    --end "${EXP_END_ISO}" \
+    --step 10s \
+    --target-rate "${TARGET_RATE}" \
+    --producer-count "${PRODUCER_POD_COUNT}" \
+    --load-type "${TRAFFIC_MODE}" \
+    --skew-fraction "${SKEW_FRACTION}" \
+    --skew-partition "${SKEW_PARTITION}" \
+    --run-id "${RUN_ID}" \
+    --exp-id "${EXP_ID}" \
+    --out-prefix "${OUT_PREFIX}"
+
+  echo "==================================================================="
 }
 ########################################
 # Main

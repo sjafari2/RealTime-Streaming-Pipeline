@@ -108,6 +108,30 @@ for pid in $(pgrep -f '\.py' || '\.sh' || true); do
 done
 
 # ============================================================
+# Delete Old Topics
+# ============================================================
+
+#if [[ "$(hostname)" == "consumer-sts-0" ]]; then
+#  echo "[consumer] Cleaning old Kafka topics..."
+
+  #chmod +x ./delete_all_topics.sh ./kafka-list-topics.sh
+
+  #./delete_all_topics.sh
+
+#  sleep 4
+
+#  remaining_topics="$(./kafka-list-topics.sh | grep -v '^__consumer_offsets$' || true)"
+
+#  if [[ -n "${remaining_topics}" ]]; then
+#    echo "[consumer] ERROR: old topics still exist:"
+#    echo "${remaining_topics}"
+#    exit 1
+#  fi
+
+# echo "[consumer] Topic cleanup complete."
+# fi
+
+# ============================================================
 #  Launch consumer (ENV-only)
 # ============================================================
 

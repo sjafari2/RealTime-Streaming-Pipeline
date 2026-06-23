@@ -68,6 +68,11 @@ producer_outq_len = Gauge("producer_outq_len", "librdkafka outgoing queue length
 producer_hot_partition_count = Gauge("producer_hot_partition_count", "Number of hot partitions used (skew mode)", COMMON_LABELS)
 producer_skew_fraction = Gauge("producer_skew_fraction", "Fraction of messages sent to hot partitions (skew mode)", COMMON_LABELS)
 
+producer_partition_messages_total = Counter(
+    "producer_partition_messages_total",
+    "Messages sent per Kafka partition",
+    COMMON_LABELS + ["topic", "partition"]
+)
 
 class MyProducer:
     """
@@ -88,47 +93,21 @@ class MyProducer:
 
         self.exp_id = getenv_str("EXP_ID", "B0")
         self.traffic_mode = getenv_str("TRAFFIC_MODE", "balanced").strip().lower()
-        
-        if self.traffic_mode not in {"balanced", "skew"}:
-            raise ValueError(f"Unsupported TRAFFIC_MODE='{self.traffic_mode}'. Use 'balanced' or 'skew'.")
-        
-        self.max_burst = getenv_int("MAX_BURST", 10)
-        #self.min_burst = max(1, getenv_int("MIN_BURST", 1))
-        self.drop_catchup = getenv_str("DROP_CATCHUP", "true").strip().lower() == "true"
 
+        self.max_burst = int(os.getenv("MAX_BURST", "10"))
+        self.drop_catchup = (os.getenv("DROP_CATCHUP", "true").lower() == "true")
+        
         tr_env = os.getenv("TARGET_RATE") or os.getenv("STEADY_RATE_MSGS") or "500"
         self.target_rate = max(1.0, float(tr_env))
         self.interval = 1.0 / self.target_rate
 
+        # RUN_ID is useful for metrics/logging/headers. Not required for topic naming,
+        # but in your pipeline it should always exist after create_topics.sh.
         self.run_id = getenv_str("RUN_ID", "").strip()
-
-        # Producer-only stop condition
-        self.max_messages = getenv_int("PRODUCER_MAX_MESSAGES", 0)
-
-        # Producer pacing / batching / transport settings
-        self.acks = getenv_str("ACKS", "1")
-        self.compression_type = getenv_str("COMPRESSION_TYPE", "none")
-        self.linger_ms = getenv_int("LINGER_MS", 0)
-        self.batch_size = getenv_int("BATCH_SIZE", 16384)
-        self.max_request_size = getenv_int("MAX_REQUEST_SIZE", 1048576)
-        self.retries = getenv_int("RETRIES", 3)
-        self.retry_backoff_ms = getenv_int("RETRY_BACKOFF_MS", 100)
-        self.connection_max_idle_ms = getenv_int("CONNECTION_MAX_IDLE_MS", 30000)
-        self.reconnect_backoff_ms = getenv_int("RECONNECT_BACKOFF_MS", 100)
-        self.reconnect_backoff_max_ms = getenv_int("RECONNECT_BACKOFF_MAX_MS", 1000)
-        self.request_timeout_ms = getenv_int("REQUEST_TIMEOUT_MS", 30000)
-        self.delivery_timeout_ms = getenv_int("DELIVERY_TIMEOUT_MS", 120000)
-        self.queue_buffering_max_messages = getenv_int("QUEUE_BUFFERING_MAX_MESSAGES", 100000)
-        self.queue_buffering_max_kbytes = getenv_int("QUEUE_BUFFERING_MAX_KBYTES", 1048576)
-        self.msg_max_bytes = getenv_int("MSG_MAX_BYTES", 1048576)
-        self.metadata_max_age_ms = getenv_int("METADATA_MAX_AGE_MS", 300000)
-        self.topic_metadata_refresh_interval_ms = getenv_int("TOPIC_METADATA_REFRESH_INTERVAL_MS", 300000)
-        self.max_in_flight = getenv_int("MAX_IN_FLIGHT_REQUEST_PER_CONNECTION", 1)
-        #self.enable_idempotence = getenv_str("ENABLE_IDEMPOTENCE" , "true")
-        self.producer_http_port = getenv_int("PRODUCER_HTTP_PORT", 8001)
-
-        # Optional compatibility with old name if ever use PAYLOAD_SIZE_BYTES
-        #self.payload_size_bytes = getenv_int("MSG_MAX_BYTES", getenv_int("PAYLOAD_SIZE_BYTES", 16 * 1024))
+       
+        self.max_messages = getenv_int("MAX_MESSAGES", 0)
+        self.exp_duration_sec = getenv_int("EXP_DURATION_SEC", 0)
+        
         self.metric_labels = {
             "pod": self.pod_name,
             "client_id": self.client_id,
@@ -137,35 +116,17 @@ class MyProducer:
             "traffic_mode": self.traffic_mode,
         }
         
-        
         bootstrap_servers = getenv_str("BOOTSTRAP_SERVERS", "localhost:9092")
+        acks = getenv_str("ACKS", "1")
 
-        producer_conf = {
-            "bootstrap.servers": bootstrap_servers,
-            "client.id": self.client_id,
-            "acks": self.acks,
-            "compression.type": self.compression_type,
-            "linger.ms": self.linger_ms,
-            "batch.size": self.batch_size,
-            #"max.request.size": self.max_request_size,
-            "retries": self.retries,
-            "retry.backoff.ms": self.retry_backoff_ms,
-            "connections.max.idle.ms": self.connection_max_idle_ms,
-            "reconnect.backoff.ms": self.reconnect_backoff_ms,
-            "reconnect.backoff.max.ms": self.reconnect_backoff_max_ms,
-            "request.timeout.ms": self.request_timeout_ms,
-            "delivery.timeout.ms": self.delivery_timeout_ms,
-            "queue.buffering.max.messages": self.queue_buffering_max_messages,
-            "queue.buffering.max.kbytes": self.queue_buffering_max_kbytes,
-            "message.max.bytes": self.msg_max_bytes,
-            "metadata.max.age.ms": self.metadata_max_age_ms,
-            "topic.metadata.refresh.interval.ms": self.topic_metadata_refresh_interval_ms,
-            "max.in.flight.requests.per.connection": self.max_in_flight,
-            #"enable.idempotence": self.enable_idempotence,
-        }
+        self.producer = Producer(
+            {
+                "bootstrap.servers": bootstrap_servers,
+                "client.id": self.client_id,
+                "acks": acks,
+            }
+        )
 
-        self.producer = Producer(producer_conf)
-        
         # ---- Topics derived ONLY from TOPIC_TITLE ----
         topic_title = getenv_str("TOPIC_TITLE", "").strip()
         if not topic_title:
@@ -175,7 +136,7 @@ class MyProducer:
         self.num_topics = max(1, getenv_int("TOPIC_COUNT", 1))
 
         self.payload_size_bytes = getenv_int("PAYLOAD_SIZE_BYTES", 16 * 1024)
-
+        self.payload = os.urandom(self.payload_size_bytes)
         # Debug logging controls
         self.debug_enabled = getenv_str("PRODUCER_DEBUG", "false").strip().lower() == "true"
         self.debug_every_n = getenv_int("PRODUCER_DEBUG_EVERY_N", 0)
@@ -186,7 +147,7 @@ class MyProducer:
 
         # Skew controls
         self.skew_fraction = float(getenv_float("SKEW_FRACTION", 0.8))
-        self.hot_partitions_spec = getenv_str("HOT_PARTITIONS", "0.2").strip()
+        self.skew_partition_spec = getenv_str("SKEW_PARTITION", "0.2").strip()
         self.num_partitions = getenv_int("NUM_PARTITIONS", 0)
 
         self.hot_partitions: List[int] = []
@@ -196,20 +157,13 @@ class MyProducer:
         producer_target_rate.labels(**self.metric_labels).set(self.target_rate)
         producer_hot_partition_count.labels(**self.metric_labels).set(len(self.hot_partitions) if self.hot_partitions else 0)
         producer_skew_fraction.labels(**self.metric_labels).set(self.skew_fraction if self.traffic_mode == "skew" else 0.0)
-        
-        now = time.time()
-        
-        self.start_time = now
-        self.next_send_time = now
-        self.last_rate_time = now
-        self.last_sys_update = now
 
-        self.idx = 0  #total number of messages sent since producer started 
-        self.last_rate_idx = 0    #calculating actual producer throughput
-        
+        self.start_time = time.time()
+        self.last_sys_update = 0.0
+        self.next_send_time = time.time()
+        self.idx = 0
         self.running = True
-        
-                       
+
         print(f"[INFO] Producer pod={self.pod_name}")
         print(f"[INFO] EXP_ID={self.exp_id} TARGET_RATE={self.target_rate} RUN_ID={self.run_id or 'unset'}")
         print(f"[INFO] TRAFFIC_MODE={self.traffic_mode}")
@@ -217,10 +171,10 @@ class MyProducer:
         if self.traffic_mode == "skew":
             print(f"[INFO] SKEW_FRACTION={self.skew_fraction} hot_partitions={self.hot_partitions}")
         print(f"[INFO] Payload={self.payload_size_bytes} bytes")
-        print(f"[INFO] PRODUCER_MAX_MESSAGES={self.max_messages if self.max_messages > 0 else 'unlimited'}")
+        print(f"[INFO] MAX_MESSAGES={self.max_messages if self.max_messages > 0 else 'unlimited'}")
 
     def _resolve_hot_partitions(self) -> List[int]:
-        spec = self.hot_partitions_spec
+        spec = self.skew_partition_spec
 
         if "," in spec:
             parts = []
@@ -249,7 +203,7 @@ class MyProducer:
                 f"{self.exp_id}-"
                 f"r{self.target_rate}-"
                 f"p{self.num_partitions}-"
-                f"alpha{self.hot_partitions_spec}-"
+                f"alpha{self.skew_partition_spec}-"
                 f"f{self.skew_fraction}-"
                 f"run{self.run_id}"
             )
@@ -287,62 +241,72 @@ class MyProducer:
             print(f"[DELIVERY_OK] topic={msg.topic()} partition={msg.partition()} offset={msg.offset()}")
 
     def send_one(self, topic: str, idx: int):
-        """
-        Send one Kafka message safely.
-        If the producer queue is full (BufferError),
-        the function waits and retries until the message
-        is successfully queued.
-        """
-        
         send_time = time.time()
-        payload = self._make_payload()
+        payload = self.payload
 
         headers = [
-            ("index", str(idx).encode()),
-            ("producer_timestamp", str(send_time).encode()),
-            ("producer_pod_name", self.pod_name.encode()),
-            ("size_bytes", str(len(payload)).encode()),
-            ("target_rate", str(self.target_rate).encode()),
-            ("exp_id", self.exp_id.encode()),
-            ("run_id", (self.run_id or "unset").encode()),
-            ("traffic_mode", self.traffic_mode.encode()),
-        ]
-        
-        while True:
+                ("index", str(idx).encode()),
+                ("producer_timestamp", str(send_time).encode()),
+                ("producer_pod_name", self.pod_name.encode()),
+                ("size_bytes", str(len(payload)).encode()),
+                ("target_rate", str(self.target_rate).encode()),
+                ("exp_id", self.exp_id.encode()),
+                ("run_id", (self.run_id or "unset").encode()),
+                ("traffic_mode", self.traffic_mode.encode()),
+                ]
 
+        while True:
             try:
+                partition = None
+
                 if self.traffic_mode == "skew":
-                    p = self._choose_partition_for_skew()
-                    if p is None:
-                        self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
-                    else:
-                        self.producer.produce(topic=topic, value=payload, headers=headers, partition=p, callback=self._delivery_report)
+                    partition = self._choose_partition_for_skew()
+
+                if partition is None:
+                    self.producer.produce(
+                            topic=topic,
+                            value=payload,
+                            headers=headers,
+                            callback=self._delivery_report
+                            )
+                    partition_label = "auto"
                 else:
-                    self.producer.produce(topic=topic, value=payload, headers=headers, callback=self._delivery_report)
+                    self.producer.produce(
+                            topic=topic,
+                            value=payload,
+                            headers=headers,
+                            partition=partition,
+                            callback=self._delivery_report
+                            )
+                    partition_label = str(partition)
 
                 producer_messages_sent_total.labels(**self.metric_labels).inc()
                 producer_bytes_sent_total.labels(**self.metric_labels).inc(len(payload))
 
-                self.producer.poll(0)
+                producer_partition_messages_total.labels(
+                        **self.metric_labels,
+                        topic=topic,
+                        partition=partition_label
+                        ).inc()
 
-                if self.debug_enabled and self.debug_every_n > 0 and (idx % self.debug_every_n) == 0:
-                    print(f"[ENQUEUE_OK] idx={idx} topic={topic} mode={self.traffic_mode}")
-                
+                self.producer.poll(0)
                 break
 
             except BufferError:
                 self.producer.poll(1)
+
             except KafkaException as e:
                 print(f"[ERROR] Produce failed: {e}")
                 break
-
     def run(self):
         while self.running and not shutdown_event.is_set():
             
             if self.max_messages > 0 and self.idx >= self.max_messages:
                 print(f"[INFO] Reached MAX_MESSAGES={self.max_messages}. Stopping producer.")
                 break
-
+            if self.exp_duration_sec > 0 and (time.time() - self.start_time) >= self.exp_duration_sec:
+                print(f"[INFO] Reached EXP_DURATION_SEC={self.exp_duration_sec}. Stopping producer.")
+                break
             now = time.time()
 
             if now - self.last_sys_update >= 10.0:
@@ -360,22 +324,9 @@ class MyProducer:
                 except Exception:
                     pass
 
-                now_rate = time.time()
-                dt = now_rate - self.last_rate_time
-                di = self.idx - self.last_rate_idx
-                actual_rate = di / dt if dt > 0 else 0.0
-                
                 if self.debug_enabled:
-                     print(
-                            f"[HEARTBEAT] "
-                            f"sent={self.idx} "
-                            f"actual_rate={actual_rate:.2f} msg/s "
-                            f"target_rate={self.target_rate:.2f} msg/s "
-                            f"outq_len={oq}"
-                        )
+                    print(f"[HEARTBEAT] sent={self.idx}") #outq_len={oq}")
 
-                self.last_rate_time = now_rate
-                self.last_rate_idx = self.idx
                 self.last_heartbeat = now
 
             if now < self.next_send_time:
@@ -442,4 +393,3 @@ if __name__ == "__main__":
     threading.Thread(target=start_metrics_server, daemon=True).start()
     producer_instance.run()
 
-#
