@@ -1,0 +1,140 @@
+{
+  "frozen_epoch": 1789214324.758784,
+  "calibration_run_id": "run-20260912-054927",
+  "calibration_qualified": true,
+  "calibration_evidence": {
+    "admitted_evaluation": 180000,
+    "admitted_whole_production": 269973,
+    "lag_coverage": 0.9833333333333333,
+    "median_boundary_growth_offsets": [
+      13187.0,
+      12943.5
+    ],
+    "unfinished": 3103
+  },
+  "deadline_epoch": 1789246384.0,
+  "total_target_messages_per_second": 1500,
+  "initial_consumers": 3,
+  "target_consumers": 6,
+  "application_sha256_iterations": 2000,
+  "production_seconds_by_family": {
+    "sustained": 600,
+    "short": 180
+  },
+  "warmup_seconds": 60,
+  "drain_seconds": 120,
+  "action_seconds_from_production_start": 120,
+  "recovery_threshold_offsets": 1500,
+  "recovery_hold_seconds": 20,
+  "transition_monitoring_guard_grace_seconds": 60,
+  "trials": [
+    {
+      "label": "sustained-s21-scale",
+      "family": "sustained",
+      "pair": "L1",
+      "seed": 21,
+      "action": "scale",
+      "production_seconds": 600,
+      "config": "sustained-seed-21.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "b24611dfaa61865c712b18ddab1376e87f1bc5aa29373586593e39f738180ab9",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "sustained-s21-none",
+      "family": "sustained",
+      "pair": "L1",
+      "seed": 21,
+      "action": "none",
+      "production_seconds": 600,
+      "config": "sustained-seed-21.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "b24611dfaa61865c712b18ddab1376e87f1bc5aa29373586593e39f738180ab9",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    },
+    {
+      "label": "short-s31-none",
+      "family": "short",
+      "pair": "S1",
+      "seed": 31,
+      "action": "none",
+      "production_seconds": 180,
+      "config": "short-seed-31.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "b576aeb37a9a3188bdc674c4cb6cfd2b1242770ab08361b5c665155316176e71",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    },
+    {
+      "label": "short-s31-scale",
+      "family": "short",
+      "pair": "S1",
+      "seed": 31,
+      "action": "scale",
+      "production_seconds": 180,
+      "config": "short-seed-31.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "b576aeb37a9a3188bdc674c4cb6cfd2b1242770ab08361b5c665155316176e71",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "sustained-s22-none",
+      "family": "sustained",
+      "pair": "L2",
+      "seed": 22,
+      "action": "none",
+      "production_seconds": 600,
+      "config": "sustained-seed-22.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "0a2b877db34b26c734574d5f0d284951b0cd9a81ac7134fee659346dde773ad1",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    },
+    {
+      "label": "sustained-s22-scale",
+      "family": "sustained",
+      "pair": "L2",
+      "seed": 22,
+      "action": "scale",
+      "production_seconds": 600,
+      "config": "sustained-seed-22.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "0a2b877db34b26c734574d5f0d284951b0cd9a81ac7134fee659346dde773ad1",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "short-s32-scale",
+      "family": "short",
+      "pair": "S2",
+      "seed": 32,
+      "action": "scale",
+      "production_seconds": 180,
+      "config": "short-seed-32.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "f9bb77180e8f93abe7291223a55646b0ddc0f4ee361b0f4ca3cac604f903d6ef",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "short-s32-none",
+      "family": "short",
+      "pair": "S2",
+      "seed": 32,
+      "action": "none",
+      "production_seconds": 180,
+      "config": "short-seed-32.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "f9bb77180e8f93abe7291223a55646b0ddc0f4ee361b0f4ca3cac604f903d6ef",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    }
+  ],
+  "notes": [
+    "Preliminary finite production episodes, not the full 25-minute/five-repetition Table 1 protocol.",
+    "The sustained episode permits eight minutes after the scheduled request; the short episode permits one minute. Input stops at the declared boundary in both cases, without a background low-rate phase.",
+    "The first 60 seconds are excluded from the admission cohort but deliberately develop the same backlog before evaluation; no stationary warm-up claim is made.",
+    "Two pairs per duration with reversed treatment order across pairs. Workload parameters and seed match within each pair; actual admissions and assignments remain measured.",
+    "The existing HPA remains paused. Scheduled 3-to-6 scaling is an action test, not a new selector or tuned HPA baseline.",
+    "The 60-second guard grace permits expected monitoring interruption after a scale request; missing observations still reduce analysis coverage and never count as recovery.",
+    "Retain unfavorable valid results. Stop for evidence/control problems and report technical exclusions explicitly.",
+    "Resource comparisons use common evaluation-through-drain horizons; calibration/setup is reported separately.",
+    "Recovery not confirmed during production is censored; do not substitute drain recovery for in-production recovery.",
+    "No confidence interval, universal superiority, novelty or legal eligibility claim follows from these short repeated pilots."
+  ]
+}

@@ -131,6 +131,19 @@ def summarize(index, results_root):
         delta = {k: right['metrics'][k]-v for k,v in left['metrics'].items()
                  if isinstance(v, (int, float)) and isinstance(right['metrics'].get(k), (int, float))}
         pairs.append(dict(pair=pair['pair'], runs=rows, compatibility_failures=mismatches, scale_minus_none=delta))
+    # Pair effects from different durations or processing configurations do not
+    # belong to one replication distribution. Use one index per condition family.
+    families = set()
+    provenance = set()
+    for pair in pairs:
+        if pair['compatibility_failures']:
+            continue
+        for row in pair['runs'].values():
+            families.add(json.dumps({k:v for k,v in row['config'].items()
+                                    if k not in {'RUN_ID', 'TOPIC_TITLE', 'EXP_ID', 'WORKLOAD_SEED'}}, sort_keys=True))
+            provenance.add(tuple(row['source_signatures']))
+    if len(families) > 1 or len(provenance) > 1:
+        raise ValueError('Use a separate comparison index for each workload, duration and application version family')
     distribution = {}
     for pair in pairs:
         if pair['compatibility_failures'] or any(r['quality_flags'] for r in pair['runs'].values()):

@@ -34,3 +34,26 @@ def test_paired_summary_preserves_flagged_pairs_but_does_not_aggregate_them(monk
     assert result['pairs'][1]['runs']['scale']['quality_flags'] == ['coverage']
     assert result['descriptive_paired_differences']['p99_seconds'] == dict(
         pair_count=1,mean_paired_difference=-3,minimum=-3,maximum=-3,sample_standard_deviation=None)
+
+
+def test_short_and_sustained_pairs_cannot_be_pooled(monkeypatch):
+    def run(path):
+        action = 'scale' if 'scale' in path.name else 'none'
+        return dict(run_id=path.name, config={'EXP_DURATION_SEC':'600' if 'long' in path.name else '180'},
+                    action=action, source_signatures=['known'], intervention={}, quality_flags=[], metrics={'p99_seconds':1})
+    monkeypatch.setattr(comparison, 'run_record', run)
+    index = dict(pairs=[dict(pair=1,none='none-long',scale='scale-long'),
+                        dict(pair=2,none='none-short',scale='scale-short')])
+    with pytest.raises(ValueError, match='separate comparison index'):
+        comparison.summarize(index, Path('/unused'))
+
+
+def test_incompatible_pair_is_retained_with_its_reason(monkeypatch):
+    def run(path):
+        action = path.name
+        return dict(run_id=action, config={'EXP_DURATION_SEC':'600' if action=='scale' else '180'},
+                    action=action, source_signatures=['known'], intervention={}, quality_flags=[], metrics={'p99_seconds':1})
+    monkeypatch.setattr(comparison, 'run_record', run)
+    result = comparison.summarize(dict(pairs=[dict(pair=1,none='none',scale='scale')]), Path('/unused'))
+    assert result['pairs'][0]['compatibility_failures'] == ['Frozen workload configurations differ']
+    assert result['descriptive_paired_differences'] == {}
