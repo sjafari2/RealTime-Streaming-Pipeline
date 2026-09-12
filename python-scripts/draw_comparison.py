@@ -37,7 +37,7 @@ for ax,(metric,factor,title,ylabel) in zip(axes.flat,metrics):
     ax.set(title=title,ylabel=ylabel,xticks=[0,1],xticklabels=['Keep 3 consumers','Schedule 3 → 6'])
     ax.set_xlim(-.2,1.2);ax.set_ylim(bottom=0);ax.grid(axis='y',alpha=.2)
     ax.legend(fontsize=8)
-fig.suptitle('Preliminary paired action comparison · each line is one matched seed',fontsize=12)
+fig.suptitle(f"Preliminary action comparison · {len(s['pairs'])} matched seed pair(s)\neach line connects the two runs for one seed",fontsize=12)
 fig.supxlabel('Read conditional latency with unfinished outcomes. Dotted lines are retained but excluded from that metric’s aggregate.\nRequested CPU is not measured whole-cluster cost. Short pilots on shared nodes do not establish general superiority.',fontsize=8)
 for suffix in ('png','svg','pdf'):
     fig.savefig(D/('paired-outcomes.'+suffix),dpi=190,bbox_inches='tight')
