@@ -1,0 +1,192 @@
+{
+  "run_id": "run-20260912-083417",
+  "process_lifetimes": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e",
+      "started_epoch": 1789223667.013889,
+      "finished_epoch": 1789223999.721551,
+      "process_seconds": 332.71691414900124,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-0/dbf18ce69304477ca992dccd23c9d00e/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-0",
+      "incarnation": "2f7179c365954c9091a515bc155e3353",
+      "started_epoch": 1789223670.2802508,
+      "finished_epoch": 1789223879.6850257,
+      "process_seconds": 209.6763687171042,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-0/2f7179c365954c9091a515bc155e3353/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-1",
+      "incarnation": "9d3d901b754f47cbb7f7ef676e8fd1d5",
+      "started_epoch": 1789223670.4996107,
+      "finished_epoch": 1789223879.6856904,
+      "process_seconds": 209.50434643798508,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-1/9d3d901b754f47cbb7f7ef676e8fd1d5/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-2",
+      "incarnation": "aad121d7b54d47dc8e0d2cd9a53457be",
+      "started_epoch": 1789223670.5028498,
+      "finished_epoch": 1789223879.6858017,
+      "process_seconds": 209.41736009391025,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-2/aad121d7b54d47dc8e0d2cd9a53457be/events.jsonl"
+    }
+  ],
+  "consumer_process_seconds": 332.71691414900124,
+  "consumer_lifetime_coverage_complete": true,
+  "ownership_events": [
+    {
+      "event": "assign_started",
+      "timestamp": 1789223670.2230792,
+      "partitions": [
+        [
+          "single-partition-capacity-balanced-R400-20260912-083417_0",
+          0
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789223670.2406235,
+      "partitions": [
+        [
+          "single-partition-capacity-balanced-R400-20260912-083417_0",
+          0
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789223999.7051804,
+      "partitions": [
+        [
+          "single-partition-capacity-balanced-R400-20260912-083417_0",
+          0
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789223999.712991,
+      "partitions": [
+        [
+          "single-partition-capacity-balanced-R400-20260912-083417_0",
+          0
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e"
+    }
+  ],
+  "callback_blocking_intervals": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e",
+      "event": "assign",
+      "started_epoch": 1789223670.2230792,
+      "finished_epoch": 1789223670.2406235,
+      "blocked_seconds": 0.017544269561767578
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e",
+      "event": "revoke",
+      "started_epoch": 1789223999.7051804,
+      "finished_epoch": 1789223999.712991,
+      "blocked_seconds": 0.0078105926513671875
+    }
+  ],
+  "assignment_first_completions": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "dbf18ce69304477ca992dccd23c9d00e",
+      "topic": "single-partition-capacity-balanced-R400-20260912-083417_0",
+      "partition": 0,
+      "assigned_epoch": 1789223670.2406235,
+      "first_completion_epoch": 1789223699.9509394,
+      "assign_to_first_completion_seconds": 29.710315942764282
+    }
+  ],
+  "resource_requests": {
+    "covered_seconds": 345.83264803886414,
+    "observation_seconds": 364.5660717487335,
+    "covered_fraction": 0.9486144620644215,
+    "scheduled_consumer_pod_seconds_observed": 345.83264803886414,
+    "consumer_container_requested_cpu_seconds_observed": 691.6652960777283,
+    "consumer_container_requested_gib_seconds_observed": 345.83264803886414,
+    "intervals_with_unsupported_resources": 0
+  },
+  "recovery": {
+    "status": "not_observed_by_evaluation_end",
+    "threshold_offsets": 1500,
+    "hold_seconds": 20,
+    "seconds_to_confirmation": null,
+    "censored": true,
+    "followup_seconds": 60.0
+  },
+  "observed_consumer_pods": [
+    {
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:46:56Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:47:02Z"
+    }
+  ],
+  "intervention_events": [
+    {
+      "event": "decision",
+      "timestamp": 1789223820.765719,
+      "scheduled_epoch": 1789223819.684026,
+      "scheduling_delay_seconds": 1.0816929340362549,
+      "action": "none"
+    },
+    {
+      "event": "request_completed",
+      "timestamp": 1789223820.767563,
+      "action": "none"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789223821.220305,
+      "pod": "consumer-sts-0",
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "kubernetes_ready_transition": "2026-09-12T00:47:02Z"
+    }
+  ],
+  "notes": [
+    "Consumer process-seconds sum every recorded started-to-finished lifetime, including preparation, warm-up and drain; new runtime evidence uses a local monotonic timer.",
+    "Final scrape hold after the finished event is outside process-seconds; scheduled-pod accounting includes observed hold time.",
+    "Resource request integrals use left-held samples on covered intervals. Transition times are uncertain by up to a sample gap.",
+    "CPU/GiB request-time covers only consumer-container declarations on scheduled pods, not broker/producer/sidecar/whole-cluster cost or actual usage.",
+    "Missing samples and unsupported pod-level resources/resize are not silently treated as zero. Report coverage.",
+    "Recovery requires processing backlog at or below the declared threshold for the full hold interval with valid contiguous same-owner samples.",
+    "Recovery is confirmed at the end of the hold interval; missing/unobserved recovery is censored, not zero.",
+    "Ownership callbacks are observable boundaries, not proof of broker-coordinator timing or a precise processing pause.",
+    "Callback blocking intervals bracket the sequential consumer callback; assignment-to-first-completion also includes idle time and work."
+  ]
+}
