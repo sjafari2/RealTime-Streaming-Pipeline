@@ -2,6 +2,7 @@
 import json
 import math
 from pathlib import Path
+from evidence_io import event_paths, open_events
 import sqlite3
 import tempfile
 
@@ -25,6 +26,8 @@ def partition_metrics(directory, manifest, latency_sink=None):
     failures = []
     with tempfile.TemporaryDirectory() as tmp:
         db = sqlite3.connect(str(Path(tmp) / 'partitions.sqlite'))
+        # Keep more of the temporary identity index in memory during reconciliation.
+        db.execute('PRAGMA cache_size=-65536')
         db.executescript('''
           CREATE TABLE identity (id TEXT PRIMARY KEY, topic TEXT, partition INTEGER, offset INTEGER, produced REAL);
           CREATE UNIQUE INDEX physical_record ON identity(topic,partition,offset);
@@ -36,9 +39,9 @@ def partition_metrics(directory, manifest, latency_sink=None):
           CREATE TABLE delays (topic TEXT, partition INTEGER, seconds REAL);
           CREATE INDEX ordered_partition_delays ON delays(topic,partition,seconds);
         ''')
-        for path in sorted(Path(directory).rglob('events.jsonl')):
+        for path in event_paths(directory):
             previous = {}
-            with path.open() as stream:
+            with open_events(path) as stream:
                 for line in stream:
                     event = json.loads(line)
                     kind = event.get('event')

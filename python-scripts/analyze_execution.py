@@ -3,6 +3,7 @@ from decimal import Decimal
 import json
 import math
 from pathlib import Path
+from evidence_io import event_paths, open_events
 import re
 
 
@@ -96,12 +97,12 @@ def analyze(directory, lag=None):
     directory = Path(directory)
     manifest = json.loads((directory / 'manifest.json').read_text())
     lifetimes, ownership, callbacks, resumes = [], [], [], []
-    for path in sorted(directory.rglob('events.jsonl')):
+    for path in event_paths(directory):
         final_path = path.with_name('final.json')
         final = json.loads(final_path.read_text()) if final_path.exists() else {}
         started = finished = elapsed = None
         callback_starts, waiting_for_completion = {}, {}
-        with path.open() as stream:
+        with open_events(path) as stream:
             for line in stream:
                 event = json.loads(line)
                 kind, timestamp = event.get('event'), event.get('timestamp')

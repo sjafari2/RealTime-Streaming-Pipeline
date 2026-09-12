@@ -42,3 +42,40 @@ post-deployment health are recorded in the campaign audit before workload begins
 No broker restart or data deletion is required.
 
 Configuration semantics: https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+
+## Live preparation outcome and next calibration
+
+Nautilus rejected the Prometheus Deployment change because account resource
+utilization was low. The original ConfigMap and one Prometheus replica were
+restored using the existing data PVC. The new discovery configuration is committed
+but **not deployed**. Existing six-consumer static targets remain at a 5-second
+scrape interval; broker scrapes remain incomplete. Read-only container metrics are
+saved separately. The prepared RBAC grants were not activated by Prometheus.
+
+The first six-consumer calibration is run-20260912-031020. A subsequent calibration
+will reduce the initial consumer count to three while preserving its rate, timing,
+processing task and workload seed. Nautilus accepted a server dry run of the
+standard scale request. A 3-to-6 comparison would remain within the existing
+monitoring targets and original replica allocation. Actual scaling outcomes and
+startup/placement still need live validation. Calibration runs will be reported
+separately from the later fixed comparison protocol.
+
+Completed local event logs may be compressed after collection and validation:
+
+```bash
+python3 python-scripts/compress_evidence.py results/RUN_ID
+```
+
+Replace RUN_ID with the completed run's identifier. This writes gzip files, verifies
+that decompression exactly reproduces each original SHA-256, records both hashes
+and byte counts, then removes only the redundant uncompressed local representation.
+The original Nautilus evidence is unchanged. The outcome, partition and execution
+analyses read either format and reject duplicate plain/compressed representations.
+Keep `compressed-evidence.json` with the run. This is lossless storage, not sampling.
+The helper refuses incomplete/failed managed runs and shares the runner's local
+lock; do not manually modify evidence during collection or compression.
+
+The analysis uses a 64 MiB SQLite cache for each temporary identity database. All
+64 checks passed. On the same synthetic 120,000-record workload, the old and new
+summaries were identical (14.24 versus 9.38 seconds on this Mac). This small check
+is not a full-run speed guarantee or an experimental performance result.

@@ -4,6 +4,7 @@ import argparse
 import json
 import math
 from pathlib import Path
+from evidence_io import event_paths, open_events
 import sqlite3
 import tempfile
 from partition_outcomes import partition_metrics, quantiles
@@ -27,7 +28,7 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None):
         if not set(manifest[role + '_pods']).issubset(observed[role]):
             invalid.append('Missing final snapshots for initial ' + role + ' pods')
     # Every incarnation that wrote events must have closed and saved its final status.
-    event_files = list(directory.rglob('events.jsonl'))
+    event_files = event_paths(directory)
     for path in event_files:
         if not path.with_name('final.json').exists():
             invalid.append('Missing final status: ' + str(path.relative_to(directory)))
@@ -35,6 +36,8 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None):
         invalid.append('No outcome files')
     with tempfile.TemporaryDirectory() as temporary:
         db = sqlite3.connect(str(Path(temporary) / 'outcomes.sqlite'))
+        # Keep more of the temporary identity index in memory during reconciliation.
+        db.execute('PRAGMA cache_size=-65536')
         db.executescript('''
         CREATE TABLE admitted (id TEXT PRIMARY KEY, produced REAL);
         CREATE TABLE completed (id TEXT PRIMARY KEY, finished REAL, attempts INTEGER, output TEXT, started REAL, processing REAL);
@@ -43,7 +46,7 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None):
         failed_sends = unresolved_sends = bad_clock = output_mismatch = 0
         completed_attempts_window = valid_attempts_window = late_attempts_window = 0
         for path in event_files:
-            with path.open() as stream:
+            with open_events(path) as stream:
                 for line in stream:
                     event = json.loads(line)
                     kind = event['event']
