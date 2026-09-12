@@ -1,0 +1,553 @@
+{
+  "run_id": "run-20260911-234758",
+  "state": "running",
+  "config_path": "/config/runs/run-20260911-234758/pipeline-configmap.yaml",
+  "preparing_epoch": 1789192086.925327,
+  "config_sha256": "810d16af2643cea9fc2a7e2782294cf2ca4669c1ee7cd0e156f07f7dd63a685a",
+  "drain_seconds": 60.0,
+  "duration_seconds": 300.0,
+  "warmup_seconds": 0.0,
+  "producer_pods": [
+    "producer-sts-0",
+    "producer-sts-1",
+    "producer-sts-2"
+  ],
+  "consumer_pods": [
+    "consumer-sts-0",
+    "consumer-sts-1",
+    "consumer-sts-2",
+    "consumer-sts-3",
+    "consumer-sts-4",
+    "consumer-sts-5"
+  ],
+  "expected_partitions": 60,
+  "expires_epoch": 1789192625.897069,
+  "config": {
+    "RELEASE_NAME": "pip",
+    "NAMESPACE": "kafkastreamingdata",
+    "EXP_ID": "A-monitoring",
+    "TRAFFIC_MODE": "balanced",
+    "TARGET_RATE": "3000",
+    "EXP_DURATION_SEC": "300",
+    "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+    "TOPIC_COUNT": "1",
+    "BROKER_COUNT": "3",
+    "NUM_PARTITIONS": "60",
+    "RETENTION_MS": "86400000",
+    "SEGMENT_MS": "30000",
+    "CLEANUP_POLICY": "delete",
+    "REPLICATION_FACTOR": "1",
+    "MIN_INSYNC_REPLICAS": "1",
+    "PRODUCER_POD_COUNT": "3",
+    "ACKS": "all",
+    "COMPRESSION_TYPE": "lz4",
+    "PRODUCER_INPUT_PATH": "producer-data",
+    "DELAY_BETWEEN_MESSAGES": "0",
+    "LINGER_MS": "5",
+    "BATCH_SIZE": "65536",
+    "MAX_REQUEST_SIZE": "1048576",
+    "RETRIES": "2",
+    "RETRY_BACKOFF_MS": "20",
+    "CONNECTION_MAX_IDLE_MS": "30000",
+    "RECONNECT_BACKOFF_MS": "100",
+    "RECONNECT_BACKOFF_MAX_MS": "1000",
+    "RANDOM_RANGE": "1000",
+    "REQUEST_TIMEOUT_MS": "10000",
+    "DELIVERY_TIMEOUT_MS": "30000",
+    "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+    "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+    "PRODUCER_CLIENT_ID": "pipeline-producer",
+    "MSG_MAX_BYTES": "1048576",
+    "METADATA_MAX_AGE_MS": "120000",
+    "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+    "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+    "PACING_MODE": "per_message",
+    "PACING_TICK_SEC": "0.005",
+    "MIN_BURST": "1",
+    "MAX_BURST": "2",
+    "PRODUCER_HTTP_PORT": "8001",
+    "PRODUCER_DEBUG": "false",
+    "PRODUCER_DEBUG_EVERY_N": "20000",
+    "PRODUCER_HEARTBEAT_SEC": "10",
+    "DROP_CATCHUP": "false",
+    "PAYLOAD_SIZE_BYTES": "100",
+    "CONSUMER_GROUP_ID": "consgroup",
+    "CONSUMER_POD_COUNT": "6",
+    "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+    "PRODUCER_MAX_MESSAGES": "0",
+    "ENABLE_AUTO_COMMIT": "false",
+    "AUTO_OFFSET_RESET": "earliest",
+    "AUTO_COMMIT_INTERVAL_MS": "0",
+    "POLL_TIMEOUT": "0.1",
+    "POLL_MAX_MSG": "25",
+    "FETCH_MAX_BYTES": "5242880",
+    "FETCH_MIN_BYTES": "1",
+    "FETCH_MAX_WAIT_MS": "5",
+    "MAX_POLL_RECORDS": "100",
+    "MAX_POLL_INTERVAL_MS": "120000",
+    "SESSION_TIMEOUT_MS": "20000",
+    "HEARTBEAT_INTERVAL_MS": "1000",
+    "SOCKET_TIMEOUT_MS": "30000",
+    "MAX_PARTITION_FETCH_BYTES": "1048576",
+    "SOCKET_SEND_BUFFER_BYTES": "524288",
+    "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+    "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+    "PROCESSED_DIR": "/tmp/metrics/processed",
+    "CONSUMER_HTTP_PORT": "8002",
+    "CONSUMER_DEBUG": "false",
+    "CONSUMER_DEBUG_EVERY_N": "20000",
+    "CONSUMER_HEARTBEAT_SEC": "10",
+    "CONSUMER_CLIENT_ID": "pipeline-consumer",
+    "PER_MSG_LAT_ENABLED": "false",
+    "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+    "PER_MSG_LAT_FLUSH_SEC": "10",
+    "PER_MSG_LAT_MAX_BUFFER": "20000",
+    "SLO_WINDOW_SECONDS": "30",
+    "SLO_THRESHOLD_MS": "99",
+    "MITIGATION_POLICY": "none",
+    "SKEW_FRACTION": "0.8",
+    "SKEW_PARTITION": "0.2",
+    "LAG_QUERY_INTERVAL": "2",
+    "LAG_QUERY_TIMEOUT": "3",
+    "PARTITION_LAG_CSV_ENABLED": "false",
+    "CSV_LOG_INTERVAL_SEC": "30",
+    "CSV_LATENCY_WINDOW_SEC": "30",
+    "REBALANCE_CSV_ENABLED": "false",
+    "APP_DELAY_MODE": "fixed",
+    "APP_DELAY_MS": "0",
+    "APP_DELAY_MAX_MS": "0",
+    "RUN_ID": "run-20260911-234758",
+    "TOPIC_TITLE": "A-monitoring-balanced-R3000-20260911-234758",
+    "ENABLE_IDEMPOTENCE": "true",
+    "WARMUP_SECONDS": "0",
+    "DRAIN_SECONDS": "60",
+    "READINESS_TIMEOUT_SECONDS": "180",
+    "FINAL_SCRAPE_SECONDS": "15",
+    "PRODUCER_FLUSH_SECONDS": "30",
+    "WORKLOAD_SEED": "1",
+    "LAG_QUERY_BUDGET_SEC": "0.2",
+    "LAG_FRESHNESS_SECONDS": "10",
+    "OUTCOME_LOG_ENABLED": "true",
+    "EVIDENCE_MAX_BUFFER": "100000",
+    "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+    "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence"
+  },
+  "capacity_estimate": {
+    "producer_count": 3,
+    "consumer_count": 6,
+    "target_messages_per_second": 9000.0,
+    "balanced_messages_per_second_per_consumer": 1500.0,
+    "balanced_processing_budget_ms": 0.6666666666666666,
+    "app_delay_ms": 0.0,
+    "note": "Initial replica counts; assumes balanced sequential processing. All overhead uses this budget. Recalculate after scaling."
+  },
+  "initial_consumer_resources": [
+    {
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-1",
+      "node": "unseenu.crbs.ucsd.edu",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-2",
+      "node": "k8s-chase-ci-10.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-3",
+      "node": "k8s-gpu-01.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-4",
+      "node": "k8s-ravi-01.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-5",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    }
+  ],
+  "clock_probes": [
+    {
+      "pod": "producer-sts-0",
+      "role": "producer",
+      "roundtrip_seconds": 0.6398439407348633,
+      "offset_low_seconds": 0.08641624450683594,
+      "offset_high_seconds": 0.7262601852416992
+    },
+    {
+      "pod": "producer-sts-1",
+      "role": "producer",
+      "roundtrip_seconds": 0.7532970905303955,
+      "offset_low_seconds": 0.0844264030456543,
+      "offset_high_seconds": 0.8377234935760498
+    },
+    {
+      "pod": "producer-sts-2",
+      "role": "producer",
+      "roundtrip_seconds": 0.6839399337768555,
+      "offset_low_seconds": 0.07676506042480469,
+      "offset_high_seconds": 0.7607049942016602
+    },
+    {
+      "pod": "consumer-sts-0",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6368911266326904,
+      "offset_low_seconds": 0.09162259101867676,
+      "offset_high_seconds": 0.7285137176513672
+    },
+    {
+      "pod": "consumer-sts-1",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6339840888977051,
+      "offset_low_seconds": 0.09379792213439941,
+      "offset_high_seconds": 0.7277820110321045
+    },
+    {
+      "pod": "consumer-sts-2",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6362497806549072,
+      "offset_low_seconds": 0.09343934059143066,
+      "offset_high_seconds": 0.7296891212463379
+    },
+    {
+      "pod": "consumer-sts-3",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6484229564666748,
+      "offset_low_seconds": 0.09345340728759766,
+      "offset_high_seconds": 0.7418763637542725
+    },
+    {
+      "pod": "consumer-sts-4",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6486520767211914,
+      "offset_low_seconds": 0.09325122833251953,
+      "offset_high_seconds": 0.7419033050537109
+    },
+    {
+      "pod": "consumer-sts-5",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6224291324615479,
+      "offset_low_seconds": 0.09198141098022461,
+      "offset_high_seconds": 0.7144105434417725
+    }
+  ],
+  "initial_assignment": [
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 0
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 1
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 2
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 3
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 4
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 5
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 6
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 7
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 8
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 9
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 10
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 11
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 12
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 13
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 14
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 15
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 16
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 17
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 18
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 19
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 20
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 21
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 22
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 23
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 24
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 25
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 26
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 27
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 28
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 29
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 30
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 31
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 32
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 33
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 34
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 35
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 36
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 37
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 38
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 39
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 40
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 41
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 42
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 43
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 44
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 45
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 46
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 47
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 48
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 49
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 50
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 51
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 52
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 53
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 54
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 55
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 56
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 57
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 58
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 59
+    }
+  ],
+  "start_epoch": 1789192145.897069,
+  "evaluation_start_epoch": 1789192145.897069,
+  "producer_end_epoch": 1789192445.897069,
+  "drain_end_epoch": 1789192505.897069
+}

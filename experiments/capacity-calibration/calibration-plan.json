@@ -1,0 +1,65 @@
+{
+  "status": "prepared_not_executed",
+  "purpose": "Find sustained processing backlog under increased balanced input; no mitigation",
+  "baseline_reference": "run-20260911-234758",
+  "producer_count": 3,
+  "consumer_count": 6,
+  "partitions": 60,
+  "rates_per_producer": [
+    4000,
+    5000,
+    6000
+  ],
+  "target_total_rates": [
+    12000,
+    15000,
+    18000
+  ],
+  "production_seconds": 180,
+  "warmup_seconds": 60,
+  "evaluation_seconds": 120,
+  "drain_seconds": 120,
+  "final_scrape_seconds": 15,
+  "app_delay_ms": 0,
+  "app_cpu_iterations": 0,
+  "maximum_stages": 3,
+  "stage_policy": "Run one stage and inspect it before selecting a next stage; stop increasing once informative overload is found.",
+  "screening_criteria": {
+    "consecutive_windows": 2,
+    "window_seconds": 60,
+    "minimum_valid_coverage_fraction": 0.95,
+    "minimum_processing_backlog_median_growth_offsets_per_window": 1500,
+    "boundary_median_seconds": 10,
+    "required_observations": [
+      "Positive acknowledged-arrival minus completion rate during the same windows",
+      "Backlog across multiple partitions with recorded ownership",
+      "No unresolved sends, evidence loss, conflicting identities or unexplained observation gaps",
+      "Producer/broker/node measurements support consumer-stage capacity as the limiting factor",
+      "Inspect the full backlog trace for persistent growth; boundary median comparisons alone are insufficient"
+    ],
+    "target_tracking_warning_below_fraction": 0.95
+  },
+  "stop_conditions": {
+    "processing_backlog_offsets": 600000,
+    "backlog_hold_seconds": 10,
+    "invalid_monitoring_seconds": 10,
+    "local_free_space_rule": "At least 4 times projected raw-run bytes plus 8 GiB reserve before each stage",
+    "producer_pvc_minimum_free_gib": 2,
+    "consumer_pvc_minimum_free_gib": 5,
+    "immediate": [
+      "Evidence drops or writer failure",
+      "Repeated send/processing failures",
+      "Pod OOM/restarts or impending storage exhaustion"
+    ],
+    "invalid_monitoring_scope": "During evaluation; require valid coverage before evaluation begins. Backlog/storage/error limits also apply during warm-up."
+  },
+  "enforcement": "Reviewed run by run. The standard runner enforces duration/drain; these extra thresholds currently require operator monitoring and explicit stop. No automatic overload-threshold guard is claimed.",
+  "constraints": [
+    "Do not change processing cost, replicas, partition count or rate during a frozen run.",
+    "Do not run all rates blindly via a sweep command.",
+    "An early-stopped trial is labelled interrupted/threshold-limited; preserve all available evidence.",
+    "If all three stages remain stable, review the measured bottleneck before choosing more pressure.",
+    "This is short calibration, not the proposal comparison or five-repetition protocol.",
+    "Achieving below 95% of target flags workload tracking for investigation; it does not by itself prove that consumers are not overloaded."
+  ]
+}

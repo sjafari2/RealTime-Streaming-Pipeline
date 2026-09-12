@@ -1,0 +1,85 @@
+{
+  "protocol_revision": 1,
+  "frozen_epoch": 1789218376.128993,
+  "scenario": "Table 1 D: one isolated overloaded partition",
+  "calibration_qualified": true,
+  "calibration_run_id": "run-20260912-054927",
+  "deadline_epoch": 1789246384.0,
+  "total_target_messages_per_second": 1500,
+  "initial_consumers": 3,
+  "target_consumers": 6,
+  "application_sha256_iterations": 2000,
+  "warmup_seconds": 60,
+  "drain_seconds": 120,
+  "action_seconds_from_production_start": 120,
+  "recovery_threshold_offsets": 1500,
+  "recovery_hold_seconds": 20,
+  "transition_monitoring_guard_grace_seconds": 60,
+  "trials": [
+    {
+      "label": "isolated-s41-none-v4",
+      "family": "isolated",
+      "pair": "D1",
+      "seed": 41,
+      "action": "none",
+      "production_seconds": 300,
+      "config": "isolated-seed-41.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "1db9c81a134e58768b81403f1fe421c7fd2e7784345a1209164659f3493a3950",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    },
+    {
+      "label": "isolated-s41-scale-v4",
+      "family": "isolated",
+      "pair": "D1",
+      "seed": 41,
+      "action": "scale",
+      "production_seconds": 300,
+      "config": "isolated-seed-41.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "1db9c81a134e58768b81403f1fe421c7fd2e7784345a1209164659f3493a3950",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "isolated-s42-scale-v4",
+      "family": "isolated",
+      "pair": "D2",
+      "seed": 42,
+      "action": "scale",
+      "production_seconds": 300,
+      "config": "isolated-seed-42.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "9de5ee742cc37511895c865d5cfb603c39ef3762b016d9baf0004204789fed10",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "isolated-s42-none-v4",
+      "family": "isolated",
+      "pair": "D2",
+      "seed": 42,
+      "action": "none",
+      "production_seconds": 300,
+      "config": "isolated-seed-42.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "9de5ee742cc37511895c865d5cfb603c39ef3762b016d9baf0004204789fed10",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    }
+  ],
+  "prerequisite": "Finish and inspect all eight core protocol-v4 trials and their paired evidence first.",
+  "notes": [
+    "This is a preliminary synthetic partition-sequential limitation case, not key-skew analysis, stateful output validation, a new selector, or novelty over prior work.",
+    "Producer code treats SKEW_PARTITION=\"0\" as explicit partition 0. Every producer chooses it with probability 0.8; remaining messages choose among the other 59. Expected hot input is 1,200/s; actual acknowledged partition arrivals are measured.",
+    "One current owner processes the hot partition sequentially. Scaling may change its owner and that owner's performance; it does not split the partition across consumers. Record hot-owner changes and achieved throughput rather than assume the same service capacity on shared nodes.",
+    "Each production episode lasts 300 s, including 60 s excluded warm-up. Action is scheduled at production +120 s, leaving 180 s of continued production before a fixed 120 s drain.",
+    "Two matched seed pairs use opposite action orders. Do not pool this family with balanced trials or claim equal initial placement: ordinary assignor mappings and node placement are recorded.",
+    "Apply the same production freshness, guard, evidence, admission and per-metric coverage rules as core protocol-v4. Keep unfavorable results and interrupted diagnostics.",
+    "Unfinished messages remain alongside conditional completion latency. No recovery confirmed during production is censored. Backlog offsets are not distinct unfinished-cohort counts.",
+    "Prepare now; launch only after the core comparison prerequisite and the remaining-time/storage checks are satisfied. Stop at the same campaign deadline and reserve the final hour for restoration/reporting."
+  ],
+  "orchestration_sha256": {
+    "launch_trial.py": "4854d72ff089d1524a1a520e3bc4d7bdb6bf3d5a5219896590a1489b5df72972",
+    "guard_trial.py": "68f1f95991ff14d246fa17d4099d12ea631218ac84a008ff53f3478a95c01d72",
+    "run_sequence.py": "b719021276ec9089dfca01e295efa850a028539cf41c26d29e36e5e7c3ce3417",
+    "draw_run.py": "e29c38a5e9f93083094fd5a36b422fbf97628820e92bcfb7fcdda34555c4331d"
+  }
+}

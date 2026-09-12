@@ -19,6 +19,7 @@ spec:
         app: producer-sts
         app.kubernetes.io/name: producer-sts
     spec:
+      terminationGracePeriodSeconds: 120
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -66,11 +67,7 @@ spec:
               chmod 644 /config/pipeline-configmap.yaml
             fi
 
-            if [ ! -f /config/experiments.yaml ]; then
-              echo "[init] Seeding experiments.yaml from /defaults"
-              cp /defaults/experiments.yaml /config/experiments.yaml
-              chmod 644 /config/experiments.yaml
-            fi
+
             # Copy code into /app/producer-data once
             if [ ! -f /app/producer-data/.code_initialized ]; then
               cp -r /code/* /app/producer-data/

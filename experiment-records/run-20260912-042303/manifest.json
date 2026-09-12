@@ -1,0 +1,555 @@
+{
+  "run_id": "run-20260912-042303",
+  "state": "stopped",
+  "config_path": "/config/runs/run-20260912-042303/pipeline-configmap.yaml",
+  "preparing_epoch": 1789208590.823431,
+  "config_sha256": "f4832b642e91a995735d2bfa2acbd574d60090595d492fa86c5546e5f4f56e68",
+  "drain_seconds": 120.0,
+  "duration_seconds": 180.0,
+  "warmup_seconds": 60.0,
+  "producer_pods": [
+    "producer-sts-0",
+    "producer-sts-1",
+    "producer-sts-2"
+  ],
+  "consumer_pods": [
+    "consumer-sts-0",
+    "consumer-sts-1",
+    "consumer-sts-2",
+    "consumer-sts-3",
+    "consumer-sts-4",
+    "consumer-sts-5"
+  ],
+  "expected_partitions": 60,
+  "expires_epoch": 1789208911.951045,
+  "config": {
+    "RELEASE_NAME": "pip",
+    "NAMESPACE": "kafkastreamingdata",
+    "EXP_ID": "capacity-pressure-three",
+    "TRAFFIC_MODE": "balanced",
+    "TARGET_RATE": "4000",
+    "EXP_DURATION_SEC": "180",
+    "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+    "TOPIC_COUNT": "1",
+    "BROKER_COUNT": "3",
+    "NUM_PARTITIONS": "60",
+    "RETENTION_MS": "86400000",
+    "SEGMENT_MS": "30000",
+    "CLEANUP_POLICY": "delete",
+    "REPLICATION_FACTOR": "1",
+    "MIN_INSYNC_REPLICAS": "1",
+    "PRODUCER_POD_COUNT": "3",
+    "ACKS": "all",
+    "COMPRESSION_TYPE": "lz4",
+    "PRODUCER_INPUT_PATH": "producer-data",
+    "DELAY_BETWEEN_MESSAGES": "0",
+    "LINGER_MS": "5",
+    "BATCH_SIZE": "65536",
+    "MAX_REQUEST_SIZE": "1048576",
+    "RETRIES": "2",
+    "RETRY_BACKOFF_MS": "20",
+    "CONNECTION_MAX_IDLE_MS": "30000",
+    "RECONNECT_BACKOFF_MS": "100",
+    "RECONNECT_BACKOFF_MAX_MS": "1000",
+    "RANDOM_RANGE": "1000",
+    "REQUEST_TIMEOUT_MS": "10000",
+    "DELIVERY_TIMEOUT_MS": "30000",
+    "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+    "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+    "PRODUCER_CLIENT_ID": "pipeline-producer",
+    "MSG_MAX_BYTES": "1048576",
+    "METADATA_MAX_AGE_MS": "120000",
+    "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+    "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+    "PACING_MODE": "per_message",
+    "PACING_TICK_SEC": "0.005",
+    "MIN_BURST": "1",
+    "MAX_BURST": "2",
+    "PRODUCER_HTTP_PORT": "8001",
+    "PRODUCER_DEBUG": "false",
+    "PRODUCER_DEBUG_EVERY_N": "20000",
+    "PRODUCER_HEARTBEAT_SEC": "10",
+    "DROP_CATCHUP": "false",
+    "PAYLOAD_SIZE_BYTES": "100",
+    "CONSUMER_GROUP_ID": "consgroup",
+    "CONSUMER_POD_COUNT": "3",
+    "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+    "PRODUCER_MAX_MESSAGES": "0",
+    "ENABLE_AUTO_COMMIT": "false",
+    "AUTO_OFFSET_RESET": "earliest",
+    "AUTO_COMMIT_INTERVAL_MS": "0",
+    "POLL_TIMEOUT": "0.1",
+    "POLL_MAX_MSG": "25",
+    "FETCH_MAX_BYTES": "5242880",
+    "FETCH_MIN_BYTES": "1",
+    "FETCH_MAX_WAIT_MS": "5",
+    "MAX_POLL_RECORDS": "100",
+    "MAX_POLL_INTERVAL_MS": "120000",
+    "SESSION_TIMEOUT_MS": "20000",
+    "HEARTBEAT_INTERVAL_MS": "1000",
+    "SOCKET_TIMEOUT_MS": "30000",
+    "MAX_PARTITION_FETCH_BYTES": "1048576",
+    "SOCKET_SEND_BUFFER_BYTES": "524288",
+    "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+    "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+    "PROCESSED_DIR": "/tmp/metrics/processed",
+    "CONSUMER_HTTP_PORT": "8002",
+    "CONSUMER_DEBUG": "false",
+    "CONSUMER_DEBUG_EVERY_N": "20000",
+    "CONSUMER_HEARTBEAT_SEC": "10",
+    "CONSUMER_CLIENT_ID": "pipeline-consumer",
+    "PER_MSG_LAT_ENABLED": "false",
+    "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+    "PER_MSG_LAT_FLUSH_SEC": "10",
+    "PER_MSG_LAT_MAX_BUFFER": "20000",
+    "SLO_WINDOW_SECONDS": "30",
+    "SLO_THRESHOLD_MS": "99",
+    "MITIGATION_POLICY": "none",
+    "SKEW_FRACTION": "0.8",
+    "SKEW_PARTITION": "0.2",
+    "LAG_QUERY_INTERVAL": "2",
+    "LAG_QUERY_TIMEOUT": "3",
+    "PARTITION_LAG_CSV_ENABLED": "false",
+    "CSV_LOG_INTERVAL_SEC": "30",
+    "CSV_LATENCY_WINDOW_SEC": "30",
+    "REBALANCE_CSV_ENABLED": "false",
+    "APP_DELAY_MODE": "fixed",
+    "APP_DELAY_MS": "0",
+    "APP_DELAY_MAX_MS": "0",
+    "RUN_ID": "run-20260912-042303",
+    "TOPIC_TITLE": "capacity-pressure-three-balanced-R4000-20260912-042303",
+    "ENABLE_IDEMPOTENCE": "true",
+    "WARMUP_SECONDS": "60",
+    "DRAIN_SECONDS": "120",
+    "READINESS_TIMEOUT_SECONDS": "180",
+    "FINAL_SCRAPE_SECONDS": "15",
+    "PRODUCER_FLUSH_SECONDS": "30",
+    "WORKLOAD_SEED": "1",
+    "LAG_QUERY_BUDGET_SEC": "0.2",
+    "LAG_FRESHNESS_SECONDS": "10",
+    "OUTCOME_LOG_ENABLED": "true",
+    "EVIDENCE_MAX_BUFFER": "100000",
+    "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+    "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+    "APP_CPU_ITERATIONS": "0"
+  },
+  "capacity_estimate": {
+    "producer_count": 3,
+    "consumer_count": 6,
+    "target_messages_per_second": 12000.0,
+    "balanced_messages_per_second_per_consumer": 2000.0,
+    "balanced_processing_budget_ms": 0.5,
+    "app_delay_ms": 0.0,
+    "note": "Initial replica counts; assumes balanced sequential processing. All overhead uses this budget. Recalculate after scaling."
+  },
+  "initial_consumer_resources": [
+    {
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-1",
+      "node": "unseenu.crbs.ucsd.edu",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-2",
+      "node": "k8s-chase-ci-10.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-3",
+      "node": "k8s-gpu-01.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-4",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    },
+    {
+      "pod": "consumer-sts-5",
+      "node": "k8s-ravi-01.calit2.optiputer.net",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0
+    }
+  ],
+  "clock_probes": [
+    {
+      "pod": "producer-sts-0",
+      "role": "producer",
+      "roundtrip_seconds": 0.6243858337402344,
+      "offset_low_seconds": 0.044793128967285156,
+      "offset_high_seconds": 0.6691789627075195
+    },
+    {
+      "pod": "producer-sts-1",
+      "role": "producer",
+      "roundtrip_seconds": 0.6100249290466309,
+      "offset_low_seconds": 0.04369068145751953,
+      "offset_high_seconds": 0.6537156105041504
+    },
+    {
+      "pod": "producer-sts-2",
+      "role": "producer",
+      "roundtrip_seconds": 0.6404459476470947,
+      "offset_low_seconds": 0.04261422157287598,
+      "offset_high_seconds": 0.6830601692199707
+    },
+    {
+      "pod": "consumer-sts-0",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6518871784210205,
+      "offset_low_seconds": 0.038771867752075195,
+      "offset_high_seconds": 0.6906590461730957
+    },
+    {
+      "pod": "consumer-sts-1",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6032156944274902,
+      "offset_low_seconds": 0.04387497901916504,
+      "offset_high_seconds": 0.6470906734466553
+    },
+    {
+      "pod": "consumer-sts-2",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6262259483337402,
+      "offset_low_seconds": 0.04430198669433594,
+      "offset_high_seconds": 0.6705279350280762
+    },
+    {
+      "pod": "consumer-sts-3",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6071212291717529,
+      "offset_low_seconds": 0.04504990577697754,
+      "offset_high_seconds": 0.6521711349487305
+    },
+    {
+      "pod": "consumer-sts-4",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6236231327056885,
+      "offset_low_seconds": 0.04438471794128418,
+      "offset_high_seconds": 0.6680078506469727
+    },
+    {
+      "pod": "consumer-sts-5",
+      "role": "consumer",
+      "roundtrip_seconds": 0.6192901134490967,
+      "offset_low_seconds": 0.044763803482055664,
+      "offset_high_seconds": 0.6640539169311523
+    }
+  ],
+  "initial_assignment": [
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 0
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 1
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 2
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 3
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 4
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 5
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 6
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 7
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 8
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 9
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 10
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 11
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 12
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 13
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 14
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 15
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 16
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 17
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 18
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 19
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 20
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 21
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 22
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 23
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 24
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 25
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 26
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 27
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 28
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 29
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 30
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 31
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 32
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 33
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 34
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 35
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 36
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 37
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 38
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 39
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 40
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 41
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 42
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 43
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 44
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 45
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 46
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 47
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 48
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 49
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 50
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 51
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 52
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 53
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 54
+    },
+    {
+      "pod": "consumer-sts-4",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 55
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 56
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 57
+    },
+    {
+      "pod": "consumer-sts-5",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 58
+    },
+    {
+      "pod": "consumer-sts-3",
+      "topic": "capacity-pressure-three-balanced-R4000-20260912-042303_0",
+      "partition": 59
+    }
+  ],
+  "start_epoch": 1789208644.128326,
+  "evaluation_start_epoch": 1789208704.128326,
+  "producer_end_epoch": 1789208671.951045,
+  "drain_end_epoch": 1789208791.951045,
+  "intervention_cancelled_epoch": 1789209038.5839832
+}

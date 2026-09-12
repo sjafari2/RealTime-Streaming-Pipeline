@@ -1,0 +1,20 @@
+{
+  "run_id": "run-20260911-234758",
+  "start": 1789192145.897069,
+  "end": 1789192520.897069,
+  "producer_end": 1789192445.897069,
+  "drain_end": 1789192505.897069,
+  "step": 2,
+  "queries": {
+    "admitted_rate": "sum(rate(producer_delivery_ok_total{run_id=\"run-20260911-234758\"}[30s]))",
+    "completion_rate": "sum(rate(consumer_messages_consumed_total{run_id=\"run-20260911-234758\"}[30s]))",
+    "p50_ms": "1000 * histogram_quantile(0.50, sum by (le) (rate(consumer_e2e_latency_seconds_bucket{run_id=\"run-20260911-234758\"}[30s])))",
+    "p95_ms": "1000 * histogram_quantile(0.95, sum by (le) (rate(consumer_e2e_latency_seconds_bucket{run_id=\"run-20260911-234758\"}[30s])))",
+    "p99_ms": "1000 * histogram_quantile(0.99, sum by (le) (rate(consumer_e2e_latency_seconds_bucket{run_id=\"run-20260911-234758\"}[30s])))",
+    "deadline_percent": "100 * sum(rate(consumer_slo_violations_total{run_id=\"run-20260911-234758\"}[30s])) / sum(rate(consumer_e2e_latency_seconds_count{run_id=\"run-20260911-234758\"}[30s]))",
+    "consumer_cpu_percent": "consumer_cpu_percent{run_id=\"run-20260911-234758\"}",
+    "consumer_memory_mib": "consumer_memory_bytes{run_id=\"run-20260911-234758\"} / 1048576"
+  },
+  "window_seconds": 30,
+  "note": "Rolling attempt monitoring; histogram quantiles are estimates, separate from exact whole-run cohort statistics."
+}

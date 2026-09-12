@@ -1,0 +1,28 @@
+{
+  "snapshots": [],
+  "covered_seconds": 0.0,
+  "backlog_area_offset_seconds": null,
+  "time_weighted_mean_lag": null,
+  "peak_sampled_lag": null,
+  "run_id": "run-20260912-042303",
+  "evaluation_seconds": -32.17728090286255,
+  "covered_fraction": null,
+  "final_lag": null,
+  "parameters": {
+    "window_samples": 15,
+    "hot_k": 1.0,
+    "minimum_lag": 10.0,
+    "persistence": 0.8,
+    "max_gap": 3.0
+  },
+  "notes": [
+    "Offline diagnostic signals; this does not implement a controller.",
+    "Lag is high offset minus returned-record position. Processing backlog is reported separately.",
+    "Trapezoidal integration covers only adjacent valid, same-owner observations within max_gap.",
+    "Windows reset after invalid samples, owner changes, gaps or decreasing observed offsets.",
+    "Window growth uses m+1 snapshots; window means and persistence use m snapshots.",
+    "Hotspot thresholds are exploratory inputs and require pilot calibration.",
+    "Final lag requires a valid sample at the exact evaluation boundary; no extrapolation.",
+    "Unsampled ownership changes or resets cannot be recovered from these exported gauges."
+  ]
+}

@@ -1,0 +1,111 @@
+Local verification for the measurement and run workflow update
+
+Current status — 12 September 2026 preliminary campaign
+- Latest relevant full automated suite: 96 tests passed (2.87 seconds).
+- Live application signatures and frozen configurations checked for each trial.
+- Sixteen controlled trials completed across four two-pair families; exact
+  outcomes and per-metric coverage screens are in experiment-records/campaign-20260912/.
+- Raw event copies reconciled against original Nautilus PVC SHA-256 hashes;
+  completed-run compression verified lossless before removing plain duplicates.
+- Three-to-six startup and first-completion events recorded in live experiments.
+- Subsequent plot correction made the target-rate reference visible when observed
+  throughput stayed below target; reviewed rendered PDFs use the corrected plotter.
+- Consumer HPA/shared-config restoration and publication status are recorded in
+  the campaign completion record. Dynamic Prometheus discovery was not deployed.
+- These runs do not validate a tuned autoscaling policy, targeted reassignment,
+  a stateful downstream sink or cross-node clock accuracy for the 99 ms threshold.
+
+The entries below are dated history. Earlier statements that deployment had not
+been performed describe their own stage, not the current campaign status.
+
+19 tests passed using a temporary Python virtual environment.
+- Completion latency includes processing work.
+- Invalid records do not advance commit progress.
+- Revocation removes lag series and commits only completed offsets.
+- Lost ownership does not commit.
+- Failed lag queries remain invalid, not zero.
+- Readiness rejects incomplete or duplicate assignments.
+- Runtime observes cancellation.
+- Negative/sentinel offsets and invalid clocks are rejected.
+- Evidence writers flush and report errors.
+- Producer configuration requires acknowledgments and uses reproducible hot sets.
+- Exports preserve labels and scope the exact run.
+- Cohort evaluation counts incomplete messages and duplicate attempts.
+- An actual SIGTERM flushes durable final evidence.
+- A per-pod role lock prevents duplicate processes.
+- Restarting reads the newly edited shared YAML.
+- The coordinator defers to an active consumer supervisor.
+- PromQL string literals are not rewritten as metric references.
+- A stopped consumer commits only the processed batch prefix.
+- The producer flushes when the shared window has already ended.
+
+All 15 generated dashboard expressions parsed with promql-parser 0.10.0.
+Python source parsing, bash -n checks, changed YAML parsing and dashboard JSON parsing passed.
+
+Local packages: confluent-kafka 2.15.1, prometheus-client 0.26.0,
+psutil 7.2.2, PyYAML 6.0.3, pytest 9.1.1.
+
+No live Kafka, Nautilus, Kubernetes deployment, clock-accuracy or performance validation was run.
+Follow docs/nautilus-measurement-update.md for the cluster smoke test.
+
+2026-09-11 archive and documentation cleanup:
+- Moved 71 legacy files to archive/legacy-before-managed-runs; verified SHA-256 for each and absence at original paths.
+- Kept historical measurement files, backups, infrastructure and clock diagnostics.
+- Replaced two archived-exporter tests with active exporter label/NaN and missing-incarnation cases.
+- 19 tests passed (PYTHONDONTWRITEBYTECODE=1, pytest -q -p no:cacheprovider).
+- Active source/test Python AST checks, active shell bash -n checks, guide links and save-run.sh --help passed.
+- No Nautilus deployment or experiment was performed.
+
+2026-09-11 metric alignment update: 26 tests passed locally (pytest, no cache); Grafana PromQL expressions parsed. No Nautilus deployment or live experiment performed. Added exact cohort mean, diagnostic timing, matching-run pooling and coverage-aware offline lag calculations.
+
+Complete experiment entry points (11 September 2026)
+- save-run.sh defaults to one full run; run_pipeline.sh repeats the shared
+  configuration, with optional explicit per-producer rates.
+- Automatic temporary connection to existing Prometheus; dependency/source
+  checks, wait/drain, collection, export, outcome/lag analysis and batch summary.
+- 36 tests passed locally (26 existing + 10 run-command tests).
+- Failure tests cover export loss with retained outcome analysis, interrupted
+  run cleanup, stopped batches, unusable Prometheus and owned-forward cleanup.
+- Shell scripts and documentation blocks parsed; coordinator parses as Python 3.8.
+- Read-only kubectl check confirmed nautilus context and existing services
+  prometheus-svc:9090 and grafana-svc:3000 in kafkastreamingdata.
+- No cluster workload or deployment command was run for this update.
+
+2026-09-11 research-direction update
+- 57 local tests passed; no Nautilus experiment or deployment was performed.
+- Both complete-run entry points use the same expanded evaluation and optional
+  scheduled no-action/scale-up path. Targeted reassignment is not implemented.
+- Tests cover known p50/p95/p99, partition arrival/completion populations,
+  conflicting identities, within-epoch ordering, pooled partition quantiles,
+  action grouping, censored recovery, removed process lifetimes, monotonic
+  duration across wall-clock adjustment, sampled resource gaps, guarded scale
+  requests, no-action behavior, baseline restoration, repeated plans and
+  cancellation before drain. Interrupted runs are excluded from pooling.
+- Python 3.8 syntax parsing, active shell scripts, documentation bash blocks
+  and both shell entry-point --help commands passed.
+- Request-time is a sampled consumer-container estimate with coverage, not
+  whole-cluster allocation or actual CPU/RSS usage. Real handover behavior,
+  permissions, performance overhead and clock accuracy still require pilots.
+
+2026-09-12 Nautilus pilot and evidence-transfer recovery
+- Synchronized final application source and verified it across 3 producer and 6 consumer pods.
+- Executed run-20260911-214924: 300 seconds production, 60 seconds drain, no intervention.
+- Recovered an initial kubectl cp unexpected EOF using bounded retries and a longer copy allowance.
+- Both run workflows share the transfer fix; 59 local tests passed.
+- All 27 copied evidence files matched retained Nautilus SHA-256 hashes; nine final snapshots were clean.
+- Prometheus export: 1671 series, no missing incarnations. Runner status: complete, no evidence validity failures.
+- 2699197 distinct admissions and completions; zero unfinished or duplicate completions.
+- Recorded mean 46.958 ms, p50 15.019 ms, p95 254.503 ms, p99 662.856 ms; 238485 deadline misses above 99 ms.
+- Lag integration coverage 87.33%; resource-request sample coverage 92.98%. Clock calibration remains pending.
+- This validates the single-run measurement path after recovery; no repeated or action-comparison batch was executed.
+- Detailed report: results/run-20260911-214924/validation-report.md
+
+Git history integration and next-configuration review (2026-09-12 UTC)
+- Original private repository main c59a6a90fb8fddaf430e4b850caf47892de95f92: 111 commits.
+- A complete mirror and portable --all bundle were made before the update.
+- Current active code, historical source archives and small run records prepared on codex/managed-experiments-2026.
+- 59 existing tests passed in the integration checkout (2.49 seconds).
+- Both prepared YAML configurations pass the current validate_config function.
+- The longer no-action and 6-to-12 scale plan pass validate_intervention; both entry-point help pages confirm the documented flags.
+- No producer/consumer runtime behavior changed in this integration task.
+- No new experiment was launched and no shared Nautilus configuration or Overleaf definition was changed.

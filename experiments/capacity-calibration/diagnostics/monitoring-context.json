@@ -1,0 +1,163 @@
+{
+  "scrape_duration_at_balanced_end": {
+    "query": "max_over_time(scrape_duration_seconds{job=\"kafka-pipeline\"}[300s])",
+    "at_epoch": 1789192445.897069,
+    "response": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {
+              "instance": "consumer-sts-0.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002",
+              "job": "kafka-pipeline",
+              "role": "consumer"
+            },
+            "value": [
+              1789192445.897,
+              "0.242047168"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "consumer-sts-1.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002",
+              "job": "kafka-pipeline",
+              "role": "consumer"
+            },
+            "value": [
+              1789192445.897,
+              "0.197384102"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "consumer-sts-2.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002",
+              "job": "kafka-pipeline",
+              "role": "consumer"
+            },
+            "value": [
+              1789192445.897,
+              "0.188368833"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "consumer-sts-3.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002",
+              "job": "kafka-pipeline",
+              "role": "consumer"
+            },
+            "value": [
+              1789192445.897,
+              "0.211068063"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "consumer-sts-4.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002",
+              "job": "kafka-pipeline",
+              "role": "consumer"
+            },
+            "value": [
+              1789192445.897,
+              "0.291753782"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "consumer-sts-5.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002",
+              "job": "kafka-pipeline",
+              "role": "consumer"
+            },
+            "value": [
+              1789192445.897,
+              "0.18758025"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "producer-sts-0.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001",
+              "job": "kafka-pipeline",
+              "role": "producer"
+            },
+            "value": [
+              1789192445.897,
+              "0.139618661"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "producer-sts-1.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001",
+              "job": "kafka-pipeline",
+              "role": "producer"
+            },
+            "value": [
+              1789192445.897,
+              "0.148085268"
+            ]
+          },
+          {
+            "metric": {
+              "instance": "producer-sts-2.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001",
+              "job": "kafka-pipeline",
+              "role": "producer"
+            },
+            "value": [
+              1789192445.897,
+              "0.286977122"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "available_jobs": {
+    "query": "count by(job) (up)",
+    "at_epoch": null,
+    "response": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {
+              "job": "prometheus"
+            },
+            "value": [
+              1789199472.398,
+              "1"
+            ]
+          },
+          {
+            "metric": {
+              "job": "kafka-pipeline"
+            },
+            "value": [
+              1789199472.398,
+              "9"
+            ]
+          },
+          {
+            "metric": {
+              "job": "kafka-brokers"
+            },
+            "value": [
+              1789199472.398,
+              "1"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "timex_metrics": {
+    "query": "count by(__name__) ({__name__=~\"node_timex_.*|node_time_seconds\"})",
+    "at_epoch": null,
+    "response": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": []
+      }
+    }
+  }
+}

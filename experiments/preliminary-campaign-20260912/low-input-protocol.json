@@ -1,0 +1,102 @@
+{
+  "frozen_epoch": 1789220470.722444,
+  "calibration_run_id": "run-20260912-054927",
+  "calibration_qualified": true,
+  "calibration_evidence": {
+    "admitted_evaluation": 180000,
+    "admitted_whole_production": 269973,
+    "lag_coverage": 0.9833333333333333,
+    "median_boundary_growth_offsets": [
+      13187.0,
+      12943.5
+    ],
+    "unfinished": 3103
+  },
+  "deadline_epoch": 1789246384.0,
+  "total_target_messages_per_second": 600,
+  "initial_consumers": 3,
+  "target_consumers": 6,
+  "application_sha256_iterations": 2000,
+  "production_seconds_by_family": {
+    "low-input": 180
+  },
+  "warmup_seconds": 60,
+  "drain_seconds": 120,
+  "action_seconds_from_production_start": 120,
+  "recovery_threshold_offsets": 1500,
+  "recovery_hold_seconds": 20,
+  "transition_monitoring_guard_grace_seconds": 60,
+  "trials": [
+    {
+      "label": "low-input-s51-none-v4",
+      "family": "low-input",
+      "pair": "A1",
+      "seed": 51,
+      "action": "none",
+      "production_seconds": 180,
+      "config": "low-input-seed-51.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "f5788b6e87bf1150a177824e5222e16e0d8356c4a1043eef39486d9d8a7f2ab9",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    },
+    {
+      "label": "low-input-s51-scale-v4",
+      "family": "low-input",
+      "pair": "A1",
+      "seed": 51,
+      "action": "scale",
+      "production_seconds": 180,
+      "config": "low-input-seed-51.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "f5788b6e87bf1150a177824e5222e16e0d8356c4a1043eef39486d9d8a7f2ab9",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "low-input-s52-scale-v4",
+      "family": "low-input",
+      "pair": "A2",
+      "seed": 52,
+      "action": "scale",
+      "production_seconds": 180,
+      "config": "low-input-seed-52.yaml",
+      "plan": "scheduled-scale.json",
+      "config_sha256": "06b120b0682019d32d54df6450c63bc5c4defafe2b8c4874096b64fb1cc8c964",
+      "plan_sha256": "ce5ce4bc156793ad0ce8292efee99b3f2c9888c66ec8121efad38ac0bd4ae1fe"
+    },
+    {
+      "label": "low-input-s52-none-v4",
+      "family": "low-input",
+      "pair": "A2",
+      "seed": 52,
+      "action": "none",
+      "production_seconds": 180,
+      "config": "low-input-seed-52.yaml",
+      "plan": "scheduled-none.json",
+      "config_sha256": "06b120b0682019d32d54df6450c63bc5c4defafe2b8c4874096b64fb1cc8c964",
+      "plan_sha256": "3347bde1699eeda0003a62c43bae92ccb18a03fce0d2ca7abf361fb0851ce05a"
+    }
+  ],
+  "notes": [
+    "Same 2000 SHA-256 iterations/message and 60 partitions as the pressure trials, but only 600/s total input.",
+    "This workload is intended to leave processing headroom. Verify that property from each no-action run; do not label it sufficient capacity solely from its target rate.",
+    "Use two matched seed pairs with opposite action orders, 180 s production including 60 s warm-up and 120 s drain. Schedule the decision at evaluation +60 s.",
+    "All favorable and unfavorable results and per-metric coverage flags remain visible. This tests scheduled actions, not an adaptive selector or tuned HPA.",
+    "Analyze this condition separately from high-input trials. Do not pool their outcomes or use a post hoc deadline to declare success.",
+    "If backlog is already below the threshold before the decision, subsequent threshold-hold confirmation is a health check, not recovery from overload. Missing transition observations do not prove that a healthy workload failed to recover."
+  ],
+  "protocol_revision": 1,
+  "measurement_revision": "monotonic_scrape_v2",
+  "orchestration_sha256": {
+    "launch_trial.py": "4854d72ff089d1524a1a520e3bc4d7bdb6bf3d5a5219896590a1489b5df72972",
+    "guard_trial.py": "68f1f95991ff14d246fa17d4099d12ea631218ac84a008ff53f3478a95c01d72",
+    "run_sequence.py": "b719021276ec9089dfca01e295efa850a028539cf41c26d29e36e5e7c3ce3417",
+    "draw_run.py": "e29c38a5e9f93083094fd5a36b422fbf97628820e92bcfb7fcdda34555c4331d"
+  },
+  "scenario": "Table 1 A-related low-input scheduled-action comparison",
+  "prerequisite": "Complete and inspect all core comparisons first. Execute after the concentrated-partition contrast if time and storage permit.",
+  "derived_measurement_protocol": {
+    "path": "comparison-protocol-v4.json",
+    "sha256": "98e115fc32114e2cce46c61acc0cbfeb02f25dfaffa6b21ced16b2ef1965424f"
+  },
+  "calibration_evidence_scope": "The prior 1500/s balanced pressure calibration qualified the fixed CPU task and evidence method. It does not establish headroom at the new 600/s input; each no-action trial must verify that condition."
+}

@@ -1,0 +1,93 @@
+{
+  "run_id": "run-20260911-234758",
+  "purpose": "One short balanced monitoring validation; no mitigation",
+  "workload_executed": true,
+  "run_start_git_commit": "46c5d4aa22d6a568c9cad01ecc73180b49672ba8",
+  "source_unchanged_between_launch_and_start": true,
+  "transfer_recovery": {
+    "run_id": "run-20260911-234758",
+    "original_transfer": "Consumer role copy failed with unexpected EOF despite three kubectl retries.",
+    "recovery": "Copied each consumer pod evidence directory separately from the same retained shared volume.",
+    "consumer_pods": [
+      "consumer-sts-0",
+      "consumer-sts-1",
+      "consumer-sts-2",
+      "consumer-sts-3",
+      "consumer-sts-4",
+      "consumer-sts-5"
+    ],
+    "workload_repeated": false
+  },
+  "post_workload_collector_maintenance": {
+    "commit": "0975d4b26bd49517b6fe23894d49373199cb399c",
+    "branch": "codex/managed-experiments-2026",
+    "files": [
+      "my-shell/run_experiment.py",
+      "tests/test_run_commands.py",
+      "docs/evidence-collection.md"
+    ],
+    "tests": "61 passed in final code folder; no new workload for this maintenance fix"
+  },
+  "raw_results_directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260911-234758",
+  "raw_results_bytes_before_report": 2268024905,
+  "raw_data_uploaded_to_github": false,
+  "previous_run_id": "run-20260911-214924",
+  "observed_partition_balance": {
+    "partitions": 60,
+    "total": 2699808,
+    "minimum": 44609,
+    "maximum": 45466,
+    "mean": 44996.8,
+    "population_stddev": 183.58002796237577,
+    "coefficient_of_variation": 0.0040798462993451926
+  },
+  "comparison": {
+    "admitted_evaluation_cohort": {
+      "balanced": 2699808,
+      "previous_skewed": 2699197
+    },
+    "completed_by_drain": {
+      "balanced": 2699808,
+      "previous_skewed": 2699197
+    },
+    "incomplete_by_drain": {
+      "balanced": 0,
+      "previous_skewed": 0
+    },
+    "admitted_cohort_completion_mean_seconds": {
+      "balanced": 0.052631779414205326,
+      "previous_skewed": 0.046957570131386524
+    },
+    "admitted_cohort_completion_p95_seconds": {
+      "balanced": 0.30127882957458496,
+      "previous_skewed": 0.254502534866333
+    },
+    "admitted_cohort_completion_p99_seconds": {
+      "balanced": 0.764188289642334,
+      "previous_skewed": 0.662855863571167
+    },
+    "deadline_misses": {
+      "balanced": 254589,
+      "previous_skewed": 238485
+    },
+    "deadline_miss_fraction": {
+      "balanced": 0.09429892792376347,
+      "previous_skewed": 0.0883540549281879
+    },
+    "admitted_messages_per_second": {
+      "balanced": 8999.36,
+      "previous_skewed": 8997.323333333334
+    },
+    "useful_throughput_per_second": {
+      "balanced": 8998.81,
+      "previous_skewed": 8996.923333333334
+    }
+  },
+  "limitations": [
+    "One unreplicated comparison, not a causal treatment-effect estimate.",
+    "Not the proposal timing protocol, a capacity calibration or a scaling experiment.",
+    "Recorded cross-node timestamp latency; clock probes do not establish 99 ms accuracy.",
+    "Lag and sampled resource accounting must be interpreted with their coverage.",
+    "Raw evidence remains on Nautilus and locally; no additional cloud backup configured."
+  ]
+}

@@ -1,0 +1,1786 @@
+{
+  "run_id": "run-20260912-053411",
+  "process_lifetimes": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "started_epoch": 1789212861.1806006,
+      "finished_epoch": 1789213205.9983478,
+      "process_seconds": 344.82650015095714,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-0/0bb22d7d92e544c385811e1d327b79f6/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "started_epoch": 1789212863.9095278,
+      "finished_epoch": 1789213205.897998,
+      "process_seconds": 341.99934190139174,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-1/da1c8125c8dc4fb6be8e7b5b1f6fab4d/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "started_epoch": 1789212863.1505709,
+      "finished_epoch": 1789213205.8955142,
+      "process_seconds": 342.75618194788694,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-2/e6a91f0faaec4d2f84657c14c9a56cf2/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-0",
+      "incarnation": "d442a78c9c4d47e69ce8a963b8da7cec",
+      "started_epoch": 1789212865.9197118,
+      "finished_epoch": 1789213086.6275878,
+      "process_seconds": 220.99370712041855,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-0/d442a78c9c4d47e69ce8a963b8da7cec/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-1",
+      "incarnation": "9a46f9a0f6334cdc80fbd3b2c271b3c9",
+      "started_epoch": 1789212866.262222,
+      "finished_epoch": 1789213086.6323617,
+      "process_seconds": 220.7514515920775,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-1/9a46f9a0f6334cdc80fbd3b2c271b3c9/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-2",
+      "incarnation": "cb5c1f9cb6764be6a2a08703e43b94e6",
+      "started_epoch": 1789212866.8245723,
+      "finished_epoch": 1789213086.6293778,
+      "process_seconds": 220.17412225098815,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-2/cb5c1f9cb6764be6a2a08703e43b94e6/events.jsonl"
+    }
+  ],
+  "consumer_process_seconds": 1029.5820240002358,
+  "consumer_lifetime_coverage_complete": true,
+  "ownership_events": [
+    {
+      "event": "assign_started",
+      "timestamp": 1789212867.4129746,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          1
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          4
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          7
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          10
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          13
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          16
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          19
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          22
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          25
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          28
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          31
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          34
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          37
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          40
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          43
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          46
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          49
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          52
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          55
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789212867.4130125,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          0
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          3
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          6
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          9
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          12
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          15
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          18
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          21
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          24
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          27
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          30
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          33
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          36
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          39
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          42
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          45
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          48
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          51
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          54
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789212867.4131737,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          2
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          5
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          8
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          11
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          14
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          17
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          20
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          23
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          26
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          29
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          32
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          35
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          38
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          41
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          44
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          47
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          50
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          53
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          56
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789212867.4493766,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          1
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          4
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          7
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          10
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          13
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          16
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          19
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          22
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          25
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          28
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          31
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          34
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          37
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          40
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          43
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          46
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          49
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          52
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          55
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          58
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789212867.4984994,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          2
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          5
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          8
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          11
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          14
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          17
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          20
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          23
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          26
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          29
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          32
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          35
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          38
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          41
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          44
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          47
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          50
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          53
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          56
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          59
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789212867.5334263,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          0
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          3
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          6
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          9
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          12
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          15
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          18
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          21
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          24
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          27
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          30
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          33
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          36
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          39
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          42
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          45
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          48
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          51
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          54
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          57
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789213205.883641,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          0
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          3
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          6
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          9
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          12
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          15
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          18
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          21
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          24
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          27
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          30
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          33
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          36
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          39
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          42
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          45
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          48
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          51
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          54
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789213205.8852355,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          1
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          4
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          7
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          10
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          13
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          16
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          19
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          22
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          25
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          28
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          31
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          34
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          37
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          40
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          43
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          46
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          49
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          52
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          55
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789213205.8936348,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          0
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          3
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          6
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          9
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          12
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          15
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          18
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          21
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          24
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          27
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          30
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          33
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          36
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          39
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          42
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          45
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          48
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          51
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          54
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          57
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789213205.8941367,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          1
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          4
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          7
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          10
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          13
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          16
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          19
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          22
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          25
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          28
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          31
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          34
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          37
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          40
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          43
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          46
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          49
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          52
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          55
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          58
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789213205.9763317,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          2
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          5
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          8
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          11
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          14
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          17
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          20
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          23
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          26
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          29
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          32
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          35
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          38
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          41
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          44
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          47
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          50
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          53
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          56
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789213205.9903593,
+      "partitions": [
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          2
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          5
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          8
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          11
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          14
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          17
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          20
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          23
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          26
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          29
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          32
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          35
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          38
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          41
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          44
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          47
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          50
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          53
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          56
+        ],
+        [
+          "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+          59
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6"
+    }
+  ],
+  "callback_blocking_intervals": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "event": "assign",
+      "started_epoch": 1789212867.4131737,
+      "finished_epoch": 1789212867.4984994,
+      "blocked_seconds": 0.08532571792602539
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "event": "revoke",
+      "started_epoch": 1789213205.9763317,
+      "finished_epoch": 1789213205.9903593,
+      "blocked_seconds": 0.014027595520019531
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "event": "assign",
+      "started_epoch": 1789212867.4129746,
+      "finished_epoch": 1789212867.4493766,
+      "blocked_seconds": 0.036401987075805664
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "event": "revoke",
+      "started_epoch": 1789213205.8852355,
+      "finished_epoch": 1789213205.8941367,
+      "blocked_seconds": 0.008901119232177734
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "event": "assign",
+      "started_epoch": 1789212867.4130125,
+      "finished_epoch": 1789212867.5334263,
+      "blocked_seconds": 0.12041378021240234
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "event": "revoke",
+      "started_epoch": 1789213205.883641,
+      "finished_epoch": 1789213205.8936348,
+      "blocked_seconds": 0.009993791580200195
+    }
+  ],
+  "assignment_first_completions": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 2,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.1379824,
+      "assign_to_first_completion_seconds": 38.6394829750061
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 5,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.204008,
+      "assign_to_first_completion_seconds": 38.70550870895386
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 8,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9877439,
+      "assign_to_first_completion_seconds": 38.48924446105957
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 11,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9353237,
+      "assign_to_first_completion_seconds": 38.436824321746826
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 14,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.123136,
+      "assign_to_first_completion_seconds": 38.62463665008545
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 17,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.09311,
+      "assign_to_first_completion_seconds": 38.59461069107056
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 20,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9413168,
+      "assign_to_first_completion_seconds": 38.4428174495697
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 23,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.1081395,
+      "assign_to_first_completion_seconds": 38.60964012145996
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 26,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9459405,
+      "assign_to_first_completion_seconds": 38.44744110107422
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 29,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9964402,
+      "assign_to_first_completion_seconds": 38.4979407787323
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 32,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.968534,
+      "assign_to_first_completion_seconds": 38.4700345993042
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 35,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.016192,
+      "assign_to_first_completion_seconds": 38.51769256591797
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 38,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9301639,
+      "assign_to_first_completion_seconds": 38.43166446685791
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 41,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.085365,
+      "assign_to_first_completion_seconds": 38.58686566352844
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 44,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9783602,
+      "assign_to_first_completion_seconds": 38.47986078262329
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 47,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.954652,
+      "assign_to_first_completion_seconds": 38.45615267753601
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 50,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9734502,
+      "assign_to_first_completion_seconds": 38.47495079040527
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 53,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.0196743,
+      "assign_to_first_completion_seconds": 38.521174907684326
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 56,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212905.9591374,
+      "assign_to_first_completion_seconds": 38.46063804626465
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "0bb22d7d92e544c385811e1d327b79f6",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 59,
+      "assigned_epoch": 1789212867.4984994,
+      "first_completion_epoch": 1789212906.1814935,
+      "assign_to_first_completion_seconds": 38.68299412727356
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 1,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.0606587,
+      "assign_to_first_completion_seconds": 38.61128211021423
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 4,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.0300744,
+      "assign_to_first_completion_seconds": 38.580697774887085
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 7,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.0335324,
+      "assign_to_first_completion_seconds": 38.584155797958374
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 10,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.1437137,
+      "assign_to_first_completion_seconds": 38.694337129592896
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 13,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.9216123,
+      "assign_to_first_completion_seconds": 38.472235679626465
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 16,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.911381,
+      "assign_to_first_completion_seconds": 38.46200442314148
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 19,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.136996,
+      "assign_to_first_completion_seconds": 38.68761944770813
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 22,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.1603975,
+      "assign_to_first_completion_seconds": 38.711020946502686
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 25,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.894152,
+      "assign_to_first_completion_seconds": 38.444775342941284
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 28,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.133673,
+      "assign_to_first_completion_seconds": 38.68429636955261
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 31,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.9046044,
+      "assign_to_first_completion_seconds": 38.455227851867676
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 34,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.0571704,
+      "assign_to_first_completion_seconds": 38.6077938079834
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 37,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.9147618,
+      "assign_to_first_completion_seconds": 38.46538519859314
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 40,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.9079256,
+      "assign_to_first_completion_seconds": 38.45854902267456
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 43,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.1873634,
+      "assign_to_first_completion_seconds": 38.73798680305481
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 46,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.0165412,
+      "assign_to_first_completion_seconds": 38.56716465950012
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 49,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.1569812,
+      "assign_to_first_completion_seconds": 38.70760464668274
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 52,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.0031433,
+      "assign_to_first_completion_seconds": 38.55376672744751
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 55,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212906.394189,
+      "assign_to_first_completion_seconds": 38.944812297821045
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "da1c8125c8dc4fb6be8e7b5b1f6fab4d",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 58,
+      "assigned_epoch": 1789212867.4493766,
+      "first_completion_epoch": 1789212905.918257,
+      "assign_to_first_completion_seconds": 38.46888041496277
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 0,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9307344,
+      "assign_to_first_completion_seconds": 38.397308111190796
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 3,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9699798,
+      "assign_to_first_completion_seconds": 38.43655347824097
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 6,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212906.068724,
+      "assign_to_first_completion_seconds": 38.53529763221741
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 9,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9527445,
+      "assign_to_first_completion_seconds": 38.419318199157715
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 12,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212906.053691,
+      "assign_to_first_completion_seconds": 38.520264625549316
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 15,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.926373,
+      "assign_to_first_completion_seconds": 38.39294672012329
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 18,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212906.0665128,
+      "assign_to_first_completion_seconds": 38.53308653831482
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 21,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212906.072881,
+      "assign_to_first_completion_seconds": 38.53945469856262
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 24,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.919379,
+      "assign_to_first_completion_seconds": 38.38595271110535
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 27,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9506612,
+      "assign_to_first_completion_seconds": 38.417234897613525
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 30,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9395416,
+      "assign_to_first_completion_seconds": 38.40611529350281
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 33,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9330897,
+      "assign_to_first_completion_seconds": 38.39966344833374
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 36,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9485211,
+      "assign_to_first_completion_seconds": 38.41509485244751
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 39,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212906.0301194,
+      "assign_to_first_completion_seconds": 38.49669313430786
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 42,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9441555,
+      "assign_to_first_completion_seconds": 38.41072916984558
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 45,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9220257,
+      "assign_to_first_completion_seconds": 38.38859939575195
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 48,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9352136,
+      "assign_to_first_completion_seconds": 38.40178728103638
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 51,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.924096,
+      "assign_to_first_completion_seconds": 38.39066982269287
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 54,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9462767,
+      "assign_to_first_completion_seconds": 38.41285037994385
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "e6a91f0faaec4d2f84657c14c9a56cf2",
+      "topic": "cpu-capacity-calibration-balanced-R500-20260912-053411_0",
+      "partition": 57,
+      "assigned_epoch": 1789212867.5334263,
+      "first_completion_epoch": 1789212905.9656265,
+      "assign_to_first_completion_seconds": 38.43220019340515
+    }
+  ],
+  "resource_requests": {
+    "covered_seconds": 353.94681191444397,
+    "observation_seconds": 378.55839705467224,
+    "covered_fraction": 0.9349860276995156,
+    "scheduled_consumer_pod_seconds_observed": 1061.840435743332,
+    "consumer_container_requested_cpu_seconds_observed": 2123.680871486664,
+    "consumer_container_requested_gib_seconds_observed": 1061.840435743332,
+    "intervals_with_unsupported_resources": 0
+  },
+  "recovery": null,
+  "observed_consumer_pods": [
+    {
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:46:56Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:47:02Z"
+    },
+    {
+      "uid": "91ffc054-9d08-4312-8650-004d3a05afe8",
+      "pod": "consumer-sts-1",
+      "node": "unseenu.crbs.ucsd.edu",
+      "created_at": "2026-09-12T00:46:40Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:46:54Z"
+    },
+    {
+      "uid": "414f566d-244d-4786-85b4-ac9bab46300c",
+      "pod": "consumer-sts-2",
+      "node": "k8s-chase-ci-10.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:45:50Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:46:38Z"
+    }
+  ],
+  "intervention_events": [],
+  "notes": [
+    "Consumer process-seconds sum every recorded started-to-finished lifetime, including preparation, warm-up and drain; new runtime evidence uses a local monotonic timer.",
+    "Final scrape hold after the finished event is outside process-seconds; scheduled-pod accounting includes observed hold time.",
+    "Resource request integrals use left-held samples on covered intervals. Transition times are uncertain by up to a sample gap.",
+    "CPU/GiB request-time covers only consumer-container declarations on scheduled pods, not broker/producer/sidecar/whole-cluster cost or actual usage.",
+    "Missing samples and unsupported pod-level resources/resize are not silently treated as zero. Report coverage.",
+    "Recovery requires processing backlog at or below the declared threshold for the full hold interval with valid contiguous same-owner samples.",
+    "Recovery is confirmed at the end of the hold interval; missing/unobserved recovery is censored, not zero.",
+    "Ownership callbacks are observable boundaries, not proof of broker-coordinator timing or a precise processing pause.",
+    "Callback blocking intervals bracket the sequential consumer callback; assignment-to-first-completion also includes idle time and work."
+  ]
+}

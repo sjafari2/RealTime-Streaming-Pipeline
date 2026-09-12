@@ -1,0 +1,103 @@
+{
+  "run_id": "run-20260912-083417",
+  "validity_failures": [],
+  "useful_throughput_per_second": 639.1833333333333,
+  "evaluation_seconds": 120.0,
+  "admitted_messages_per_second": 1200.0,
+  "observed_completion_deadline_miss_fraction": 1.0,
+  "valid_completion_attempts_in_evaluation": 76702,
+  "diagnostic_cohort_latencies": {
+    "start_seconds": {
+      "observation_count": 119313,
+      "mean": 97.63454014247272,
+      "p50": 97.68397927284241,
+      "p95": 136.16421461105347,
+      "p99": 139.7006278038025
+    },
+    "processing_seconds": {
+      "observation_count": 119313,
+      "mean": 0.0014586309491541843,
+      "p50": 0.0013868960086256266,
+      "p95": 0.0017769290134310722,
+      "p99": 0.002068184083327651
+    }
+  },
+  "admitted_evaluation_cohort": 144000,
+  "completed_by_drain": 119313,
+  "incomplete_by_drain": 24687,
+  "deadline_misses": 144000,
+  "deadline_censored": 0,
+  "deadline_miss_fraction": 1.0,
+  "duplicate_completion_attempts": 0,
+  "invalid_clock_observations": 0,
+  "failed_or_cancelled_sends_whole_run": 0,
+  "unresolved_sends_whole_run": 0,
+  "completed_attempts_per_second": 639.1833333333333,
+  "admitted_cohort_valid_completion_count": 119313,
+  "admitted_cohort_completion_latency_sum_seconds": 11649243.99255824,
+  "admitted_cohort_completion_mean_seconds": 97.63599936769874,
+  "admitted_cohort_completion_p50_seconds": 97.68568706512451,
+  "admitted_cohort_completion_p95_seconds": 136.16553807258606,
+  "admitted_cohort_completion_p99_seconds": 139.70200181007385,
+  "partition_metrics": {
+    "partitions": [
+      {
+        "topic": "single-partition-capacity-balanced-R400-20260912-083417_0",
+        "topic_index": 0,
+        "partition": 0,
+        "admitted_messages": 144000,
+        "completed_cohort_messages": 119313,
+        "incomplete_messages": 24687,
+        "deadline_misses": 144000,
+        "deadline_censored": 0,
+        "valid_completion_count": 119313,
+        "completion_latency_sum_seconds": 11649243.99255824,
+        "completion_mean_seconds": 97.63599936769874,
+        "admitted_per_second": 1200.0,
+        "acknowledged_arrivals_per_second": 1200.0083333333334,
+        "unique_completions_per_second": 639.1833333333333,
+        "completion_attempts_per_second": 639.1833333333333,
+        "incomplete_fraction": 0.1714375,
+        "deadline_miss_fraction": 1.0,
+        "completion_p50_seconds": 97.68568706512451,
+        "completion_p95_seconds": 136.16553807258606,
+        "completion_p99_seconds": 139.70200181007385
+      }
+    ],
+    "validity_failures": [],
+    "correctness": {
+      "conflicting_message_identities": 0,
+      "conflicting_offset_identities": 0,
+      "within_epoch_ordering_violations": 0,
+      "within_epoch_ordering_comparisons": 191180,
+      "events_missing_partition_metadata": 0,
+      "application_effects_checked": false,
+      "permanent_message_loss_established": false
+    },
+    "notes": [
+      "Per-partition latency uses the admitted cohort; rates use the common evaluation seconds.",
+      "Acknowledged arrival uses callback time, not exact broker arrival; admission uses producer time.",
+      "Unique completions include warm-up admissions completing in evaluation; attempts include replays.",
+      "Ordering checks are local to a process and ownership epoch; they do not prove ordering at a downstream sink.",
+      "Unfinished by drain does not establish permanent loss; synthetic hashes do not measure durable business effects.",
+      "Partition results are unavailable if legacy outcome events lack partition metadata."
+    ]
+  },
+  "incomplete_fraction": 0.1714375,
+  "capacity_estimate": {
+    "producer_count": 3,
+    "consumer_count": 1,
+    "target_messages_per_second": 1200.0,
+    "balanced_messages_per_second_per_consumer": 1200.0,
+    "balanced_processing_budget_ms": 0.8333333333333334,
+    "app_delay_ms": 0.0,
+    "note": "Initial replica counts; assumes balanced sequential processing. All overhead uses this budget. Recalculate after scaling."
+  },
+  "notes": [
+    "Mean and p50/p95/p99 exclude unfinished messages; always report incomplete/deadline results alongside them.",
+    "Percentiles use nearest rank among valid cohort completions by the drain bound.",
+    "Start/processing diagnostic counts may be lower for older evidence without those fields.",
+    "Clock uncertainty still needs a Nautilus measurement.",
+    "Histograms and final counters remain available in the Prometheus export and final.prom files."
+  ]
+}

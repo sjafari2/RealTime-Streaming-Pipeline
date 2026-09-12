@@ -1,0 +1,1990 @@
+{
+  "pairs": [
+    {
+      "pair": "D1",
+      "runs": {
+        "none": {
+          "run_id": "run-20260912-085711",
+          "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-085711",
+          "action": "none",
+          "workload_seed": "41",
+          "config": {
+            "ACKS": "all",
+            "APP_CPU_ITERATIONS": "2000",
+            "APP_DELAY_MAX_MS": "0",
+            "APP_DELAY_MODE": "fixed",
+            "APP_DELAY_MS": "0",
+            "AUTO_COMMIT_INTERVAL_MS": "0",
+            "AUTO_OFFSET_RESET": "earliest",
+            "BATCH_SIZE": "65536",
+            "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+            "BROKER_COUNT": "3",
+            "CLEANUP_POLICY": "delete",
+            "COMPRESSION_TYPE": "lz4",
+            "CONNECTION_MAX_IDLE_MS": "30000",
+            "CONSUMER_CLIENT_ID": "pipeline-consumer",
+            "CONSUMER_DEBUG": "false",
+            "CONSUMER_DEBUG_EVERY_N": "20000",
+            "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+            "CONSUMER_GROUP_ID": "consgroup",
+            "CONSUMER_HEARTBEAT_SEC": "10",
+            "CONSUMER_HTTP_PORT": "8002",
+            "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+            "CONSUMER_POD_COUNT": "3",
+            "CSV_LATENCY_WINDOW_SEC": "30",
+            "CSV_LOG_INTERVAL_SEC": "30",
+            "DELAY_BETWEEN_MESSAGES": "0",
+            "DELIVERY_TIMEOUT_MS": "30000",
+            "DRAIN_SECONDS": "120",
+            "DROP_CATCHUP": "false",
+            "ENABLE_AUTO_COMMIT": "false",
+            "ENABLE_IDEMPOTENCE": "true",
+            "EVIDENCE_MAX_BUFFER": "100000",
+            "EXP_DURATION_SEC": "300",
+            "EXP_ID": "cpu-isolated-s41",
+            "FETCH_MAX_BYTES": "5242880",
+            "FETCH_MAX_WAIT_MS": "5",
+            "FETCH_MIN_BYTES": "1",
+            "FINAL_SCRAPE_SECONDS": "15",
+            "HEARTBEAT_INTERVAL_MS": "1000",
+            "LAG_FRESHNESS_SECONDS": "10",
+            "LAG_QUERY_BUDGET_SEC": "0.2",
+            "LAG_QUERY_INTERVAL": "2",
+            "LAG_QUERY_TIMEOUT": "3",
+            "LINGER_MS": "5",
+            "MAX_BURST": "2",
+            "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+            "MAX_PARTITION_FETCH_BYTES": "1048576",
+            "MAX_POLL_INTERVAL_MS": "120000",
+            "MAX_POLL_RECORDS": "100",
+            "MAX_REQUEST_SIZE": "1048576",
+            "METADATA_MAX_AGE_MS": "120000",
+            "MIN_BURST": "1",
+            "MIN_INSYNC_REPLICAS": "1",
+            "MITIGATION_POLICY": "none",
+            "MSG_MAX_BYTES": "1048576",
+            "NAMESPACE": "kafkastreamingdata",
+            "NUM_PARTITIONS": "60",
+            "OUTCOME_LOG_ENABLED": "true",
+            "PACING_MODE": "per_message",
+            "PACING_TICK_SEC": "0.005",
+            "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+            "PARTITION_LAG_CSV_ENABLED": "false",
+            "PAYLOAD_SIZE_BYTES": "100",
+            "PER_MSG_LAT_ENABLED": "false",
+            "PER_MSG_LAT_FLUSH_SEC": "10",
+            "PER_MSG_LAT_MAX_BUFFER": "20000",
+            "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+            "POLL_MAX_MSG": "25",
+            "POLL_TIMEOUT": "0.1",
+            "PROCESSED_DIR": "/tmp/metrics/processed",
+            "PRODUCER_CLIENT_ID": "pipeline-producer",
+            "PRODUCER_DEBUG": "false",
+            "PRODUCER_DEBUG_EVERY_N": "20000",
+            "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+            "PRODUCER_FLUSH_SECONDS": "30",
+            "PRODUCER_HEARTBEAT_SEC": "10",
+            "PRODUCER_HTTP_PORT": "8001",
+            "PRODUCER_INPUT_PATH": "producer-data",
+            "PRODUCER_MAX_MESSAGES": "0",
+            "PRODUCER_POD_COUNT": "3",
+            "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+            "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+            "RANDOM_RANGE": "1000",
+            "READINESS_TIMEOUT_SECONDS": "180",
+            "REBALANCE_CSV_ENABLED": "false",
+            "RECONNECT_BACKOFF_MAX_MS": "1000",
+            "RECONNECT_BACKOFF_MS": "100",
+            "RELEASE_NAME": "pip",
+            "REPLICATION_FACTOR": "1",
+            "REQUEST_TIMEOUT_MS": "10000",
+            "RETENTION_MS": "86400000",
+            "RETRIES": "2",
+            "RETRY_BACKOFF_MS": "20",
+            "RUN_ID": "run-20260912-085711",
+            "SEGMENT_MS": "30000",
+            "SESSION_TIMEOUT_MS": "20000",
+            "SKEW_FRACTION": "0.8",
+            "SKEW_PARTITION": "0",
+            "SLO_THRESHOLD_MS": "99",
+            "SLO_WINDOW_SECONDS": "30",
+            "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+            "SOCKET_SEND_BUFFER_BYTES": "524288",
+            "SOCKET_TIMEOUT_MS": "30000",
+            "TARGET_RATE": "500",
+            "TOPIC_COUNT": "1",
+            "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+            "TOPIC_TITLE": "cpu-isolated-s41-skew-R500-20260912-085711",
+            "TRAFFIC_MODE": "skew",
+            "WARMUP_SECONDS": "60",
+            "WORKLOAD_SEED": "41"
+          },
+          "intervention": {
+            "action": "none",
+            "after_evaluation_start_seconds": 60,
+            "initial_consumers": 3,
+            "recovery_threshold_offsets": 1500,
+            "recovery_hold_seconds": 20,
+            "at_epoch": 1789225206.387243
+          },
+          "metrics": {
+            "admitted_evaluation_cohort": 360000,
+            "completed_by_drain": 174961,
+            "incomplete_by_drain": 185039,
+            "duplicate_completion_attempts": 0,
+            "admitted_messages_per_second": 1500.0,
+            "useful_throughput_per_second": 690.2125,
+            "deadline_miss_fraction": 0.9856777777777778,
+            "admitted_cohort_completion_mean_seconds": 132.44429035061017,
+            "admitted_cohort_completion_p50_seconds": 153.76990246772766,
+            "admitted_cohort_completion_p95_seconds": 250.39860343933105,
+            "admitted_cohort_completion_p99_seconds": 259.65543818473816,
+            "unfinished_fraction": 0.5139972222222222,
+            "target_admission_fraction": 1.0,
+            "lag_covered_fraction": 0.9916666666666667,
+            "consumer_process_seconds": 1390.7974642229674,
+            "processing_backlog_area_offset_seconds": 34721923.0,
+            "mean_processing_backlog_offsets": 145890.43277310923,
+            "evaluation_and_drain_requested_cpu_seconds": 2160.0,
+            "evaluation_and_drain_resource_coverage": 1.0
+          },
+          "processing_backlog_integrals": {
+            "evaluation": {
+              "area_offset_seconds": 34721923.0,
+              "covered_seconds": 238.0,
+              "covered_fraction": 0.9916666666666667,
+              "mean_offsets": 145890.43277310923
+            },
+            "after_scheduled_action": {
+              "area_offset_seconds": 30493221.14342594,
+              "covered_seconds": 179.9997570514679,
+              "covered_fraction": 0.9999986502859327,
+              "mean_offsets": 169407.01278117235
+            }
+          },
+          "resource_windows": {
+            "production": {
+              "covered_seconds": 300.0,
+              "observation_seconds": 300.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 900.0,
+              "consumer_container_requested_cpu_seconds_observed": 1800.0,
+              "consumer_container_requested_gib_seconds_observed": 900.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation": {
+              "covered_seconds": 240.0,
+              "observation_seconds": 240.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 720.0,
+              "consumer_container_requested_cpu_seconds_observed": 1440.0,
+              "consumer_container_requested_gib_seconds_observed": 720.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation_and_drain": {
+              "covered_seconds": 360.0,
+              "observation_seconds": 360.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1080.0,
+              "consumer_container_requested_cpu_seconds_observed": 2160.0,
+              "consumer_container_requested_gib_seconds_observed": 1080.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "after_scheduled_action": {
+              "covered_seconds": 180.0,
+              "observation_seconds": 180.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 540.0,
+              "consumer_container_requested_cpu_seconds_observed": 1080.0,
+              "consumer_container_requested_gib_seconds_observed": 540.0,
+              "intervals_with_unsupported_resources": 0
+            }
+          },
+          "timing": {
+            "scheduled_epoch": 1789225206.387243,
+            "action": "none",
+            "decision_delay_seconds": 2.017930030822754,
+            "new_consumers": []
+          },
+          "recovery": {
+            "status": "not_observed_by_evaluation_end",
+            "threshold_offsets": 1500,
+            "hold_seconds": 20,
+            "seconds_to_confirmation": null,
+            "censored": true,
+            "followup_seconds": 180.0
+          },
+          "commit_results": {
+            "successful": 617
+          },
+          "commit_errors": [],
+          "source_signatures": [
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"consumer\", \"source\": {\"consumer.py\": \"e2b722776773c47822e3b66b4279ed278d097194ffb386eb0f560b418e6dd92f\", \"consumer1.py\": \"5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68\", \"delete-empty-dirs.py\": \"65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"supervise.py\": \"35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.15.1\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}"
+          ],
+          "quality_flags": [],
+          "evidence_valid": true,
+          "validity_failures": []
+        },
+        "scale": {
+          "run_id": "run-20260912-090802",
+          "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-090802",
+          "action": "scale",
+          "workload_seed": "41",
+          "config": {
+            "ACKS": "all",
+            "APP_CPU_ITERATIONS": "2000",
+            "APP_DELAY_MAX_MS": "0",
+            "APP_DELAY_MODE": "fixed",
+            "APP_DELAY_MS": "0",
+            "AUTO_COMMIT_INTERVAL_MS": "0",
+            "AUTO_OFFSET_RESET": "earliest",
+            "BATCH_SIZE": "65536",
+            "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+            "BROKER_COUNT": "3",
+            "CLEANUP_POLICY": "delete",
+            "COMPRESSION_TYPE": "lz4",
+            "CONNECTION_MAX_IDLE_MS": "30000",
+            "CONSUMER_CLIENT_ID": "pipeline-consumer",
+            "CONSUMER_DEBUG": "false",
+            "CONSUMER_DEBUG_EVERY_N": "20000",
+            "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+            "CONSUMER_GROUP_ID": "consgroup",
+            "CONSUMER_HEARTBEAT_SEC": "10",
+            "CONSUMER_HTTP_PORT": "8002",
+            "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+            "CONSUMER_POD_COUNT": "3",
+            "CSV_LATENCY_WINDOW_SEC": "30",
+            "CSV_LOG_INTERVAL_SEC": "30",
+            "DELAY_BETWEEN_MESSAGES": "0",
+            "DELIVERY_TIMEOUT_MS": "30000",
+            "DRAIN_SECONDS": "120",
+            "DROP_CATCHUP": "false",
+            "ENABLE_AUTO_COMMIT": "false",
+            "ENABLE_IDEMPOTENCE": "true",
+            "EVIDENCE_MAX_BUFFER": "100000",
+            "EXP_DURATION_SEC": "300",
+            "EXP_ID": "cpu-isolated-s41",
+            "FETCH_MAX_BYTES": "5242880",
+            "FETCH_MAX_WAIT_MS": "5",
+            "FETCH_MIN_BYTES": "1",
+            "FINAL_SCRAPE_SECONDS": "15",
+            "HEARTBEAT_INTERVAL_MS": "1000",
+            "LAG_FRESHNESS_SECONDS": "10",
+            "LAG_QUERY_BUDGET_SEC": "0.2",
+            "LAG_QUERY_INTERVAL": "2",
+            "LAG_QUERY_TIMEOUT": "3",
+            "LINGER_MS": "5",
+            "MAX_BURST": "2",
+            "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+            "MAX_PARTITION_FETCH_BYTES": "1048576",
+            "MAX_POLL_INTERVAL_MS": "120000",
+            "MAX_POLL_RECORDS": "100",
+            "MAX_REQUEST_SIZE": "1048576",
+            "METADATA_MAX_AGE_MS": "120000",
+            "MIN_BURST": "1",
+            "MIN_INSYNC_REPLICAS": "1",
+            "MITIGATION_POLICY": "none",
+            "MSG_MAX_BYTES": "1048576",
+            "NAMESPACE": "kafkastreamingdata",
+            "NUM_PARTITIONS": "60",
+            "OUTCOME_LOG_ENABLED": "true",
+            "PACING_MODE": "per_message",
+            "PACING_TICK_SEC": "0.005",
+            "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+            "PARTITION_LAG_CSV_ENABLED": "false",
+            "PAYLOAD_SIZE_BYTES": "100",
+            "PER_MSG_LAT_ENABLED": "false",
+            "PER_MSG_LAT_FLUSH_SEC": "10",
+            "PER_MSG_LAT_MAX_BUFFER": "20000",
+            "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+            "POLL_MAX_MSG": "25",
+            "POLL_TIMEOUT": "0.1",
+            "PROCESSED_DIR": "/tmp/metrics/processed",
+            "PRODUCER_CLIENT_ID": "pipeline-producer",
+            "PRODUCER_DEBUG": "false",
+            "PRODUCER_DEBUG_EVERY_N": "20000",
+            "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+            "PRODUCER_FLUSH_SECONDS": "30",
+            "PRODUCER_HEARTBEAT_SEC": "10",
+            "PRODUCER_HTTP_PORT": "8001",
+            "PRODUCER_INPUT_PATH": "producer-data",
+            "PRODUCER_MAX_MESSAGES": "0",
+            "PRODUCER_POD_COUNT": "3",
+            "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+            "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+            "RANDOM_RANGE": "1000",
+            "READINESS_TIMEOUT_SECONDS": "180",
+            "REBALANCE_CSV_ENABLED": "false",
+            "RECONNECT_BACKOFF_MAX_MS": "1000",
+            "RECONNECT_BACKOFF_MS": "100",
+            "RELEASE_NAME": "pip",
+            "REPLICATION_FACTOR": "1",
+            "REQUEST_TIMEOUT_MS": "10000",
+            "RETENTION_MS": "86400000",
+            "RETRIES": "2",
+            "RETRY_BACKOFF_MS": "20",
+            "RUN_ID": "run-20260912-090802",
+            "SEGMENT_MS": "30000",
+            "SESSION_TIMEOUT_MS": "20000",
+            "SKEW_FRACTION": "0.8",
+            "SKEW_PARTITION": "0",
+            "SLO_THRESHOLD_MS": "99",
+            "SLO_WINDOW_SECONDS": "30",
+            "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+            "SOCKET_SEND_BUFFER_BYTES": "524288",
+            "SOCKET_TIMEOUT_MS": "30000",
+            "TARGET_RATE": "500",
+            "TOPIC_COUNT": "1",
+            "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+            "TOPIC_TITLE": "cpu-isolated-s41-skew-R500-20260912-090802",
+            "TRAFFIC_MODE": "skew",
+            "WARMUP_SECONDS": "60",
+            "WORKLOAD_SEED": "41"
+          },
+          "intervention": {
+            "action": "scale",
+            "after_evaluation_start_seconds": 60,
+            "initial_consumers": 3,
+            "recovery_threshold_offsets": 1500,
+            "recovery_hold_seconds": 20,
+            "target_consumers": 6,
+            "at_epoch": 1789225857.9604769
+          },
+          "metrics": {
+            "admitted_evaluation_cohort": 359999,
+            "completed_by_drain": 200152,
+            "incomplete_by_drain": 159847,
+            "duplicate_completion_attempts": 0,
+            "admitted_messages_per_second": 1499.9958333333334,
+            "useful_throughput_per_second": 769.3708333333333,
+            "deadline_miss_fraction": 0.9160303223064509,
+            "admitted_cohort_completion_mean_seconds": 111.43226719163934,
+            "admitted_cohort_completion_p50_seconds": 121.80015850067139,
+            "admitted_cohort_completion_p95_seconds": 235.7517855167389,
+            "admitted_cohort_completion_p99_seconds": 246.73291683197021,
+            "unfinished_fraction": 0.4440206778352162,
+            "target_admission_fraction": 0.9999972222222223,
+            "lag_covered_fraction": 0.8916666666666667,
+            "consumer_process_seconds": 2248.940793298665,
+            "processing_backlog_area_offset_seconds": 27549676.0,
+            "mean_processing_backlog_offsets": 128736.80373831776,
+            "evaluation_and_drain_requested_cpu_seconds": 3946.7533378601074,
+            "evaluation_and_drain_resource_coverage": 1.0
+          },
+          "processing_backlog_integrals": {
+            "evaluation": {
+              "area_offset_seconds": 27549676.0,
+              "covered_seconds": 214.0,
+              "covered_fraction": 0.8916666666666667,
+              "mean_offsets": 128736.80373831776
+            },
+            "after_scheduled_action": {
+              "area_offset_seconds": 23975615.723400626,
+              "covered_seconds": 155.9995231628418,
+              "covered_fraction": 0.8666640175713434,
+              "mean_offsets": 153690.3141580338
+            }
+          },
+          "resource_windows": {
+            "production": {
+              "covered_seconds": 300.0,
+              "observation_seconds": 300.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1433.3766689300537,
+              "consumer_container_requested_cpu_seconds_observed": 2866.7533378601074,
+              "consumer_container_requested_gib_seconds_observed": 1433.3766689300537,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation": {
+              "covered_seconds": 240.0,
+              "observation_seconds": 240.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1253.3766689300537,
+              "consumer_container_requested_cpu_seconds_observed": 2506.7533378601074,
+              "consumer_container_requested_gib_seconds_observed": 1253.3766689300537,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation_and_drain": {
+              "covered_seconds": 360.0,
+              "observation_seconds": 360.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1973.3766689300537,
+              "consumer_container_requested_cpu_seconds_observed": 3946.7533378601074,
+              "consumer_container_requested_gib_seconds_observed": 1973.3766689300537,
+              "intervals_with_unsupported_resources": 0
+            },
+            "after_scheduled_action": {
+              "covered_seconds": 180.0,
+              "observation_seconds": 180.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1073.3766689300537,
+              "consumer_container_requested_cpu_seconds_observed": 2146.7533378601074,
+              "consumer_container_requested_gib_seconds_observed": 1073.3766689300537,
+              "intervals_with_unsupported_resources": 0
+            }
+          },
+          "timing": {
+            "scheduled_epoch": 1789225857.9604769,
+            "action": "scale",
+            "decision_delay_seconds": 1.20054292678833,
+            "new_consumers": [
+              {
+                "pod": "consumer-sts-3",
+                "node": "k8s-u200-00.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 9.838980197906494,
+                "request_to_ready_observed_seconds": 12.083760261535645,
+                "request_to_first_completion_seconds": 12.941442966461182
+              },
+              {
+                "pod": "consumer-sts-4",
+                "node": "k8s-chase-ci-10.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 14.838980197906494,
+                "request_to_ready_observed_seconds": 17.621047258377075,
+                "request_to_first_completion_seconds": 15.997782230377197
+              },
+              {
+                "pod": "consumer-sts-5",
+                "node": "k8s-ravi-01.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 12.838980197906494,
+                "request_to_ready_observed_seconds": 17.621047258377075,
+                "request_to_first_completion_seconds": 15.953192949295044
+              }
+            ]
+          },
+          "recovery": {
+            "status": "not_observed_by_evaluation_end",
+            "threshold_offsets": 1500,
+            "hold_seconds": 20,
+            "seconds_to_confirmation": null,
+            "censored": true,
+            "followup_seconds": 180.0
+          },
+          "commit_results": {
+            "successful": 1047,
+            "group_transition_failure": 4
+          },
+          "commit_errors": [
+            {
+              "event": "commit_result",
+              "timestamp": 1789225875.057535,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 24,
+                  "offset": 468,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 27,
+                  "offset": 598,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 30,
+                  "offset": 646,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 33,
+                  "offset": 447,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 36,
+                  "offset": 542,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 39,
+                  "offset": 298,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 42,
+                  "offset": 293,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 45,
+                  "offset": 308,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 48,
+                  "offset": 308,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 51,
+                  "offset": 291,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 54,
+                  "offset": 480,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 57,
+                  "offset": 299,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-0"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789225871.9467738,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 16,
+                  "offset": 692,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 19,
+                  "offset": 670,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 22,
+                  "offset": 704,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 25,
+                  "offset": 654,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 28,
+                  "offset": 695,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 31,
+                  "offset": 687,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 34,
+                  "offset": 655,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 37,
+                  "offset": 713,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 40,
+                  "offset": 696,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 43,
+                  "offset": 683,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 46,
+                  "offset": 689,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 49,
+                  "offset": 656,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 52,
+                  "offset": 658,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 55,
+                  "offset": 726,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 58,
+                  "offset": 695,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789225876.1391642,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 31,
+                  "offset": 703,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 34,
+                  "offset": 675,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 37,
+                  "offset": 739,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 40,
+                  "offset": 717,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 43,
+                  "offset": 705,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 46,
+                  "offset": 705,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 49,
+                  "offset": 682,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 52,
+                  "offset": 682,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 55,
+                  "offset": 748,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 58,
+                  "offset": 706,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789225875.0665674,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 3,
+                  "offset": 592,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 4,
+                  "offset": 693,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 6,
+                  "offset": 546,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 7,
+                  "offset": 672,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 8,
+                  "offset": 707,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 9,
+                  "offset": 458,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 10,
+                  "offset": 632,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 11,
+                  "offset": 655,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 12,
+                  "offset": 440,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 13,
+                  "offset": 641,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s41-skew-R500-20260912-090802_0",
+                  "partition": 14,
+                  "offset": 654,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-3"
+            }
+          ],
+          "source_signatures": [
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"consumer\", \"source\": {\"consumer.py\": \"e2b722776773c47822e3b66b4279ed278d097194ffb386eb0f560b418e6dd92f\", \"consumer1.py\": \"5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68\", \"delete-empty-dirs.py\": \"65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"supervise.py\": \"35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.15.1\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}"
+          ],
+          "quality_flags": [
+            "Lag coverage below 90%; transition gaps remain part of the result"
+          ],
+          "evidence_valid": true,
+          "validity_failures": []
+        }
+      },
+      "compatibility_failures": [],
+      "scale_minus_none": {
+        "admitted_evaluation_cohort": -1,
+        "completed_by_drain": 25191,
+        "incomplete_by_drain": -25192,
+        "duplicate_completion_attempts": 0,
+        "admitted_messages_per_second": -0.004166666666606034,
+        "useful_throughput_per_second": 79.1583333333333,
+        "deadline_miss_fraction": -0.06964745547132689,
+        "admitted_cohort_completion_mean_seconds": -21.012023158970834,
+        "admitted_cohort_completion_p50_seconds": -31.969743967056274,
+        "admitted_cohort_completion_p95_seconds": -14.646817922592163,
+        "admitted_cohort_completion_p99_seconds": -12.922521352767944,
+        "unfinished_fraction": -0.06997654438700601,
+        "target_admission_fraction": -2.7777777776849533e-06,
+        "lag_covered_fraction": -0.09999999999999998,
+        "consumer_process_seconds": 858.1433290756977,
+        "processing_backlog_area_offset_seconds": -7172247.0,
+        "mean_processing_backlog_offsets": -17153.629034791476,
+        "evaluation_and_drain_requested_cpu_seconds": 1786.7533378601074,
+        "evaluation_and_drain_resource_coverage": 0.0
+      }
+    },
+    {
+      "pair": "D2",
+      "runs": {
+        "none": {
+          "run_id": "run-20260912-093023",
+          "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-093023",
+          "action": "none",
+          "workload_seed": "42",
+          "config": {
+            "ACKS": "all",
+            "APP_CPU_ITERATIONS": "2000",
+            "APP_DELAY_MAX_MS": "0",
+            "APP_DELAY_MODE": "fixed",
+            "APP_DELAY_MS": "0",
+            "AUTO_COMMIT_INTERVAL_MS": "0",
+            "AUTO_OFFSET_RESET": "earliest",
+            "BATCH_SIZE": "65536",
+            "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+            "BROKER_COUNT": "3",
+            "CLEANUP_POLICY": "delete",
+            "COMPRESSION_TYPE": "lz4",
+            "CONNECTION_MAX_IDLE_MS": "30000",
+            "CONSUMER_CLIENT_ID": "pipeline-consumer",
+            "CONSUMER_DEBUG": "false",
+            "CONSUMER_DEBUG_EVERY_N": "20000",
+            "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+            "CONSUMER_GROUP_ID": "consgroup",
+            "CONSUMER_HEARTBEAT_SEC": "10",
+            "CONSUMER_HTTP_PORT": "8002",
+            "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+            "CONSUMER_POD_COUNT": "3",
+            "CSV_LATENCY_WINDOW_SEC": "30",
+            "CSV_LOG_INTERVAL_SEC": "30",
+            "DELAY_BETWEEN_MESSAGES": "0",
+            "DELIVERY_TIMEOUT_MS": "30000",
+            "DRAIN_SECONDS": "120",
+            "DROP_CATCHUP": "false",
+            "ENABLE_AUTO_COMMIT": "false",
+            "ENABLE_IDEMPOTENCE": "true",
+            "EVIDENCE_MAX_BUFFER": "100000",
+            "EXP_DURATION_SEC": "300",
+            "EXP_ID": "cpu-isolated-s42",
+            "FETCH_MAX_BYTES": "5242880",
+            "FETCH_MAX_WAIT_MS": "5",
+            "FETCH_MIN_BYTES": "1",
+            "FINAL_SCRAPE_SECONDS": "15",
+            "HEARTBEAT_INTERVAL_MS": "1000",
+            "LAG_FRESHNESS_SECONDS": "10",
+            "LAG_QUERY_BUDGET_SEC": "0.2",
+            "LAG_QUERY_INTERVAL": "2",
+            "LAG_QUERY_TIMEOUT": "3",
+            "LINGER_MS": "5",
+            "MAX_BURST": "2",
+            "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+            "MAX_PARTITION_FETCH_BYTES": "1048576",
+            "MAX_POLL_INTERVAL_MS": "120000",
+            "MAX_POLL_RECORDS": "100",
+            "MAX_REQUEST_SIZE": "1048576",
+            "METADATA_MAX_AGE_MS": "120000",
+            "MIN_BURST": "1",
+            "MIN_INSYNC_REPLICAS": "1",
+            "MITIGATION_POLICY": "none",
+            "MSG_MAX_BYTES": "1048576",
+            "NAMESPACE": "kafkastreamingdata",
+            "NUM_PARTITIONS": "60",
+            "OUTCOME_LOG_ENABLED": "true",
+            "PACING_MODE": "per_message",
+            "PACING_TICK_SEC": "0.005",
+            "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+            "PARTITION_LAG_CSV_ENABLED": "false",
+            "PAYLOAD_SIZE_BYTES": "100",
+            "PER_MSG_LAT_ENABLED": "false",
+            "PER_MSG_LAT_FLUSH_SEC": "10",
+            "PER_MSG_LAT_MAX_BUFFER": "20000",
+            "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+            "POLL_MAX_MSG": "25",
+            "POLL_TIMEOUT": "0.1",
+            "PROCESSED_DIR": "/tmp/metrics/processed",
+            "PRODUCER_CLIENT_ID": "pipeline-producer",
+            "PRODUCER_DEBUG": "false",
+            "PRODUCER_DEBUG_EVERY_N": "20000",
+            "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+            "PRODUCER_FLUSH_SECONDS": "30",
+            "PRODUCER_HEARTBEAT_SEC": "10",
+            "PRODUCER_HTTP_PORT": "8001",
+            "PRODUCER_INPUT_PATH": "producer-data",
+            "PRODUCER_MAX_MESSAGES": "0",
+            "PRODUCER_POD_COUNT": "3",
+            "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+            "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+            "RANDOM_RANGE": "1000",
+            "READINESS_TIMEOUT_SECONDS": "180",
+            "REBALANCE_CSV_ENABLED": "false",
+            "RECONNECT_BACKOFF_MAX_MS": "1000",
+            "RECONNECT_BACKOFF_MS": "100",
+            "RELEASE_NAME": "pip",
+            "REPLICATION_FACTOR": "1",
+            "REQUEST_TIMEOUT_MS": "10000",
+            "RETENTION_MS": "86400000",
+            "RETRIES": "2",
+            "RETRY_BACKOFF_MS": "20",
+            "RUN_ID": "run-20260912-093023",
+            "SEGMENT_MS": "30000",
+            "SESSION_TIMEOUT_MS": "20000",
+            "SKEW_FRACTION": "0.8",
+            "SKEW_PARTITION": "0",
+            "SLO_THRESHOLD_MS": "99",
+            "SLO_WINDOW_SECONDS": "30",
+            "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+            "SOCKET_SEND_BUFFER_BYTES": "524288",
+            "SOCKET_TIMEOUT_MS": "30000",
+            "TARGET_RATE": "500",
+            "TOPIC_COUNT": "1",
+            "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+            "TOPIC_TITLE": "cpu-isolated-s42-skew-R500-20260912-093023",
+            "TRAFFIC_MODE": "skew",
+            "WARMUP_SECONDS": "60",
+            "WORKLOAD_SEED": "42"
+          },
+          "intervention": {
+            "action": "none",
+            "after_evaluation_start_seconds": 60,
+            "initial_consumers": 3,
+            "recovery_threshold_offsets": 1500,
+            "recovery_hold_seconds": 20,
+            "at_epoch": 1789227197.32926
+          },
+          "metrics": {
+            "admitted_evaluation_cohort": 360000,
+            "completed_by_drain": 168873,
+            "incomplete_by_drain": 191127,
+            "duplicate_completion_attempts": 0,
+            "admitted_messages_per_second": 1500.0,
+            "useful_throughput_per_second": 677.125,
+            "deadline_miss_fraction": 0.983875,
+            "admitted_cohort_completion_mean_seconds": 133.16458170627,
+            "admitted_cohort_completion_p50_seconds": 155.9503571987152,
+            "admitted_cohort_completion_p95_seconds": 254.69173288345337,
+            "admitted_cohort_completion_p99_seconds": 268.5317425727844,
+            "unfinished_fraction": 0.5309083333333333,
+            "target_admission_fraction": 1.0,
+            "lag_covered_fraction": 0.9916666666666667,
+            "consumer_process_seconds": 1387.6285302675387,
+            "processing_backlog_area_offset_seconds": 35144249.0,
+            "mean_processing_backlog_offsets": 147664.91176470587,
+            "evaluation_and_drain_requested_cpu_seconds": 2160.0,
+            "evaluation_and_drain_resource_coverage": 1.0
+          },
+          "processing_backlog_integrals": {
+            "evaluation": {
+              "area_offset_seconds": 35144249.0,
+              "covered_seconds": 238.0,
+              "covered_fraction": 0.9916666666666667,
+              "mean_offsets": 147664.91176470587
+            },
+            "after_scheduled_action": {
+              "area_offset_seconds": 30885492.304572344,
+              "covered_seconds": 179.9997398853302,
+              "covered_fraction": 0.9999985549185011,
+              "mean_offsets": 171586.31631494642
+            }
+          },
+          "resource_windows": {
+            "production": {
+              "covered_seconds": 300.0,
+              "observation_seconds": 300.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 900.0,
+              "consumer_container_requested_cpu_seconds_observed": 1800.0,
+              "consumer_container_requested_gib_seconds_observed": 900.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation": {
+              "covered_seconds": 240.0,
+              "observation_seconds": 240.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 720.0,
+              "consumer_container_requested_cpu_seconds_observed": 1440.0,
+              "consumer_container_requested_gib_seconds_observed": 720.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation_and_drain": {
+              "covered_seconds": 360.0,
+              "observation_seconds": 360.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1080.0,
+              "consumer_container_requested_cpu_seconds_observed": 2160.0,
+              "consumer_container_requested_gib_seconds_observed": 1080.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "after_scheduled_action": {
+              "covered_seconds": 180.0,
+              "observation_seconds": 180.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 540.0,
+              "consumer_container_requested_cpu_seconds_observed": 1080.0,
+              "consumer_container_requested_gib_seconds_observed": 540.0,
+              "intervals_with_unsupported_resources": 0
+            }
+          },
+          "timing": {
+            "scheduled_epoch": 1789227197.32926,
+            "action": "none",
+            "decision_delay_seconds": 1.164834976196289,
+            "new_consumers": []
+          },
+          "recovery": {
+            "status": "not_observed_by_evaluation_end",
+            "threshold_offsets": 1500,
+            "hold_seconds": 20,
+            "seconds_to_confirmation": null,
+            "censored": true,
+            "followup_seconds": 180.0
+          },
+          "commit_results": {
+            "successful": 617
+          },
+          "commit_errors": [],
+          "source_signatures": [
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"consumer\", \"source\": {\"consumer.py\": \"e2b722776773c47822e3b66b4279ed278d097194ffb386eb0f560b418e6dd92f\", \"consumer1.py\": \"5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68\", \"delete-empty-dirs.py\": \"65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"supervise.py\": \"35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.15.1\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}"
+          ],
+          "quality_flags": [],
+          "evidence_valid": true,
+          "validity_failures": []
+        },
+        "scale": {
+          "run_id": "run-20260912-091909",
+          "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-091909",
+          "action": "scale",
+          "workload_seed": "42",
+          "config": {
+            "ACKS": "all",
+            "APP_CPU_ITERATIONS": "2000",
+            "APP_DELAY_MAX_MS": "0",
+            "APP_DELAY_MODE": "fixed",
+            "APP_DELAY_MS": "0",
+            "AUTO_COMMIT_INTERVAL_MS": "0",
+            "AUTO_OFFSET_RESET": "earliest",
+            "BATCH_SIZE": "65536",
+            "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+            "BROKER_COUNT": "3",
+            "CLEANUP_POLICY": "delete",
+            "COMPRESSION_TYPE": "lz4",
+            "CONNECTION_MAX_IDLE_MS": "30000",
+            "CONSUMER_CLIENT_ID": "pipeline-consumer",
+            "CONSUMER_DEBUG": "false",
+            "CONSUMER_DEBUG_EVERY_N": "20000",
+            "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+            "CONSUMER_GROUP_ID": "consgroup",
+            "CONSUMER_HEARTBEAT_SEC": "10",
+            "CONSUMER_HTTP_PORT": "8002",
+            "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+            "CONSUMER_POD_COUNT": "3",
+            "CSV_LATENCY_WINDOW_SEC": "30",
+            "CSV_LOG_INTERVAL_SEC": "30",
+            "DELAY_BETWEEN_MESSAGES": "0",
+            "DELIVERY_TIMEOUT_MS": "30000",
+            "DRAIN_SECONDS": "120",
+            "DROP_CATCHUP": "false",
+            "ENABLE_AUTO_COMMIT": "false",
+            "ENABLE_IDEMPOTENCE": "true",
+            "EVIDENCE_MAX_BUFFER": "100000",
+            "EXP_DURATION_SEC": "300",
+            "EXP_ID": "cpu-isolated-s42",
+            "FETCH_MAX_BYTES": "5242880",
+            "FETCH_MAX_WAIT_MS": "5",
+            "FETCH_MIN_BYTES": "1",
+            "FINAL_SCRAPE_SECONDS": "15",
+            "HEARTBEAT_INTERVAL_MS": "1000",
+            "LAG_FRESHNESS_SECONDS": "10",
+            "LAG_QUERY_BUDGET_SEC": "0.2",
+            "LAG_QUERY_INTERVAL": "2",
+            "LAG_QUERY_TIMEOUT": "3",
+            "LINGER_MS": "5",
+            "MAX_BURST": "2",
+            "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+            "MAX_PARTITION_FETCH_BYTES": "1048576",
+            "MAX_POLL_INTERVAL_MS": "120000",
+            "MAX_POLL_RECORDS": "100",
+            "MAX_REQUEST_SIZE": "1048576",
+            "METADATA_MAX_AGE_MS": "120000",
+            "MIN_BURST": "1",
+            "MIN_INSYNC_REPLICAS": "1",
+            "MITIGATION_POLICY": "none",
+            "MSG_MAX_BYTES": "1048576",
+            "NAMESPACE": "kafkastreamingdata",
+            "NUM_PARTITIONS": "60",
+            "OUTCOME_LOG_ENABLED": "true",
+            "PACING_MODE": "per_message",
+            "PACING_TICK_SEC": "0.005",
+            "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+            "PARTITION_LAG_CSV_ENABLED": "false",
+            "PAYLOAD_SIZE_BYTES": "100",
+            "PER_MSG_LAT_ENABLED": "false",
+            "PER_MSG_LAT_FLUSH_SEC": "10",
+            "PER_MSG_LAT_MAX_BUFFER": "20000",
+            "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+            "POLL_MAX_MSG": "25",
+            "POLL_TIMEOUT": "0.1",
+            "PROCESSED_DIR": "/tmp/metrics/processed",
+            "PRODUCER_CLIENT_ID": "pipeline-producer",
+            "PRODUCER_DEBUG": "false",
+            "PRODUCER_DEBUG_EVERY_N": "20000",
+            "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+            "PRODUCER_FLUSH_SECONDS": "30",
+            "PRODUCER_HEARTBEAT_SEC": "10",
+            "PRODUCER_HTTP_PORT": "8001",
+            "PRODUCER_INPUT_PATH": "producer-data",
+            "PRODUCER_MAX_MESSAGES": "0",
+            "PRODUCER_POD_COUNT": "3",
+            "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+            "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+            "RANDOM_RANGE": "1000",
+            "READINESS_TIMEOUT_SECONDS": "180",
+            "REBALANCE_CSV_ENABLED": "false",
+            "RECONNECT_BACKOFF_MAX_MS": "1000",
+            "RECONNECT_BACKOFF_MS": "100",
+            "RELEASE_NAME": "pip",
+            "REPLICATION_FACTOR": "1",
+            "REQUEST_TIMEOUT_MS": "10000",
+            "RETENTION_MS": "86400000",
+            "RETRIES": "2",
+            "RETRY_BACKOFF_MS": "20",
+            "RUN_ID": "run-20260912-091909",
+            "SEGMENT_MS": "30000",
+            "SESSION_TIMEOUT_MS": "20000",
+            "SKEW_FRACTION": "0.8",
+            "SKEW_PARTITION": "0",
+            "SLO_THRESHOLD_MS": "99",
+            "SLO_WINDOW_SECONDS": "30",
+            "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+            "SOCKET_SEND_BUFFER_BYTES": "524288",
+            "SOCKET_TIMEOUT_MS": "30000",
+            "TARGET_RATE": "500",
+            "TOPIC_COUNT": "1",
+            "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+            "TOPIC_TITLE": "cpu-isolated-s42-skew-R500-20260912-091909",
+            "TRAFFIC_MODE": "skew",
+            "WARMUP_SECONDS": "60",
+            "WORKLOAD_SEED": "42"
+          },
+          "intervention": {
+            "action": "scale",
+            "after_evaluation_start_seconds": 60,
+            "initial_consumers": 3,
+            "recovery_threshold_offsets": 1500,
+            "recovery_hold_seconds": 20,
+            "target_consumers": 6,
+            "at_epoch": 1789226525.6388931
+          },
+          "metrics": {
+            "admitted_evaluation_cohort": 360000,
+            "completed_by_drain": 195428,
+            "incomplete_by_drain": 164572,
+            "duplicate_completion_attempts": 0,
+            "admitted_messages_per_second": 1500.0,
+            "useful_throughput_per_second": 760.2208333333333,
+            "deadline_miss_fraction": 0.915025,
+            "admitted_cohort_completion_mean_seconds": 112.06700325368807,
+            "admitted_cohort_completion_p50_seconds": 123.03975772857666,
+            "admitted_cohort_completion_p95_seconds": 238.57127141952515,
+            "admitted_cohort_completion_p99_seconds": 250.32846641540527,
+            "unfinished_fraction": 0.45714444444444446,
+            "target_admission_fraction": 1.0,
+            "lag_covered_fraction": 0.9416666666666667,
+            "consumer_process_seconds": 2260.600117929367,
+            "processing_backlog_area_offset_seconds": 28859992.0,
+            "mean_processing_backlog_offsets": 127699.0796460177,
+            "evaluation_and_drain_requested_cpu_seconds": 3946.568359851837,
+            "evaluation_and_drain_resource_coverage": 1.0
+          },
+          "processing_backlog_integrals": {
+            "evaluation": {
+              "area_offset_seconds": 28859992.0,
+              "covered_seconds": 226.0,
+              "covered_fraction": 0.9416666666666667,
+              "mean_offsets": 127699.0796460177
+            },
+            "after_scheduled_action": {
+              "area_offset_seconds": 25162250.004199404,
+              "covered_seconds": 166.00010681152344,
+              "covered_fraction": 0.9222228156195746,
+              "mean_offsets": 151579.72176950844
+            }
+          },
+          "resource_windows": {
+            "production": {
+              "covered_seconds": 300.0,
+              "observation_seconds": 300.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1433.2841799259186,
+              "consumer_container_requested_cpu_seconds_observed": 2866.568359851837,
+              "consumer_container_requested_gib_seconds_observed": 1433.2841799259186,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation": {
+              "covered_seconds": 240.0,
+              "observation_seconds": 240.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1253.2841799259186,
+              "consumer_container_requested_cpu_seconds_observed": 2506.568359851837,
+              "consumer_container_requested_gib_seconds_observed": 1253.2841799259186,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation_and_drain": {
+              "covered_seconds": 360.0,
+              "observation_seconds": 360.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1973.2841799259186,
+              "consumer_container_requested_cpu_seconds_observed": 3946.568359851837,
+              "consumer_container_requested_gib_seconds_observed": 1973.2841799259186,
+              "intervals_with_unsupported_resources": 0
+            },
+            "after_scheduled_action": {
+              "covered_seconds": 180.0,
+              "observation_seconds": 180.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1073.2841799259186,
+              "consumer_container_requested_cpu_seconds_observed": 2146.568359851837,
+              "consumer_container_requested_gib_seconds_observed": 1073.2841799259186,
+              "intervals_with_unsupported_resources": 0
+            }
+          },
+          "timing": {
+            "scheduled_epoch": 1789226525.6388931,
+            "action": "scale",
+            "decision_delay_seconds": 1.1586768627166748,
+            "new_consumers": [
+              {
+                "pod": "consumer-sts-3",
+                "node": "k8s-chase-ci-10.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 11.202430009841919,
+                "request_to_ready_observed_seconds": 12.20123815536499,
+                "request_to_first_completion_seconds": 14.08916974067688
+              },
+              {
+                "pod": "consumer-sts-4",
+                "node": "k8s-u200-00.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 7.202430009841919,
+                "request_to_ready_observed_seconds": 12.20123815536499,
+                "request_to_first_completion_seconds": 9.527188777923584
+              },
+              {
+                "pod": "consumer-sts-5",
+                "node": "k8s-ravi-01.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 9.202430009841919,
+                "request_to_ready_observed_seconds": 12.20123815536499,
+                "request_to_first_completion_seconds": 11.988624811172485
+              }
+            ]
+          },
+          "recovery": {
+            "status": "not_observed_by_evaluation_end",
+            "threshold_offsets": 1500,
+            "hold_seconds": 20,
+            "seconds_to_confirmation": null,
+            "censored": true,
+            "followup_seconds": 180.0
+          },
+          "commit_results": {
+            "successful": 1052,
+            "group_transition_failure": 4
+          },
+          "commit_errors": [
+            {
+              "event": "commit_result",
+              "timestamp": 1789226536.3310215,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 17,
+                  "offset": 634,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 20,
+                  "offset": 648,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 23,
+                  "offset": 683,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 26,
+                  "offset": 662,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 29,
+                  "offset": 703,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 32,
+                  "offset": 684,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 35,
+                  "offset": 698,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 38,
+                  "offset": 618,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 41,
+                  "offset": 666,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 44,
+                  "offset": 634,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 47,
+                  "offset": 659,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 50,
+                  "offset": 640,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 53,
+                  "offset": 635,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 56,
+                  "offset": 663,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 59,
+                  "offset": 648,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789226538.358642,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 26,
+                  "offset": 673,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 29,
+                  "offset": 713,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 32,
+                  "offset": 691,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 35,
+                  "offset": 708,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 38,
+                  "offset": 628,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 41,
+                  "offset": 672,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 44,
+                  "offset": 647,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 47,
+                  "offset": 672,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 50,
+                  "offset": 652,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 53,
+                  "offset": 646,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 56,
+                  "offset": 675,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 59,
+                  "offset": 654,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789226540.7336156,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 32,
+                  "offset": 700,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 35,
+                  "offset": 718,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 38,
+                  "offset": 638,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 41,
+                  "offset": 686,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 44,
+                  "offset": 654,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 47,
+                  "offset": 685,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 50,
+                  "offset": 659,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 53,
+                  "offset": 656,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 56,
+                  "offset": 688,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 59,
+                  "offset": 667,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789226535.2791579,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 1,
+                  "offset": 675,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 4,
+                  "offset": 697,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 7,
+                  "offset": 642,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 10,
+                  "offset": 635,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 13,
+                  "offset": 675,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 16,
+                  "offset": 648,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 19,
+                  "offset": 615,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 22,
+                  "offset": 670,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 25,
+                  "offset": 684,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 28,
+                  "offset": 620,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 31,
+                  "offset": 643,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 34,
+                  "offset": 583,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 37,
+                  "offset": 643,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 40,
+                  "offset": 667,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 43,
+                  "offset": 633,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 46,
+                  "offset": 653,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 49,
+                  "offset": 702,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 52,
+                  "offset": 664,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 55,
+                  "offset": 676,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "cpu-isolated-s42-skew-R500-20260912-091909_0",
+                  "partition": 58,
+                  "offset": 651,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-2"
+            }
+          ],
+          "source_signatures": [
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"consumer\", \"source\": {\"consumer.py\": \"e2b722776773c47822e3b66b4279ed278d097194ffb386eb0f560b418e6dd92f\", \"consumer1.py\": \"5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68\", \"delete-empty-dirs.py\": \"65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"supervise.py\": \"35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.15.1\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}"
+          ],
+          "quality_flags": [],
+          "evidence_valid": true,
+          "validity_failures": []
+        }
+      },
+      "compatibility_failures": [],
+      "scale_minus_none": {
+        "admitted_evaluation_cohort": 0,
+        "completed_by_drain": 26555,
+        "incomplete_by_drain": -26555,
+        "duplicate_completion_attempts": 0,
+        "admitted_messages_per_second": 0.0,
+        "useful_throughput_per_second": 83.0958333333333,
+        "deadline_miss_fraction": -0.06885000000000008,
+        "admitted_cohort_completion_mean_seconds": -21.097578452581942,
+        "admitted_cohort_completion_p50_seconds": -32.91059947013855,
+        "admitted_cohort_completion_p95_seconds": -16.120461463928223,
+        "admitted_cohort_completion_p99_seconds": -18.20327615737915,
+        "unfinished_fraction": -0.07376388888888885,
+        "target_admission_fraction": 0.0,
+        "lag_covered_fraction": -0.050000000000000044,
+        "consumer_process_seconds": 872.9715876618284,
+        "processing_backlog_area_offset_seconds": -6284257.0,
+        "mean_processing_backlog_offsets": -19965.83211868818,
+        "evaluation_and_drain_requested_cpu_seconds": 1786.5683598518372,
+        "evaluation_and_drain_resource_coverage": 0.0
+      }
+    }
+  ],
+  "descriptive_paired_differences": {
+    "admitted_evaluation_cohort": {
+      "pair_count": 2,
+      "mean_paired_difference": -0.5,
+      "minimum": -1,
+      "maximum": 0,
+      "sample_standard_deviation": 0.7071067811865476
+    },
+    "completed_by_drain": {
+      "pair_count": 2,
+      "mean_paired_difference": 25873,
+      "minimum": 25191,
+      "maximum": 26555,
+      "sample_standard_deviation": 964.4936495384508
+    },
+    "incomplete_by_drain": {
+      "pair_count": 2,
+      "mean_paired_difference": -25873.5,
+      "minimum": -26555,
+      "maximum": -25192,
+      "sample_standard_deviation": 963.7865427572643
+    },
+    "duplicate_completion_attempts": {
+      "pair_count": 2,
+      "mean_paired_difference": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "sample_standard_deviation": 0.0
+    },
+    "admitted_messages_per_second": {
+      "pair_count": 2,
+      "mean_paired_difference": -0.002083333333303017,
+      "minimum": -0.004166666666606034,
+      "maximum": 0.0,
+      "sample_standard_deviation": 0.002946278254901074
+    },
+    "useful_throughput_per_second": {
+      "pair_count": 2,
+      "mean_paired_difference": 81.1270833333333,
+      "minimum": 79.1583333333333,
+      "maximum": 83.0958333333333,
+      "sample_standard_deviation": 2.7842329509220307
+    },
+    "deadline_miss_fraction": {
+      "pair_count": 2,
+      "mean_paired_difference": -0.06924872773566348,
+      "minimum": -0.06964745547132689,
+      "maximum": -0.06885000000000008,
+      "sample_standard_deviation": 0.0005638861714695042
+    },
+    "admitted_cohort_completion_mean_seconds": {
+      "pair_count": 2,
+      "mean_paired_difference": -21.054800805776388,
+      "minimum": -21.097578452581942,
+      "maximum": -21.012023158970834,
+      "sample_standard_deviation": 0.060496728278820674
+    },
+    "admitted_cohort_completion_p50_seconds": {
+      "pair_count": 2,
+      "mean_paired_difference": -32.44017171859741,
+      "minimum": -32.91059947013855,
+      "maximum": -31.969743967056274,
+      "sample_standard_deviation": 0.6652853063461576
+    },
+    "admitted_cohort_completion_p95_seconds": {
+      "pair_count": 2,
+      "mean_paired_difference": -15.383639693260193,
+      "minimum": -16.120461463928223,
+      "maximum": -14.646817922592163,
+      "sample_standard_deviation": 1.042023341130486
+    },
+    "admitted_cohort_completion_p99_seconds": {
+      "pair_count": 2,
+      "mean_paired_difference": -15.562898755073547,
+      "minimum": -18.20327615737915,
+      "maximum": -12.922521352767944,
+      "sample_standard_deviation": 3.7340575321240257
+    },
+    "unfinished_fraction": {
+      "pair_count": 2,
+      "mean_paired_difference": -0.07187021663794743,
+      "minimum": -0.07376388888888885,
+      "maximum": -0.06997654438700601,
+      "sample_standard_deviation": 0.0026780569799709423
+    },
+    "target_admission_fraction": {
+      "pair_count": 2,
+      "mean_paired_difference": -1.3888888888424766e-06,
+      "minimum": -2.7777777776849533e-06,
+      "maximum": 0.0,
+      "sample_standard_deviation": 1.9641855032303284e-06
+    },
+    "lag_covered_fraction": {
+      "pair_count": 2,
+      "mean_paired_difference": -0.07500000000000001,
+      "minimum": -0.09999999999999998,
+      "maximum": -0.050000000000000044,
+      "sample_standard_deviation": 0.03535533905932733
+    },
+    "consumer_process_seconds": {
+      "pair_count": 2,
+      "mean_paired_difference": 865.557458368763,
+      "minimum": 858.1433290756977,
+      "maximum": 872.9715876618284,
+      "sample_standard_deviation": 10.485162199440657
+    },
+    "evaluation_and_drain_requested_cpu_seconds": {
+      "pair_count": 2,
+      "mean_paired_difference": 1786.6608488559723,
+      "minimum": 1786.5683598518372,
+      "maximum": 1786.7533378601074,
+      "sample_standard_deviation": 0.1307992040182847
+    },
+    "evaluation_and_drain_resource_coverage": {
+      "pair_count": 2,
+      "mean_paired_difference": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.0,
+      "sample_standard_deviation": 0.0
+    },
+    "processing_backlog_area_offset_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": -6284257.0,
+      "minimum": -6284257.0,
+      "maximum": -6284257.0,
+      "sample_standard_deviation": null
+    },
+    "mean_processing_backlog_offsets": {
+      "pair_count": 1,
+      "mean_paired_difference": -19965.83211868818,
+      "minimum": -19965.83211868818,
+      "maximum": -19965.83211868818,
+      "sample_standard_deviation": null
+    }
+  },
+  "notes": [
+    "Every pair and quality flag remains visible. Completed evidence-valid compatible pairs contribute message outcomes even when monitoring is incomplete. Coverage screens apply only to backlog and resource aggregates; each metric reports its own pair count.",
+    "Low achieved admission is reported alongside outcomes and limits a matched-load causal interpretation; it is not silently removed to improve the treatment result.",
+    "Scale-minus-none latency differences compare per-run conditional completion quantiles; unfinished fractions must be read alongside them.",
+    "A mean of per-run p99 values is not a pooled message p99. No pooled p99 or confidence interval is claimed.",
+    "Processing-backlog integrals use trapezoids only across valid contiguous same-owner monotonic-offset observations; coverage is explicit.",
+    "Common resource horizons use evaluation start through drain end and the same declared duration for both conditions. Preparation remains separate.",
+    "Resource quantities describe requested consumer-container CPU time, not actual whole-cluster cost.",
+    "Scheduled scale-out tests an action, not an automatic selector, a tuned HPA baseline or novelty over prior systems."
+  ]
+}

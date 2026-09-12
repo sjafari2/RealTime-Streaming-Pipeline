@@ -19,6 +19,7 @@ spec:
         app: consumer-sts
         app.kubernetes.io/name: consumer-sts
     spec:
+      terminationGracePeriodSeconds: 120
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -72,11 +73,7 @@ spec:
               chmod 644 /config/pipeline-configmap.yaml
             fi
 
-            if [ ! -f /config/experiments.yaml ]; then
-              echo "[init] Seeding experiments.yaml from /defaults"
-              cp /defaults/experiments.yaml /config/experiments.yaml
-              chmod 644 /config/experiments.yaml
-            fi
+
             
             # Copy code into RWX CephFS once (keeps your existing workflow)
             if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
@@ -120,9 +117,8 @@ spec:
             echo "[startup] Pod: $POD_NAME"
             echo "[startup] Config: $PIPELINE_CONFIG"
             ls -l /config || true
-            # Do NOT start the workload yet; keep pod alive.
-            echo "[startup] Ready. Waiting for manual start."
-            tail -f /dev/null
+            # Wait for save-run.sh to publish a run, then join it automatically.
+            exec python3 /app/consumer-merge-data/supervise.py
         ports:
         - name: metrics
           containerPort: 8002
