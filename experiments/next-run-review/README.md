@@ -1,5 +1,10 @@
 # Next experiment configuration - for review
 
+> Status update, 12 September 2026: the quick balanced configuration below was
+> executed as `run-20260911-234758`. See its [saved record](../../experiment-records/run-20260911-234758/README.md).
+> The original planning text below is retained as history. Current preparation is
+> [pressure calibration](../capacity-calibration/README.md), which has not been run.
+
 Prepared from the current online `main.tex`, Section 4.3, Tables 1 and 2, in
 [Proposal_2026_Updated](https://www.overleaf.com/project/6aa3337d078205869d3c5fe5).
 Page numbers may change during proposal revisions. No experiment was launched and
