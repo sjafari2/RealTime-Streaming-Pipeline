@@ -1,6 +1,6 @@
 # run-20260912-052133
 
-Failed readiness attempt, preserved for audit. Two consumers stopped after generation-related commit errors before the common production barrier was released. The consumer correction is documented in docs/commit-handling.md; this attempt supplies no performance result.
+Failed readiness attempt, preserved for audit. Two consumers stopped after generation-related commit errors before the common production barrier was released. The consumer correction is documented in docs/commit-handling.md; this attempt supplies no performance result. All 18 original PVC evidence files now match the local SHA-256 verification.
 
 Managed status: **failed_before_workload**. Full data: `results/run-20260912-052133/` in the active code folder; original event evidence remains on the Nautilus PVCs.
 
