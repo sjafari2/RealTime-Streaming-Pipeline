@@ -1,0 +1,1827 @@
+{
+  "run_id": "run-20260912-073652",
+  "process_lifetimes": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "started_epoch": 1789220223.0195909,
+      "finished_epoch": 1789220988.7367918,
+      "process_seconds": 765.7282214938896,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-0/41ea1626f77d4248b5126bf27a2facf5/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "started_epoch": 1789220225.2883372,
+      "finished_epoch": 1789220988.7139416,
+      "process_seconds": 763.4374812021852,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-1/35ce722a75654db98ff6babd03b59a6e/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "started_epoch": 1789220225.3047633,
+      "finished_epoch": 1789220988.767662,
+      "process_seconds": 763.4735520668328,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-2/1de7bbecdf2a4517bba3dc93c75f90b1/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-0",
+      "incarnation": "421ab414ac464c00b85274528e9d6bd7",
+      "started_epoch": 1789220227.412439,
+      "finished_epoch": 1789220868.9331276,
+      "process_seconds": 641.7921326784417,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-0/421ab414ac464c00b85274528e9d6bd7/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-1",
+      "incarnation": "59c02cb9081948b89aef1bdda72ed3e4",
+      "started_epoch": 1789220228.1987119,
+      "finished_epoch": 1789220868.7348688,
+      "process_seconds": 640.8605765649118,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-1/59c02cb9081948b89aef1bdda72ed3e4/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-2",
+      "incarnation": "d4c6561317f54ec49f552af42c30eed4",
+      "started_epoch": 1789220228.7265701,
+      "finished_epoch": 1789220868.75585,
+      "process_seconds": 640.3006140240468,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-2/d4c6561317f54ec49f552af42c30eed4/events.jsonl"
+    }
+  ],
+  "consumer_process_seconds": 2292.6392547629075,
+  "consumer_lifetime_coverage_complete": true,
+  "ownership_events": [
+    {
+      "event": "assign_started",
+      "timestamp": 1789220229.1631873,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          0
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          3
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          6
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          9
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          12
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          15
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          18
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          21
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          24
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          27
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          30
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          33
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          36
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          39
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          42
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          45
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          48
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          51
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          54
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789220229.163217,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          2
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          5
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          8
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          11
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          14
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          17
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          20
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          23
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          26
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          29
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          32
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          35
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          38
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          41
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          44
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          47
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          50
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          53
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          56
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789220229.163338,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          1
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          4
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          7
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          10
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          13
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          16
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          19
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          22
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          25
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          28
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          31
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          34
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          37
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          40
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          43
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          46
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          49
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          52
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          55
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789220229.2191527,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          0
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          3
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          6
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          9
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          12
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          15
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          18
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          21
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          24
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          27
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          30
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          33
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          36
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          39
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          42
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          45
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          48
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          51
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          54
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          57
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789220229.2298672,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          1
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          4
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          7
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          10
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          13
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          16
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          19
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          22
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          25
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          28
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          31
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          34
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          37
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          40
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          43
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          46
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          49
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          52
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          55
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          58
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789220229.2514176,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          2
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          5
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          8
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          11
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          14
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          17
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          20
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          23
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          26
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          29
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          32
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          35
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          38
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          41
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          44
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          47
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          50
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          53
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          56
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          59
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789220988.6973257,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          2
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          5
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          8
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          11
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          14
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          17
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          20
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          23
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          26
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          29
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          32
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          35
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          38
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          41
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          44
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          47
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          50
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          53
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          56
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789220988.7094855,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          2
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          5
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          8
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          11
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          14
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          17
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          20
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          23
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          26
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          29
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          32
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          35
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          38
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          41
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          44
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          47
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          50
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          53
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          56
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          59
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789220988.719334,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          1
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          4
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          7
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          10
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          13
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          16
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          19
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          22
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          25
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          28
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          31
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          34
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          37
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          40
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          43
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          46
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          49
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          52
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          55
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789220988.7338493,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          1
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          4
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          7
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          10
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          13
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          16
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          19
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          22
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          25
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          28
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          31
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          34
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          37
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          40
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          43
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          46
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          49
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          52
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          55
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          58
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789220988.7471883,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          0
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          3
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          6
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          9
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          12
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          15
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          18
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          21
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          24
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          27
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          30
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          33
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          36
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          39
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          42
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          45
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          48
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          51
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          54
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789220988.7572608,
+      "partitions": [
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          0
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          3
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          6
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          9
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          12
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          15
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          18
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          21
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          24
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          27
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          30
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          33
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          36
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          39
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          42
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          45
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          48
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          51
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          54
+        ],
+        [
+          "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+          57
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1"
+    }
+  ],
+  "callback_blocking_intervals": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "event": "assign",
+      "started_epoch": 1789220229.163338,
+      "finished_epoch": 1789220229.2298672,
+      "blocked_seconds": 0.0665292739868164
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "event": "revoke",
+      "started_epoch": 1789220988.719334,
+      "finished_epoch": 1789220988.7338493,
+      "blocked_seconds": 0.014515399932861328
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "event": "assign",
+      "started_epoch": 1789220229.163217,
+      "finished_epoch": 1789220229.2514176,
+      "blocked_seconds": 0.08820056915283203
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "event": "revoke",
+      "started_epoch": 1789220988.6973257,
+      "finished_epoch": 1789220988.7094855,
+      "blocked_seconds": 0.01215982437133789
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "event": "assign",
+      "started_epoch": 1789220229.1631873,
+      "finished_epoch": 1789220229.2191527,
+      "blocked_seconds": 0.055965423583984375
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "event": "revoke",
+      "started_epoch": 1789220988.7471883,
+      "finished_epoch": 1789220988.7572608,
+      "blocked_seconds": 0.010072469711303711
+    }
+  ],
+  "assignment_first_completions": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 1,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8206947,
+      "assign_to_first_completion_seconds": 39.59082746505737
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 4,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.7630794,
+      "assign_to_first_completion_seconds": 40.533212184906006
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 7,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.816534,
+      "assign_to_first_completion_seconds": 39.58666682243347
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 10,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8611693,
+      "assign_to_first_completion_seconds": 39.63130211830139
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 13,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.812199,
+      "assign_to_first_completion_seconds": 39.58233189582825
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 16,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8733358,
+      "assign_to_first_completion_seconds": 39.643468618392944
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 19,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8294768,
+      "assign_to_first_completion_seconds": 39.59960961341858
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 22,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8381937,
+      "assign_to_first_completion_seconds": 39.60832643508911
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 25,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.82526,
+      "assign_to_first_completion_seconds": 39.59539270401001
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 28,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.856881,
+      "assign_to_first_completion_seconds": 39.62701368331909
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 31,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8428276,
+      "assign_to_first_completion_seconds": 39.61296033859253
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 34,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.347659,
+      "assign_to_first_completion_seconds": 40.11779189109802
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 37,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.257201,
+      "assign_to_first_completion_seconds": 40.02733373641968
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 40,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.807353,
+      "assign_to_first_completion_seconds": 39.57748579978943
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 43,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.351919,
+      "assign_to_first_completion_seconds": 40.12205171585083
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 46,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.8652565,
+      "assign_to_first_completion_seconds": 39.63538932800293
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 49,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.375792,
+      "assign_to_first_completion_seconds": 40.14592480659485
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 52,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.292439,
+      "assign_to_first_completion_seconds": 40.06257176399231
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 55,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220269.2527626,
+      "assign_to_first_completion_seconds": 40.02289533615112
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "41ea1626f77d4248b5126bf27a2facf5",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 58,
+      "assigned_epoch": 1789220229.2298672,
+      "first_completion_epoch": 1789220268.87705,
+      "assign_to_first_completion_seconds": 39.64718270301819
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 2,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.845158,
+      "assign_to_first_completion_seconds": 39.593740463256836
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 5,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8587468,
+      "assign_to_first_completion_seconds": 39.60732913017273
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 8,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220269.321665,
+      "assign_to_first_completion_seconds": 40.070247411727905
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 11,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.852004,
+      "assign_to_first_completion_seconds": 39.60058641433716
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 14,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.885962,
+      "assign_to_first_completion_seconds": 39.634544372558594
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 17,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220269.2105923,
+      "assign_to_first_completion_seconds": 39.95917463302612
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 20,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8722603,
+      "assign_to_first_completion_seconds": 39.620842695236206
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 23,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8383777,
+      "assign_to_first_completion_seconds": 39.58696007728577
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 26,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220269.2675426,
+      "assign_to_first_completion_seconds": 40.016124963760376
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 29,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.825128,
+      "assign_to_first_completion_seconds": 39.573710441589355
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 32,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8146355,
+      "assign_to_first_completion_seconds": 39.563217878341675
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 35,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8285341,
+      "assign_to_first_completion_seconds": 39.5771164894104
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 38,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.868914,
+      "assign_to_first_completion_seconds": 39.61749625205994
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 41,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8418045,
+      "assign_to_first_completion_seconds": 39.59038686752319
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 44,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8826118,
+      "assign_to_first_completion_seconds": 39.63119411468506
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 47,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220270.15112,
+      "assign_to_first_completion_seconds": 40.899702310562134
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 50,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220269.2239838,
+      "assign_to_first_completion_seconds": 39.9725661277771
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 53,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8217309,
+      "assign_to_first_completion_seconds": 39.57031321525574
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 56,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220269.2273505,
+      "assign_to_first_completion_seconds": 39.97593283653259
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "35ce722a75654db98ff6babd03b59a6e",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 59,
+      "assigned_epoch": 1789220229.2514176,
+      "first_completion_epoch": 1789220268.8485928,
+      "assign_to_first_completion_seconds": 39.59717512130737
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 0,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.255872,
+      "assign_to_first_completion_seconds": 40.03671932220459
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 3,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.1639905,
+      "assign_to_first_completion_seconds": 39.94483780860901
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 6,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.2601175,
+      "assign_to_first_completion_seconds": 40.04096484184265
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 9,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.1744986,
+      "assign_to_first_completion_seconds": 39.95534586906433
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 12,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7933512,
+      "assign_to_first_completion_seconds": 39.574198484420776
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 15,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7784257,
+      "assign_to_first_completion_seconds": 39.55927300453186
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 18,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7954922,
+      "assign_to_first_completion_seconds": 39.57633948326111
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 21,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.767332,
+      "assign_to_first_completion_seconds": 39.548179388046265
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 24,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7911592,
+      "assign_to_first_completion_seconds": 39.57200646400452
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 27,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7719054,
+      "assign_to_first_completion_seconds": 39.55275273323059
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 30,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.1766682,
+      "assign_to_first_completion_seconds": 39.957515478134155
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 33,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.1807704,
+      "assign_to_first_completion_seconds": 39.96161770820618
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 36,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.1997993,
+      "assign_to_first_completion_seconds": 39.98064661026001
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 39,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.2768495,
+      "assign_to_first_completion_seconds": 40.05769681930542
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 42,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.780635,
+      "assign_to_first_completion_seconds": 39.561482429504395
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 45,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7762296,
+      "assign_to_first_completion_seconds": 39.557076930999756
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 48,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.8019886,
+      "assign_to_first_completion_seconds": 39.58283591270447
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 51,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220268.7869923,
+      "assign_to_first_completion_seconds": 39.56783962249756
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 54,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.2831957,
+      "assign_to_first_completion_seconds": 40.064043045043945
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "1de7bbecdf2a4517bba3dc93c75f90b1",
+      "topic": "cpu-sustained-s22-balanced-R500-20260912-073652_0",
+      "partition": 57,
+      "assigned_epoch": 1789220229.2191527,
+      "first_completion_epoch": 1789220269.166149,
+      "assign_to_first_completion_seconds": 39.946996212005615
+    }
+  ],
+  "resource_requests": {
+    "covered_seconds": 773.130872964859,
+    "observation_seconds": 799.0224740505219,
+    "covered_fraction": 0.9675959038368354,
+    "scheduled_consumer_pod_seconds_observed": 2319.392618894577,
+    "consumer_container_requested_cpu_seconds_observed": 4638.785237789154,
+    "consumer_container_requested_gib_seconds_observed": 2319.392618894577,
+    "intervals_with_unsupported_resources": 0
+  },
+  "recovery": {
+    "status": "not_observed_by_evaluation_end",
+    "threshold_offsets": 1500,
+    "hold_seconds": 20,
+    "seconds_to_confirmation": null,
+    "censored": true,
+    "followup_seconds": 480.0
+  },
+  "observed_consumer_pods": [
+    {
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:46:56Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:47:02Z"
+    },
+    {
+      "uid": "91ffc054-9d08-4312-8650-004d3a05afe8",
+      "pod": "consumer-sts-1",
+      "node": "unseenu.crbs.ucsd.edu",
+      "created_at": "2026-09-12T00:46:40Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:46:54Z"
+    },
+    {
+      "uid": "414f566d-244d-4786-85b4-ac9bab46300c",
+      "pod": "consumer-sts-2",
+      "node": "k8s-chase-ci-10.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:45:50Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:46:38Z"
+    }
+  ],
+  "intervention_events": [
+    {
+      "event": "decision",
+      "timestamp": 1789220389.8233228,
+      "scheduled_epoch": 1789220388.648638,
+      "scheduling_delay_seconds": 1.174684762954712,
+      "action": "none"
+    },
+    {
+      "event": "request_completed",
+      "timestamp": 1789220389.824009,
+      "action": "none"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789220390.296552,
+      "pod": "consumer-sts-0",
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "kubernetes_ready_transition": "2026-09-12T00:47:02Z"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789220390.296552,
+      "pod": "consumer-sts-1",
+      "uid": "91ffc054-9d08-4312-8650-004d3a05afe8",
+      "kubernetes_ready_transition": "2026-09-12T00:46:54Z"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789220390.296552,
+      "pod": "consumer-sts-2",
+      "uid": "414f566d-244d-4786-85b4-ac9bab46300c",
+      "kubernetes_ready_transition": "2026-09-12T00:46:38Z"
+    }
+  ],
+  "notes": [
+    "Consumer process-seconds sum every recorded started-to-finished lifetime, including preparation, warm-up and drain; new runtime evidence uses a local monotonic timer.",
+    "Final scrape hold after the finished event is outside process-seconds; scheduled-pod accounting includes observed hold time.",
+    "Resource request integrals use left-held samples on covered intervals. Transition times are uncertain by up to a sample gap.",
+    "CPU/GiB request-time covers only consumer-container declarations on scheduled pods, not broker/producer/sidecar/whole-cluster cost or actual usage.",
+    "Missing samples and unsupported pod-level resources/resize are not silently treated as zero. Report coverage.",
+    "Recovery requires processing backlog at or below the declared threshold for the full hold interval with valid contiguous same-owner samples.",
+    "Recovery is confirmed at the end of the hold interval; missing/unobserved recovery is censored, not zero.",
+    "Ownership callbacks are observable boundaries, not proof of broker-coordinator timing or a precise processing pause.",
+    "Callback blocking intervals bracket the sequential consumer callback; assignment-to-first-completion also includes idle time and work."
+  ]
+}
