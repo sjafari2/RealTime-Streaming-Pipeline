@@ -2,7 +2,7 @@
 
 The code keeps my shared-file workflow: stop the applications, edit the shared YAML, troubleshoot if needed, and use `my-shell/save-run.sh` to start the experiment. Python source remains on the existing shared producer and consumer volumes. Prometheus stores aggregate measurements. The extra files contain message outcomes, configuration, ownership events and final metric snapshots.
 
-Deployment of the updated runtime has not been verified. A read-only service check on 11 September 2026 confirmed existing `prometheus-svc:9090` and `grafana-svc:3000` services in `kafkastreamingdata`; this alone does not verify scrape coverage. The original local files are preserved in `backups/before-measurement-update.tar.gz`.
+The updated application runtime was synchronized and exercised on Nautilus during the 12 September 2026 preliminary campaign, including scheduled three-to-six consumer increases. See the [campaign report](../experiment-records/campaign-20260912/campaign-report.md) for exact run evidence and limits. The prepared dynamic Prometheus discovery update was rejected during deployment; the existing static six-consumer/three-producer targets were used with 5-second application scrapes. Broker monitoring remains incomplete. These setup instructions remain useful after future source or deployment changes; do not repeat the whole setup before every run. The original local files are preserved in `backups/before-measurement-update.tar.gz`.
 
 ## Which steps I run once and which I repeat
 
@@ -18,7 +18,7 @@ After setup, use `bash my-shell/save-run.sh` for one complete run or `bash my-sh
 - Both roles read one frozen snapshot of the shared YAML for a managed run. Editing the shared original between runs still works as before. The coordinator checks configuration hashes and assignment coverage before publishing a common start time.
 - Producers stop at the shared production end. Consumers continue to the shared drain bound. Normal exit and SIGTERM run cleanup. Final metrics remain available for several scrapes and are also written to durable storage.
 - The consumer supervisor starts the application when a run is active, including in newly added replicas. Idle consumer pods wait for a run. A per-pod file lock prevents the supervisor and the manual launcher from starting two consumers.
-- Prometheus discovers pods dynamically. The exporter selects the exact run, retains every label and NaN value, and reports if any process incarnation has no Prometheus series.
+- The prepared Prometheus configuration supports dynamic pod discovery, but that configuration is not deployed in the recorded campaign. The live static targets cover its three-to-six consumer comparisons. The exporter selects the exact run, retains every label and NaN value, and reports if any process incarnation has no Prometheus series.
 - `save-run.sh` remains the entry point but delegates to a Python coordinator. This removes the Bash associative-array dependency on the local Mac. Backups downloaded from Nautilus go to `backups/`, never over edited local source. Topic deletion and result deletion are no longer automatic.
 - Producer client settings are wired into librdkafka. ACKS=0 is rejected because it cannot establish the acknowledged-message cohort. Hot/cold routing is explicit and seeded; the arrival counter uses actual broker-acknowledged partition IDs.
 

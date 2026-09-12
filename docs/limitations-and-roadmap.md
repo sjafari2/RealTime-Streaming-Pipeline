@@ -1,6 +1,6 @@
 # Limitations and research roadmap
 
-The repository currently provides an instrumented Kafka pipeline and managed experiment workflow. Its strongest evidence is about implementation behavior and the recorded smoke test. Policy effectiveness remains to be evaluated.
+The repository provides an instrumented Kafka pipeline, managed experiment workflow and preliminary scheduled-action evidence. The [12 September campaign](../experiment-records/campaign-20260912/campaign-report.md) contains 16 controlled trials across balanced pressure, shorter episodes, concentrated input and lower-input controls. It does not evaluate the complete adaptive selector or the proposal's full main study.
 
 ## Implemented capabilities
 
@@ -13,7 +13,7 @@ Consult the active branch's tests and [experiment records](../experiment-records
 
 ## Current evidence limits
 
-The September 2026 smoke test completed its acknowledged cohort and retained evidence for analysis. It did not compare mitigation treatments or establish sustained overload, calibrated service capacity, a final application workload or an effective selector. Its lag and resource coverage were incomplete, and its clock probe did not establish timing accuracy adequate for a definitive 99 ms deadline claim. Exact figures and limitations belong to the saved run record.
+The initial smoke tests established collection and reconciliation. Subsequent calibrations established pressure for specific synthetic workloads, nodes and observation intervals. The controlled campaign uses two matched workload-seed pairs per family with opposite action orders. It retains every valid outcome and excludes only the affected metric when its monitoring coverage is insufficient. The concentrated-input conditions had systematically different initial hot-partition owners/nodes; their differences therefore do not isolate a causal effect of replica count. No universal capacity, representative application or general policy superiority is established. Recorded clock probes also do not establish timing accuracy adequate for a definitive 99 ms deadline claim.
 
 The current completion endpoint follows synthetic work and precedes commit acknowledgement. Within-epoch offset checks and identity consistency are useful diagnostics; they do not establish a durable exactly-once external result or prove ordering across every ownership transition.
 
@@ -30,7 +30,7 @@ Resource accounting covers the implemented consumer process/request measurements
 | Robustness | Conditions of benefit, no benefit and failure | Bursts, changing demand/capacity and imperfect observations |
 | Optional key splitting | Correct finer-grained work distribution | Compatible application semantics, combination cost and final-output evidence |
 
-These stages are research dependencies, not promised completion dates. The immediate configuration is [prepared for review](../experiments/next-run-review/README.md); proposed runs are not recorded as completed experiments.
+These stages are research dependencies, not promised completion dates. The [dated campaign protocols](../experiments/preliminary-campaign-20260912/README.md) and completed run inventory supersede the earlier next-configuration review as the record of what was executed. Targeted reassignment, the full burst-to-normal condition, moving hotspots and variable record costs still require implementation and controlled evaluation.
 
 ## Decisions still open
 

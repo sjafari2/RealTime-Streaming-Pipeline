@@ -4,6 +4,11 @@ This directory keeps reviewable summaries and frozen configurations. Raw per-mes
 evidence and full monitoring exports remain in the ignored `results/` directory and
 on separately managed storage. These records are not a replacement for a data backup.
 
+The [12 September 2026 campaign report](campaign-20260912/campaign-report.md) links
+all 16 controlled trials, paired plots, calibrations, technical exclusions and
+operational completion status. It also identifies which proposal conditions were
+tested and which remain for the main study.
+
 For each completed run, retain its run ID, workload/timing, actual configuration,
 summary metrics, validity/coverage limits, evidence checksums and known source revision.
 Never label illustrative values or a prepared configuration as an executed run.

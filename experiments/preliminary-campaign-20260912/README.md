@@ -7,10 +7,14 @@ not the proposal's full Table 1, 25-minute, five-repetition study.
 
 ## Current protocol and evidence
 
-The eight core trials in `comparison-protocol-v4.json` are complete. Reviewed paired
-reports and plots are under `experiment-records/campaign-20260912/comparisons/`
-(`sustained/` and `short/`). Earlier protocol revisions and technical attempts are
-retained as history; they are not instructions to repeat excluded attempts.
+All 16 controlled trials are complete: eight core trials in
+`comparison-protocol-v4.json`, four concentrated trials in
+`isolated-partition-protocol-v2.json`, and four lower-input controls in
+`low-input-protocol.json`. The [final campaign report](../../experiment-records/campaign-20260912/campaign-report.md)
+links the run inventory, paired outcomes, plots and exact operational status.
+Each family has two matched workload-seed pairs with opposite action orders.
+Earlier protocol revisions and technical attempts remain as history; they are
+not instructions to repeat excluded attempts.
 
 The dedicated one-partition calibration `run-20260912-083417` passed the criteria
 in `single-partition-capacity-plan.json`. Its measured qualification is saved in

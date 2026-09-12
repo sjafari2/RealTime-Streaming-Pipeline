@@ -1,0 +1,53 @@
+{
+  "recorded_epoch": 1789230340.088876,
+  "status": "collection_analysis_and_restoration_complete_online_publication_pending",
+  "campaign_start_utc": "2026-09-12 08:53:04 UTC",
+  "campaign_budget_end_utc": "2026-09-12 20:53:04 UTC",
+  "controlled_trials": 16,
+  "evaluation_admissions": 5687999,
+  "verified_original_evidence_files": 360,
+  "families": [
+    "sustained",
+    "short",
+    "isolated",
+    "low-input"
+  ],
+  "replication": "Two matched workload-seed pairs per family, opposite action orders. This is not the full Table 1 main study.",
+  "validation": {
+    "latest_relevant_full_suite": "96 tests passed in 2.87 seconds",
+    "live": "All 16 run outcomes reconciled; application/environment compatibility checked per pair; metric-specific coverage screens applied.",
+    "figures": "All paired outcome/time-course PDFs and both concentrated partition-detail PDFs rendered and inspected."
+  },
+  "restoration": {
+    "shared_configuration": "Original bytes restored; SHA-256 verified across all 9 producer/consumer pods.",
+    "shared_config_sha256": "810d16af2643cea9fc2a7e2782294cf2ca4669c1ee7cd0e156f07f7dd63a685a",
+    "control_state": "stopped",
+    "consumer_count": 6,
+    "producer_count": 3,
+    "hpa": "Original UID and full spec restored and verified.",
+    "prometheus": "Original one available replica on default service account, static 5-second application scrapes; dynamic discovery not deployed.",
+    "monitoring_rbac": "Three campaign-created unused objects removed with UID/resource-version preconditions; removal verified.",
+    "temporary_sleep_assertion": "SIGTERM_sent_to_verified_owned_assertion"
+  },
+  "destinations": {
+    "final_code_folder": "/Users/soheila/Desktop/Thesis-26-27/code",
+    "git_branch": "codex/managed-experiments-2026",
+    "git_revision_before_final_record": "90f1e5d173e8167d1a7ae7df028e37534c1b5983",
+    "github_push_status": "Pending; last credential attempt blocked by locked Mac/Keychain, not retried without unlock.",
+    "last_verified_pushed_revision": "80e958d",
+    "overleaf_project": "https://www.overleaf.com/project/6aa3337d078205869d3c5fe5",
+    "overleaf_saved": false,
+    "proposal_local_mirror": "Measured preliminary results and relevant method/example passages updated; main.tex and Thesis.tex compiled and changed pages visually checked.",
+    "word_exports": "No new Word export; follow current Overleaf-only document workflow.",
+    "raw_evidence": "Local results/RUN_ID and original Nautilus producer/consumer PVC evidence. Git summaries are not the full raw-data backup.",
+    "git_backup": "Verified full bundle through b42bbcf and incremental through f2e36f3 retained; final incremental bundle through the completed record commit is created after this commit and indexed in the local campaign audit."
+  },
+  "limits": [
+    "Completed-message latency is conditional on completion by drain and precedes commit acknowledgment.",
+    "Concentrated conditions have different initial hot owners/nodes; differences do not isolate replica-count effects.",
+    "Both short scaling trials fail the aggregate-backlog coverage screen; D1 also fails that screen. Their valid outcome/resource results remain retained.",
+    "Low-input threshold holds are health checks, not recovery from initial overload.",
+    "Two pairs per family, shared-node confounding, synthetic work and provisional 99 ms clock accuracy limit conclusions.",
+    "No tuned policy, targeted reassignment, stateful sink, full Table 1 or novelty claim."
+  ]
+}

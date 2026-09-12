@@ -16,6 +16,7 @@ This documentation connects the Kafka pipeline implementation to its research qu
 - [Metric definitions](metric-definitions.md): cohorts, completion, lag, percentiles, coverage, resource accounting and recovery.
 - [Next experiment configuration](../experiments/next-run-review/README.md): review-only configurations and their deviations from the proposal schedule.
 - [Experiment records](../experiment-records/README.md): small records of completed runs, with explicit limitations.
+- [12 September preliminary campaign](../experiment-records/campaign-20260912/campaign-report.md): all 16 controlled trials, paired plots, technical exclusions and the connection to the proposal experiment table.
 - [Git history and backups](git-history-and-backups.md): source history, commits and separate raw-data preservation.
 
 ## Repository organization

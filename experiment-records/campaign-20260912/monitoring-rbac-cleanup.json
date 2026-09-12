@@ -1,0 +1,78 @@
+{
+  "started_epoch": 1789230104.455627,
+  "status": "removed_and_verified",
+  "objects": [
+    {
+      "kind": "RoleBinding",
+      "name": "pipeline-prometheus-discovery",
+      "uid": "af80c223-5d84-4dfc-b01e-a0f16df671ed",
+      "response": {
+        "kind": "Status",
+        "apiVersion": "v1",
+        "metadata": {},
+        "status": "Success",
+        "details": {
+          "name": "pipeline-prometheus-discovery",
+          "group": "rbac.authorization.k8s.io",
+          "kind": "rolebindings",
+          "uid": "af80c223-5d84-4dfc-b01e-a0f16df671ed"
+        }
+      }
+    },
+    {
+      "kind": "Role",
+      "name": "pipeline-prometheus-discovery",
+      "uid": "a42ff21b-0b2a-4663-9068-ef66c4779c9d",
+      "response": {
+        "kind": "Status",
+        "apiVersion": "v1",
+        "metadata": {},
+        "status": "Success",
+        "details": {
+          "name": "pipeline-prometheus-discovery",
+          "group": "rbac.authorization.k8s.io",
+          "kind": "roles",
+          "uid": "a42ff21b-0b2a-4663-9068-ef66c4779c9d"
+        }
+      }
+    },
+    {
+      "kind": "ServiceAccount",
+      "name": "pipeline-prometheus",
+      "uid": "52ba23cc-7975-436b-a7c4-36c6660ec2bb",
+      "response": {
+        "kind": "ServiceAccount",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "pipeline-prometheus",
+          "namespace": "kafkastreamingdata",
+          "uid": "52ba23cc-7975-436b-a7c4-36c6660ec2bb",
+          "resourceVersion": "14785010530",
+          "creationTimestamp": "2026-09-12T09:06:49Z",
+          "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"ServiceAccount\",\"metadata\":{\"annotations\":{},\"name\":\"pipeline-prometheus\",\"namespace\":\"kafkastreamingdata\"}}\n"
+          },
+          "managedFields": [
+            {
+              "manager": "kubectl-client-side-apply",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-09-12T09:06:49Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    ".": {},
+                    "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "finished_epoch": 1789230107.9194071,
+  "inspected_workload_objects": 19
+}

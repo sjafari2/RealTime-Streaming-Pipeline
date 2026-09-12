@@ -1,5 +1,23 @@
 Local verification for the measurement and run workflow update
 
+Current status — 12 September 2026 preliminary campaign
+- Latest relevant full automated suite: 96 tests passed (2.87 seconds).
+- Live application signatures and frozen configurations checked for each trial.
+- Sixteen controlled trials completed across four two-pair families; exact
+  outcomes and per-metric coverage screens are in experiment-records/campaign-20260912/.
+- Raw event copies reconciled against original Nautilus PVC SHA-256 hashes;
+  completed-run compression verified lossless before removing plain duplicates.
+- Three-to-six startup and first-completion events recorded in live experiments.
+- Subsequent plot correction made the target-rate reference visible when observed
+  throughput stayed below target; reviewed rendered PDFs use the corrected plotter.
+- Consumer HPA/shared-config restoration and publication status are recorded in
+  the campaign completion record. Dynamic Prometheus discovery was not deployed.
+- These runs do not validate a tuned autoscaling policy, targeted reassignment,
+  a stateful downstream sink or cross-node clock accuracy for the 99 ms threshold.
+
+The entries below are dated history. Earlier statements that deployment had not
+been performed describe their own stage, not the current campaign status.
+
 19 tests passed using a temporary Python virtual environment.
 - Completion latency includes processing work.
 - Invalid records do not advance commit progress.
