@@ -1,0 +1,98 @@
+{
+  "updated_utc": "2026-09-12T19:01:08.008087+00:00",
+  "status": "saved_online_and_local_verified",
+  "project_title": "Proposal_2026_Updated",
+  "request": "Add the approved preliminary experiment report to the proposal.",
+  "campaign_comparison_runs": 16,
+  "overview_label": "tab:preliminary-overview",
+  "online_main_physical_pages": 53,
+  "overview_online_page": 22,
+  "source_files": {
+    "Thesis.tex": {
+      "sha256": "c887d2674b464d81ca1ece36df3f73b3aa7b895576140929dcad6145689059fb",
+      "verifiedAfterReload": true
+    },
+    "experiment_configuration_and_metrics.tex": {
+      "sha256": "5165a658c9a08b2d03fc3bd2c46667c2c55f062ed489bcf8c5446fe8119a4c6f",
+      "verifiedAfterReload": true
+    },
+    "Preliminary_Validation_Results.tex": {
+      "sha256": "449e41d92999af242e2c18de61b3dd6a2096ff10eb8aad8461904c47c86052fe",
+      "verifiedAfterReload": true
+    },
+    "main.tex": {
+      "sha256": "fd137e313d82833ed1fdeaf1fa8f2788c5e45b9de3d2feb6d8b3a27e9272672a",
+      "verifiedAfterReload": true
+    }
+  },
+  "figure_assets": [
+    {
+      "path": "figures/preliminary-calibration.pdf",
+      "uploaded_source_sha256": "5218b9241cee646671344b86b4d0d01639e5b3c3190c30c576980b9d3123708f",
+      "online_file_tree_verified": true,
+      "online_compiled_figure_visually_inspected": true
+    },
+    {
+      "path": "figures/preliminary-concentrated-D1.pdf",
+      "uploaded_source_sha256": "618ea5aff2f00a5859045d308eca3e36f8c55e903f711e942de3b02ffc2be84e",
+      "online_file_tree_verified": true,
+      "online_compiled_figure_visually_inspected": true
+    },
+    {
+      "path": "figures/preliminary-low-input-A1.pdf",
+      "uploaded_source_sha256": "1500b297564d9debde1e3cc797398e984586045f26cd1698d60edc3fb5ddf872",
+      "online_file_tree_verified": true,
+      "online_compiled_figure_visually_inspected": true
+    },
+    {
+      "path": "figures/preliminary-sustained-L1.pdf",
+      "uploaded_source_sha256": "555275585fe755bc2dbe035dfe1e52d5769df0a1e3429c488ae6b5fc87813560",
+      "online_file_tree_verified": true,
+      "online_compiled_figure_visually_inspected": true
+    }
+  ],
+  "online_compile": {
+    "errors": 0,
+    "warnings": 0,
+    "typesetting_info": 7,
+    "inspected_pdf_pages": [
+      22,
+      23,
+      25,
+      27,
+      28
+    ]
+  },
+  "local_compile": {
+    "main_pages": 53,
+    "thesis_pages": 114,
+    "main_overview_inspected_page": 22,
+    "thesis_overview_inspected_physical_page": 42,
+    "pdf_sha256": {
+      "main.pdf": "81748576e1d8502c720daef652e621a6087b1d2d1657985202100e3d7f482adb",
+      "Thesis.pdf": "721fc8d4d03f9956a6bf0efc7517cb5307ae8f4640770287e739a8ec3cebef52"
+    },
+    "notes": "Both documents compiled. Overview tables visually inspected in both; all four plots also inspected in the live Overleaf main PDF. Local-only pre-existing font/anchor diagnostics and the pre-existing small thesis overflow remain outside the new report."
+  },
+  "method_alignment": [
+    "Actual five-second monitoring scrapes versus two-second query grid",
+    "Monotonic sample age plus elapsed time for freshness",
+    "Complete-run replica and HPA ownership/restoration descriptions",
+    "Matched workload seeds do not imply identical initial placements",
+    "Already-healthy threshold hold is not overload recovery",
+    "Whole-cohort completion latency before commit acknowledgment and separate unfinished outcomes"
+  ],
+  "limitations_retained": [
+    "Two repetitions per workload/action condition",
+    "Synthetic processing and shared-node effects",
+    "Concentrated input differs in hot-partition placement before scaling",
+    "Backlog aggregation requires predeclared monitoring coverage",
+    "Conditional completed-cohort p99 must be read beside unfinished counts",
+    "No unsupported novelty, deadline SLA or complete selector validation claim"
+  ],
+  "code_changed": false,
+  "experiments_rerun": false,
+  "word_exported": false,
+  "purpose": "Publication provenance for the measured campaign; full proposal sources remain in the proposal project.",
+  "campaign_record_commit": "090dbae93d74e9913ca66ecd7cc088baf955dbe4"
+}
