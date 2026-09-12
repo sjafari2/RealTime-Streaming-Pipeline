@@ -178,6 +178,7 @@ def batch_setup(monkeypatch, tmp_path):
     monkeypatch.setattr(runner, 'analysis_tools', lambda: analysis)
     monkeypatch.setattr(runner, 'ROOT', tmp_path)
     monkeypatch.setattr(runner, 'preflight', lambda: None)
+    monkeypatch.setattr(runner, 'paused_for_experiment', lambda *args: nullcontext())
     monkeypatch.setattr(runner, 'prometheus_connection', nullcontext)
     monkeypatch.setenv('PROM_URL', 'http://test-prometheus:9090')
     monkeypatch.setattr(runner, 'prometheus_ready', lambda url: True)

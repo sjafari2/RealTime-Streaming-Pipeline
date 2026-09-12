@@ -16,6 +16,7 @@ import re
 import uuid
 import urllib.parse
 import urllib.request
+from managed_hpa import paused_for_experiment
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = os.getenv('NAMESPACE', 'kafkastreamingdata')
@@ -344,8 +345,9 @@ def start(plan=None):
     validate_intervention(plan, read_config()[1])
     validate_replica_control(read_config()[1], plan)
     stop()
-    if plan and plan.get('initial_consumers') is not None:
-        set_consumer_baseline(plan['initial_consumers'], float(read_config()[1].get('READINESS_TIMEOUT_SECONDS', 180)))
+    initial = (plan or {}).get('initial_consumers') or read_config()[1].get('CONSUMER_POD_COUNT')
+    if initial is not None:
+        set_consumer_baseline(int(initial), float(read_config()[1].get('READINESS_TIMEOUT_SECONDS', 180)))
         preflight()  # Include newly created baseline replicas in source/dependency checks.
     consumer_pods, producer_pods = pods('consumer'), pods('producer')
     validate_initial_replicas(read_config()[1], producer_pods, consumer_pods, plan)
@@ -837,7 +839,7 @@ def complete_run(plan=None):
 def run_complete_commands(repetitions=1, rates=None, batch=False, plan=None):
     if repetitions < 1 or (rates is not None and (not rates or min(rates) <= 0)):
         raise ValueError('Use positive repetition counts and rates')
-    with command_lock():
+    with command_lock(), paused_for_experiment(sys.modules[__name__], plan):
         preflight()
         if plan:
             validate_intervention(plan, read_config()[1])

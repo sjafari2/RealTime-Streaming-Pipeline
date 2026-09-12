@@ -379,3 +379,31 @@ The batch's `repetition-summary.json` adds partition groups, pooled p50/p95/p99,
 The two shell entry points call `run_experiment.py`. That coordinator publishes the frozen manifest and handles optional replica changes, resource snapshots and collection. `consumer.py` emits completion/ownership evidence alongside Prometheus metrics. `evaluate_run.py` uses `partition_outcomes.py` for partition rates and evidence checks. `analyze_lag.py` supplies coverage-checked backlog samples. `analyze_execution.py` combines lifetimes, resource snapshots, callback events and optional recovery settings. `summarize_runs.py` recomputes these results for exactly the completed runs in the batch. All analyzers run locally after collection; none sends a scaling action.
 
 Full definitions, examples and exclusions are in [metric-definitions.md](metric-definitions.md).
+
+## Fixed replicas with an existing HPA
+
+The complete one-run and repeated-run commands now save the original HPA settings,
+stop the preceding applications, and temporarily disable competing scale-up and
+scale-down decisions. They may lower the saved minimum to the declared baseline;
+they never increase the HPA maximum. Each run restores the configured initial
+consumer count before readiness. The common HPA pause lasts across a whole batch,
+then its original settings are restored after collection, including on a handled
+failure or Ctrl+C. A controller already paused before the command is left under
+its existing owner's control.
+
+The backup and restoration status are saved under
+`results/controller-settings/hpa-TIMESTAMP-ID.json`. Restoration checks both the
+controller UID and its exact paused specification. If someone changed or replaced
+it, those changes are preserved and the command reports a pending restoration.
+After a hard process termination or machine loss, inspect that saved file. To
+retry restoration of unchanged settings, run:
+
+```bash
+python3 my-shell/managed_hpa.py results/controller-settings/hpa-TIMESTAMP-ID.json
+```
+
+Replace the filename with the actual saved record. A hard termination cannot run
+Python cleanup; the file is a recovery record, not an automatic cluster-side timer.
+Manual `start` and standalone preflight still require intentionally paused,
+compatible controller settings. These changes control experiment isolation; they
+do not implement an HPA baseline or the proposed adaptive mitigation selector.
