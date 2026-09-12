@@ -28,8 +28,7 @@ Reserve time to inspect plots and reconcile the preliminary-results proposal tex
 
 The observed 99 ms threshold is provisional. Point-in-time kernel clock reports
 are not an independently established cross-node error bound. These pilots document
-research progress and limitations; they cannot establish legal eligibility,
-first-ever novelty, or superiority over all prior systems.
+research progress and limitations; they cannot establish first-ever novelty, or superiority over all prior systems.
 
 ## Monitoring preparation
 
@@ -79,3 +78,16 @@ The analysis uses a 64 MiB SQLite cache for each temporary identity database. Al
 64 checks passed. On the same synthetic 120,000-record workload, the old and new
 summaries were identical (14.24 versus 9.38 seconds on this Mac). This small check
 is not a full-run speed guarantee or an experimental performance result.
+
+## Replica-control correction
+
+The existing `consumer-hpa` restored six replicas after the attempted three-consumer
+scale-down. Run `run-20260912-042303` was interrupted and excluded. The original HPA
+settings are backed up; controlled trials require both scaling directions disabled
+and a minimum that permits the chosen initial count. The runner now rejects an
+active/conflicting HPA and checks actual producer/consumer counts before creating a
+topic and again after readiness. It records the paused HPA settings in the manifest.
+All 68 local checks passed, including the six-replica-floor regression. Restore the
+saved HPA configuration when the controlled campaign ends.
+
+HPA behavior reference: https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/

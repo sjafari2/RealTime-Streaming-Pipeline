@@ -297,14 +297,50 @@ def apply_intervention(control):
     journal(control, 'intervention-events.jsonl', dict(event='request_completed', timestamp=time.time(), action=plan['action']))
 
 
+def validate_replica_control(config, plan=None, hpas=None):
+    # A separate HPA can undo a scheduled replica count between readiness checks.
+    if hpas is None:
+        hpas = json.loads(kubectl('get', 'hpa', '-o', 'json'))['items']
+    initial = ((plan or {}).get('initial_consumers') or int(config.get('CONSUMER_POD_COUNT', 0)))
+    target = (plan or {}).get('target_consumers')
+    requested = {'consumer-sts': [n for n in (initial, target) if n],
+                 'producer-sts': [int(config['PRODUCER_POD_COUNT'])] if 'PRODUCER_POD_COUNT' in config else []}
+    records = []
+    for item in hpas:
+        spec = item['spec']
+        reference = spec['scaleTargetRef']
+        if reference.get('kind') != 'StatefulSet' or reference.get('name') not in requested:
+            continue
+        name = item['metadata']['name']
+        behavior = spec.get('behavior', {})
+        paused = all(behavior.get(direction, {}).get('selectPolicy') == 'Disabled'
+                     for direction in ('scaleUp', 'scaleDown'))
+        if not paused:
+            raise RuntimeError('HPA ' + name + ' can change experiment replicas. Pause it for fixed/scheduled trials, preserve its settings, then rerun preflight.')
+        counts = requested[reference['name']]
+        if any(n < spec.get('minReplicas', 1) or n > spec['maxReplicas'] for n in counts):
+            raise RuntimeError('HPA ' + name + ' bounds conflict with the requested replica counts, even with scaling policies disabled.')
+        records.append(dict(name=name, uid=item['metadata'].get('uid'), spec=spec))
+    return records
+
+
+def validate_initial_replicas(config, producers, consumers, plan=None):
+    expected_producers = int(config.get('PRODUCER_POD_COUNT', len(producers)))
+    expected_consumers = ((plan or {}).get('initial_consumers') or int(config.get('CONSUMER_POD_COUNT', len(consumers))))
+    if len(producers) != expected_producers or len(consumers) != expected_consumers:
+        raise RuntimeError(f'Initial replica mismatch: expected {expected_producers} producers and {expected_consumers} consumers; found {len(producers)} and {len(consumers)}. No workload was released.')
+
+
 def start(plan=None):
     # Validate a requested pilot before stopping existing applications or changing replica counts.
     validate_intervention(plan, read_config()[1])
+    validate_replica_control(read_config()[1], plan)
     stop()
     if plan and plan.get('initial_consumers') is not None:
         set_consumer_baseline(plan['initial_consumers'], float(read_config()[1].get('READINESS_TIMEOUT_SECONDS', 180)))
         preflight()  # Include newly created baseline replicas in source/dependency checks.
     consumer_pods, producer_pods = pods('consumer'), pods('producer')
+    validate_initial_replicas(read_config()[1], producer_pods, consumer_pods, plan)
     if not consumer_pods or not producer_pods:
         raise RuntimeError('Need at least one consumer and producer pod')
     validate_config(read_config()[1])
@@ -362,6 +398,10 @@ def start(plan=None):
         else:
             raise RuntimeError('Readiness timed out. Check assignments, shared mounts and logs; no workload was released.')
         control['clock_probes'] = clock_probes('producer', producer_pods) + clock_probes('consumer', consumer_pods)
+        validate_initial_replicas(config, pods('producer'), pods('consumer'), plan)
+        if pods('consumer') != consumer_pods or pods('producer') != producer_pods:
+            raise RuntimeError('Initial pod membership changed during readiness. No workload was released.')
+        control['replica_control'] = validate_replica_control(config, plan)
         control['initial_assignment'] = sorted([dict(pod=pod, topic=topic, partition=partition)
             for pod, row in zip(consumer_pods, consumers) for topic, partition in row.get('assignments', [])],
             key=lambda row: (row['topic'], row['partition']))
@@ -566,6 +606,7 @@ print(json.dumps({{name:hashlib.sha256((root/name).read_bytes()).hexdigest() if 
         print('[CHECK]', len(names), role, 'pods: imports and shared source match', flush=True)
     config = read_config()[1]
     validate_config(config)
+    validate_replica_control(config)
     print('[CONFIG] Rate per producer:', config['TARGET_RATE'], 'production seconds:',
           config.get('EXP_DURATION_SEC', 300), 'drain seconds:', config.get('DRAIN_SECONDS', 60), flush=True)
 
