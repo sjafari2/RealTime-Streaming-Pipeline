@@ -69,3 +69,22 @@ def test_shared_stop_during_gate_prevents_scale(monkeypatch):
     monkeypatch.setattr(r, 'kubectl', lambda *a, **k: pytest.fail('must not scale'))
     with pytest.raises(RuntimeError, match='changed during placement'):
         r.apply_intervention(control)
+
+
+def test_block_records_authentication_failure_before_preparation(monkeypatch, tmp_path):
+    import importlib.util
+    source = Path(__file__).resolve().parents[1] / 'experiments/controlled-followup-20260912/execute_block.py'
+    spec = importlib.util.spec_from_file_location('controlled_block', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    audit = tmp_path / 'attempt'
+    def fail_before_preparation(path):
+        path.mkdir()
+        module.write(path / 'block-status.json', dict(status='preparing', attempts=[], runs=[]))
+        raise TimeoutError('credential refresh did not finish')
+    monkeypatch.setattr(module, 'execute', fail_before_preparation)
+    with pytest.raises(TimeoutError):
+        module.main(['--audit-dir', str(audit)])
+    result = json.loads((audit / 'block-status.json').read_text())
+    assert result['status'] == 'failed' and result['attempts'] == [] and result['runs'] == []
+    assert 'credential refresh' in result['error']

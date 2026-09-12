@@ -186,8 +186,24 @@ def execute(audit):
                 block['finished_epoch'] = time.time(); save()
 
 
-if __name__ == '__main__':
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--audit-dir', type=Path, required=True, help='New directory for block evidence and restoration records')
-    args = parser.parse_args()
-    execute(args.audit_dir.resolve())
+    args = parser.parse_args(argv)
+    audit = args.audit_dir.resolve()
+    # Initial authentication and read-only checks can fail before execute()
+    # enters its restoration scope. Keep those failures visible as well.
+    existed = audit.exists()
+    try:
+        execute(audit)
+    except BaseException as exc:
+        path = audit / 'block-status.json'
+        if not existed and path.exists():
+            record = json.loads(path.read_text())
+            record.update(status='failed', error=str(exc) or type(exc).__name__, finished_epoch=time.time())
+            write(path, record)
+        raise
+
+
+if __name__ == '__main__':
+    main()
