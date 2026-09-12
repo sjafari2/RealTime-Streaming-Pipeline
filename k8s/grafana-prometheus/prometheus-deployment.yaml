@@ -13,6 +13,7 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: pipeline-prometheus
       containers:
         - name: prometheus
           image: prom/prometheus:v2.52.0

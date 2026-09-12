@@ -209,7 +209,8 @@ for i in $(seq 0 $((TOPIC_COUNT - 1))); do
   rc=$?
   set -e
   if [[ $rc -ne 0 ]]; then
-    echo "[WARN] Create returned non-zero (topic may exist or broker rejected settings): ${topic}" >&2
+    echo "[ERROR] Topic creation failed: ${topic}" >&2
+    exit "$rc"
   fi
 done
 

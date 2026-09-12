@@ -1,0 +1,18 @@
+# Small experiment records kept in Git
+
+This directory keeps reviewable summaries and frozen configurations. Raw per-message
+evidence and full monitoring exports remain in the ignored `results/` directory and
+on separately managed storage. These records are not a replacement for a data backup.
+
+For each completed run, retain its run ID, workload/timing, actual configuration,
+summary metrics, validity/coverage limits, evidence checksums and known source revision.
+Never label illustrative values or a prepared configuration as an executed run.
+Capture the Git revision before a new run; do not assign the current revision to
+older experiments retrospectively. The archived runtime events also retain application
+source hashes and package versions.
+
+Commit a completed record with a descriptive message after checking it. Correct a
+record with a later explanatory commit so the earlier interpretation remains visible.
+The run `run-20260911-214924` predates this Git integration; its source identity is
+retained in its evidence and deployment audit, and its historical Git revision is
+explicitly unknown.

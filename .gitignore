@@ -1,12 +1,21 @@
-results-all-pods
-.ipynb_checkpoints
-.idea
-src/backup
-*logs*
-unwanted_files
-kafka-temp
-venv
+__pycache__/
 *.pyc
-.kube/
+.pytest_cache/
+.DS_Store
+*.swp
+backups/
 results/
-.out
+logs/
+.ipynb_checkpoints/
+
+# Local history/data archives stay outside source control.
+*.bundle
+*.tar.gz
+*.parquet
+.venv/
+.env
+.env.*
+*.pem
+*.key
+# Historical node output remains local and in the original repository backup.
+/python-scripts/metrics_analysis/nodes-labels.out

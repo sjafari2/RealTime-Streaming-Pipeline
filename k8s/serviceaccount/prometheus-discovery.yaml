@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline-prometheus
+  namespace: kafkastreamingdata
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pipeline-prometheus-discovery
+  namespace: kafkastreamingdata
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pipeline-prometheus-discovery
+  namespace: kafkastreamingdata
+subjects:
+  - kind: ServiceAccount
+    name: pipeline-prometheus
+    namespace: kafkastreamingdata
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pipeline-prometheus-discovery

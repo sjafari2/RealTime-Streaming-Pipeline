@@ -1,15 +1,15 @@
 FROM sjafari2/kafkaconfluentbase:latest
+COPY dockerfiles_confluent/runtime-requirements.txt /tmp/runtime-requirements.txt
+RUN pip install --no-cache-dir -r /tmp/runtime-requirements.txt
 
 # Copy consumer source code into a safe internal path
 COPY --chown=sjafari:sjafari ./src/consumer/ /code/
+COPY --chown=sjafari:sjafari ./src/common/ /code/
 
 # Copy config files to /defaults 
 COPY --chown=sjafari:sjafari ./src/pipeline-configmap.yaml /defaults/ 
 RUN chmod 644 /defaults/pipeline-configmap.yaml 
 
-# Copy experiments.yaml file to /defaults 
-COPY --chown=sjafari:sjafari ./src/experiments.yaml /defaults/ 
-RUN chmod 644 /defaults/experiments.yaml
 
 # Switch to root to adjust permissions and install system packages
 USER root
@@ -36,5 +36,5 @@ RUN apt-get update && \
 USER sjafari
 
 # Keep container alive for debugging or interaction
-CMD ["bash", "sleep", "infinity"]
+CMD ["sleep", "infinity"]
 

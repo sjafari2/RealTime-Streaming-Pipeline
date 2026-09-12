@@ -15,29 +15,25 @@ data:
         static_configs:
           - targets: ['localhost:9090']
 
-      # App pods (Flask/Prometheus exporter) — 
+      # Discover current application pods, including consumers added during a run.
       - job_name: 'kafka-pipeline'
         metrics_path: /metrics
-        scrape_interval: 5s
-        static_configs:
-          # Producers
-          - targets:
-              - producer-sts-0.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001
-              - producer-sts-1.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001
-              - producer-sts-2.producer-headless-svc.kafkastreamingdata.svc.cluster.local:8001
-            labels:
-              role: producer
-
-          # Consumers
-          - targets:
-              - consumer-sts-0.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
-              - consumer-sts-1.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
-              - consumer-sts-2.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
-              - consumer-sts-3.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
-              - consumer-sts-4.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
-              - consumer-sts-5.consumer-headless-svc.kafkastreamingdata.svc.cluster.local:8002
-            labels:
-              role: consumer
+        scrape_interval: 2s
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: [kafkastreamingdata]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: '(producer|consumer)-sts'
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_container_port_name]
+            regex: metrics
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: '(producer|consumer)-sts'
+            target_label: role
+            replacement: '$1'
       # Kafka JMX exporter (from Bitnami chart) — HTTP metrics on 5556
       - job_name: 'kafka-brokers'
         scrape_interval: 10s
