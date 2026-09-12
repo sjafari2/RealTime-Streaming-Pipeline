@@ -11,6 +11,7 @@ from test_measurements import consumer as module
 @pytest.fixture
 def worker():
     obj = module.MetricConsumer.__new__(module.MetricConsumer)
+    obj.metrics_lock = threading.RLock()
     obj.consumer = Mock()
     obj.consumer.commit.return_value = []
     obj.runtime = SimpleNamespace(event=Mock(), outcome=Mock(), failure=None,

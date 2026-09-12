@@ -59,6 +59,8 @@ Time-weighted run mean lag uses trapezoidal area / covered seconds. Each eligibl
 
 Defaults are exploratory: window_samples=15, hot_k=1, minimum_lag=10, persistence=0.8, max_gap=3 seconds. They are analyzer options, not automatically calibrated thresholds or controller settings. With eight zero-lag partitions and two equal hot partitions, k=2 puts the threshold exactly on the hot value; strict > detects none. Calibrate on pilot runs before comparisons.
 
+The consumer serializes lag/ownership updates with metrics exposition so a scrape cannot mix a new position with an older high offset. The exported completion offset is refreshed with the lag snapshot. This consistency is local to one consumer; observations across consumers still have different timestamps and must pass freshness/ownership checks. A scrape may wait for a bounded lag query or ownership callback; missing scrapes remain missing. Calibration run `run-20260912-053411` exposed the earlier mixed-field issue and retains its original 85% coverage result. The correction does not retroactively repair those observations.
+
 ## Several runs
 
 summarize_runs.py separates matching frozen configurations, actual initial replica counts, evaluation/follow-up durations and recorded source/package signatures. Different workload seeds remain separate groups; paired seed comparisons require a further analysis. Invalid runs remain listed with reasons and do not enter pooled results. A valid run with poor performance stays included.
@@ -107,3 +109,11 @@ No automatic threshold tuning or policy selection is implemented. The 99 ms dead
 The batch summary groups the declared intervention and recorded initial assignment as well as configuration, replica counts, durations and source/package signatures. Generated topic prefixes are normalized, so partition 0 of topic 0 can be compared across fresh-topic runs. Different initial ownership maps remain separate groups; the broker assignor is not forced to recreate an identical map.
 
 Pipeline and partition p50/p95/p99 are reported both as run-level metrics and as pooled message quantiles. Pooled quantiles sort the individual valid latencies; they never average run quantiles. Partition rates and request-time costs have run-level mean, sample standard deviation, minimum, maximum and available-run count. Recovery summaries list the number of censored trials; their recovery-time mean includes observed recoveries only and must not be presented as the mean of all trials. Runs marked interrupted/failed are explicitly excluded even if their individual messages look complete. Poor performance alone does not exclude a valid run.
+
+## Explicit paired comparison files
+
+`python-scripts/compare_runs.py` reads an index with a `pairs` list. Each entry supplies `pair`, `none` and `scale`, where the latter two are completed run IDs. Run `python3 python-scripts/compare_runs.py comparison-index.json --output results/comparison` after collecting both treatments. The index contains observed run IDs, not planned run names.
+
+The analyzer verifies frozen workload settings, application hashes, Python/package signatures and the shared intervention timing. It preserves every individual run and quality flag. Summary paired differences are scale minus no action and use only compatible pairs meeting the declared input/coverage screens. A mean of paired differences is a descriptive run-level result; neither an averaged p99 nor its paired difference is a pooled-message p99. There is no small-sample confidence interval claim.
+
+Processing-backlog area uses the same valid intervals as lag, integrating the completion backlog with trapezoids and reporting its covered duration. The primary cost window spans evaluation start to drain end in both treatments, with separate production, evaluation and post-action windows. Requested CPU-seconds are summed only across observed valid intervals; below 95% coverage, the analyzer flags the cost comparison. An unfinished fraction is always retained beside conditional completion latency. Commit-result records and request-to-readiness/first-completion timings remain available for explaining transition behavior.

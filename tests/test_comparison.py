@@ -1,0 +1,36 @@
+import sys
+from pathlib import Path
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'python-scripts'))
+import compare_runs as comparison
+
+
+def test_processing_area_clips_the_horizon_without_filling_gaps():
+    rows = [dict(timestamp=t, valid=valid, processing_backlog=back, growth_offsets_per_second=growth)
+            for t,valid,back,growth in [(0,True,0,None), (2,True,10,5), (4,True,20,5), (6,False,None,None)]]
+    result = comparison.processing_integral(rows, 1, 5)
+    assert result['area_offset_seconds'] == pytest.approx(37.5)
+    assert result['covered_seconds'] == 3
+    assert result['covered_fraction'] == .75
+    rows[2]['growth_offsets_per_second'] = None  # Ownership/offset discontinuity rejected upstream.
+    result = comparison.processing_integral(rows, 1, 5)
+    assert result['area_offset_seconds'] == pytest.approx(7.5)
+    assert result['covered_seconds'] == 1
+
+
+def test_paired_summary_preserves_flagged_pairs_but_does_not_aggregate_them(monkeypatch):
+    def run(path):
+        action = 'scale' if 'scale' in path.name else 'none'
+        bad = 'bad' in path.name
+        return dict(run_id=path.name, config={'WORKLOAD_SEED':'1'}, action=action,
+                    source_signatures=['known'], intervention={}, quality_flags=['coverage'] if bad else [],
+                    metrics={'p99_seconds': 7 if action=='scale' else 10, 'unfinished_fraction':0.0})
+    monkeypatch.setattr(comparison, 'run_record', run)
+    index = dict(pairs=[dict(pair=1,none='none-good',scale='scale-good'),
+                        dict(pair=2,none='none-bad',scale='scale-bad')])
+    result = comparison.summarize(index, Path('/unused'))
+    assert len(result['pairs']) == 2
+    assert result['pairs'][1]['runs']['scale']['quality_flags'] == ['coverage']
+    assert result['descriptive_paired_differences']['p99_seconds'] == dict(
+        pair_count=1,mean_paired_difference=-3,minimum=-3,maximum=-3,sample_standard_deviation=None)

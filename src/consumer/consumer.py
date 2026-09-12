@@ -3,6 +3,8 @@ import math
 import os
 import time
 import hashlib
+import threading
+from functools import wraps
 from collections import deque
 
 import psutil
@@ -49,9 +51,18 @@ losses = Gauge('consumer_evidence_dropped_total', 'Outcome records dropped by th
 PARTITION_GAUGES = [lag_metric, backlog_metric, observed_metric, valid_metric, high_metric, position_metric, frontier_metric, owner_metric]
 
 
+def synchronized_lag(method):
+    @wraps(method)
+    def call(self, *args, **kwargs):
+        with self.metrics_lock:
+            return method(self, *args, **kwargs)
+    return call
+
+
 class MetricConsumer:
     def __init__(self):
         self.runtime = Runtime('consumer')
+        self.metrics_lock = threading.RLock()
         self.group = os.environ['CONSUMER_GROUP_ID']
         self.labels = dict(pod=self.runtime.pod, group=self.group,
                            client_id=os.getenv('CONSUMER_CLIENT_ID', self.runtime.pod),
@@ -109,11 +120,18 @@ class MetricConsumer:
                            task=dict(wait_seconds=self.delay, sha256_iterations=self.cpu_iterations))
         self.consumer.subscribe(self.topics, on_assign=self.on_assign, on_revoke=self.on_revoke, on_lost=self.on_lost)
         self.runtime.phase = 'ready'
-        self.runtime.start_http(int(os.getenv('CONSUMER_HTTP_PORT', '8002')), generate_latest)
+        self.runtime.start_http(int(os.getenv('CONSUMER_HTTP_PORT', '8002')), self.metrics_snapshot)
+
+    def metrics_snapshot(self):
+        # A scrape must see high, position, backlog, validity and ownership from
+        # the same update. Prometheus otherwise reads their families separately.
+        with self.metrics_lock:
+            return generate_latest()
 
     def partition_labels(self, key):
         return dict(self.labels, topic=key[0], partition=str(key[1]))
 
+    @synchronized_lag
     def on_assign(self, consumer, partitions):
         self.runtime.event('assign_started', partitions=[[p.topic, p.partition] for p in partitions])
         # Resolve the exact starting offsets before a batch can advance position().
@@ -210,6 +228,7 @@ class MetricConsumer:
     def on_commit(self, error, partitions):
         self.record_commit_result(error, partitions or [], 'asynchronous_callback')
 
+    @synchronized_lag
     def on_revoke(self, consumer, partitions):
         self.runtime.event('revoke_started', partitions=[[p.topic, p.partition] for p in partitions])
         self.commit([(tp.topic, tp.partition) for tp in partitions])
@@ -217,12 +236,14 @@ class MetricConsumer:
         consumer.incremental_unassign(partitions)
         self.ownership_event('revoke', partitions)
 
+    @synchronized_lag
     def on_lost(self, consumer, partitions):
         # A lost owner must not commit offsets for partitions now owned elsewhere.
         self.forget(partitions)
         consumer.incremental_unassign(partitions)
         self.ownership_event('lost', partitions)
 
+    @synchronized_lag
     def update_lag(self):
         # Rotate bounded queries through the assignment instead of blocking on every partition.
         started = time.monotonic()
@@ -304,7 +325,6 @@ class MetricConsumer:
         # Processing is sequential, so offset+1 is safe only after this record succeeds.
         self.frontiers[key] = msg.offset() + 1
         self.completed_offsets[key] = msg.offset() + 1
-        frontier_metric.labels(**self.partition_labels(key)).set(self.frontiers[key])
         self.consumer.store_offsets(message=msg)
         completed.labels(**self.labels).inc()
         completed_partition.labels(**self.partition_labels(key)).inc()
@@ -359,7 +379,7 @@ class MetricConsumer:
             try:
                 self.consumer.close()
             finally:
-                self.runtime.finish(generate_latest)
+                self.runtime.finish(self.metrics_snapshot)
 
 
 if __name__ == '__main__':

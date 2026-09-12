@@ -288,3 +288,35 @@ def test_active_export_preserves_labels_nan_and_checks_incarnations(tmp_path, mo
     assert rows[0]['value'] == 'NaN'
     assert 'run_id="r"' in requests[0]['query'][0]
     assert json.loads((tmp_path / 'export-status.json').read_text())['status'] == expected_status
+
+
+def test_scrape_cannot_mix_fields_from_two_lag_updates(app, monkeypatch):
+    entered, release, exposed = threading.Event(), threading.Event(), threading.Event()
+    original_position = app.consumer.position
+    def position(partitions):
+        entered.set()
+        assert release.wait(2)
+        return original_position(partitions)
+    monkeypatch.setattr(app.consumer, 'position', position)
+    def export():
+        labels = app.partition_labels(('topic_0', 0))
+        high = consumer.high_metric.labels(**labels)._value.get()
+        pos = consumer.position_metric.labels(**labels)._value.get()
+        lag = consumer.lag_metric.labels(**labels)._value.get()
+        assert high-pos == lag
+        exposed.set()
+        return b'coherent'
+    monkeypatch.setattr(consumer, 'generate_latest', export)
+    update = threading.Thread(target=app.update_lag)
+    scrape = threading.Thread(target=app.metrics_snapshot)
+    update.start()
+    try:
+        assert entered.wait(2)
+        scrape.start()
+        assert not exposed.wait(.05)
+    finally:
+        release.set()
+        update.join(2)
+        if scrape.ident is not None:
+            scrape.join(2)
+    assert exposed.is_set() and not update.is_alive() and not scrape.is_alive()
