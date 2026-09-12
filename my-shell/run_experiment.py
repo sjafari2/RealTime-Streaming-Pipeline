@@ -417,6 +417,7 @@ def start(plan=None):
         control['initial_assignment'] = sorted([dict(pod=pod, topic=topic, partition=partition)
             for pod, row in zip(consumer_pods, consumers) for topic, partition in row.get('assignments', [])],
             key=lambda row: (row['topic'], row['partition']))
+        control['monitoring_readiness'] = monitoring_readiness(control)
         control['state'] = 'running'
         control['start_epoch'] = time.time() + 5
         control['evaluation_start_epoch'] = control['start_epoch'] + warmup
@@ -533,6 +534,59 @@ def collect():
     return directory
 
 
+def add_lag_sample_timestamps(selector, run_id):
+    ages = 'consumer_lag_observation_age_seconds{run_id=' + json.dumps(run_id) + '}'
+    # Default set matching ignores the metric name and would discard the added
+    # series because the raw ages have the same labels. This reserved new name
+    # must be a separate member of the union, with all original labels retained.
+    return selector + ' or on(__name__) label_replace(timestamp(' + ages + '), "__name__", "consumer_lag_scrape_timestamp_seconds", "", "")'
+
+
+def monitoring_readiness(control, timeout=30):
+    if not os.getenv('PROM_URL'):
+        return dict(status='not_checked', reason='Manual start without a Prometheus connection')
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'python-scripts'))
+    from lag_freshness import observation_validity
+    config=control['config']
+    expected={(f"{config['TOPIC_TITLE']}_{t}", str(p)) for t in range(int(config['TOPIC_COUNT']))
+              for p in range(int(config['NUM_PARTITIONS']))}
+    selector='{__name__=~"consumer_lag.*|consumer_partition_owned|consumer_processing_backlog|consumer_position_offset|consumer_high_offset",run_id='+json.dumps(control['run_id'])+'}'
+    query=add_lag_sample_timestamps(selector, control['run_id'])
+    deadline=time.monotonic()+timeout
+    error='No complete observation'
+    while time.monotonic()<deadline:
+        timestamp=time.time()-1
+        try:
+            params=urllib.parse.urlencode(dict(query=query,time=timestamp))
+            with urllib.request.urlopen(os.environ['PROM_URL'].rstrip('/')+'/api/v1/query?'+params, timeout=5) as response:
+                data=json.load(response)
+            if data.get('status')!='success': raise ValueError('Prometheus query failed')
+            entries={}
+            for series in data['data']['result']:
+                m=series['metric']
+                if 'partition' not in m: continue
+                key=(m.get('topic'),m['partition'],m.get('pod'),m.get('incarnation'))
+                values=entries.setdefault(key,{})
+                if m['__name__'] in values: raise ValueError('Duplicate partition metric')
+                values[m['__name__']]=float(series['value'][1])
+            selected={};duplicate=False
+            for (topic,partition,pod,incarnation),values in entries.items():
+                if values.get('consumer_partition_owned')!=1: continue
+                duplicate=duplicate or (topic,partition) in selected
+                selected[(topic,partition)]=values
+            valid=not duplicate and set(selected)==expected and all(
+                observation_validity(m,timestamp,float(config.get('LAG_FRESHNESS_SECONDS',10)))[0]
+                for m in selected.values())
+            if valid:
+                return dict(status='complete',query=query,query_timestamp=timestamp,
+                            valid_owned_partitions=len(selected),freshness_clock='monotonic_scrape_v2')
+            error='Missing, duplicated, invalid or stale partition observations'
+        except Exception as exc:
+            error=str(exc)
+        time.sleep(1)
+    raise RuntimeError('Prometheus measurement readiness failed before production: '+error)
+
+
 def export_metrics(directory, control):
     # Export raw series with all labels; dashboard layout never determines research data.
     start = control.get('start_epoch')
@@ -542,8 +596,7 @@ def export_metrics(directory, control):
     selector = '{__name__=~"consumer_.*|producer_.*",run_id=' + json.dumps(control['run_id']) + '}'
     # query_range timestamps are evaluation times, not the original scrape times.
     # Preserve the latter as a named series alongside the exporter-local ages.
-    ages = 'consumer_lag_observation_age_seconds{run_id=' + json.dumps(control['run_id']) + '}'
-    selector += ' or label_replace(timestamp(' + ages + '), "__name__", "consumer_lag_scrape_timestamp_seconds", "", "")'
+    selector = add_lag_sample_timestamps(selector, control['run_id'])
     (directory / 'prometheus-query.json').write_text(json.dumps(dict(query=selector, start=start, end=end, step=2), indent=2))
     params = urllib.parse.urlencode(dict(query=selector, start=start, end=end, step=2))
     url = os.getenv('PROM_URL', 'http://localhost:9090').rstrip('/') + '/api/v1/query_range?' + params

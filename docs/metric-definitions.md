@@ -150,3 +150,11 @@ stamping/render timing or a small node-clock offset; the evidence does not isola
 the two. This diagnostic remains excluded from planned full-duration comparisons.
 
 Reference: [Prometheus timestamp() documentation](https://prometheus.io/docs/prometheus/latest/querying/functions/#timestamp).
+
+Protocol revision 3 corrects the PromQL union used to retain sample timestamps.
+The union explicitly matches on metric name; otherwise the timestamp series is
+suppressed by the raw age series with the same non-name labels. Managed complete
+runs now verify the actual Prometheus response for all unique, fresh partition
+observations before production is released. Manual `start` without `PROM_URL`
+records that this external check was not performed. The short, pre-action attempt
+`run-20260912-062803` is retained as a query diagnostic, not a scaling result.

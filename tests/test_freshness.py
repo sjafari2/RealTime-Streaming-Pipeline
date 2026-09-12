@@ -74,3 +74,29 @@ def test_saved_analysis_requires_v2_age_and_scrape_samples(tmp_path):
     data=[row for row in data if row['metric']['__name__']!='consumer_lag_observation_age_seconds']
     path.write_text(json.dumps(dict(status='success',data=dict(result=data))))
     assert analyze(root)['covered_seconds']==0  # Never fall back to wall time for a v2 run.
+
+
+def test_monitoring_gate_waits_for_complete_fresh_export_before_release(monkeypatch):
+    import io
+    import run_experiment as runner
+    clock=SimpleNamespace(value=0.)
+    monkeypatch.setattr(runner,'time',SimpleNamespace(time=lambda:101.,monotonic=lambda:clock.value,
+                        sleep=lambda delay:setattr(clock,'value',clock.value+delay)))
+    monkeypatch.setenv('PROM_URL','http://test')
+    control=dict(run_id='r',state='preparing',config=dict(TOPIC_TITLE='r',TOPIC_COUNT='1',NUM_PARTITIONS='1'))
+    data=[dict(metric=dict(__name__=name,run_id='r',topic='r_0',partition='0',pod='c',incarnation='i'),value=[100,str(value)])
+          for name,value in dict(metrics(),consumer_partition_owned=1).items()]
+    requests=[]
+    def response(url,timeout):
+        requests.append(url)
+        # First scrape is still missing the required original sample timestamp.
+        result=data[:-1] if len(requests)==1 else data
+        if len(requests)==1:result=[r for r in data if r['metric']['__name__']!='consumer_lag_scrape_timestamp_seconds']
+        return io.BytesIO(json.dumps(dict(status='success',data=dict(result=result))).encode())
+    monkeypatch.setattr(runner.urllib.request,'urlopen',response)
+    result=runner.monitoring_readiness(control,timeout=3)
+    assert len(requests)==2 and result['valid_owned_partitions']==1
+    assert control['state']=='preparing'
+    monkeypatch.setattr(runner.urllib.request,'urlopen',lambda *a,**k:io.BytesIO(json.dumps(dict(status='success',data=dict(result=data+[data[-1]]))).encode()))
+    with pytest.raises(RuntimeError,match='before production'):
+        runner.monitoring_readiness(control,timeout=3)
