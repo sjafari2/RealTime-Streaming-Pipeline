@@ -45,13 +45,14 @@ for pair in s['pairs']:
             axes[1].plot(x,y,color=colors[action],lw=1.5,label=labels[action])
     if max(durations)-min(durations)>.01:raise ValueError('Incompatible evaluation durations')
     anchor=pair['runs']['scale']['intervention']['after_evaluation_start_seconds']
+    # Include the reference in autoscaling before fixing the lower bound.
+    target=float(m['config']['TARGET_RATE'])*int(m['config']['PRODUCER_POD_COUNT'])
+    axes[1].axhline(target,color='#777777',ls=':',lw=1,label='Target admission rate')
     for ax in axes:
         ax.set_xlim(0,durations[0]);ax.set_ylim(bottom=0);ax.axvline(anchor,color='#444444',ls='--',lw=1,label='Scheduled decision time')
         ax.set_xlabel('Seconds from evaluation start');ax.grid(axis='y',alpha=.2);ax.legend(fontsize=8)
     axes[0].set(title='Processing backlog · gaps are invalid or discontinuous observations',ylabel='Completion-frontier offsets')
     axes[1].set(title='Completion attempt rate · rolling 30-second estimate',ylabel='Attempts / second')
-    target=float(m['config']['TARGET_RATE'])*int(m['config']['PRODUCER_POD_COUNT'])
-    axes[1].axhline(target,color='#777777',ls=':',lw=1,label='Target admission rate')
     axes[1].legend(fontsize=8)
     fig.suptitle(f"Matched pair {pair['pair']} · workload seed {pair['runs']['none']['workload_seed']}\n{int(m['config']['EXP_DURATION_SEC'])} s production · target {target:,.0f} messages/s · {int(m['config']['APP_CPU_ITERATIONS']):,} SHA iterations/message",fontsize=12)
     fig.supxlabel('; '.join(coverage)+'\nReplayed completed attempts can contribute to monitoring rates; exact distinct cohort outcomes are reported separately.',fontsize=8)
