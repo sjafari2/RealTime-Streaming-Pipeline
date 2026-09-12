@@ -71,6 +71,7 @@ for pair in summary['pairs']:
     axes[0].set(xlim=(0,duration),ylim=(0,None),xlabel='Seconds from evaluation start',ylabel='Completion-frontier offsets',title=f'Selected partition {a.partition} processing backlog · invalid/transition observations remain gaps')
     axes[0].legend(fontsize=8)
     axes[1].set(xticks=[0,1],xticklabels=[f'Partition {a.partition}',f'Other {count-1} partitions (sum)'],ylabel='Messages / evaluation second',title='Acknowledged admissions and distinct completions during evaluation')
+    axes[1].margins(y=.25)
     axes[1].legend(fontsize=8,ncol=2)
     for ax in axes:ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
     fig.suptitle(f"Partition-level evidence · pair {pair['pair']} · seed {pair['runs']['none']['workload_seed']}",fontsize=12)

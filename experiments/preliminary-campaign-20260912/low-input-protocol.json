@@ -81,7 +81,8 @@
     "This workload is intended to leave processing headroom. Verify that property from each no-action run; do not label it sufficient capacity solely from its target rate.",
     "Use two matched seed pairs with opposite action orders, 180 s production including 60 s warm-up and 120 s drain. Schedule the decision at evaluation +60 s.",
     "All favorable and unfavorable results and per-metric coverage flags remain visible. This tests scheduled actions, not an adaptive selector or tuned HPA.",
-    "Analyze this condition separately from high-input trials. Do not pool their outcomes or use a post hoc deadline to declare success."
+    "Analyze this condition separately from high-input trials. Do not pool their outcomes or use a post hoc deadline to declare success.",
+    "If backlog is already below the threshold before the decision, subsequent threshold-hold confirmation is a health check, not recovery from overload. Missing transition observations do not prove that a healthy workload failed to recover."
   ],
   "protocol_revision": 1,
   "measurement_revision": "monotonic_scrape_v2",
