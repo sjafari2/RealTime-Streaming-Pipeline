@@ -5,6 +5,41 @@ measurements and the outcome/cost of scheduled consumer scale-out. The work budg
 starts at 08:53 UTC and ends at 20:53 UTC. This is a short preliminary campaign,
 not the proposal's full Table 1, 25-minute, five-repetition study.
 
+## Current protocol and evidence
+
+The eight core trials in `comparison-protocol-v4.json` are complete. Reviewed paired
+reports and plots are under `experiment-records/campaign-20260912/comparisons/`
+(`sustained/` and `short/`). Earlier protocol revisions and technical attempts are
+retained as history; they are not instructions to repeat excluded attempts.
+
+The dedicated one-partition calibration `run-20260912-083417` passed the criteria
+in `single-partition-capacity-plan.json`. Its measured qualification is saved in
+`experiment-records/campaign-20260912/single-partition-calibration/qualification.json`.
+`isolated-partition-protocol-v2.json` adds that evidence before the four concentrated
+trials, preserving their original configurations, seeds, action order and 300 s
+production duration. `low-input-protocol.json` defines a separate lower-input
+comparison. A prepared protocol is not evidence that its trials have completed;
+use the saved run records and final campaign inventory for actual status.
+
+The core and dedicated calibration use 2,000 SHA-256 iterations per message with
+no added sleep. Qualified balanced input is 1,500 messages/s across three producers;
+the dedicated partition calibration uses 1,200/s. These observations do not define
+a universal consumer capacity. The latest relevant full suite passed 96 tests.
+The current freshness rule uses local monotonic observation age plus original
+Prometheus sample age; exports query a 2 s grid over actual 5 s application scrapes.
+
+Routine future runs use `my-shell/save-run.sh` and `my-shell/run_pipeline.sh` as
+explained in `docs/runtime-and-data-flow.md`. Dated campaign orchestration records
+preserve the exact guarded sequence and should not be mistaken for another general
+runtime entry point. Complete commands own and restore their temporary HPA pause;
+this campaign's earlier explicit pause remains under campaign restoration control.
+
+## Preparation history
+
+The following notes retain the order of calibration and infrastructure findings.
+Their future-tense statements describe decisions at that point in the campaign,
+not pending instructions for the current runtime.
+
 First calibrate real backlog with the committed 180-second balanced pressure
 configuration (12,000 target messages/s total, no artificial application work).
 Inspect the trial before selecting another. If rate alone does not create an
