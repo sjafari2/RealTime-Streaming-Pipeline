@@ -1,0 +1,2005 @@
+{
+  "run_id": "run-20260911-234758",
+  "process_lifetimes": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "started_epoch": 1789192090.3514924,
+      "finished_epoch": 1789192506.0079782,
+      "process_seconds": 415.6681104960153,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-0/e9661a93e33d4028bb0e434e4c8ff933/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "started_epoch": 1789192091.0353062,
+      "finished_epoch": 1789192505.934124,
+      "process_seconds": 414.9097080267966,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-1/a5b17e934121417ead573ba19da1b417/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "started_epoch": 1789192091.2155294,
+      "finished_epoch": 1789192506.0160873,
+      "process_seconds": 414.81119573581964,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-2/f926e3d649fe434d94714bb4b87bd429/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "started_epoch": 1789192090.94931,
+      "finished_epoch": 1789192505.9514017,
+      "process_seconds": 415.01665141712874,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-3/3af4481d100944c4906a0ba4c912ea23/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "started_epoch": 1789192091.384439,
+      "finished_epoch": 1789192505.9511573,
+      "process_seconds": 414.5769770620391,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-4/0d28d0c2588646458eb361739551cdd6/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "started_epoch": 1789192090.9688745,
+      "finished_epoch": 1789192505.934929,
+      "process_seconds": 414.9750754358247,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-5/d5d3cf84cfe44fc6b543afd1dfd0704f/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-0",
+      "incarnation": "2db6b95e96924c62926d8607cfc5c509",
+      "started_epoch": 1789192096.6778007,
+      "finished_epoch": 1789192445.899387,
+      "process_seconds": 349.45804279018193,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-0/2db6b95e96924c62926d8607cfc5c509/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-1",
+      "incarnation": "604d44e04e4c414e8e2612d9f4adebab",
+      "started_epoch": 1789192097.379453,
+      "finished_epoch": 1789192445.8994772,
+      "process_seconds": 348.8507087409962,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-1/604d44e04e4c414e8e2612d9f4adebab/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-2",
+      "incarnation": "09a99df05c3e45b8b1d6bfdf2b215b72",
+      "started_epoch": 1789192097.5441582,
+      "finished_epoch": 1789192445.900931,
+      "process_seconds": 348.62990189006086,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-2/09a99df05c3e45b8b1d6bfdf2b215b72/events.jsonl"
+    }
+  ],
+  "consumer_process_seconds": 2489.957718173624,
+  "consumer_lifetime_coverage_complete": true,
+  "ownership_events": [
+    {
+      "event": "assign_started",
+      "timestamp": 1789192096.4349906,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          1
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          7
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          13
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          19
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          25
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          31
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          37
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          43
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          49
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          55
+        ]
+      ],
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789192096.4350655,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          2
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          8
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          14
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          20
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          26
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          32
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          38
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          44
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          50
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          56
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789192096.4351306,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          5
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          11
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          17
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          23
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          29
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          35
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          41
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          47
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          53
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789192096.4352117,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          3
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          9
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          15
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          21
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          27
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          33
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          39
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          45
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          51
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789192096.4352539,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          0
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          6
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          12
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          18
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          24
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          30
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          36
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          42
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          48
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          54
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789192096.4352582,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          4
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          10
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          16
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          22
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          28
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          34
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          40
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          46
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          52
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789192096.5100255,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          3
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          9
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          15
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          21
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          27
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          33
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          39
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          45
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          51
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          57
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789192096.518503,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          2
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          8
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          14
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          20
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          26
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          32
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          38
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          44
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          50
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          56
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789192096.5204535,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          5
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          11
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          17
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          23
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          29
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          35
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          41
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          47
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          53
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          59
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789192096.5444522,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          1
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          7
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          13
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          19
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          25
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          31
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          37
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          43
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          49
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          55
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789192096.5448365,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          0
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          6
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          12
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          18
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          24
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          30
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          36
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          42
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          48
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          54
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789192096.6109684,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          4
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          10
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          16
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          22
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          28
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          34
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          40
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          46
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          52
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          58
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789192505.9239933,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          4
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          10
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          16
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          22
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          28
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          34
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          40
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          46
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          52
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789192505.9241867,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          1
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          7
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          13
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          19
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          25
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          31
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          37
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          43
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          49
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          55
+        ]
+      ],
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789192505.9327056,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          1
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          7
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          13
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          19
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          25
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          31
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          37
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          43
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          49
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          55
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789192505.9327912,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          4
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          10
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          16
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          22
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          28
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          34
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          40
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          46
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          52
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          58
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789192505.941398,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          5
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          11
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          17
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          23
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          29
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          35
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          41
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          47
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          53
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789192505.941467,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          3
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          9
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          15
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          21
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          27
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          33
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          39
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          45
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          51
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789192505.949778,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          5
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          11
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          17
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          23
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          29
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          35
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          41
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          47
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          53
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          59
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789192505.9498012,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          3
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          9
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          15
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          21
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          27
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          33
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          39
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          45
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          51
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          57
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789192505.9937751,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          0
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          6
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          12
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          18
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          24
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          30
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          36
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          42
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          48
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          54
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789192506.0005188,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          2
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          8
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          14
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          20
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          26
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          32
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          38
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          44
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          50
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          56
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789192506.0019305,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          0
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          6
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          12
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          18
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          24
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          30
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          36
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          42
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          48
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          54
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789192506.0086577,
+      "partitions": [
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          2
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          8
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          14
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          20
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          26
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          32
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          38
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          44
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          50
+        ],
+        [
+          "A-monitoring-balanced-R3000-20260911-234758_0",
+          56
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429"
+    }
+  ],
+  "callback_blocking_intervals": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "event": "assign",
+      "started_epoch": 1789192096.4352539,
+      "finished_epoch": 1789192096.5448365,
+      "blocked_seconds": 0.10958266258239746
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "event": "revoke",
+      "started_epoch": 1789192505.9937751,
+      "finished_epoch": 1789192506.0019305,
+      "blocked_seconds": 0.008155345916748047
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "event": "assign",
+      "started_epoch": 1789192096.4352582,
+      "finished_epoch": 1789192096.6109684,
+      "blocked_seconds": 0.17571020126342773
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "event": "revoke",
+      "started_epoch": 1789192505.9239933,
+      "finished_epoch": 1789192505.9327912,
+      "blocked_seconds": 0.008797883987426758
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "event": "assign",
+      "started_epoch": 1789192096.4350655,
+      "finished_epoch": 1789192096.518503,
+      "blocked_seconds": 0.08343744277954102
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "event": "revoke",
+      "started_epoch": 1789192506.0005188,
+      "finished_epoch": 1789192506.0086577,
+      "blocked_seconds": 0.008138895034790039
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "event": "assign",
+      "started_epoch": 1789192096.4352117,
+      "finished_epoch": 1789192096.5100255,
+      "blocked_seconds": 0.0748138427734375
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "event": "revoke",
+      "started_epoch": 1789192505.941467,
+      "finished_epoch": 1789192505.9498012,
+      "blocked_seconds": 0.008334159851074219
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "event": "assign",
+      "started_epoch": 1789192096.4351306,
+      "finished_epoch": 1789192096.5204535,
+      "blocked_seconds": 0.08532285690307617
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "event": "revoke",
+      "started_epoch": 1789192505.941398,
+      "finished_epoch": 1789192505.949778,
+      "blocked_seconds": 0.00838017463684082
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "event": "assign",
+      "started_epoch": 1789192096.4349906,
+      "finished_epoch": 1789192096.5444522,
+      "blocked_seconds": 0.10946154594421387
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "event": "revoke",
+      "started_epoch": 1789192505.9241867,
+      "finished_epoch": 1789192505.9327056,
+      "blocked_seconds": 0.00851893424987793
+    }
+  ],
+  "assignment_first_completions": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 0,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.963124,
+      "assign_to_first_completion_seconds": 49.41828751564026
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 6,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9666245,
+      "assign_to_first_completion_seconds": 49.42178797721863
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 12,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9929147,
+      "assign_to_first_completion_seconds": 49.44807815551758
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 18,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9931417,
+      "assign_to_first_completion_seconds": 49.44830513000488
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 24,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9610686,
+      "assign_to_first_completion_seconds": 49.416232109069824
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 30,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9621124,
+      "assign_to_first_completion_seconds": 49.41727590560913
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 36,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9634213,
+      "assign_to_first_completion_seconds": 49.4185848236084
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 42,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9636114,
+      "assign_to_first_completion_seconds": 49.41877484321594
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 48,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9919908,
+      "assign_to_first_completion_seconds": 49.44715428352356
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "e9661a93e33d4028bb0e434e4c8ff933",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 54,
+      "assigned_epoch": 1789192096.5448365,
+      "first_completion_epoch": 1789192145.9677489,
+      "assign_to_first_completion_seconds": 49.42291235923767
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 4,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9845865,
+      "assign_to_first_completion_seconds": 49.37361812591553
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 10,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9828603,
+      "assign_to_first_completion_seconds": 49.37189197540283
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 16,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9952579,
+      "assign_to_first_completion_seconds": 49.384289503097534
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 22,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9573336,
+      "assign_to_first_completion_seconds": 49.346365213394165
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 28,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9569554,
+      "assign_to_first_completion_seconds": 49.34598708152771
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 34,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.958435,
+      "assign_to_first_completion_seconds": 49.347466707229614
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 40,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9827178,
+      "assign_to_first_completion_seconds": 49.37174940109253
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 46,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.957095,
+      "assign_to_first_completion_seconds": 49.346126556396484
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 52,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.959387,
+      "assign_to_first_completion_seconds": 49.34841871261597
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "a5b17e934121417ead573ba19da1b417",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 58,
+      "assigned_epoch": 1789192096.6109684,
+      "first_completion_epoch": 1789192145.9563482,
+      "assign_to_first_completion_seconds": 49.34537982940674
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 2,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9669428,
+      "assign_to_first_completion_seconds": 49.448439836502075
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 8,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9671834,
+      "assign_to_first_completion_seconds": 49.44868040084839
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 14,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.969072,
+      "assign_to_first_completion_seconds": 49.45056915283203
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 20,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9664388,
+      "assign_to_first_completion_seconds": 49.447935819625854
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 26,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9957135,
+      "assign_to_first_completion_seconds": 49.477210521698
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 32,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9971814,
+      "assign_to_first_completion_seconds": 49.478678464889526
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 38,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9692037,
+      "assign_to_first_completion_seconds": 49.450700759887695
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 44,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9673123,
+      "assign_to_first_completion_seconds": 49.44880938529968
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 50,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192145.9675536,
+      "assign_to_first_completion_seconds": 49.44905066490173
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "f926e3d649fe434d94714bb4b87bd429",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 56,
+      "assigned_epoch": 1789192096.518503,
+      "first_completion_epoch": 1789192146.0053627,
+      "assign_to_first_completion_seconds": 49.4868597984314
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 3,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9648292,
+      "assign_to_first_completion_seconds": 49.454803705215454
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 9,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.965552,
+      "assign_to_first_completion_seconds": 49.45552659034729
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 15,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9924204,
+      "assign_to_first_completion_seconds": 49.48239493370056
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 21,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9645133,
+      "assign_to_first_completion_seconds": 49.454487800598145
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 27,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9643707,
+      "assign_to_first_completion_seconds": 49.45434522628784
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 33,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9649484,
+      "assign_to_first_completion_seconds": 49.454922914505005
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 39,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.992554,
+      "assign_to_first_completion_seconds": 49.48252844810486
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 45,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9656858,
+      "assign_to_first_completion_seconds": 49.455660343170166
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 51,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9638288,
+      "assign_to_first_completion_seconds": 49.453803300857544
+    },
+    {
+      "pod": "consumer-sts-3",
+      "incarnation": "3af4481d100944c4906a0ba4c912ea23",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 57,
+      "assigned_epoch": 1789192096.5100255,
+      "first_completion_epoch": 1789192145.9658947,
+      "assign_to_first_completion_seconds": 49.45586919784546
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 5,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9676828,
+      "assign_to_first_completion_seconds": 49.44722938537598
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 11,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9685023,
+      "assign_to_first_completion_seconds": 49.44804883003235
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 17,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9675531,
+      "assign_to_first_completion_seconds": 49.447099685668945
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 23,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9979146,
+      "assign_to_first_completion_seconds": 49.477461099624634
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 29,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9669607,
+      "assign_to_first_completion_seconds": 49.44650721549988
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 35,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9681995,
+      "assign_to_first_completion_seconds": 49.44774603843689
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 41,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9664826,
+      "assign_to_first_completion_seconds": 49.44602918624878
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 47,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.96864,
+      "assign_to_first_completion_seconds": 49.44818663597107
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 53,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.9975326,
+      "assign_to_first_completion_seconds": 49.47707915306091
+    },
+    {
+      "pod": "consumer-sts-4",
+      "incarnation": "0d28d0c2588646458eb361739551cdd6",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 59,
+      "assigned_epoch": 1789192096.5204535,
+      "first_completion_epoch": 1789192145.969286,
+      "assign_to_first_completion_seconds": 49.448832511901855
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 1,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.992755,
+      "assign_to_first_completion_seconds": 49.44830274581909
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 7,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9920492,
+      "assign_to_first_completion_seconds": 49.44759702682495
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 13,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9922438,
+      "assign_to_first_completion_seconds": 49.4477915763855
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 19,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9465923,
+      "assign_to_first_completion_seconds": 49.40214014053345
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 25,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9676292,
+      "assign_to_first_completion_seconds": 49.423177003860474
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 31,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9678245,
+      "assign_to_first_completion_seconds": 49.42337226867676
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 37,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9679403,
+      "assign_to_first_completion_seconds": 49.4234881401062
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 43,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192146.003198,
+      "assign_to_first_completion_seconds": 49.45874571800232
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 49,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.947022,
+      "assign_to_first_completion_seconds": 49.40256977081299
+    },
+    {
+      "pod": "consumer-sts-5",
+      "incarnation": "d5d3cf84cfe44fc6b543afd1dfd0704f",
+      "topic": "A-monitoring-balanced-R3000-20260911-234758_0",
+      "partition": 55,
+      "assigned_epoch": 1789192096.5444522,
+      "first_completion_epoch": 1789192145.9670782,
+      "assign_to_first_completion_seconds": 49.42262601852417
+    }
+  ],
+  "resource_requests": {
+    "covered_seconds": 417.7930691242218,
+    "observation_seconds": 453.4189009666443,
+    "covered_fraction": 0.9214284367800466,
+    "scheduled_consumer_pod_seconds_observed": 2506.758414745331,
+    "consumer_container_requested_cpu_seconds_observed": 5013.516829490662,
+    "consumer_container_requested_gib_seconds_observed": 2506.758414745331,
+    "intervals_with_unsupported_resources": 0
+  },
+  "recovery": null,
+  "observed_consumer_pods": [
+    {
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:46:56Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:47:02Z"
+    },
+    {
+      "uid": "91ffc054-9d08-4312-8650-004d3a05afe8",
+      "pod": "consumer-sts-1",
+      "node": "unseenu.crbs.ucsd.edu",
+      "created_at": "2026-09-12T00:46:40Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:46:54Z"
+    },
+    {
+      "uid": "414f566d-244d-4786-85b4-ac9bab46300c",
+      "pod": "consumer-sts-2",
+      "node": "k8s-chase-ci-10.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:45:50Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:46:38Z"
+    },
+    {
+      "uid": "2cf2c64f-ac33-4760-9d35-725de2150e0b",
+      "pod": "consumer-sts-3",
+      "node": "k8s-gpu-01.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:45:32Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:45:48Z"
+    },
+    {
+      "uid": "19f2af74-d92c-4581-98ca-9290981f7331",
+      "pod": "consumer-sts-4",
+      "node": "k8s-ravi-01.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:45:25Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:45:30Z"
+    },
+    {
+      "uid": "58198645-b4cd-41f4-8606-69435c379cbd",
+      "pod": "consumer-sts-5",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:45:13Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:45:22Z"
+    }
+  ],
+  "intervention_events": [],
+  "notes": [
+    "Consumer process-seconds sum every recorded started-to-finished lifetime, including preparation, warm-up and drain; new runtime evidence uses a local monotonic timer.",
+    "Final scrape hold after the finished event is outside process-seconds; scheduled-pod accounting includes observed hold time.",
+    "Resource request integrals use left-held samples on covered intervals. Transition times are uncertain by up to a sample gap.",
+    "CPU/GiB request-time covers only consumer-container declarations on scheduled pods, not broker/producer/sidecar/whole-cluster cost or actual usage.",
+    "Missing samples and unsupported pod-level resources/resize are not silently treated as zero. Report coverage.",
+    "Recovery requires processing backlog at or below the declared threshold for the full hold interval with valid contiguous same-owner samples.",
+    "Recovery is confirmed at the end of the hold interval; missing/unobserved recovery is censored, not zero.",
+    "Ownership callbacks are observable boundaries, not proof of broker-coordinator timing or a precise processing pause.",
+    "Callback blocking intervals bracket the sequential consumer callback; assignment-to-first-completion also includes idle time and work."
+  ]
+}

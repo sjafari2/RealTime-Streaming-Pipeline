@@ -1,0 +1,765 @@
+{
+  "run_id": "run-20260911-234758",
+  "covered_fraction": 0.94,
+  "covered_seconds": 282.0,
+  "evaluation_seconds": 300.0,
+  "time_weighted_mean_lag": 136.04255319148936,
+  "peak_sampled_lag": 734.0,
+  "notes": [
+    "Offline diagnostic signals; this does not implement a controller.",
+    "Lag is high offset minus returned-record position. Processing backlog is reported separately.",
+    "Trapezoidal integration covers only adjacent valid, same-owner observations within max_gap.",
+    "Windows reset after invalid samples, owner changes, gaps or decreasing observed offsets.",
+    "Window growth uses m+1 snapshots; window means and persistence use m snapshots.",
+    "Hotspot thresholds are exploratory inputs and require pilot calibration.",
+    "Final lag requires a valid sample at the exact evaluation boundary; no extrapolation.",
+    "Unsampled ownership changes or resets cannot be recovered from these exported gauges."
+  ],
+  "snapshots": [
+    {
+      "timestamp": 1789192147.897,
+      "valid": false
+    },
+    {
+      "timestamp": 1789192149.897,
+      "valid": false
+    },
+    {
+      "timestamp": 1789192151.897,
+      "valid": true,
+      "total_lag": 166.0
+    },
+    {
+      "timestamp": 1789192153.897,
+      "valid": true,
+      "total_lag": 125.0
+    },
+    {
+      "timestamp": 1789192155.897,
+      "valid": true,
+      "total_lag": 103.0
+    },
+    {
+      "timestamp": 1789192157.897,
+      "valid": true,
+      "total_lag": 108.0
+    },
+    {
+      "timestamp": 1789192159.897,
+      "valid": true,
+      "total_lag": 111.0
+    },
+    {
+      "timestamp": 1789192161.897,
+      "valid": true,
+      "total_lag": 113.0
+    },
+    {
+      "timestamp": 1789192163.897,
+      "valid": true,
+      "total_lag": 123.0
+    },
+    {
+      "timestamp": 1789192165.897,
+      "valid": true,
+      "total_lag": 110.0
+    },
+    {
+      "timestamp": 1789192167.897,
+      "valid": true,
+      "total_lag": 93.0
+    },
+    {
+      "timestamp": 1789192169.897,
+      "valid": true,
+      "total_lag": 112.0
+    },
+    {
+      "timestamp": 1789192171.897,
+      "valid": true,
+      "total_lag": 112.0
+    },
+    {
+      "timestamp": 1789192173.897,
+      "valid": true,
+      "total_lag": 111.0
+    },
+    {
+      "timestamp": 1789192175.897,
+      "valid": true,
+      "total_lag": 121.0
+    },
+    {
+      "timestamp": 1789192177.897,
+      "valid": true,
+      "total_lag": 86.0
+    },
+    {
+      "timestamp": 1789192179.897,
+      "valid": true,
+      "total_lag": 65.0
+    },
+    {
+      "timestamp": 1789192181.897,
+      "valid": true,
+      "total_lag": 92.0
+    },
+    {
+      "timestamp": 1789192183.897,
+      "valid": true,
+      "total_lag": 110.0
+    },
+    {
+      "timestamp": 1789192185.897,
+      "valid": true,
+      "total_lag": 111.0
+    },
+    {
+      "timestamp": 1789192187.897,
+      "valid": true,
+      "total_lag": 109.0
+    },
+    {
+      "timestamp": 1789192189.897,
+      "valid": true,
+      "total_lag": 107.0
+    },
+    {
+      "timestamp": 1789192191.897,
+      "valid": true,
+      "total_lag": 99.0
+    },
+    {
+      "timestamp": 1789192193.897,
+      "valid": true,
+      "total_lag": 92.0
+    },
+    {
+      "timestamp": 1789192195.897,
+      "valid": true,
+      "total_lag": 223.0
+    },
+    {
+      "timestamp": 1789192197.897,
+      "valid": true,
+      "total_lag": 217.0
+    },
+    {
+      "timestamp": 1789192199.897,
+      "valid": true,
+      "total_lag": 90.0
+    },
+    {
+      "timestamp": 1789192201.897,
+      "valid": true,
+      "total_lag": 94.0
+    },
+    {
+      "timestamp": 1789192203.897,
+      "valid": true,
+      "total_lag": 100.0
+    },
+    {
+      "timestamp": 1789192205.897,
+      "valid": true,
+      "total_lag": 184.0
+    },
+    {
+      "timestamp": 1789192207.897,
+      "valid": true,
+      "total_lag": 182.0
+    },
+    {
+      "timestamp": 1789192209.897,
+      "valid": true,
+      "total_lag": 110.0
+    },
+    {
+      "timestamp": 1789192211.897,
+      "valid": true,
+      "total_lag": 122.0
+    },
+    {
+      "timestamp": 1789192213.897,
+      "valid": true,
+      "total_lag": 120.0
+    },
+    {
+      "timestamp": 1789192215.897,
+      "valid": true,
+      "total_lag": 117.0
+    },
+    {
+      "timestamp": 1789192217.897,
+      "valid": true,
+      "total_lag": 109.0
+    },
+    {
+      "timestamp": 1789192219.897,
+      "valid": true,
+      "total_lag": 106.0
+    },
+    {
+      "timestamp": 1789192221.897,
+      "valid": true,
+      "total_lag": 121.0
+    },
+    {
+      "timestamp": 1789192223.897,
+      "valid": true,
+      "total_lag": 117.0
+    },
+    {
+      "timestamp": 1789192225.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192227.897,
+      "valid": true,
+      "total_lag": 99.0
+    },
+    {
+      "timestamp": 1789192229.897,
+      "valid": true,
+      "total_lag": 109.0
+    },
+    {
+      "timestamp": 1789192231.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192233.897,
+      "valid": true,
+      "total_lag": 104.0
+    },
+    {
+      "timestamp": 1789192235.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192237.897,
+      "valid": true,
+      "total_lag": 119.0
+    },
+    {
+      "timestamp": 1789192239.897,
+      "valid": true,
+      "total_lag": 125.0
+    },
+    {
+      "timestamp": 1789192241.897,
+      "valid": true,
+      "total_lag": 136.0
+    },
+    {
+      "timestamp": 1789192243.897,
+      "valid": true,
+      "total_lag": 113.0
+    },
+    {
+      "timestamp": 1789192245.897,
+      "valid": true,
+      "total_lag": 230.0
+    },
+    {
+      "timestamp": 1789192247.897,
+      "valid": true,
+      "total_lag": 220.0
+    },
+    {
+      "timestamp": 1789192249.897,
+      "valid": true,
+      "total_lag": 92.0
+    },
+    {
+      "timestamp": 1789192251.897,
+      "valid": true,
+      "total_lag": 90.0
+    },
+    {
+      "timestamp": 1789192253.897,
+      "valid": true,
+      "total_lag": 94.0
+    },
+    {
+      "timestamp": 1789192255.897,
+      "valid": true,
+      "total_lag": 98.0
+    },
+    {
+      "timestamp": 1789192257.897,
+      "valid": true,
+      "total_lag": 98.0
+    },
+    {
+      "timestamp": 1789192259.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192261.897,
+      "valid": true,
+      "total_lag": 107.0
+    },
+    {
+      "timestamp": 1789192263.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192265.897,
+      "valid": true,
+      "total_lag": 94.0
+    },
+    {
+      "timestamp": 1789192267.897,
+      "valid": true,
+      "total_lag": 158.0
+    },
+    {
+      "timestamp": 1789192269.897,
+      "valid": true,
+      "total_lag": 171.0
+    },
+    {
+      "timestamp": 1789192271.897,
+      "valid": true,
+      "total_lag": 157.0
+    },
+    {
+      "timestamp": 1789192273.897,
+      "valid": true,
+      "total_lag": 114.0
+    },
+    {
+      "timestamp": 1789192275.897,
+      "valid": true,
+      "total_lag": 103.0
+    },
+    {
+      "timestamp": 1789192277.897,
+      "valid": true,
+      "total_lag": 109.0
+    },
+    {
+      "timestamp": 1789192279.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192281.897,
+      "valid": true,
+      "total_lag": 114.0
+    },
+    {
+      "timestamp": 1789192283.897,
+      "valid": true,
+      "total_lag": 111.0
+    },
+    {
+      "timestamp": 1789192285.897,
+      "valid": true,
+      "total_lag": 119.0
+    },
+    {
+      "timestamp": 1789192287.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192289.897,
+      "valid": true,
+      "total_lag": 116.0
+    },
+    {
+      "timestamp": 1789192291.897,
+      "valid": true,
+      "total_lag": 102.0
+    },
+    {
+      "timestamp": 1789192293.897,
+      "valid": true,
+      "total_lag": 106.0
+    },
+    {
+      "timestamp": 1789192295.897,
+      "valid": true,
+      "total_lag": 92.0
+    },
+    {
+      "timestamp": 1789192297.897,
+      "valid": true,
+      "total_lag": 119.0
+    },
+    {
+      "timestamp": 1789192299.897,
+      "valid": true,
+      "total_lag": 261.0
+    },
+    {
+      "timestamp": 1789192301.897,
+      "valid": true,
+      "total_lag": 256.0
+    },
+    {
+      "timestamp": 1789192303.897,
+      "valid": true,
+      "total_lag": 254.0
+    },
+    {
+      "timestamp": 1789192305.897,
+      "valid": true,
+      "total_lag": 111.0
+    },
+    {
+      "timestamp": 1789192307.897,
+      "valid": true,
+      "total_lag": 112.0
+    },
+    {
+      "timestamp": 1789192309.897,
+      "valid": true,
+      "total_lag": 116.0
+    },
+    {
+      "timestamp": 1789192311.897,
+      "valid": true,
+      "total_lag": 115.0
+    },
+    {
+      "timestamp": 1789192313.897,
+      "valid": true,
+      "total_lag": 127.0
+    },
+    {
+      "timestamp": 1789192315.897,
+      "valid": true,
+      "total_lag": 126.0
+    },
+    {
+      "timestamp": 1789192317.897,
+      "valid": true,
+      "total_lag": 107.0
+    },
+    {
+      "timestamp": 1789192319.897,
+      "valid": true,
+      "total_lag": 88.0
+    },
+    {
+      "timestamp": 1789192321.897,
+      "valid": true,
+      "total_lag": 101.0
+    },
+    {
+      "timestamp": 1789192323.897,
+      "valid": true,
+      "total_lag": 90.0
+    },
+    {
+      "timestamp": 1789192325.897,
+      "valid": true,
+      "total_lag": 101.0
+    },
+    {
+      "timestamp": 1789192327.897,
+      "valid": true,
+      "total_lag": 98.0
+    },
+    {
+      "timestamp": 1789192329.897,
+      "valid": true,
+      "total_lag": 243.0
+    },
+    {
+      "timestamp": 1789192331.897,
+      "valid": true,
+      "total_lag": 240.0
+    },
+    {
+      "timestamp": 1789192333.897,
+      "valid": true,
+      "total_lag": 244.0
+    },
+    {
+      "timestamp": 1789192335.897,
+      "valid": true,
+      "total_lag": 104.0
+    },
+    {
+      "timestamp": 1789192337.897,
+      "valid": true,
+      "total_lag": 99.0
+    },
+    {
+      "timestamp": 1789192339.897,
+      "valid": true,
+      "total_lag": 95.0
+    },
+    {
+      "timestamp": 1789192341.897,
+      "valid": true,
+      "total_lag": 94.0
+    },
+    {
+      "timestamp": 1789192343.897,
+      "valid": true,
+      "total_lag": 90.0
+    },
+    {
+      "timestamp": 1789192345.897,
+      "valid": true,
+      "total_lag": 105.0
+    },
+    {
+      "timestamp": 1789192347.897,
+      "valid": true,
+      "total_lag": 111.0
+    },
+    {
+      "timestamp": 1789192349.897,
+      "valid": true,
+      "total_lag": 98.0
+    },
+    {
+      "timestamp": 1789192351.897,
+      "valid": true,
+      "total_lag": 86.0
+    },
+    {
+      "timestamp": 1789192353.897,
+      "valid": true,
+      "total_lag": 86.0
+    },
+    {
+      "timestamp": 1789192355.897,
+      "valid": true,
+      "total_lag": 110.0
+    },
+    {
+      "timestamp": 1789192357.897,
+      "valid": true,
+      "total_lag": 130.0
+    },
+    {
+      "timestamp": 1789192359.897,
+      "valid": true,
+      "total_lag": 74.0
+    },
+    {
+      "timestamp": 1789192361.897,
+      "valid": true,
+      "total_lag": 59.0
+    },
+    {
+      "timestamp": 1789192363.897,
+      "valid": true,
+      "total_lag": 64.0
+    },
+    {
+      "timestamp": 1789192365.897,
+      "valid": true,
+      "total_lag": 87.0
+    },
+    {
+      "timestamp": 1789192367.897,
+      "valid": true,
+      "total_lag": 80.0
+    },
+    {
+      "timestamp": 1789192369.897,
+      "valid": true,
+      "total_lag": 55.0
+    },
+    {
+      "timestamp": 1789192371.897,
+      "valid": true,
+      "total_lag": 52.0
+    },
+    {
+      "timestamp": 1789192373.897,
+      "valid": true,
+      "total_lag": 55.0
+    },
+    {
+      "timestamp": 1789192375.897,
+      "valid": true,
+      "total_lag": 711.0
+    },
+    {
+      "timestamp": 1789192377.897,
+      "valid": true,
+      "total_lag": 734.0
+    },
+    {
+      "timestamp": 1789192379.897,
+      "valid": true,
+      "total_lag": 273.0
+    },
+    {
+      "timestamp": 1789192381.897,
+      "valid": true,
+      "total_lag": 448.0
+    },
+    {
+      "timestamp": 1789192383.897,
+      "valid": true,
+      "total_lag": 446.0
+    },
+    {
+      "timestamp": 1789192385.897,
+      "valid": true,
+      "total_lag": 267.0
+    },
+    {
+      "timestamp": 1789192387.897,
+      "valid": true,
+      "total_lag": 73.0
+    },
+    {
+      "timestamp": 1789192389.897,
+      "valid": true,
+      "total_lag": 133.0
+    },
+    {
+      "timestamp": 1789192391.897,
+      "valid": true,
+      "total_lag": 125.0
+    },
+    {
+      "timestamp": 1789192393.897,
+      "valid": true,
+      "total_lag": 130.0
+    },
+    {
+      "timestamp": 1789192395.897,
+      "valid": true,
+      "total_lag": 91.0
+    },
+    {
+      "timestamp": 1789192397.897,
+      "valid": true,
+      "total_lag": 95.0
+    },
+    {
+      "timestamp": 1789192399.897,
+      "valid": false
+    },
+    {
+      "timestamp": 1789192401.897,
+      "valid": true,
+      "total_lag": 101.0
+    },
+    {
+      "timestamp": 1789192403.897,
+      "valid": true,
+      "total_lag": 94.0
+    },
+    {
+      "timestamp": 1789192405.897,
+      "valid": true,
+      "total_lag": 100.0
+    },
+    {
+      "timestamp": 1789192407.897,
+      "valid": true,
+      "total_lag": 100.0
+    },
+    {
+      "timestamp": 1789192409.897,
+      "valid": false
+    },
+    {
+      "timestamp": 1789192411.897,
+      "valid": true,
+      "total_lag": 64.0
+    },
+    {
+      "timestamp": 1789192413.897,
+      "valid": true,
+      "total_lag": 72.0
+    },
+    {
+      "timestamp": 1789192415.897,
+      "valid": true,
+      "total_lag": 103.0
+    },
+    {
+      "timestamp": 1789192417.897,
+      "valid": true,
+      "total_lag": 97.0
+    },
+    {
+      "timestamp": 1789192419.897,
+      "valid": false
+    },
+    {
+      "timestamp": 1789192421.897,
+      "valid": true,
+      "total_lag": 276.0
+    },
+    {
+      "timestamp": 1789192423.897,
+      "valid": true,
+      "total_lag": 277.0
+    },
+    {
+      "timestamp": 1789192425.897,
+      "valid": true,
+      "total_lag": 97.0
+    },
+    {
+      "timestamp": 1789192427.897,
+      "valid": true,
+      "total_lag": 97.0
+    },
+    {
+      "timestamp": 1789192429.897,
+      "valid": true,
+      "total_lag": 84.0
+    },
+    {
+      "timestamp": 1789192431.897,
+      "valid": true,
+      "total_lag": 85.0
+    },
+    {
+      "timestamp": 1789192433.897,
+      "valid": true,
+      "total_lag": 91.0
+    },
+    {
+      "timestamp": 1789192435.897,
+      "valid": true,
+      "total_lag": 323.0
+    },
+    {
+      "timestamp": 1789192437.897,
+      "valid": true,
+      "total_lag": 333.0
+    },
+    {
+      "timestamp": 1789192439.897,
+      "valid": true,
+      "total_lag": 128.0
+    },
+    {
+      "timestamp": 1789192441.897,
+      "valid": true,
+      "total_lag": 130.0
+    },
+    {
+      "timestamp": 1789192443.897,
+      "valid": true,
+      "total_lag": 131.0
+    },
+    {
+      "timestamp": 1789192445.897,
+      "valid": true,
+      "total_lag": 107.0
+    }
+  ]
+}
