@@ -1,0 +1,25 @@
+{
+  "status": "prepared_not_run",
+  "frozen_epoch": 1789220470.7209501,
+  "purpose": "Measure one partition with one consumer at the expected 1200/s hot-partition input before interpreting the D-related contrast",
+  "prerequisite": "Complete and inspect all eight core trials first; respect the same deadline and storage limits.",
+  "label": "single-partition-capacity-v4",
+  "config": "single-partition-capacity.yaml",
+  "config_sha256": "7cd9f0152ae2ef23354c819545e43a9b92df32db61a14c180cd63690cceaabcf",
+  "plan": "single-partition-no-action.json",
+  "plan_sha256": "41cb06197e86cf11b1217debdfcdea6c32b530d3fb27cd3dfcfbe58a57ca18b6",
+  "production_seconds": 180,
+  "warmup_seconds": 60,
+  "drain_seconds": 120,
+  "initial_consumers": 1,
+  "total_target_messages_per_second": 1200,
+  "qualification": [
+    "Complete evidence, at least 98% target admissions, no ownership changes through production and drain, at least 90% lag coverage.",
+    "Inspect positive backlog growth in both 60-second evaluation halves and achieved processing throughput below admitted input. Do not infer overload from the configured input alone.",
+    "If this does not qualify, retain it and do not describe the later 80%-hot workload as an established dedicated-partition capacity limit."
+  ],
+  "limitations": [
+    "This is a single calibration on the recorded node, not a capacity estimate valid for every shared node or future time.",
+    "The later 60-partition comparison retains sparse cold traffic and may change the hot owner; report those differences."
+  ]
+}
