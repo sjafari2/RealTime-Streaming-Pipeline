@@ -1,0 +1,83 @@
+[
+  {
+    "role": "consumer",
+    "run_id": "run-20260912-052133",
+    "pod": "consumer-sts-2",
+    "incarnation": "5fbdce77008d463abdb3566fe7957991",
+    "config_sha256": "b3b94fd8584b906ea283c71c39d8b0d579db8f26d9bad2eb5a2b24710e81d4a2",
+    "phase": "failed",
+    "timestamp": 1789212117.3905575,
+    "failure": "Asynchronous commit failed: KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+    "evidence_dropped": 0,
+    "evidence_error": null,
+    "lag_valid": false,
+    "assignments": [],
+    "assignment_epoch": 5
+  },
+  {
+    "role": "consumer",
+    "run_id": "run-20260912-052133",
+    "pod": "consumer-sts-0",
+    "incarnation": "179ffbca428f43fab7c8c5f7069253ff",
+    "config_sha256": "b3b94fd8584b906ea283c71c39d8b0d579db8f26d9bad2eb5a2b24710e81d4a2",
+    "phase": "failed",
+    "timestamp": 1789212117.3004267,
+    "failure": "Asynchronous commit failed: KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+    "evidence_dropped": 0,
+    "evidence_error": null,
+    "lag_valid": false,
+    "assignments": [],
+    "assignment_epoch": 5
+  },
+  {
+    "role": "consumer",
+    "run_id": "run-20260912-052133",
+    "pod": "consumer-sts-1",
+    "incarnation": "27bf52c501f0479b88c220db203d75f8",
+    "config_sha256": "b3b94fd8584b906ea283c71c39d8b0d579db8f26d9bad2eb5a2b24710e81d4a2",
+    "phase": "finished",
+    "timestamp": 1789212291.0133543,
+    "failure": null,
+    "evidence_dropped": 0,
+    "evidence_error": null,
+    "lag_valid": false,
+    "assignments": [],
+    "assignment_epoch": 4
+  },
+  {
+    "role": "producer",
+    "run_id": "run-20260912-052133",
+    "pod": "producer-sts-2",
+    "incarnation": "3a711b05fef842cbb7850c05567e3794",
+    "config_sha256": "b3b94fd8584b906ea283c71c39d8b0d579db8f26d9bad2eb5a2b24710e81d4a2",
+    "phase": "finished",
+    "timestamp": 1789212291.4317439,
+    "failure": null,
+    "evidence_dropped": 0,
+    "evidence_error": null
+  },
+  {
+    "role": "producer",
+    "run_id": "run-20260912-052133",
+    "pod": "producer-sts-0",
+    "incarnation": "faaa1838b24e435a94f33b0b6d7c732c",
+    "config_sha256": "b3b94fd8584b906ea283c71c39d8b0d579db8f26d9bad2eb5a2b24710e81d4a2",
+    "phase": "finished",
+    "timestamp": 1789212291.536937,
+    "failure": null,
+    "evidence_dropped": 0,
+    "evidence_error": null
+  },
+  {
+    "role": "producer",
+    "run_id": "run-20260912-052133",
+    "pod": "producer-sts-1",
+    "incarnation": "3bad30b53d864bd39ed4dd13d8fdb66c",
+    "config_sha256": "b3b94fd8584b906ea283c71c39d8b0d579db8f26d9bad2eb5a2b24710e81d4a2",
+    "phase": "finished",
+    "timestamp": 1789212291.449183,
+    "failure": null,
+    "evidence_dropped": 0,
+    "evidence_error": null
+  }
+]
