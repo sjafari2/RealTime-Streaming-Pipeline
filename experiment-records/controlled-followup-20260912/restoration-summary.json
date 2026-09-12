@@ -1,0 +1,126 @@
+{
+  "verified": true,
+  "original_hpas": {
+    "consumer-hpa": {
+      "uid": "49662462-fbd5-4061-a08a-d36ec6d80c2e",
+      "spec": {
+        "behavior": {
+          "scaleDown": {
+            "policies": [
+              {
+                "periodSeconds": 120,
+                "type": "Pods",
+                "value": 1
+              }
+            ],
+            "selectPolicy": "Max",
+            "stabilizationWindowSeconds": 300
+          },
+          "scaleUp": {
+            "policies": [
+              {
+                "periodSeconds": 60,
+                "type": "Pods",
+                "value": 1
+              }
+            ],
+            "selectPolicy": "Max",
+            "stabilizationWindowSeconds": 30
+          }
+        },
+        "maxReplicas": 12,
+        "metrics": [
+          {
+            "resource": {
+              "name": "cpu",
+              "target": {
+                "averageUtilization": 70,
+                "type": "Utilization"
+              }
+            },
+            "type": "Resource"
+          }
+        ],
+        "minReplicas": 6,
+        "scaleTargetRef": {
+          "apiVersion": "apps/v1",
+          "kind": "StatefulSet",
+          "name": "consumer-sts"
+        }
+      }
+    }
+  },
+  "restored_hpas": {
+    "consumer-hpa": {
+      "uid": "49662462-fbd5-4061-a08a-d36ec6d80c2e",
+      "spec": {
+        "behavior": {
+          "scaleDown": {
+            "policies": [
+              {
+                "periodSeconds": 120,
+                "type": "Pods",
+                "value": 1
+              }
+            ],
+            "selectPolicy": "Max",
+            "stabilizationWindowSeconds": 300
+          },
+          "scaleUp": {
+            "policies": [
+              {
+                "periodSeconds": 60,
+                "type": "Pods",
+                "value": 1
+              }
+            ],
+            "selectPolicy": "Max",
+            "stabilizationWindowSeconds": 30
+          }
+        },
+        "maxReplicas": 12,
+        "metrics": [
+          {
+            "resource": {
+              "name": "cpu",
+              "target": {
+                "averageUtilization": 70,
+                "type": "Utilization"
+              }
+            },
+            "type": "Resource"
+          }
+        ],
+        "minReplicas": 6,
+        "scaleTargetRef": {
+          "apiVersion": "apps/v1",
+          "kind": "StatefulSet",
+          "name": "consumer-sts"
+        }
+      }
+    }
+  },
+  "original_statefulsets": {
+    "producer-sts": {
+      "replicas": 3,
+      "ready_replicas": 3
+    },
+    "consumer-sts": {
+      "replicas": 6,
+      "ready_replicas": 6
+    }
+  },
+  "restored_statefulsets": {
+    "producer-sts": {
+      "replicas": 3,
+      "ready_replicas": 3
+    },
+    "consumer-sts": {
+      "replicas": 6,
+      "ready_replicas": 6
+    }
+  },
+  "shared_config_restored": true,
+  "reference_pods_unchanged_at_end": true,
+  "active_workload_processes": 0
+}

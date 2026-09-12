@@ -1,0 +1,84 @@
+{
+  "status": "failed",
+  "created_epoch": 1789254300.682086,
+  "seed": 71,
+  "order": [
+    "scale",
+    "none"
+  ],
+  "attempts": [
+    {
+      "action": "scale",
+      "attempt": 1,
+      "preparation_only": true,
+      "started_epoch": 1789254334.902496,
+      "budget_seconds": 900,
+      "status": "rejected",
+      "error": "Complete partition ownership differs from the block reference",
+      "run_id": "run-20260912-170614"
+    },
+    {
+      "action": "scale",
+      "attempt": 2,
+      "preparation_only": true,
+      "started_epoch": 1789254470.270101,
+      "budget_seconds": 768.4674283340573,
+      "status": "rejected",
+      "error": "Complete partition ownership differs from the block reference",
+      "run_id": "run-20260912-170822"
+    },
+    {
+      "action": "scale",
+      "attempt": 3,
+      "preparation_only": true,
+      "started_epoch": 1789254597.511722,
+      "budget_seconds": 646.1763451260049,
+      "status": "rejected",
+      "error": "Complete partition ownership differs from the block reference",
+      "run_id": "run-20260912-171032"
+    },
+    {
+      "action": "scale",
+      "attempt": 4,
+      "preparation_only": true,
+      "started_epoch": 1789254727.956743,
+      "budget_seconds": 519.5593480840325,
+      "status": "rejected",
+      "error": "Complete partition ownership differs from the block reference",
+      "run_id": "run-20260912-171242"
+    },
+    {
+      "action": "scale",
+      "attempt": 5,
+      "preparation_only": true,
+      "started_epoch": 1789254856.3306282,
+      "budget_seconds": 395.11505604186095,
+      "status": "rejected",
+      "error": "Complete partition ownership differs from the block reference",
+      "run_id": "run-20260912-171450"
+    },
+    {
+      "action": "scale",
+      "attempt": 6,
+      "preparation_only": true,
+      "started_epoch": 1789254989.691564,
+      "budget_seconds": 266.20038141682744,
+      "status": "rejected",
+      "error": "Complete partition ownership differs from the block reference",
+      "run_id": "run-20260912-171702"
+    }
+  ],
+  "runs": [],
+  "preparation_seconds_used": 760.1990287501831,
+  "preparation_verified": false,
+  "code_commit": "eb7c31d00e5daeee0b82bd70078d862e623536eb",
+  "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+  "initial_free_bytes": {
+    "producer": 5230297088,
+    "consumer": 315298414592,
+    "local": 17473400832
+  },
+  "error": "Predeclared preparation limit exhausted for scale",
+  "restoration": "verified",
+  "finished_epoch": 1789255197.117362
+}

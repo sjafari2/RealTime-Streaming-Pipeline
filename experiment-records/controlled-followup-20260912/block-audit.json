@@ -1,0 +1,1425 @@
+{
+  "block_status": {
+    "status": "failed",
+    "created_epoch": 1789254300.682086,
+    "seed": 71,
+    "order": [
+      "scale",
+      "none"
+    ],
+    "attempts": [
+      {
+        "action": "scale",
+        "attempt": 1,
+        "preparation_only": true,
+        "started_epoch": 1789254334.902496,
+        "budget_seconds": 900,
+        "status": "rejected",
+        "error": "Complete partition ownership differs from the block reference",
+        "run_id": "run-20260912-170614"
+      },
+      {
+        "action": "scale",
+        "attempt": 2,
+        "preparation_only": true,
+        "started_epoch": 1789254470.270101,
+        "budget_seconds": 768.4674283340573,
+        "status": "rejected",
+        "error": "Complete partition ownership differs from the block reference",
+        "run_id": "run-20260912-170822"
+      },
+      {
+        "action": "scale",
+        "attempt": 3,
+        "preparation_only": true,
+        "started_epoch": 1789254597.511722,
+        "budget_seconds": 646.1763451260049,
+        "status": "rejected",
+        "error": "Complete partition ownership differs from the block reference",
+        "run_id": "run-20260912-171032"
+      },
+      {
+        "action": "scale",
+        "attempt": 4,
+        "preparation_only": true,
+        "started_epoch": 1789254727.956743,
+        "budget_seconds": 519.5593480840325,
+        "status": "rejected",
+        "error": "Complete partition ownership differs from the block reference",
+        "run_id": "run-20260912-171242"
+      },
+      {
+        "action": "scale",
+        "attempt": 5,
+        "preparation_only": true,
+        "started_epoch": 1789254856.3306282,
+        "budget_seconds": 395.11505604186095,
+        "status": "rejected",
+        "error": "Complete partition ownership differs from the block reference",
+        "run_id": "run-20260912-171450"
+      },
+      {
+        "action": "scale",
+        "attempt": 6,
+        "preparation_only": true,
+        "started_epoch": 1789254989.691564,
+        "budget_seconds": 266.20038141682744,
+        "status": "rejected",
+        "error": "Complete partition ownership differs from the block reference",
+        "run_id": "run-20260912-171702"
+      }
+    ],
+    "runs": [],
+    "preparation_seconds_used": 760.1990287501831,
+    "preparation_verified": false,
+    "code_commit": "eb7c31d00e5daeee0b82bd70078d862e623536eb",
+    "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+    "initial_free_bytes": {
+      "producer": 5230297088,
+      "consumer": 315298414592,
+      "local": 17473400832
+    },
+    "error": "Predeclared preparation limit exhausted for scale",
+    "restoration": "verified",
+    "finished_epoch": 1789255197.117362
+  },
+  "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+  "attempts": [
+    {
+      "action": "scale",
+      "attempt": 1,
+      "run_id": "run-20260912-170614",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-170614",
+      "preparation_only": true,
+      "production_released": false,
+      "manifest_state": "failed",
+      "reference_matches": true,
+      "gates": [
+        {
+          "stage": "before_production",
+          "request_started_epoch": 1789254423.901365,
+          "valid": false,
+          "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+          "error": "Complete partition ownership differs from the block reference",
+          "timestamp": 1789254428.602158
+        }
+      ],
+      "observed_assignments": {
+        "consumer-sts-0": [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49,
+          52,
+          55,
+          58
+        ],
+        "consumer-sts-1": [
+          2,
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          41,
+          44,
+          47,
+          50,
+          53,
+          56,
+          59
+        ],
+        "consumer-sts-2": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57
+        ]
+      },
+      "event_counts": {
+        "consumer/consumer-sts-0/81b3b4f1ee5547fb9c5e120ff2c1eac1/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-1/094db35a688a4397824ddc5950ae85b5/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 2,
+          "assign": 1,
+          "lag_invalid": 20,
+          "finished": 1
+        },
+        "consumer/consumer-sts-2/043e8cdfceb0453a81aca5e20dea70af/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-0/ab815c9b7be94d599f94f733ca38973c/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-1/2716aa6d7343432dbb58184a64e1a4b8/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-2/f40a24693ffb44f6bef21919d9590c0f/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        }
+      },
+      "process_failures": [],
+      "source_files": {
+        "consumer/consumer-sts-0/81b3b4f1ee5547fb9c5e120ff2c1eac1/events.jsonl": "c053252f2c545e8b94003c122c111ebc2f7a444f35f3cd0658765b6b7bd65271",
+        "consumer/consumer-sts-0/81b3b4f1ee5547fb9c5e120ff2c1eac1/final.json": "c74974dbc237860416505a74145f990dbeb86e38ad820da304f68c0f512ce6db",
+        "consumer/consumer-sts-1/094db35a688a4397824ddc5950ae85b5/events.jsonl": "bc78111eb61281220185a8da7d04fe7d4c7e60491c24894f7db2bbd9de448ca5",
+        "consumer/consumer-sts-1/094db35a688a4397824ddc5950ae85b5/final.json": "df0859fe2d6e0387256914621cb8b131cc69a7e86bcc7b0533527902c5f32a94",
+        "consumer/consumer-sts-2/043e8cdfceb0453a81aca5e20dea70af/events.jsonl": "c80f3de4372b63119a8b2c455f1b25ee0711d47cc9f4ffea511d87b8cce33a04",
+        "consumer/consumer-sts-2/043e8cdfceb0453a81aca5e20dea70af/final.json": "5b2aee08c0f3523ca811af3a9cf26c094ccf8d5387aae0dd3ae3cacb18f35afc",
+        "producer/producer-sts-0/ab815c9b7be94d599f94f733ca38973c/events.jsonl": "69a3fc21cbceaca5a1289d1266719e0c663970776788fa0d62ff87741e347b08",
+        "producer/producer-sts-0/ab815c9b7be94d599f94f733ca38973c/final.json": "1369cd177d72bdafbea594717d4070f7b45c63924c2458dfba2eb8a8d99c24dc",
+        "producer/producer-sts-1/2716aa6d7343432dbb58184a64e1a4b8/events.jsonl": "e72d1a3728125f955b928b5ba911f680573371d92c4759dccfa0f97073cfcc54",
+        "producer/producer-sts-1/2716aa6d7343432dbb58184a64e1a4b8/final.json": "46c16d9796cf464f8f8ce26b67918cfce4ad6044304e7ff135c3ddcc89c498b7",
+        "producer/producer-sts-2/f40a24693ffb44f6bef21919d9590c0f/events.jsonl": "05a7eaa85818a777ca5458d69b8d1650d4e1ca4388ff4ed3e8f35e3a8fa49268",
+        "producer/producer-sts-2/f40a24693ffb44f6bef21919d9590c0f/final.json": "5ac912f1b32b0f5d2c3614ddaf8652b1657f82f1d11fd08aa3c8d9019724cbad"
+      },
+      "final_records": [
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-0",
+          "run_id": "run-20260912-170614",
+          "incarnation": "81b3b4f1ee5547fb9c5e120ff2c1eac1",
+          "config_sha256": "1d8eb6782166bf5c0f4dd69f53b83e2447e646e49cbe802b50afcbcbd883a40b",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-1",
+          "run_id": "run-20260912-170614",
+          "incarnation": "094db35a688a4397824ddc5950ae85b5",
+          "config_sha256": "1d8eb6782166bf5c0f4dd69f53b83e2447e646e49cbe802b50afcbcbd883a40b",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-2",
+          "run_id": "run-20260912-170614",
+          "incarnation": "043e8cdfceb0453a81aca5e20dea70af",
+          "config_sha256": "1d8eb6782166bf5c0f4dd69f53b83e2447e646e49cbe802b50afcbcbd883a40b",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-0",
+          "run_id": "run-20260912-170614",
+          "incarnation": "ab815c9b7be94d599f94f733ca38973c",
+          "config_sha256": "1d8eb6782166bf5c0f4dd69f53b83e2447e646e49cbe802b50afcbcbd883a40b",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-1",
+          "run_id": "run-20260912-170614",
+          "incarnation": "2716aa6d7343432dbb58184a64e1a4b8",
+          "config_sha256": "1d8eb6782166bf5c0f4dd69f53b83e2447e646e49cbe802b50afcbcbd883a40b",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-2",
+          "run_id": "run-20260912-170614",
+          "incarnation": "f40a24693ffb44f6bef21919d9590c0f",
+          "config_sha256": "1d8eb6782166bf5c0f4dd69f53b83e2447e646e49cbe802b50afcbcbd883a40b",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        }
+      ],
+      "acknowledgment_events": 0,
+      "completion_events": 0
+    },
+    {
+      "action": "scale",
+      "attempt": 2,
+      "run_id": "run-20260912-170822",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-170822",
+      "preparation_only": true,
+      "production_released": false,
+      "manifest_state": "failed",
+      "reference_matches": true,
+      "gates": [
+        {
+          "stage": "before_production",
+          "request_started_epoch": 1789254552.82186,
+          "valid": false,
+          "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+          "error": "Complete partition ownership differs from the block reference",
+          "timestamp": 1789254557.5164878
+        }
+      ],
+      "observed_assignments": {
+        "consumer-sts-0": [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49,
+          52,
+          55,
+          58
+        ],
+        "consumer-sts-1": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57
+        ],
+        "consumer-sts-2": [
+          2,
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          41,
+          44,
+          47,
+          50,
+          53,
+          56,
+          59
+        ]
+      },
+      "event_counts": {
+        "consumer/consumer-sts-0/cc1d2d0efce94a08973fac044662c463/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-1/3b5102b8a6364c91af5ff02dd84f21cb/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-2/9f20fc8a499f4c6a908619d3a9bed97b/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-0/a7b8124a66eb4a0dbb1f3a5838ce0066/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-1/f1b209f316b449e6ba4eebf95ff2cd9d/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-2/b893c76dcd5f49e8a398d925dc4e6766/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        }
+      },
+      "process_failures": [],
+      "source_files": {
+        "consumer/consumer-sts-0/cc1d2d0efce94a08973fac044662c463/events.jsonl": "13e6a20487dd5fdaf0cf5b5c1d2cea8b1668837e1c85225bbea1443bfca66775",
+        "consumer/consumer-sts-0/cc1d2d0efce94a08973fac044662c463/final.json": "e589fe0de302772bcecc742e2fa9358658ce653ca0d94019c733c2ad78192cd2",
+        "consumer/consumer-sts-1/3b5102b8a6364c91af5ff02dd84f21cb/events.jsonl": "42ba4e8c82c7f60885f4ff542c400616253849ccd61fc6c30368a200d8e913de",
+        "consumer/consumer-sts-1/3b5102b8a6364c91af5ff02dd84f21cb/final.json": "a304b30d1931b644da21ba58ffc397f589eeeec278fe79365007a08f3e8f17d6",
+        "consumer/consumer-sts-2/9f20fc8a499f4c6a908619d3a9bed97b/events.jsonl": "18d2efa311ac62b80c896070d44df5b61d09ec8ac6dcfec82bd1d77daf7b3551",
+        "consumer/consumer-sts-2/9f20fc8a499f4c6a908619d3a9bed97b/final.json": "b7290550cd2a213ba757d9239c8831ff63efa00b7b48e853ab79a6f158325c89",
+        "producer/producer-sts-0/a7b8124a66eb4a0dbb1f3a5838ce0066/events.jsonl": "2bed7030690b793ff886a441e20cbb45ebf9acf0453f83921a0eb241d288b74b",
+        "producer/producer-sts-0/a7b8124a66eb4a0dbb1f3a5838ce0066/final.json": "9f5b6bc67be25ee75b5ff4487d6f62c4bd0b68986344288fc4cc9fad18a07965",
+        "producer/producer-sts-1/f1b209f316b449e6ba4eebf95ff2cd9d/events.jsonl": "d9ac82114d398a11b1a303089778aba759742f6eef17ffc113f2bc1872e96f2e",
+        "producer/producer-sts-1/f1b209f316b449e6ba4eebf95ff2cd9d/final.json": "ceb59b77b115367052bd6ae8f697a514400259d56af9ffd000db76f0ce6dad29",
+        "producer/producer-sts-2/b893c76dcd5f49e8a398d925dc4e6766/events.jsonl": "5b91c7df37d208e5eba6996df9a97d4b1ebd729b84c3ae9af631338bf105418a",
+        "producer/producer-sts-2/b893c76dcd5f49e8a398d925dc4e6766/final.json": "bd37e5740974d528e32eb659cc489ff09874b83578c3ea3856bdad735ab36c0b"
+      },
+      "final_records": [
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-0",
+          "run_id": "run-20260912-170822",
+          "incarnation": "cc1d2d0efce94a08973fac044662c463",
+          "config_sha256": "6d207859a196965aa2b1646f195ffa18527a975a1e24711786d7910d6c823e93",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-1",
+          "run_id": "run-20260912-170822",
+          "incarnation": "3b5102b8a6364c91af5ff02dd84f21cb",
+          "config_sha256": "6d207859a196965aa2b1646f195ffa18527a975a1e24711786d7910d6c823e93",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-2",
+          "run_id": "run-20260912-170822",
+          "incarnation": "9f20fc8a499f4c6a908619d3a9bed97b",
+          "config_sha256": "6d207859a196965aa2b1646f195ffa18527a975a1e24711786d7910d6c823e93",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-0",
+          "run_id": "run-20260912-170822",
+          "incarnation": "a7b8124a66eb4a0dbb1f3a5838ce0066",
+          "config_sha256": "6d207859a196965aa2b1646f195ffa18527a975a1e24711786d7910d6c823e93",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-1",
+          "run_id": "run-20260912-170822",
+          "incarnation": "f1b209f316b449e6ba4eebf95ff2cd9d",
+          "config_sha256": "6d207859a196965aa2b1646f195ffa18527a975a1e24711786d7910d6c823e93",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-2",
+          "run_id": "run-20260912-170822",
+          "incarnation": "b893c76dcd5f49e8a398d925dc4e6766",
+          "config_sha256": "6d207859a196965aa2b1646f195ffa18527a975a1e24711786d7910d6c823e93",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        }
+      ],
+      "acknowledgment_events": 0,
+      "completion_events": 0
+    },
+    {
+      "action": "scale",
+      "attempt": 3,
+      "run_id": "run-20260912-171032",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-171032",
+      "preparation_only": true,
+      "production_released": false,
+      "manifest_state": "failed",
+      "reference_matches": true,
+      "gates": [
+        {
+          "stage": "before_production",
+          "request_started_epoch": 1789254683.046884,
+          "valid": false,
+          "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+          "error": "Complete partition ownership differs from the block reference",
+          "timestamp": 1789254687.8987808
+        }
+      ],
+      "observed_assignments": {
+        "consumer-sts-0": [
+          2,
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          41,
+          44,
+          47,
+          50,
+          53,
+          56,
+          59
+        ],
+        "consumer-sts-1": [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49,
+          52,
+          55,
+          58
+        ],
+        "consumer-sts-2": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57
+        ]
+      },
+      "event_counts": {
+        "consumer/consumer-sts-0/25595f045aba4af59bb7dbaf0a1aa22e/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-1/629a9137aec84244b53f6406a7205aff/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-2/f3883834741b4b4c9d200ddcc9033e40/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-0/6e81cf86c6db4a1ba1ab9c331816054d/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-1/4338810bbc4842b38a73f95e673263a4/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-2/0667b93c45834b059b84e5e8733daa53/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        }
+      },
+      "process_failures": [],
+      "source_files": {
+        "consumer/consumer-sts-0/25595f045aba4af59bb7dbaf0a1aa22e/events.jsonl": "16193c0b7ba24ed96e55553b346dc8989fad5829750aecfd3f5fea3095d13db5",
+        "consumer/consumer-sts-0/25595f045aba4af59bb7dbaf0a1aa22e/final.json": "edc72afe2b52dfa326cb6944e13d575e6a8df662f287789993382136e6bb8d46",
+        "consumer/consumer-sts-1/629a9137aec84244b53f6406a7205aff/events.jsonl": "416bf7f3301b45ef9e0810bc51353e09d92d80796013e4cc2408e1a69a1c2ebf",
+        "consumer/consumer-sts-1/629a9137aec84244b53f6406a7205aff/final.json": "eaecb5fe6e96bc3445c92a0b0bdeeaa487fdeaa2186dcafa71e049bb332912bb",
+        "consumer/consumer-sts-2/f3883834741b4b4c9d200ddcc9033e40/events.jsonl": "b0ae75668dc5160bd88518d05e67ecc256d1182500708cf4478dd14f0666e58f",
+        "consumer/consumer-sts-2/f3883834741b4b4c9d200ddcc9033e40/final.json": "31751a2e831f3f9cdf943f0cef0dc484fae830d6d2b07e98a08145d326625c34",
+        "producer/producer-sts-0/6e81cf86c6db4a1ba1ab9c331816054d/events.jsonl": "89824a2879f6156c4afaa1ced8014cd4e67db48789046b6f6a0762b11da32e68",
+        "producer/producer-sts-0/6e81cf86c6db4a1ba1ab9c331816054d/final.json": "e845a4b7447b182d6f284c7a3d5fecea44f0af94ef0b473762edecc58231bbb9",
+        "producer/producer-sts-1/4338810bbc4842b38a73f95e673263a4/events.jsonl": "3382e3aaae8f4bb49236be53107e3b916fc797329aded87582f6262e84dfbaf2",
+        "producer/producer-sts-1/4338810bbc4842b38a73f95e673263a4/final.json": "3a3c7a1be36c7dcc2c548df43afd5821159c3c166b9e218d0aedf4b3bdb6c7a5",
+        "producer/producer-sts-2/0667b93c45834b059b84e5e8733daa53/events.jsonl": "1258158ad94e0cd3d84bf0869cfc54faa98e8886f1c538c272e2bff4b8db0195",
+        "producer/producer-sts-2/0667b93c45834b059b84e5e8733daa53/final.json": "8c836283f3db765abc24dfebc46c0886e66672b2d59dd4e6c9a67457f0b38aac"
+      },
+      "final_records": [
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-0",
+          "run_id": "run-20260912-171032",
+          "incarnation": "25595f045aba4af59bb7dbaf0a1aa22e",
+          "config_sha256": "be9978b6a05b3e21f62170b086bd77c2eca94a82586b0492f20e46065be8fad5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-1",
+          "run_id": "run-20260912-171032",
+          "incarnation": "629a9137aec84244b53f6406a7205aff",
+          "config_sha256": "be9978b6a05b3e21f62170b086bd77c2eca94a82586b0492f20e46065be8fad5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-2",
+          "run_id": "run-20260912-171032",
+          "incarnation": "f3883834741b4b4c9d200ddcc9033e40",
+          "config_sha256": "be9978b6a05b3e21f62170b086bd77c2eca94a82586b0492f20e46065be8fad5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-0",
+          "run_id": "run-20260912-171032",
+          "incarnation": "6e81cf86c6db4a1ba1ab9c331816054d",
+          "config_sha256": "be9978b6a05b3e21f62170b086bd77c2eca94a82586b0492f20e46065be8fad5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-1",
+          "run_id": "run-20260912-171032",
+          "incarnation": "4338810bbc4842b38a73f95e673263a4",
+          "config_sha256": "be9978b6a05b3e21f62170b086bd77c2eca94a82586b0492f20e46065be8fad5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-2",
+          "run_id": "run-20260912-171032",
+          "incarnation": "0667b93c45834b059b84e5e8733daa53",
+          "config_sha256": "be9978b6a05b3e21f62170b086bd77c2eca94a82586b0492f20e46065be8fad5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        }
+      ],
+      "acknowledgment_events": 0,
+      "completion_events": 0
+    },
+    {
+      "action": "scale",
+      "attempt": 4,
+      "run_id": "run-20260912-171242",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-171242",
+      "preparation_only": true,
+      "production_released": false,
+      "manifest_state": "failed",
+      "reference_matches": true,
+      "gates": [
+        {
+          "stage": "before_production",
+          "request_started_epoch": 1789254812.259687,
+          "valid": false,
+          "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+          "error": "Complete partition ownership differs from the block reference",
+          "timestamp": 1789254816.913654
+        }
+      ],
+      "observed_assignments": {
+        "consumer-sts-0": [
+          2,
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          41,
+          44,
+          47,
+          50,
+          53,
+          56,
+          59
+        ],
+        "consumer-sts-1": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57
+        ],
+        "consumer-sts-2": [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49,
+          52,
+          55,
+          58
+        ]
+      },
+      "event_counts": {
+        "consumer/consumer-sts-0/006be29fc639437493da0cdafc2da1f0/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-1/e0c33e532aba4889acbafb23a49f0400/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-2/ca1f7df25b37430c98c8be5f50955162/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-0/62bf490f4dd44cd1a45ccda7a7ab0106/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-1/abdbffdb0b644ec5921025f307e3eef3/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-2/ee9ebf7c0c31468683e403dd91ffe1f7/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        }
+      },
+      "process_failures": [],
+      "source_files": {
+        "consumer/consumer-sts-0/006be29fc639437493da0cdafc2da1f0/events.jsonl": "818417217b2d715b24af287348be278c8742a00446dd91cddb0425eb0befb2db",
+        "consumer/consumer-sts-0/006be29fc639437493da0cdafc2da1f0/final.json": "1f0b75f1cb77d01749bcb8dd8138acf3cfcff1bff391d7b8a2dc7cc2cad1b428",
+        "consumer/consumer-sts-1/e0c33e532aba4889acbafb23a49f0400/events.jsonl": "5ff68cfb75889aba33792d78bbe20bf595194f3c528d5aab2778b049890b43a5",
+        "consumer/consumer-sts-1/e0c33e532aba4889acbafb23a49f0400/final.json": "39675dd5e6fed93d43eb899cc7f03774e7e0a93df49771a1f5456cf925c7c519",
+        "consumer/consumer-sts-2/ca1f7df25b37430c98c8be5f50955162/events.jsonl": "d549a92073cdf4f6d6c482dadfa3962c10edb360030a9b6f99e685b9eeaa4649",
+        "consumer/consumer-sts-2/ca1f7df25b37430c98c8be5f50955162/final.json": "933c7244c0f22f4be353e2070bbae1b00e39f9f515a407af120ea2481ab55d60",
+        "producer/producer-sts-0/62bf490f4dd44cd1a45ccda7a7ab0106/events.jsonl": "25ff529465c80effa65060f99c414dd5e1cc5d4e06148f11b392297d9ce2dfc2",
+        "producer/producer-sts-0/62bf490f4dd44cd1a45ccda7a7ab0106/final.json": "ddb6e154b8ef90267d7106ffd73b933adecb100060dd02a806d9c943a649aec8",
+        "producer/producer-sts-1/abdbffdb0b644ec5921025f307e3eef3/events.jsonl": "4d1c0c53747ca715ddabf3ca40c3f2b690785e110c470d75421a6fcc44342414",
+        "producer/producer-sts-1/abdbffdb0b644ec5921025f307e3eef3/final.json": "0bb9aee0d2ab4b94182c833134bf9918aef1d1dfb753bc2200a5130b5148c100",
+        "producer/producer-sts-2/ee9ebf7c0c31468683e403dd91ffe1f7/events.jsonl": "07b04d8e8bc1418563a52d4b04ccf4624c9f72bf1621d2e80b48ca5ece10d175",
+        "producer/producer-sts-2/ee9ebf7c0c31468683e403dd91ffe1f7/final.json": "8e502d33b6198b29a1f91ce11006ebee5af4ea2864540687cf38d3380883a0c0"
+      },
+      "final_records": [
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-0",
+          "run_id": "run-20260912-171242",
+          "incarnation": "006be29fc639437493da0cdafc2da1f0",
+          "config_sha256": "2a2ad91f239e08447a2c9b5712628329b916cc3098f29637c093a1412e7cb52e",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-1",
+          "run_id": "run-20260912-171242",
+          "incarnation": "e0c33e532aba4889acbafb23a49f0400",
+          "config_sha256": "2a2ad91f239e08447a2c9b5712628329b916cc3098f29637c093a1412e7cb52e",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-2",
+          "run_id": "run-20260912-171242",
+          "incarnation": "ca1f7df25b37430c98c8be5f50955162",
+          "config_sha256": "2a2ad91f239e08447a2c9b5712628329b916cc3098f29637c093a1412e7cb52e",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-0",
+          "run_id": "run-20260912-171242",
+          "incarnation": "62bf490f4dd44cd1a45ccda7a7ab0106",
+          "config_sha256": "2a2ad91f239e08447a2c9b5712628329b916cc3098f29637c093a1412e7cb52e",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-1",
+          "run_id": "run-20260912-171242",
+          "incarnation": "abdbffdb0b644ec5921025f307e3eef3",
+          "config_sha256": "2a2ad91f239e08447a2c9b5712628329b916cc3098f29637c093a1412e7cb52e",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-2",
+          "run_id": "run-20260912-171242",
+          "incarnation": "ee9ebf7c0c31468683e403dd91ffe1f7",
+          "config_sha256": "2a2ad91f239e08447a2c9b5712628329b916cc3098f29637c093a1412e7cb52e",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        }
+      ],
+      "acknowledgment_events": 0,
+      "completion_events": 0
+    },
+    {
+      "action": "scale",
+      "attempt": 5,
+      "run_id": "run-20260912-171450",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-171450",
+      "preparation_only": true,
+      "production_released": false,
+      "manifest_state": "failed",
+      "reference_matches": true,
+      "gates": [
+        {
+          "stage": "before_production",
+          "request_started_epoch": 1789254942.185746,
+          "valid": false,
+          "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+          "error": "Complete partition ownership differs from the block reference",
+          "timestamp": 1789254947.110948
+        }
+      ],
+      "observed_assignments": {
+        "consumer-sts-0": [
+          2,
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          41,
+          44,
+          47,
+          50,
+          53,
+          56,
+          59
+        ],
+        "consumer-sts-1": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57
+        ],
+        "consumer-sts-2": [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49,
+          52,
+          55,
+          58
+        ]
+      },
+      "event_counts": {
+        "consumer/consumer-sts-0/8f61967bdaed4489a4294307208a0402/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-1/24c84dffcf524a0b8ad313f19204074f/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-2/8f3d883806954f129e2f986115d8ff02/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 2,
+          "assign": 1,
+          "lag_invalid": 20,
+          "finished": 1
+        },
+        "producer/producer-sts-0/5630bf83c10441d68893066834443877/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-1/eee4cb108cee43cd9a966b52fd8455f9/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-2/cbcf8760dc154a629f60dc508e6fb2d7/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        }
+      },
+      "process_failures": [],
+      "source_files": {
+        "consumer/consumer-sts-0/8f61967bdaed4489a4294307208a0402/events.jsonl": "9147fcab47b2dba64ba4b3d0117efc8bee59d4ae19fdff103d21f611d208eabd",
+        "consumer/consumer-sts-0/8f61967bdaed4489a4294307208a0402/final.json": "dcfdec5345670ede0f920474a49911e062ac9f17ab31bb5cf5bdf12848a7ef64",
+        "consumer/consumer-sts-1/24c84dffcf524a0b8ad313f19204074f/events.jsonl": "bb54897c2d54d8a36f8d4786eb7b2cd629219fc2b2e499846d39c3accb3c9428",
+        "consumer/consumer-sts-1/24c84dffcf524a0b8ad313f19204074f/final.json": "addfb15db8851548e010aa523db1142981bd9ddc87b4f30e556c6e8cdaaf6815",
+        "consumer/consumer-sts-2/8f3d883806954f129e2f986115d8ff02/events.jsonl": "2f1dbbc49d5356fd4ff5bc2b17b4b656602e6ccb6182e5d161ac12fa35a00175",
+        "consumer/consumer-sts-2/8f3d883806954f129e2f986115d8ff02/final.json": "1b73854d7c8c85ece27bd41bc74beee064883f995a91b90f6915a9ec6d63e57f",
+        "producer/producer-sts-0/5630bf83c10441d68893066834443877/events.jsonl": "122fea9a7820dbc60f9c73d134b4f54d38f71cc178498f3503d978aada66e945",
+        "producer/producer-sts-0/5630bf83c10441d68893066834443877/final.json": "ffc698aca22dd20e68289501e6e1f4b3cff460fde6fdc4bad01f947070eb23f1",
+        "producer/producer-sts-1/eee4cb108cee43cd9a966b52fd8455f9/events.jsonl": "1ecf520541c4f06530515866b278f35c7489ebaf1193b415e9665651171fd43f",
+        "producer/producer-sts-1/eee4cb108cee43cd9a966b52fd8455f9/final.json": "5ef098b1dd62f7b96697031120b39e1ace8c9b6f0eaae4c3009d8aaed9cbf6c2",
+        "producer/producer-sts-2/cbcf8760dc154a629f60dc508e6fb2d7/events.jsonl": "9cd87931f55dd33e2221f73c449577c1702ae3dafe5fb6826412704364c6db1f",
+        "producer/producer-sts-2/cbcf8760dc154a629f60dc508e6fb2d7/final.json": "280c5d7974dc7bf10ac6c3ee9bcb687270e503e1cfbad397037dea89419e9776"
+      },
+      "final_records": [
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-0",
+          "run_id": "run-20260912-171450",
+          "incarnation": "8f61967bdaed4489a4294307208a0402",
+          "config_sha256": "eafefc709cc4b55aee1317d6daee673e9eb7b7d63595cbf55d086beeed418af5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-1",
+          "run_id": "run-20260912-171450",
+          "incarnation": "24c84dffcf524a0b8ad313f19204074f",
+          "config_sha256": "eafefc709cc4b55aee1317d6daee673e9eb7b7d63595cbf55d086beeed418af5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-2",
+          "run_id": "run-20260912-171450",
+          "incarnation": "8f3d883806954f129e2f986115d8ff02",
+          "config_sha256": "eafefc709cc4b55aee1317d6daee673e9eb7b7d63595cbf55d086beeed418af5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-0",
+          "run_id": "run-20260912-171450",
+          "incarnation": "5630bf83c10441d68893066834443877",
+          "config_sha256": "eafefc709cc4b55aee1317d6daee673e9eb7b7d63595cbf55d086beeed418af5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-1",
+          "run_id": "run-20260912-171450",
+          "incarnation": "eee4cb108cee43cd9a966b52fd8455f9",
+          "config_sha256": "eafefc709cc4b55aee1317d6daee673e9eb7b7d63595cbf55d086beeed418af5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-2",
+          "run_id": "run-20260912-171450",
+          "incarnation": "cbcf8760dc154a629f60dc508e6fb2d7",
+          "config_sha256": "eafefc709cc4b55aee1317d6daee673e9eb7b7d63595cbf55d086beeed418af5",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        }
+      ],
+      "acknowledgment_events": 0,
+      "completion_events": 0
+    },
+    {
+      "action": "scale",
+      "attempt": 6,
+      "run_id": "run-20260912-171702",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260912-171702",
+      "preparation_only": true,
+      "production_released": false,
+      "manifest_state": "failed",
+      "reference_matches": true,
+      "gates": [
+        {
+          "stage": "before_production",
+          "request_started_epoch": 1789255074.858015,
+          "valid": false,
+          "reference_sha256": "5d6220b7d567ee3316962dc63262bad45007e0bd495b1468c6139d0b977c3001",
+          "error": "Complete partition ownership differs from the block reference",
+          "timestamp": 1789255079.520229
+        }
+      ],
+      "observed_assignments": {
+        "consumer-sts-0": [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49,
+          52,
+          55,
+          58
+        ],
+        "consumer-sts-1": [
+          2,
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          41,
+          44,
+          47,
+          50,
+          53,
+          56,
+          59
+        ],
+        "consumer-sts-2": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57
+        ]
+      },
+      "event_counts": {
+        "consumer/consumer-sts-0/760d3790f7334684b5080476bbc50a38/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-1/cde5bb98cb9d4ea3b7178fa577c20947/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "consumer/consumer-sts-2/0815bc2fa86e4dc182ecd1ca3d019484/events.jsonl": {
+          "started": 1,
+          "consumer_config": 1,
+          "assign_started": 1,
+          "assign": 1,
+          "lag_invalid": 20,
+          "revoke_started": 1,
+          "revoke": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-0/2e126bd875e94d88a7d54577f9d404c0/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-1/e9bd61346b204cb39233a42cfee3197c/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        },
+        "producer/producer-sts-2/cec173ff3d3049bc8cd666c7c57ef88f/events.jsonl": {
+          "started": 1,
+          "producer_config": 1,
+          "delivery_summary": 1,
+          "finished": 1
+        }
+      },
+      "process_failures": [],
+      "source_files": {
+        "consumer/consumer-sts-0/760d3790f7334684b5080476bbc50a38/events.jsonl": "5bf95cda6b5fdcd1e6ec3db2302f60d19e7842acb1338c09e0102fd2a862ec01",
+        "consumer/consumer-sts-0/760d3790f7334684b5080476bbc50a38/final.json": "0f7bb1f8646dd44b10cfd4695dc800b192d624993ca03793b600bcc757a782f5",
+        "consumer/consumer-sts-1/cde5bb98cb9d4ea3b7178fa577c20947/events.jsonl": "421c4730b02b1aad453fddea5af81e9f92f840a52070a483abc2287b39d47b13",
+        "consumer/consumer-sts-1/cde5bb98cb9d4ea3b7178fa577c20947/final.json": "bb347ee01f81082353c97dd4737f6c46bfbb2f63643c524c28d108aeeed4e23e",
+        "consumer/consumer-sts-2/0815bc2fa86e4dc182ecd1ca3d019484/events.jsonl": "44bc1cbf91faaa90be62a256acb6ea8dcf8ed44a719b6ad260b956e6c3cdf052",
+        "consumer/consumer-sts-2/0815bc2fa86e4dc182ecd1ca3d019484/final.json": "f911aea89c398dfc712b8778d42427159de677918c555f75d86f3e3a6de87569",
+        "producer/producer-sts-0/2e126bd875e94d88a7d54577f9d404c0/events.jsonl": "80c8c6edfdf971580ce46ed5b2a120e2382e092d8da59f5c720a6ecba26f1cd3",
+        "producer/producer-sts-0/2e126bd875e94d88a7d54577f9d404c0/final.json": "97091d768d7c5a9ac27a0a3c4bbf37dc1a9cf2f84db1ecd3e58e20297ba7773b",
+        "producer/producer-sts-1/e9bd61346b204cb39233a42cfee3197c/events.jsonl": "01553ff669ae95393c022a8789896fd59d8d9793dbf13c9b6a874be0a818485a",
+        "producer/producer-sts-1/e9bd61346b204cb39233a42cfee3197c/final.json": "f07ba32bdba5048a0f2084928e8fd5971ccc1421efdebf22d48fac31dcf6b244",
+        "producer/producer-sts-2/cec173ff3d3049bc8cd666c7c57ef88f/events.jsonl": "ee1c048ba7e2f1aaf5d77a7a68f65ede03f8240831cbe2b032fc1efa5724b7e7",
+        "producer/producer-sts-2/cec173ff3d3049bc8cd666c7c57ef88f/final.json": "be91c8d9d8a1c2ff53658a78edccdd8519fccea4468ee86c571366f5fdc95466"
+      },
+      "final_records": [
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-0",
+          "run_id": "run-20260912-171702",
+          "incarnation": "760d3790f7334684b5080476bbc50a38",
+          "config_sha256": "2b1218f30e3bce61e7d3d8e00aff01c53728cd6377b6308e870ea4924ca06328",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-1",
+          "run_id": "run-20260912-171702",
+          "incarnation": "cde5bb98cb9d4ea3b7178fa577c20947",
+          "config_sha256": "2b1218f30e3bce61e7d3d8e00aff01c53728cd6377b6308e870ea4924ca06328",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "consumer",
+          "pod": "consumer-sts-2",
+          "run_id": "run-20260912-171702",
+          "incarnation": "0815bc2fa86e4dc182ecd1ca3d019484",
+          "config_sha256": "2b1218f30e3bce61e7d3d8e00aff01c53728cd6377b6308e870ea4924ca06328",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-0",
+          "run_id": "run-20260912-171702",
+          "incarnation": "2e126bd875e94d88a7d54577f9d404c0",
+          "config_sha256": "2b1218f30e3bce61e7d3d8e00aff01c53728cd6377b6308e870ea4924ca06328",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-1",
+          "run_id": "run-20260912-171702",
+          "incarnation": "e9bd61346b204cb39233a42cfee3197c",
+          "config_sha256": "2b1218f30e3bce61e7d3d8e00aff01c53728cd6377b6308e870ea4924ca06328",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        },
+        {
+          "role": "producer",
+          "pod": "producer-sts-2",
+          "run_id": "run-20260912-171702",
+          "incarnation": "cec173ff3d3049bc8cd666c7c57ef88f",
+          "config_sha256": "2b1218f30e3bce61e7d3d8e00aff01c53728cd6377b6308e870ea4924ca06328",
+          "phase": "finished",
+          "failure": null,
+          "evidence_error": null,
+          "evidence_dropped": 0
+        }
+      ],
+      "acknowledgment_events": 0,
+      "completion_events": 0
+    }
+  ],
+  "issues": [],
+  "reference_pods_unchanged_at_block_end": true
+}
