@@ -37,6 +37,7 @@ lag_duration = Histogram('consumer_lag_collection_seconds', 'Time spent collecti
 lag_metric = Gauge('consumer_lag', 'High offset minus returned-record position; NaN when invalid', PARTITION_LABELS)
 backlog_metric = Gauge('consumer_processing_backlog', 'High offset minus sequential completion frontier', PARTITION_LABELS)
 observed_metric = Gauge('consumer_lag_observed_timestamp_seconds', 'Time of the last valid offset query', PARTITION_LABELS)
+age_metric = Gauge('consumer_lag_observation_age_seconds', 'Monotonic observation age at exporter snapshot', PARTITION_LABELS)
 valid_metric = Gauge('consumer_lag_valid', 'One when the partition observation is valid and fresh', PARTITION_LABELS)
 high_metric = Gauge('consumer_high_offset', 'Queried high offset', PARTITION_LABELS)
 position_metric = Gauge('consumer_position_offset', 'Next offset after returned records', PARTITION_LABELS)
@@ -48,7 +49,7 @@ cpu = Gauge('consumer_cpu_percent', 'Process CPU percent; 100 percent is one CPU
 memory = Gauge('consumer_memory_bytes', 'Process resident memory in bytes', LABELS)
 uptime = Gauge('consumer_uptime_seconds', 'Process uptime', LABELS)
 losses = Gauge('consumer_evidence_dropped_total', 'Outcome records dropped by the bounded writer', LABELS)
-PARTITION_GAUGES = [lag_metric, backlog_metric, observed_metric, valid_metric, high_metric, position_metric, frontier_metric, owner_metric]
+PARTITION_GAUGES = [lag_metric, backlog_metric, observed_metric, age_metric, valid_metric, high_metric, position_metric, frontier_metric, owner_metric]
 
 
 def synchronized_lag(method):
@@ -126,6 +127,7 @@ class MetricConsumer:
         # A scrape must see high, position, backlog, validity and ownership from
         # the same update. Prometheus otherwise reads their families separately.
         with self.metrics_lock:
+            self.refresh_lag_validity()
             return generate_latest()
 
     def partition_labels(self, key):
@@ -252,7 +254,7 @@ class MetricConsumer:
             key = self.query_queue.popleft()
             self.query_queue.append(key)
             previous = self.observations.get(key)
-            if previous and time.time() - previous['timestamp'] < self.lag_interval:
+            if previous and time.monotonic() - previous['monotonic'] < self.lag_interval:
                 continue
             remaining = deadline - time.monotonic()
             if remaining <= 0:
@@ -266,7 +268,7 @@ class MetricConsumer:
                 if lag is None or unfinished is None:
                     raise ValueError('Invalid offset observation')
                 labels = self.partition_labels(key)
-                self.observations[key] = dict(timestamp=time.time(), lag=lag, backlog=unfinished)
+                self.observations[key] = dict(timestamp=time.time(), monotonic=time.monotonic(), lag=lag, backlog=unfinished)
                 self.query_errors.pop(key, None)
                 for metric, value in [(lag_metric, lag), (backlog_metric, unfinished), (high_metric, high),
                                       (position_metric, position), (frontier_metric, self.frontiers[key]),
@@ -280,11 +282,19 @@ class MetricConsumer:
                     self.runtime.event('lag_invalid', topic=key[0], partition=key[1], reason=reason, error=str(exc))
                 self.query_errors[key] = reason
         lag_duration.labels(**self.labels).observe(time.monotonic() - started)
+        self.refresh_lag_validity()
+
+    def refresh_lag_validity(self):
+        # Called while holding metrics_lock. Age advances even if the main loop
+        # stops updating offsets; a successful HTTP scrape alone is not freshness.
+        now = time.monotonic()
         values = []
         for key in self.assignments:
             row = self.observations.get(key)
-            valid = row is not None and time.time() - row['timestamp'] <= self.freshness
+            age = now - row['monotonic'] if row is not None else math.nan
+            valid = math.isfinite(age) and 0 <= age <= self.freshness
             labels = self.partition_labels(key)
+            age_metric.labels(**labels).set(age)
             valid_metric.labels(**labels).set(int(valid))
             if valid:
                 values.append(row['lag'])

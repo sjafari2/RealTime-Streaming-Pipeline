@@ -117,3 +117,36 @@ Pipeline and partition p50/p95/p99 are reported both as run-level metrics and as
 Use a separate index for each workload/duration/application-version family. The analyzer verifies frozen workload settings, application hashes, Python/package signatures and the shared intervention timing. It preserves every individual run and quality flag. Summary paired differences are scale minus no action. Compatible completed runs with valid identity evidence contribute message outcomes even when monitoring is incomplete; this prevents transition-related monitoring loss from hiding an unfavorable outcome. Coverage screens apply only to backlog and resource aggregates, with a separate pair count for each metric. Low achieved admission remains visible and limits a matched-load causal interpretation. A mean of paired differences is a descriptive run-level result; neither an averaged p99 nor its paired difference is a pooled-message p99. There is no small-sample confidence interval claim.
 
 Processing-backlog area uses the same valid intervals as lag, integrating the completion backlog with trapezoids and reporting its covered duration. The primary cost window spans evaluation start to drain end in both treatments, with separate production, evaluation and post-action windows. Requested CPU-seconds are summed only across observed valid intervals; below 95% coverage, the analyzer flags the cost comparison. An unfinished fraction is always retained beside conditional completion latency. Commit-result records and request-to-readiness/first-completion timings remain available for explaining transition behavior.
+
+## Observation freshness revision (12 September 2026)
+
+New managed runs record `lag_freshness_clock=monotonic_scrape_v2`. For partition p
+at query time t, the accepted age is `a_local + (t - t_scrape)`. Here `a_local` is
+the consumer's monotonic elapsed time since the valid offset query, refreshed
+under the same lock as lag/ownership when exporting metrics. `t_scrape` is the
+original Prometheus sample timestamp, exported with `timestamp()` as
+`consumer_lag_scrape_timestamp_seconds`. The range-query evaluation timestamp
+alone does not reveal the original sample time.
+
+Both age components must be finite and nonnegative, and their sum must be at
+most `LAG_FRESHNESS_SECONDS` (10 seconds in this campaign). Missing metrics,
+invalid offsets and incomplete/duplicate ownership still invalidate a snapshot.
+A main-loop stall ages the local observation; an absent scrape ages the retained
+sample. Neither is treated as fresh just because Prometheus can return a value.
+The live campaign guard and saved analysis use the same predicate.
+
+This is a conservative freshness estimate at scrape resolution: scrape request,
+exporter lock waiting and rendering take time. It is not exact simultaneous
+observation across consumers. The wall-clock observation timestamp remains a
+diagnostic, and message latency still requires sufficiently synchronized producer
+and consumer clocks. This change does not establish clock synchronization for
+message latency. Older exports retain their original wall-clock rule and explicit
+coverage gaps; no previous result is retrospectively repaired.
+
+The first long scale trial (`run-20260912-060649`) was interrupted by the old rule:
+two otherwise coherent partition samples had observation timestamps about 28 and
+34 milliseconds ahead of the query time. The cause is consistent with scrape
+stamping/render timing or a small node-clock offset; the evidence does not isolate
+the two. This diagnostic remains excluded from planned full-duration comparisons.
+
+Reference: [Prometheus timestamp() documentation](https://prometheus.io/docs/prometheus/latest/querying/functions/#timestamp).

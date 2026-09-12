@@ -5,6 +5,7 @@ import json
 import math
 from pathlib import Path
 import statistics
+from lag_freshness import observation_validity
 
 
 def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persistence=.8, max_gap=3.0):
@@ -73,6 +74,7 @@ def analyze(directory, **options):
     # Do not interpolate absent series. query_range already supplies a common evaluation grid.
     table = {}
     names = {'consumer_lag','consumer_lag_valid','consumer_lag_observed_timestamp_seconds',
+             'consumer_lag_observation_age_seconds','consumer_lag_scrape_timestamp_seconds',
              'consumer_partition_owned','consumer_position_offset','consumer_high_offset','consumer_processing_backlog'}
     for series in data['data']['result']:
         labels = series['metric']; name=labels.get('__name__')
@@ -83,6 +85,9 @@ def analyze(directory, **options):
                 bucket=table.setdefault(timestamp,{}).setdefault(key,{})
                 if name in bucket: raise ValueError('Duplicate Prometheus series for one process/partition')
                 bucket[name]=float(value)
+    clock = manifest.get('lag_freshness_clock', 'monotonic_scrape_v2' if any(
+        row['metric'].get('__name__') == 'consumer_lag_observation_age_seconds' for row in data['data']['result'])
+        else 'legacy_wall_clock_v1')
     snapshots=[]
     for timestamp,entries in sorted(table.items()):
         selected={}; reasons=[]
@@ -95,9 +100,8 @@ def analyze(directory, **options):
         for partition,(pod,incarnation,m) in selected.items():
             lag=m.get('consumer_lag',math.nan); pos=m.get('consumer_position_offset',math.nan)
             high=m.get('consumer_high_offset',math.nan); back=m.get('consumer_processing_backlog',math.nan)
-            age=timestamp-m.get('consumer_lag_observed_timestamp_seconds',math.nan)
-            if (m.get('consumer_lag_valid')!=1 or not all(math.isfinite(v) for v in (lag,pos,high,back,age))
-                or not 0 <= age <= freshness or min(lag,pos,high,back)<0 or high<pos):
+            good, age = observation_validity(m, timestamp, freshness, clock)
+            if not good:
                 reasons.append('Invalid/stale observation for '+partition)
             lags[partition]=lag; positions[partition]=pos; highs[partition]=high;backlog[partition]=back
             owners[partition]=pod+'/'+incarnation
@@ -112,8 +116,10 @@ def analyze(directory, **options):
     result.update(run_id=manifest['run_id'],evaluation_seconds=end-start,
                   covered_fraction=result['covered_seconds']/(end-start) if end>start else None,
                   final_lag=result['snapshots'][-1].get('total_lag') if snapshots and snapshots[-1]['timestamp']==end else None,
-                  parameters=options,
+                  parameters=options, freshness_clock=clock,
                   notes=['Offline diagnostic signals; this does not implement a controller.',
+                         'V2 age is exporter monotonic age plus elapsed Prometheus sample age; a conservative scrape-resolution estimate, not exact cross-pod timing.',
+                         'Legacy exports keep their original wall-clock validity rule; they are not retrospectively repaired.',
                          'Lag is high offset minus returned-record position. Processing backlog is reported separately.',
                          'Trapezoidal integration covers only adjacent valid, same-owner observations within max_gap.',
                          'Windows reset after invalid samples, owner changes, gaps or decreasing observed offsets.',

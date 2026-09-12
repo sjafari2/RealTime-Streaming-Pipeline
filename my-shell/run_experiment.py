@@ -366,6 +366,7 @@ def start(plan=None):
     frozen = f'/config/runs/{run_id}/pipeline-configmap.yaml'
     shared_write(frozen, raw)
     control = dict(run_id=run_id, state='preparing', config_path=frozen,
+                   lag_freshness_clock='monotonic_scrape_v2',
                    preparing_epoch=time.time(),
                    config_sha256=hashlib.sha256(raw).hexdigest(), drain_seconds=drain,
                    duration_seconds=duration, warmup_seconds=warmup,
@@ -539,6 +540,10 @@ def export_metrics(directory, control):
         raise ValueError('This run never passed readiness')
     end = min(time.time(), control['drain_end_epoch'] + float(control['config'].get('FINAL_SCRAPE_SECONDS', 15)))
     selector = '{__name__=~"consumer_.*|producer_.*",run_id=' + json.dumps(control['run_id']) + '}'
+    # query_range timestamps are evaluation times, not the original scrape times.
+    # Preserve the latter as a named series alongside the exporter-local ages.
+    ages = 'consumer_lag_observation_age_seconds{run_id=' + json.dumps(control['run_id']) + '}'
+    selector += ' or label_replace(timestamp(' + ages + '), "__name__", "consumer_lag_scrape_timestamp_seconds", "", "")'
     (directory / 'prometheus-query.json').write_text(json.dumps(dict(query=selector, start=start, end=end, step=2), indent=2))
     params = urllib.parse.urlencode(dict(query=selector, start=start, end=end, step=2))
     url = os.getenv('PROM_URL', 'http://localhost:9090').rstrip('/') + '/api/v1/query_range?' + params
