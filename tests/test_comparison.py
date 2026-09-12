@@ -19,13 +19,16 @@ def test_processing_area_clips_the_horizon_without_filling_gaps():
     assert result['covered_seconds'] == 1
 
 
-def test_paired_summary_preserves_flagged_pairs_but_does_not_aggregate_them(monkeypatch):
+def test_monitoring_loss_does_not_hide_an_unfavorable_valid_message_outcome(monkeypatch):
     def run(path):
         action = 'scale' if 'scale' in path.name else 'none'
         bad = 'bad' in path.name
         return dict(run_id=path.name, config={'WORKLOAD_SEED':'1'}, action=action,
                     source_signatures=['known'], intervention={}, quality_flags=['coverage'] if bad else [],
-                    metrics={'p99_seconds': 7 if action=='scale' else 10, 'unfinished_fraction':0.0})
+                    metrics={'p99_seconds': (14 if bad else 7) if action=='scale' else 10, 'unfinished_fraction':0.0,
+                             'lag_covered_fraction':.85 if bad else .98, 'mean_processing_backlog_offsets':100,
+                             'evaluation_and_drain_resource_coverage':.8 if bad else .99,
+                             'evaluation_and_drain_requested_cpu_seconds':100})
     monkeypatch.setattr(comparison, 'run_record', run)
     index = dict(pairs=[dict(pair=1,none='none-good',scale='scale-good'),
                         dict(pair=2,none='none-bad',scale='scale-bad')])
@@ -33,7 +36,9 @@ def test_paired_summary_preserves_flagged_pairs_but_does_not_aggregate_them(monk
     assert len(result['pairs']) == 2
     assert result['pairs'][1]['runs']['scale']['quality_flags'] == ['coverage']
     assert result['descriptive_paired_differences']['p99_seconds'] == dict(
-        pair_count=1,mean_paired_difference=-3,minimum=-3,maximum=-3,sample_standard_deviation=None)
+        pair_count=2,mean_paired_difference=.5,minimum=-3,maximum=4,sample_standard_deviation=pytest.approx(4.949747))
+    assert result['descriptive_paired_differences']['mean_processing_backlog_offsets']['pair_count'] == 1
+    assert result['descriptive_paired_differences']['evaluation_and_drain_requested_cpu_seconds']['pair_count'] == 1
 
 
 def test_short_and_sustained_pairs_cannot_be_pooled(monkeypatch):

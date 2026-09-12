@@ -112,7 +112,7 @@ def run_record(directory):
                 workload_seed=config['WORKLOAD_SEED'], config=config, intervention=plan, metrics=metrics,
                 processing_backlog_integrals=areas, resource_windows=windows, timing=timing,
                 recovery=e.get('recovery'), commit_results=dict(commits), commit_errors=commit_errors,
-                source_signatures=sorted(sources), quality_flags=flags, validity_failures=o['validity_failures'])
+                source_signatures=sorted(sources), quality_flags=flags, evidence_valid=status['status']=='complete' and not o['validity_failures'], validity_failures=o['validity_failures'])
 
 
 def summarize(index, results_root):
@@ -146,15 +146,24 @@ def summarize(index, results_root):
         raise ValueError('Use a separate comparison index for each workload, duration and application version family')
     distribution = {}
     for pair in pairs:
-        if pair['compatibility_failures'] or any(r['quality_flags'] for r in pair['runs'].values()):
+        if pair['compatibility_failures'] or any(not r.get('evidence_valid', True) for r in pair['runs'].values()):
             continue
         for metric, value in pair['scale_minus_none'].items():
+            # Monitoring loss during scaling must not erase an unfavorable,
+            # completely reconciled message outcome from the comparison.
+            if metric in ('processing_backlog_area_offset_seconds', 'mean_processing_backlog_offsets'):
+                if any(r['metrics'].get('lag_covered_fraction', 0)<.9 for r in pair['runs'].values()):
+                    continue
+            if metric == 'evaluation_and_drain_requested_cpu_seconds':
+                if any(r['metrics'].get('evaluation_and_drain_resource_coverage', 0)<.95 for r in pair['runs'].values()):
+                    continue
             distribution.setdefault(metric, []).append(value)
     descriptive = {k:dict(pair_count=len(v), mean_paired_difference=statistics.mean(v),
                          minimum=min(v), maximum=max(v), sample_standard_deviation=statistics.stdev(v) if len(v)>1 else None)
                    for k,v in distribution.items()}
     return dict(pairs=pairs, descriptive_paired_differences=descriptive, notes=[
-        'Every pair and every quality flag remains visible. Descriptive aggregates use only fully compatible pairs meeting declared coverage screens.',
+        'Every pair and quality flag remains visible. Completed evidence-valid compatible pairs contribute message outcomes even when monitoring is incomplete. Coverage screens apply only to backlog and resource aggregates; each metric reports its own pair count.',
+        'Low achieved admission is reported alongside outcomes and limits a matched-load causal interpretation; it is not silently removed to improve the treatment result.',
         'Scale-minus-none latency differences compare per-run conditional completion quantiles; unfinished fractions must be read alongside them.',
         'A mean of per-run p99 values is not a pooled message p99. No pooled p99 or confidence interval is claimed.',
         'Processing-backlog integrals use trapezoids only across valid contiguous same-owner monotonic-offset observations; coverage is explicit.',
