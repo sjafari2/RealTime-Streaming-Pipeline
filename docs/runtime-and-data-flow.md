@@ -110,11 +110,11 @@ python3 python-scripts/evaluate_run.py results/RUN_ID
 bash my-shell/run_pipeline.sh --rates 1000 2000 3000 --repetitions 5
 ```
 
-This creates 15 sequential runs, updating TARGET_RATE in the shared YAML before each run. Each rate is per producer. Without --rates, run_pipeline.sh repeats the current shared target rate. The coordinator discovers the current pods; it does not scale them to configuration counts. Each run waits, collects, exports and writes outcome-summary.json, lag-summary.json and runner-status.json before the next starts. A failure stops the sequence. Completed batches write repetition-summary.json and the exact run paths in batch-status.json under results/batches/BATCH_ID. The final explicit rate remains in the shared YAML.
+This creates 15 sequential runs, updating TARGET_RATE in the shared YAML before each run. Each rate is per producer. Without --rates, run_pipeline.sh repeats the current shared target rate. Before each run, the coordinator restores the initial consumer count from `--initial-consumers` when supplied, otherwise from the shared `CONSUMER_POD_COUNT`. Producer replicas must already match `PRODUCER_POD_COUNT`; the runner validates that count instead of resizing producers. Each run waits, collects, exports and writes outcome-summary.json, lag-summary.json and runner-status.json before the next starts. A failure stops the sequence. Completed batches write repetition-summary.json and the exact run paths in batch-status.json under results/batches/BATCH_ID. The final explicit rate remains in the shared YAML.
 
 ### One producer and one consumer
 
-Between experiments, set the intended StatefulSet replica counts to one, then run the same managed commands. A standalone pod process test is also possible after stopping the managed run and creating appropriate topics:
+Between experiments, set the producer StatefulSet to one replica and set both `PRODUCER_POD_COUNT` and `CONSUMER_POD_COUNT` to `1` in the shared configuration. The complete managed command restores one initial consumer and validates the producer count. Use HPA bounds that permit the declared counts; the complete command temporarily pauses conflicting scaling decisions and restores the settings it saved afterward. A standalone pod process test is also possible after stopping the managed run and creating appropriate topics:
 
 ```bash
 # In the consumer pod:
@@ -132,6 +132,7 @@ Standalone timing is local to each process. Use managed runs for comparisons. Se
 | `my-shell/save-run.sh` | Local terminal | Runs one complete experiment by default; explicit actions remain for troubleshooting. |
 | `my-shell/run_pipeline.sh` | Local terminal | Repeats the shared configuration or explicit rates through the same coordinator, then summarizes the batch. |
 | `my-shell/run_experiment.py` | Local terminal | Coordinates preparation, full-run waiting, collection, temporary Prometheus forwarding, export and automatic analysis; retains individual troubleshooting actions. |
+| `my-shell/managed_hpa.py` | Local terminal through the complete-run coordinator | Saves, temporarily pauses and conditionally restores the HPA settings owned by this invocation. |
 | `my-shell/sync-code.sh` → `sync_code.py` | Local terminal | Imports coordinator connection helpers; copies and verifies the role and common code on shared volumes. |
 | `src/pipeline-configmap.yaml` | Local template/image defaults | Seed configuration for new storage; the existing shared file is edited separately. |
 | `src/consumer/create_topics.sh` | One consumer pod | Reads the shared original, creates topics and writes new RUN_ID/TOPIC_TITLE before the coordinator freezes it. |
