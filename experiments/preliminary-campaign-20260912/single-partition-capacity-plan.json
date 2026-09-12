@@ -21,5 +21,28 @@
   "limitations": [
     "This is a single calibration on the recorded node, not a capacity estimate valid for every shared node or future time.",
     "The later 60-partition comparison retains sparse cold traffic and may change the hot owner; report those differences."
-  ]
+  ],
+  "numeric_qualification": {
+    "minimum_target_admission_fraction": 0.98,
+    "minimum_lag_coverage": 0.9,
+    "maximum_processing_to_arrival_ratio": 0.9,
+    "minimum_growth_offsets_each_half_exclusive": 1000,
+    "boundary_windows_seconds_from_evaluation_start": [
+      [
+        0,
+        10
+      ],
+      [
+        55,
+        65
+      ],
+      [
+        110,
+        120
+      ]
+    ],
+    "minimum_valid_observations_each_boundary": 3,
+    "ownership_changes_between_production_start_and_drain_end": 0
+  },
+  "qualification_helper_sha256": "4737e054a7a05fae773ada9d1eaaf30dfb119d2015d1f83e547f57bd0d904d32"
 }
