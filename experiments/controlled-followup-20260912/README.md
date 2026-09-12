@@ -73,3 +73,7 @@ Compare paired run outcomes first. Retain all valid unfavorable results. Do not 
 `review-plan.json` contains the two candidate configurations, reference ownership/placement, source hashes and local feasibility checks. It is intentionally a review document, not a `save-run.sh` action plan. Existing active runtime settings were not changed. No cluster campaign was started.
 
 For the immediate priority, implement and test the placement/ownership gate, then validate preparation without producing an experimental workload. Only after that succeeds can the existing keep-three/scale comparison be called ready for a controlled repeat. Targeted reassignment remains a later mechanism project. The proposal already describes it as planned work; this assessment does not turn it into an implemented feature or remove optional hot-key splitting from RQ4.
+
+## Implementation following the review
+
+The user subsequently authorized this bounded repeat. The placement gate and preparation-only mode are now implemented; see [EXECUTION.md](EXECUTION.md) for the runnable block and its safeguards. This does not retroactively change the dated feasibility record in `review-plan.json`. Live validation and outcomes must be reported from execution evidence, not inferred from local tests.

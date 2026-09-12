@@ -17,6 +17,7 @@ import uuid
 import urllib.parse
 import urllib.request
 from managed_hpa import paused_for_experiment
+from placement_control import PlacementMismatch, check_placement, pod_identity, reference_hash, validate_reference
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = os.getenv('NAMESPACE', 'kafkastreamingdata')
@@ -233,6 +234,16 @@ def validate_intervention(plan, config):
     duration, _, warmup, _ = validate_config(config)
     if plan['action'] not in ('none', 'scale'):
         raise ValueError('Only scheduled no-action and scale-up pilots are implemented; targeted reassignment is not implemented')
+    if plan.get('placement_reference') is not None:
+        validate_reference(plan['placement_reference'], config)
+        if plan.get('initial_consumers') != int(config['CONSUMER_POD_COUNT']):
+            raise ValueError('Controlled placement requires matching explicit initial consumers')
+    if plan.get('prepare_only') and plan.get('placement_reference') is None:
+        raise ValueError('Preparation-only validation requires a placement reference')
+    budget = plan.get('preparation_budget_seconds')
+    if budget is not None and (plan.get('placement_reference') is None or
+                               not math.isfinite(budget) or budget <= 0):
+        raise ValueError('A positive preparation budget requires a placement reference')
     after = plan['after_evaluation_start_seconds']
     if not math.isfinite(after) or not 0 <= after < duration-warmup:
         raise ValueError('Intervention time must fall inside the evaluation interval')
@@ -290,11 +301,48 @@ def resource_snapshot(control):
     return row
 
 
+def verify_placement(control, stage):
+    reference = control.get('placement_reference')
+    if reference is None:
+        return
+    started = time.monotonic()
+    record = dict(stage=stage, request_started_epoch=time.time(), valid=False,
+                  reference_sha256=reference_hash(reference))
+    try:
+        if record['reference_sha256'] != control['placement_reference_sha256']:
+            raise PlacementMismatch('Frozen placement reference hash changed')
+        rows = {p['pod']: status(p['role'], p['pod']) for p in reference['pods']}
+        record['application_status'] = rows
+        items = json.loads(kubectl('get', 'pods', '-l', 'app in (producer-sts,consumer-sts)',
+                                  '-o', 'json', timeout=10))['items']
+        record['observed_pods'] = [pod_identity(item) for item in items]
+        processes = check_placement(reference, control['config'], control['run_id'],
+                                    control['config_sha256'], rows, items,
+                                    expected_processes=control.get('initial_placement_processes'),
+                                    preparing=stage == 'before_production')
+        elapsed = time.monotonic() - started
+        if elapsed > 30:
+            raise PlacementMismatch('Placement observation exceeded the 30-second freshness budget')
+        record.update(valid=True, processes=processes, observation_seconds=elapsed)
+        if stage == 'before_production':
+            control['initial_placement_processes'] = processes
+    except Exception as exc:
+        record['error'] = str(exc)
+        raise
+    finally:
+        record['timestamp'] = time.time()
+        journal(control, 'placement-checks.jsonl', record)
+
+
 def apply_intervention(control):
     plan = control['intervention']
     current = read_control()
     if not current or current['run_id'] != control['run_id'] or current.get('state') != 'running':
         raise RuntimeError('Shared run changed before the intervention; refusing to act')
+    verify_placement(control, 'before_intervention')
+    current = read_control()
+    if not current or current['run_id'] != control['run_id'] or current.get('state') != 'running':
+        raise RuntimeError('Shared run changed during placement verification; refusing to act')
     now = time.time()
     if now >= control['producer_end_epoch']:
         raise RuntimeError('Intervention time was missed; refusing to act after evaluation ended')
@@ -341,6 +389,7 @@ def validate_initial_replicas(config, producers, consumers, plan=None):
 
 
 def start(plan=None):
+    preparation_started = time.monotonic()
     # Validate a requested pilot before stopping existing applications or changing replica counts.
     validate_intervention(plan, read_config()[1])
     validate_replica_control(read_config()[1], plan)
@@ -375,6 +424,11 @@ def start(plan=None):
                    producer_pods=producer_pods, consumer_pods=consumer_pods,
                    expected_partitions=int(config['NUM_PARTITIONS']) * int(config['TOPIC_COUNT']),
                    expires_epoch=time.time() + readiness_timeout + 30, config=config)
+    if (plan or {}).get('placement_reference') is not None:
+        control['placement_reference'] = plan['placement_reference']
+        control['placement_reference_sha256'] = reference_hash(plan['placement_reference'])
+    if (plan or {}).get('prepare_only'):
+        control['preparation_only'] = True
     control['capacity_estimate'] = estimate_capacity(config, len(producer_pods), len(consumer_pods))
     print('[CAPACITY]', json.dumps(control['capacity_estimate']))
     publish(control)
@@ -420,6 +474,25 @@ def start(plan=None):
             for pod, row in zip(consumer_pods, consumers) for topic, partition in row.get('assignments', [])],
             key=lambda row: (row['topic'], row['partition']))
         control['monitoring_readiness'] = monitoring_readiness(control)
+        verify_placement(control, 'before_production')
+        control['preparation_elapsed_seconds'] = time.monotonic() - preparation_started
+        budget = (plan or {}).get('preparation_budget_seconds')
+        if budget is not None:
+            control['preparation_budget_seconds'] = budget
+            if control['preparation_elapsed_seconds'] >= budget:
+                raise PlacementMismatch('Preparation budget exhausted; no workload released')
+        if control.get('placement_reference') is not None:
+            # Use the freshly verified map in the manifest, with this run's topic prefix.
+            control['initial_assignment'] = [dict(pod=r['pod'],
+                topic=f"{config['TOPIC_TITLE']}_{r['topic_index']}", partition=r['partition'])
+                for r in control['placement_reference']['assignment']]
+        if control.get('preparation_only'):
+            control['preparation_verified_epoch'] = time.time()
+            control['state'] = 'stopped'  # Producers never receive a running state.
+            publish(control)
+            shared_write(f'/config/runs/{run_id}/manifest.json', json.dumps(control, indent=2).encode())
+            print('[PREPARED]', run_id, 'placement verified; no workload released', flush=True)
+            return control
         control['state'] = 'running'
         control['start_epoch'] = time.time() + 5
         control['evaluation_start_epoch'] = control['start_epoch'] + warmup
@@ -811,6 +884,14 @@ def complete_run(plan=None):
     control = None
     try:
         control = start(plan) if plan else start()
+        if control.get('preparation_only'):
+            stop()
+            directory = collect()
+            result = dict(run_id=control['run_id'], status='preparation_verified',
+                          workload_released=False, issues=[])
+            (directory / 'runner-status.json').write_text(json.dumps(result, indent=2) + '\n')
+            print('[PREPARATION RESULTS]', directory.resolve(), flush=True)
+            return directory
         wait_for_end(control)
     except BaseException:
         # On Ctrl+C or startup/wait failure, stop only the run this invocation created.
@@ -839,6 +920,8 @@ def complete_run(plan=None):
 def run_complete_commands(repetitions=1, rates=None, batch=False, plan=None):
     if repetitions < 1 or (rates is not None and (not rates or min(rates) <= 0)):
         raise ValueError('Use positive repetition counts and rates')
+    if (plan or {}).get('prepare_only') and (batch or repetitions != 1 or rates is not None):
+        raise ValueError('Preparation-only validation is one preparation, not an experiment batch')
     with command_lock(), paused_for_experiment(sys.modules[__name__], plan):
         preflight()
         if plan:
@@ -930,6 +1013,12 @@ One-time code/configuration/monitoring setup must already be complete.
     parser.add_argument('--target-consumers', type=int, help='Consumer count after the scale-up action')
     parser.add_argument('--recovery-threshold', type=float, help='Calibrated total processing-backlog threshold in offsets')
     parser.add_argument('--recovery-hold', type=float, help='Seconds backlog must remain below the threshold')
+    parser.add_argument('--placement-reference', type=Path,
+                        help='Frozen JSON assignment/pod reference, checked before production and intervention')
+    parser.add_argument('--prepare-only', action='store_true',
+                        help='Check one referenced preparation and collect it without releasing a workload')
+    parser.add_argument('--preparation-budget', type=float,
+                        help='Maximum seconds to prepare a controlled run before releasing production')
     args = parser.parse_args()
     plan_values = (args.intervention_after, args.initial_consumers, args.target_consumers, args.recovery_threshold, args.recovery_hold)
     plan = None
@@ -941,6 +1030,15 @@ One-time code/configuration/monitoring setup must already be complete.
                     recovery_threshold_offsets=args.recovery_threshold, recovery_hold_seconds=args.recovery_hold)
     elif any(value is not None for value in plan_values):
         parser.error('Pilot settings require --intervention none or scale')
+    if args.placement_reference is not None or args.prepare_only or args.preparation_budget is not None:
+        if plan is None or (args.prepare_only and args.action != 'run'):
+            parser.error('Placement checks need a scheduled action; --prepare-only is for a single run command')
+        if args.placement_reference is None:
+            parser.error('--prepare-only requires --placement-reference')
+        reference = json.loads(args.placement_reference.read_text())
+        validate_reference(reference)
+        plan.update(placement_reference=reference, prepare_only=args.prepare_only,
+                    preparation_budget_seconds=args.preparation_budget)
     if args.repetitions < 1 or (args.rates is not None and min(args.rates) <= 0):
         parser.error('Use positive repetition counts and rates')
     if args.action not in ('repeat', 'sweep') and (args.rates is not None or args.repetitions != 1):
