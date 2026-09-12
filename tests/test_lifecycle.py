@@ -67,3 +67,33 @@ def test_launcher_uses_updated_shared_file_on_restart(tmp_path):
         result = subprocess.run([sys.executable, str(tmp_path / 'launch.py'), 'producer'], env=env,
                                 capture_output=True, text=True, check=True)
         assert result.stdout.strip().endswith(str(rate))
+
+
+@pytest.mark.parametrize('initial_state,exit_on_term,forced', [('Z', False, False), ('S', True, False), ('S', False, True)])
+def test_stop_distinguishes_exited_children_from_live_processes(tmp_path, monkeypatch, initial_state, exit_on_term, forced):
+    import contextlib
+    import io
+    sys.path.insert(0, str(ROOT / 'my-shell'))
+    import run_experiment as runner
+    fake = tmp_path / '123'
+    fake.mkdir()
+    (fake / 'cmdline').write_bytes(b'python3\x00producer.py\x00')
+    (fake / 'status').write_text('State:\t' + initial_state + '\n')
+    signals = []
+    def signal_process(pid, sig):
+        assert pid == 123
+        signals.append(sig)
+        if exit_on_term:
+            (fake / 'status').write_text('State:\tZ\n')
+    monkeypatch.setattr(os, 'kill', signal_process)
+    monkeypatch.setattr(runner, 'pods', lambda role: ['producer-sts-0'])
+    def execute(role, pod, code, **kwargs):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            exec(code.replace("Path('/proc')", 'Path(' + repr(str(tmp_path)) + ')'), {})
+        return output.getvalue().encode()
+    monkeypatch.setattr(runner, 'remote', execute)
+    assert runner.force_stop_role('producer', grace=.01) == (['producer-sts-0'] if forced else [])
+    assert (signal.SIGKILL in signals) == forced
+    if initial_state == 'Z':
+        assert not signals

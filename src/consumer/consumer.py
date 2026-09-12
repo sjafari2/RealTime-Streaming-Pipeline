@@ -6,7 +6,7 @@ import hashlib
 from collections import deque
 
 import psutil
-from confluent_kafka import Consumer, TopicPartition
+from confluent_kafka import Consumer, TopicPartition, KafkaError, KafkaException
 from prometheus_client import Counter, Gauge, Histogram, generate_latest
 from pipeline_runtime import Runtime, latency_seconds, valid_lag
 
@@ -24,7 +24,8 @@ service_time = Histogram('consumer_processing_seconds', 'Local processing durati
 violations = Counter('consumer_slo_violations_total', 'Valid completion observations above the deadline', LABELS)
 invalid_latency = Counter('consumer_invalid_latency_total', 'Invalid or negative completion latency observations', LABELS)
 failures = Counter('consumer_processing_failures_total', 'Records that did not complete successfully', LABELS)
-commit_failures = Counter('consumer_commit_failures_total', 'Failed offset commits', LABELS)
+commit_failures = Counter('consumer_commit_failures_total', 'Failed offset commits, including group transitions', LABELS)
+commit_transitions = Counter('consumer_commit_rebalance_errors_total', 'Commit errors caused by group membership transitions', LABELS)
 rebalance = Counter('consumer_rebalances_total', 'Ownership callback events', LABELS + ['event_type'])
 freshness_metric = Gauge('consumer_lag_freshness_seconds', 'Maximum accepted offset observation age', LABELS)
 expected_metric = Gauge('consumer_expected_partitions', 'Expected partitions in this run', LABELS)
@@ -60,6 +61,7 @@ class MetricConsumer:
         self.topics = [f'{prefix}_{i}' for i in range(int(os.getenv('TOPIC_COUNT', '1')))]
         self.assignments = {}
         self.frontiers = {}
+        self.completed_offsets = {}
         self.observations = {}
         self.query_errors = {}
         self.query_queue = deque()
@@ -146,6 +148,7 @@ class MetricConsumer:
             key = (tp.topic, tp.partition)
             self.assignments.pop(key, None)
             self.frontiers.pop(key, None)
+            self.completed_offsets.pop(key, None)
             self.observations.pop(key, None)
             self.query_errors.pop(key, None)
             for metric in PARTITION_GAUGES:
@@ -155,23 +158,57 @@ class MetricConsumer:
                     pass
         self.query_queue = deque(k for k in self.query_queue if k in self.assignments)
 
+    def record_commit_result(self, error, partitions, context):
+        errors = ([error] if error else []) + [tp.error for tp in partitions if tp.error]
+        offsets = [dict(topic=tp.topic, partition=tp.partition, offset=tp.offset,
+                        error=str(tp.error) if tp.error else None) for tp in partitions]
+        if not errors:
+            self.runtime.event('commit_result', context=context, success=True, offsets=offsets)
+            return True
+        # A request from an old group generation can fail while ownership changes.
+        # Retry only current completed offsets in the normal loop. Revoked/lost
+        # partitions are forgotten, so their new owner resumes from Kafka's commit.
+        transition = all(isinstance(e, KafkaError) and not e.fatal() and e.code() in
+                         (KafkaError.ILLEGAL_GENERATION, KafkaError.UNKNOWN_MEMBER_ID,
+                          KafkaError.REBALANCE_IN_PROGRESS) for e in errors)
+        commit_failures.labels(**self.labels).inc()
+        if transition:
+            commit_transitions.labels(**self.labels).inc()
+        self.runtime.event('commit_result', context=context, success=False,
+                           group_transition=transition, errors=[str(e) for e in errors], offsets=offsets)
+        if not transition:
+            self.runtime.failure = 'Offset commit failed: ' + '; '.join(str(e) for e in errors)
+            self.runtime.stop_event.set()
+        return False
+
     def commit(self, keys=None, asynchronous=False):
         keys = self.assignments if keys is None else keys
-        offsets = [TopicPartition(t, p, self.frontiers[(t, p)]) for t, p in keys if (t, p) in self.frontiers]
-        if offsets:
-            try:
-                result = self.consumer.commit(offsets=offsets, asynchronous=asynchronous)
-                if result and any(tp.error for tp in result):
-                    raise RuntimeError('Partition commit failed: ' + str(result))
-            except Exception:
-                commit_failures.labels(**self.labels).inc()
+        # Assignment frontiers initialize lag even before work begins. They are
+        # not new completed work, and must not generate startup commits.
+        offsets = [TopicPartition(t, p, self.completed_offsets[(t, p)]) for t, p in keys
+                   if (t, p) in self.assignments and (t, p) in self.completed_offsets]
+        if not offsets:
+            return True
+        context = 'asynchronous_request' if asynchronous else 'synchronous_request'
+        try:
+            result = self.consumer.commit(offsets=offsets, asynchronous=asynchronous)
+        except KafkaException as exc:
+            self.record_commit_result(exc.args[0], offsets, context)
+            if self.runtime.failure:
                 raise
+            return False
+        except Exception as exc:
+            self.record_commit_result(exc, offsets, context)
+            raise
+        if not asynchronous:
+            successful = self.record_commit_result(None, result or [], context)
+            if self.runtime.failure:
+                raise RuntimeError(self.runtime.failure)
+            return successful
+        return None  # A queued request is not a commit acknowledgment.
 
     def on_commit(self, error, partitions):
-        if error:
-            commit_failures.labels(**self.labels).inc()
-            self.runtime.failure = 'Asynchronous commit failed: ' + str(error)
-            self.runtime.stop_event.set()
+        self.record_commit_result(error, partitions or [], 'asynchronous_callback')
 
     def on_revoke(self, consumer, partitions):
         self.runtime.event('revoke_started', partitions=[[p.topic, p.partition] for p in partitions])
@@ -266,6 +303,7 @@ class MetricConsumer:
                              output_sha256=hashlib.sha256(result).hexdigest(), assignment_epoch=self.epoch)
         # Processing is sequential, so offset+1 is safe only after this record succeeds.
         self.frontiers[key] = msg.offset() + 1
+        self.completed_offsets[key] = msg.offset() + 1
         frontier_metric.labels(**self.partition_labels(key)).set(self.frontiers[key])
         self.consumer.store_offsets(message=msg)
         completed.labels(**self.labels).inc()

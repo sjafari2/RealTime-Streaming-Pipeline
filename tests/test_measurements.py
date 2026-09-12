@@ -128,6 +128,7 @@ def test_revoke_removes_old_lag_and_commits_completion(app):
     app.update_lag()
     assert app.observations[('topic_0', 0)]['lag'] == 80
     app.frontiers[('topic_0', 0)] = 7
+    app.completed_offsets[('topic_0', 0)] = 7
     app.on_revoke(app.consumer, list(app.assignments.values()))
     assert app.consumer.commits[-1]['offsets'][0].offset == 7
     assert not app.assignments and not app.observations

@@ -88,20 +88,28 @@ def force_stop_role(role, grace=60):
     # Match Python's script argument, not arbitrary text in a shell command.
     code = f'''import os,signal,time,json
 from pathlib import Path
+def alive(pid):
+    try:
+        status = (Path('/proc') / str(pid) / 'status').read_text()
+        state = next(line.split()[1] for line in status.splitlines() if line.startswith('State:'))
+        return state not in ('Z', 'X')  # Exited children can remain until PID 1 reaps them.
+    except (OSError, StopIteration, IndexError):
+        return False
 pids=[]
 for p in Path('/proc').iterdir():
     if not p.name.isdigit(): continue
     try:
         argv=(p/'cmdline').read_bytes().split(b'\\0')
         if len(argv)>1 and Path(os.fsdecode(argv[1])).name=={(role + '.py')!r}:
-            pids.append(int(p.name))
+
+            if alive(int(p.name)): pids.append(int(p.name))
     except (OSError,ValueError): pass
 for pid in pids:
     try: os.kill(pid,signal.SIGTERM)
     except ProcessLookupError: pass
 end=time.monotonic()+{grace}
 while pids and time.monotonic()<end:
-    pids=[pid for pid in pids if Path('/proc/'+str(pid)).exists()]
+    pids=[pid for pid in pids if alive(pid)]
     if pids: time.sleep(.25)
 for pid in pids:
     try: os.kill(pid,signal.SIGKILL)
@@ -386,6 +394,9 @@ def start(plan=None):
                 last_resource_sample = time.monotonic()
             consumers = [status('consumer', p) for p in consumer_pods]
             producers = [status('producer', p) for p in producer_pods]
+            for pod, row in zip(consumer_pods + producer_pods, consumers + producers):
+                if row.get('run_id') == run_id and (row.get('failure') or row.get('phase') == 'failed'):
+                    raise RuntimeError(pod + ': readiness failed: ' + str(row.get('failure')))
             ready = validate_readiness(consumers, expected, control['config_sha256'])
             ready = ready and all(r.get('run_id') == run_id and r.get('phase') == 'ready' and
                                   r.get('config_sha256') == control['config_sha256'] for r in producers)
