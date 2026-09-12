@@ -1,0 +1,21 @@
+{
+  "prepared_epoch": 1789211966.194864,
+  "config_sha256": "0c666630cbbe92b2b10be17a96c3365da06badfdadbb93cf1d6f6e92df307a68",
+  "selection": "2000 SHA256 iterations, 1500 total target messages/s, 3 consumers",
+  "reason": "The isolated task takes 1.70, 3.44 and 2.22 ms/message on the initial three consumers. Equal partition input implies about 500 messages/s per consumer; at least the slower consumers may accumulate backlog. Six consumers would average about 250 messages/s each, below isolated capacities. These estimates omit pipeline overhead and are not throughput results.",
+  "calibration_seconds": 180,
+  "warmup_seconds": 60,
+  "drain_seconds": 120,
+  "freeze_comparison_only_after_calibration": true,
+  "qualification": {
+    "whole_run_delivery_fraction_minimum": 0.98,
+    "minimum_lag_coverage_fraction": 0.9,
+    "sustained_growth": "Positive backlog growth in both 60-second evaluation windows; each window median of final 10 seconds minus initial 10 seconds exceeds 1500 offsets.",
+    "evidence": "No identity/evidence/delivery/processing failures; unfinished outcomes remain reportable, not grounds for favorable selection."
+  },
+  "stop_limits": {
+    "backlog_offsets": 600000,
+    "backlog_duration_seconds": 10,
+    "invalid_monitoring_seconds": 10
+  }
+}
