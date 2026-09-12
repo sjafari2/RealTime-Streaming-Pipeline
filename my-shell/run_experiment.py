@@ -446,11 +446,34 @@ def collect():
         import shutil
         with tempfile.TemporaryDirectory(dir=directory) as temporary:
             staging = Path(temporary) / role
-            # The evidence can exceed a gigabyte. Allow the stream to finish,
-            # retry interrupted copies, and keep a bounded overall transfer time.
-            print('[COLLECT] Copying', role, 'evidence from', pod, flush=True)
-            kubectl('cp', pod + ':' + source, str(staging), '-c', ROLES[role][0],
-                    '--retries=3', timeout=900, request_timeout='0')
+            staging.mkdir()
+            # Copying every pod in one stream can fail even with cp retries.
+            # Copy each saved pod directory separately, including pods that no
+            # longer exist after scaling. Keep earlier local evidence until every
+            # directory has arrived successfully.
+            names = json.loads(remote(role, pod,
+                'from pathlib import Path; import json; '
+                f'print(json.dumps(sorted(p.name for p in Path({source!r}).iterdir())))'))
+            if not isinstance(names, list) or any(not isinstance(name, str) or not name or
+                    name in ('.', '..') or Path(name).name != name for name in names):
+                raise RuntimeError('Invalid evidence directory listing for ' + role)
+            for name in names:
+                destination = staging / name
+                for attempt in range(1, 4):
+                    print('[COLLECT] Copying', role, name, 'from', pod, 'attempt', attempt, flush=True)
+                    try:
+                        kubectl('cp', pod + ':' + source + '/' + name, str(destination), '-c', ROLES[role][0],
+                                '--retries=3', timeout=900, request_timeout='0')
+                        break
+                    except subprocess.CalledProcessError:
+                        # kubectl's own resume option does not handle every
+                        # unexpected-EOF error from the API error stream.
+                        if attempt == 3:
+                            raise
+                        if destination.is_dir():
+                            shutil.rmtree(destination)
+                        elif destination.exists():
+                            destination.unlink()
             if (directory / role).exists():
                 shutil.rmtree(directory / role)
             staging.rename(directory / role)

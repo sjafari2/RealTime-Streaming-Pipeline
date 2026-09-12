@@ -48,6 +48,7 @@ def test_collect_preserves_previous_evidence_when_transfer_fails(monkeypatch, tm
     monkeypatch.setattr(runner, 'read_control', lambda: control)
     monkeypatch.setattr(runner, 'shared_read', lambda path: b'data: {}\n')
     monkeypatch.setattr(runner, 'pods', lambda role: [role + '-0'])
+    monkeypatch.setattr(runner, 'remote', lambda role, *args: json.dumps([role + '-0']).encode())
     def failed_copy(*args, **kwargs):
         staging = Path(args[2])
         staging.mkdir()
@@ -67,6 +68,8 @@ def test_evidence_copy_has_bounded_retries_and_keeps_api_timeouts(monkeypatch, t
     monkeypatch.setattr(runner, 'read_control', lambda: control)
     monkeypatch.setattr(runner, 'shared_read', lambda path: b'data: {}\n')
     monkeypatch.setattr(runner, 'pods', lambda role: [role + '-0'])
+    # The shared volume also retains evidence for a pod no longer in Kubernetes.
+    monkeypatch.setattr(runner, 'remote', lambda role, *args: json.dumps([role + '-0', role + '-retired']).encode())
     calls = []
     def transfer(command, **kwargs):
         calls.append((command, kwargs['timeout']))
@@ -83,10 +86,61 @@ def test_evidence_copy_has_bounded_retries_and_keeps_api_timeouts(monkeypatch, t
     for command, timeout in calls[1:]:
         assert '--request-timeout=0' in command
         assert '--retries=3' in command and timeout == 900
-    assert len(calls) == 3
+    assert len(calls) == 5
     for role in ('producer', 'consumer'):
-        assert (directory / role / 'copied').read_text() == 'complete'
+        for pod in [role + '-0', role + '-retired']:
+            assert (directory / role / pod / 'copied').read_text() == 'complete'
         assert not (directory / role / 'events.jsonl').exists()
+
+
+def test_collect_retries_error_stream_eof_without_kept_partial_files(monkeypatch, tmp_path):
+    directory, control = evidence(tmp_path, 'run-error-stream')
+    control.update(state='stopped', config_path='/config/frozen.yaml')
+    monkeypatch.setattr(runner, 'ROOT', tmp_path)
+    monkeypatch.setattr(runner, 'read_control', lambda: control)
+    monkeypatch.setattr(runner, 'shared_read', lambda path: b'data: {}\n')
+    monkeypatch.setattr(runner, 'pods', lambda role: [role + '-0'])
+    monkeypatch.setattr(runner, 'remote', lambda role, *args: json.dumps([role + '-0']).encode())
+    calls = []
+    def copy(*args, **kwargs):
+        calls.append(args[1])
+        destination = Path(args[2])
+        assert not destination.exists()
+        destination.mkdir()
+        if len(calls) == 1:
+            (destination / 'partial').write_text('unfinished')
+            raise subprocess.CalledProcessError(1, ['kubectl', 'cp'], stderr=b'error reading from error stream: unexpected EOF')
+        (destination / 'events.jsonl').write_text('complete')
+    monkeypatch.setattr(runner, 'kubectl', copy)
+    assert runner.collect() == directory
+    assert len(calls) == 3 and calls[0] == calls[1]
+    assert not list(directory.rglob('partial'))
+    assert (directory / 'producer/producer-0/events.jsonl').read_text() == 'complete'
+
+
+def test_collect_preserves_role_when_a_later_pod_copy_fails(monkeypatch, tmp_path):
+    directory, control = evidence(tmp_path, 'run-later-copy-fails')
+    control.update(state='stopped', config_path='/config/frozen.yaml')
+    previous = (directory / 'producer/events.jsonl').read_bytes()
+    monkeypatch.setattr(runner, 'ROOT', tmp_path)
+    monkeypatch.setattr(runner, 'read_control', lambda: control)
+    monkeypatch.setattr(runner, 'shared_read', lambda path: b'data: {}\n')
+    monkeypatch.setattr(runner, 'pods', lambda role: [role + '-0'])
+    monkeypatch.setattr(runner, 'remote', lambda *args: b'["first", "second"]')
+    calls = []
+    def copy(*args, **kwargs):
+        calls.append(args[1])
+        destination = Path(args[2])
+        destination.mkdir()
+        (destination / 'new-data').write_text('copied or partial')
+        if destination.name == 'second':
+            raise subprocess.CalledProcessError(1, ['kubectl', 'cp'], stderr=b'unexpected EOF')
+    monkeypatch.setattr(runner, 'kubectl', copy)
+    with pytest.raises(subprocess.CalledProcessError):
+        runner.collect()
+    assert len(calls) == 4  # One successful directory, then three bounded attempts.
+    assert (directory / 'producer/events.jsonl').read_bytes() == previous
+    assert not list(directory.rglob('new-data'))
 
 
 def test_complete_run_waits_before_collecting_and_analyzes(monkeypatch, tmp_path):
