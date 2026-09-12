@@ -154,7 +154,16 @@ Reference: [Prometheus timestamp() documentation](https://prometheus.io/docs/pro
 Protocol revision 3 corrects the PromQL union used to retain sample timestamps.
 The union explicitly matches on metric name; otherwise the timestamp series is
 suppressed by the raw age series with the same non-name labels. Managed complete
-runs now verify the actual Prometheus response for all unique, fresh partition
-observations before production is released. Manual `start` without `PROM_URL`
+runs verify the actual Prometheus response before production is released. On a
+fresh empty topic, an unresolved Kafka position is allowed only as an explicit
+invalid/NaN observation with the complete age schema and a fresh original scrape
+timestamp. The manifest separately counts valid and unresolved positions. No lag
+value is invented. Once production begins, the full observation-freshness rule
+applies; the calibration warm-up precedes the live guard evaluation window. Manual `start` without `PROM_URL`
 records that this external check was not performed. The short, pre-action attempt
 `run-20260912-062803` is retained as a query diagnostic, not a scaling result.
+
+Protocol revision 4 records this empty-topic initialization rule. The preceding
+readiness attempt (`run-20260912-063614`) sent no workload: it was correctly
+blocked by a check that was too strict for positions on a fresh empty topic.
+The production validity rule, limits, workload and scheduled action are unchanged.

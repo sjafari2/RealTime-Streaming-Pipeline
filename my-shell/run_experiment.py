@@ -574,12 +574,28 @@ def monitoring_readiness(control, timeout=30):
                 if values.get('consumer_partition_owned')!=1: continue
                 duplicate=duplicate or (topic,partition) in selected
                 selected[(topic,partition)]=values
-            valid=not duplicate and set(selected)==expected and all(
-                observation_validity(m,timestamp,float(config.get('LAG_FRESHNESS_SECONDS',10)))[0]
-                for m in selected.values())
+            observed=uninitialized=0
+            freshness=float(config.get('LAG_FRESHNESS_SECONDS',10))
+            for values in selected.values():
+                if observation_validity(values,timestamp,freshness)[0]:
+                    observed+=1
+                    continue
+                # On a newly created empty topic, Kafka may not yet return a
+                # position. Verify the exporter schema and scrape freshness;
+                # never invent a zero lag or call the missing position valid.
+                sample_age=timestamp-values.get('consumer_lag_scrape_timestamp_seconds',math.nan)
+                unknown=(values.get('consumer_lag_valid')==0 and
+                         all(math.isnan(values.get(name,math.inf)) for name in
+                             ('consumer_lag','consumer_processing_backlog','consumer_lag_observation_age_seconds')) and
+                         'consumer_position_offset' not in values and 'consumer_high_offset' not in values)
+                if unknown and math.isfinite(sample_age) and 0<=sample_age<=freshness:
+                    uninitialized+=1
+            valid=not duplicate and set(selected)==expected and observed+uninitialized==len(expected)
             if valid:
-                return dict(status='complete',query=query,query_timestamp=timestamp,
-                            valid_owned_partitions=len(selected),freshness_clock='monotonic_scrape_v2')
+                return dict(status='exporter_schema_ready',query=query,query_timestamp=timestamp,
+                            owned_partitions=len(selected),valid_partition_observations=observed,
+                            unresolved_empty_topic_positions=uninitialized,freshness_clock='monotonic_scrape_v2',
+                            note='The full offset freshness rule applies during production; unresolved positions remain invalid, never zero.')
             error='Missing, duplicated, invalid or stale partition observations'
         except Exception as exc:
             error=str(exc)

@@ -95,8 +95,32 @@ def test_monitoring_gate_waits_for_complete_fresh_export_before_release(monkeypa
         return io.BytesIO(json.dumps(dict(status='success',data=dict(result=result))).encode())
     monkeypatch.setattr(runner.urllib.request,'urlopen',response)
     result=runner.monitoring_readiness(control,timeout=3)
-    assert len(requests)==2 and result['valid_owned_partitions']==1
+    assert len(requests)==2 and result['valid_partition_observations']==1
     assert control['state']=='preparing'
     monkeypatch.setattr(runner.urllib.request,'urlopen',lambda *a,**k:io.BytesIO(json.dumps(dict(status='success',data=dict(result=data+[data[-1]]))).encode()))
     with pytest.raises(RuntimeError,match='before production'):
         runner.monitoring_readiness(control,timeout=3)
+
+
+def test_empty_topic_gate_requires_explicit_unknown_schema_and_fresh_scrape(monkeypatch):
+    import io
+    import run_experiment as runner
+    clock=SimpleNamespace(value=0.)
+    monkeypatch.setattr(runner,'time',SimpleNamespace(time=lambda:101.,monotonic=lambda:clock.value,
+                        sleep=lambda delay:setattr(clock,'value',clock.value+delay)))
+    monkeypatch.setenv('PROM_URL','http://test')
+    control=dict(run_id='r',state='preparing',config=dict(TOPIC_TITLE='r',TOPIC_COUNT='1',NUM_PARTITIONS='1'))
+    values=dict(consumer_partition_owned=1,consumer_lag_valid=0,consumer_lag=math.nan,
+                consumer_processing_backlog=math.nan,consumer_lag_observation_age_seconds=math.nan,
+                consumer_lag_scrape_timestamp_seconds=99)
+    def response(*args,**kwargs):
+        rows=[dict(metric=dict(__name__=name,run_id='r',topic='r_0',partition='0',pod='c',incarnation='i'),value=[100,str(value)]) for name,value in values.items()]
+        return io.BytesIO(json.dumps(dict(status='success',data=dict(result=rows))).encode())
+    monkeypatch.setattr(runner.urllib.request,'urlopen',response)
+    result=runner.monitoring_readiness(control,timeout=2)
+    assert result['unresolved_empty_topic_positions']==1 and result['valid_partition_observations']==0
+    values['consumer_lag_scrape_timestamp_seconds']=80
+    with pytest.raises(RuntimeError,match='before production'):runner.monitoring_readiness(control,timeout=2)
+    values['consumer_lag_scrape_timestamp_seconds']=99
+    del values['consumer_lag_observation_age_seconds']
+    with pytest.raises(RuntimeError,match='before production'):runner.monitoring_readiness(control,timeout=2)
