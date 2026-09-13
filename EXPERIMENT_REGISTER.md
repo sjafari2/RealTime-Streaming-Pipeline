@@ -1,8 +1,8 @@
 # Experiment progress
 
-Updated: 13 September 2026. **20 comparison runs completed. The 80/20 scaling comparison is now finished.**
+Updated: 13 September 2026. **22 comparison runs completed. The 80/20 comparison now has two runs per treatment.**
 
-The first four conditions each had four runs: twice with three consumers and twice with scaling from three to six. Two later comparisons added four runs.
+The first four conditions each had four runs: twice with three consumers and twice with scaling from three to six. Later comparisons added six runs.
 
 **Balanced pressure — 10 minutes**
 
@@ -34,12 +34,11 @@ All four empty startup rehearsals passed. Both real runs finished, evidence chec
 
 **80/20 across 12 partitions — 5 minutes**
 
-With **80% of traffic spread across 12 of 60 partitions**, keeping three consumers left **0.53% unfinished**, while scaling finished all evaluation messages. Recorded completion p99 was **121.15 seconds versus 49.37 seconds**. Scaling requested more CPU (**36.00 versus 65.16 core-minutes**). Monitoring gaps limit aggregate backlog comparisons. This is one comparison.
+With **80% of traffic spread across 12 of 60 partitions**, scaling lowered recorded completion p99 in both pairs: **121.15 to 49.37 seconds**, then **115.68 to 50.95 seconds**. Scaling finished every evaluation message in both runs; keep-three left **0.53%** unfinished in the first and **0%** in the second. Scaling used more requested CPU; monitoring coverage and delayed capacity remain limitations.
+
 
 **What is next?**
 
-The 80/20 review is complete: scaling helped in this pair, using more requested CPU. The transition check also passed: later commits covered every failed offset, and monitoring gaps matched partition transfers. Next, repeat the same workload with keep-three first and scaling second. This is a recommendation; no additional run has started.
+Repeat the single-partition concentrated-input comparison with keep-three first, then scaling. The 80/20 repetition is complete, restored and backed up. One earlier empty preparation was aborted after an API failure and retained; it produced no performance results.
 
-[Short result review and next experiment](experiment-records/8020-comparison-20260913/result-review.md)
-
-[80/20 result and plots](experiment-records/8020-comparison-20260913/README.md) · [Single-partition repeat](experiment-records/static-startup-executed-20260912/README.md) · [Earlier detailed results](experiment-records/README.md)
+[80/20 second pair and plots](experiment-records/repetitions-20260913/8020/README.md) · [80/20 first pair](experiment-records/8020-comparison-20260913/README.md) · [Single-partition first pair](experiment-records/static-startup-executed-20260912/README.md) · [Earlier detailed results](experiment-records/README.md)
