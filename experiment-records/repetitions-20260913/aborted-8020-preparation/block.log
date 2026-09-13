@@ -1,0 +1,67 @@
+[STOP] Stopping producer applications first.
+[STOP] Stopping producer applications first.
+[HPA] Saved original controller settings: /Users/soheila/Desktop/Thesis-26-27/code/results/controller-settings/hpa-20260913-021929-5bd16370.json
+[PROMETHEUS] Temporary connection to prometheus-svc at http://127.0.0.1:52848
+[STOP] Stopping producer applications first.
+[STATIC STARTUP] capture_three preparation only: True
+[STOP] Stopping producer applications first.
+[CONTEXT] nautilus namespace: kafkastreamingdata
+[CHECK] 3 producer pods: imports and shared source match
+[CHECK] 3 consumer pods: imports and shared source match
+[CONFIG] Rate per producer: 500 production seconds: 300 drain seconds: 120
+[CAPACITY] {"producer_count": 3, "consumer_count": 3, "target_messages_per_second": 1500.0, "balanced_messages_per_second_per_consumer": 500.0, "balanced_processing_budget_ms": 2.0, "app_delay_ms": 0.0, "note": "Initial replica counts; assumes balanced sequential processing. All overhead uses this budget. Recalculate after scaling."}
+[START] consumer-sts-0 will be started by its supervisor
+[START] consumer-sts-1 will be started by its supervisor
+[START] consumer-sts-2 will be started by its supervisor
+[PREPARED] run-20260913-022024 placement verified; no workload released
+[STOP] Stopping producer applications first.
+[COLLECT] Copying producer producer-sts-0 from producer-sts-0 attempt 1
+[COLLECT] Copying producer producer-sts-1 from producer-sts-0 attempt 1
+[COLLECT] Copying producer producer-sts-2 from producer-sts-0 attempt 1
+[COLLECT] Copying consumer consumer-sts-0 from consumer-sts-0 attempt 1
+[COLLECT] Copying consumer consumer-sts-1 from consumer-sts-0 attempt 1
+[COLLECT] Copying consumer consumer-sts-2 from consumer-sts-0 attempt 1
+[COLLECT] /Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-022024
+[PREPARATION RESULTS] /Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-022024
+[STOP] Stopping producer applications first.
+[STATIC STARTUP] restart_three preparation only: True
+[STOP] Stopping producer applications first.
+[STOP] Stopping producer applications first.
+[HPA] Restored this invocation's original settings.
+Traceback (most recent call last):
+  File "/Users/soheila/Desktop/Thesis-26-27/code/experiments/controlled-followup-20260912/execute_block.py", line 254, in <module>
+    main()
+    ~~~~^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/experiments/controlled-followup-20260912/execute_block.py", line 241, in main
+    execute(audit, static_startup=True, include_comparison=args.include_comparison, workload=args.workload, trial_order=args.trial_order)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/experiments/controlled-followup-20260912/execute_block.py", line 125, in execute
+    execute_stages(r, audit, block, cfg, reference['pods'], save, write,
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   update_configuration, capacity, include_comparison)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/static_startup.py", line 138, in execute_stages
+    directory = runner.complete_run(plan)
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/run_experiment.py", line 909, in complete_run
+    control = start(plan) if plan else start()
+              ~~~~~^^^^^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/run_experiment.py", line 420, in start
+    set_consumer_baseline(int(initial), float(read_config()[1].get('READINESS_TIMEOUT_SECONDS', 180)))
+                                              ~~~~~~~~~~~^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/run_experiment.py", line 205, in read_config
+    raw = shared_read(CONFIG)
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/run_experiment.py", line 47, in shared_read
+    return remote('consumer', pods('consumer')[0], f'from pathlib import Path; import sys; sys.stdout.buffer.write(Path({path!r}).read_bytes())')
+                              ~~~~^^^^^^^^^^^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/run_experiment.py", line 37, in pods
+    result = json.loads(kubectl('get', 'pods', '-l', 'app=' + role + '-sts', '-o', 'json'))
+                        ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/soheila/Desktop/Thesis-26-27/code/my-shell/run_experiment.py", line 32, in kubectl
+    return subprocess.run(['kubectl', '-n', NS, '--request-timeout=' + request_timeout, *args],
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          input=input, capture_output=True, check=True, timeout=timeout).stdout
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.0_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['kubectl', '-n', 'kafkastreamingdata', '--request-timeout=30s', 'get', 'pods', '-l', 'app=consumer-sts', '-o', 'json']' returned non-zero exit status 1.

@@ -12,10 +12,12 @@ The added order option changes local orchestration, not producer/consumer proces
 Launch each block separately, only after the preceding block is stopped/restored:
 
 ```bash
-/tmp/pipeline-review-venv/bin/python experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload 80-20 --audit-dir '/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/repetitions-20260913/8020/block'
+/tmp/pipeline-review-venv/bin/python experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload 80-20 --audit-dir '/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/repetitions-20260913/8020-restart/block'
 /tmp/pipeline-review-venv/bin/python experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload single-partition --audit-dir '/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/repetitions-20260913/single-partition/block'
 ```
 
 Save per-run outcomes and plots, commit-transition checks, original/restored configuration and placement, PVC/local hashes, and a verified raw-evidence archive. Compare repetitions at the run-pair level, with unfinished outcomes beside conditional latency. Exclude aggregate backlog claims for coverage below 90%; do not repair gaps retrospectively. These are scheduled scaling comparisons, not an adaptive-policy or reassignment evaluation.
 
 Validation before launch: 158 tests passed. The planned four performance trials are not completed results until their records verify.
+
+Operational exception: the initial 80/20 block stopped on a pod-list API failure during empty preparation, with zero performance trials. Restoration, stopped applications and evidence were verified. Preserve [the aborted attempt](../../experiment-records/repetitions-20260913/aborted-8020-preparation/README.md). One fresh block uses `8020-restart/block`; if it fails, stop instead of looping.
