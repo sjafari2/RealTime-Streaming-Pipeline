@@ -1,5 +1,7 @@
 # Small experiment records kept in Git
 
+**Start here:** [Experiment register and progress](../EXPERIMENT_REGISTER.md). Update it after each reviewed run or bounded block; keep exclusions and approval status visible.
+
 This directory keeps reviewable summaries and frozen configurations. Raw per-message
 evidence and full monitoring exports remain in the ignored `results/` directory and
 on separately managed storage. These records are not a replacement for a data backup.
