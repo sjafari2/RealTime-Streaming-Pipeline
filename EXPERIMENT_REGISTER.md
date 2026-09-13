@@ -37,6 +37,8 @@ With **80% of traffic spread across 12 of 60 partitions**, scaling lowered recor
 
 **What is next?**
 
-Review the repeated results before choosing the next experiment. All requested runs are complete, settings are restored, applications are stopped, and plots and raw-data backups are saved. One empty preparation was aborted after an API failure and retained; it produced no performance results. No further run is queued.
+The repeated results are now included in the proposal, with a comparison figure and a one-page research summary. Hot-key splitting remains the next planned implementation stage. All requested runs are complete, settings are restored, applications are stopped, and plots and raw-data backups are saved. One empty preparation was aborted after an API failure and retained; it produced no performance results. No further run is queued.
 
 [Repeated results and plots](experiment-records/repetitions-20260913/README.md) · [Why the second single-partition result differed](experiment-records/repetitions-20260913/single-partition/ownership-review.md) · [Earlier detailed results](experiment-records/README.md)
+
+[Proposal update and one-page summary](experiment-records/proposal-progress-20260913/README.md)
