@@ -38,7 +38,7 @@ With **80% of traffic spread across 12 of 60 partitions**, keeping three consume
 
 **What is next?**
 
-The 80/20 review is complete: scaling helped in this pair, using more requested CPU. Next, check transition errors and monitoring gaps, then repeat the same workload with keep-three first and scaling second. This is a recommendation; no additional run has started.
+The 80/20 review is complete: scaling helped in this pair, using more requested CPU. The transition check also passed: later commits covered every failed offset, and monitoring gaps matched partition transfers. Next, repeat the same workload with keep-three first and scaling second. This is a recommendation; no additional run has started.
 
 [Short result review and next experiment](experiment-records/8020-comparison-20260913/result-review.md)
 

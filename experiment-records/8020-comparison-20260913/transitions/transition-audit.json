@@ -1,0 +1,2164 @@
+{
+  "run_id": "run-20260913-003714",
+  "evaluation_start_epoch": 1789281553.877633,
+  "input_sha256": {
+    "consumer/consumer-sts-0/47e5cc4c23e24d869628a0d5dccdab7b/events.jsonl": "08ac25d10772ec4098ed5393eb9f203e68a0972006dbce0a811b911674410d10",
+    "consumer/consumer-sts-1/c034aff35eb64643b417197b7f08dc7f/events.jsonl": "5a96fbf45cf0dec7e2d47d723fcb441c641c8c29626ee5260ee2d55f22150f2d",
+    "consumer/consumer-sts-2/37d96e7c28d44074b3ae199bb806d900/events.jsonl": "1f75ddb3b42bb99561b44ef33bdf93b581775cd16fb35a7af5db88eb560e594b",
+    "consumer/consumer-sts-3/c7e14c050f72479c898d3b20cbfbc3b7/events.jsonl": "2fbabfb44297b315189a7d26887fc43ae982c803acccb2da8314e089087d9ab9",
+    "consumer/consumer-sts-4/5387b0ce88a84aabac41d8f86809e19a/events.jsonl": "4db5b17e58343cb21d28dc1f571c8ba3400c9f4657a10c2a0e90f8f747d5df62",
+    "consumer/consumer-sts-5/95fdf6a6bc0944b5877bb5a0265cfca2/events.jsonl": "c3a65ee09a11f6cebe5af67639a3c3d21f651201cbb3ccf658c9984e0afe3180",
+    "producer/producer-sts-0/cc7b626ff8484e9893c5801a89452285/events.jsonl": "6b1402d3ea3538067f2e5e7b1858459cfaec2ee2ac32898de919eba36d9b3638",
+    "producer/producer-sts-1/1731b3342aa34ed885307c9dd1ab7235/events.jsonl": "5bd9ec5246849d642bfe0a3c8b525dbf1c36c37290ddd7b92408cd8f5cdd4951",
+    "producer/producer-sts-2/119b530adb6848c2a3078af40bc49ac1/events.jsonl": "d95ea21a25126f8aeabe041460c12a1919f8b0d5e8b07991f90545c88f3cd03b",
+    "lag-summary.json": "a05d551208097ffe9113737d93453b26597b10929f2853378bf7456e653d7479",
+    "manifest.json": "2f6e901418b2ee8f9ff6a6f98555a97c1a57c84faf8fb779e663237488bd5f86"
+  },
+  "event_counts": {
+    "completed": 449945,
+    "acknowledged": 449945
+  },
+  "successful_commit_events": 1007,
+  "failed_commit_events": 5,
+  "failures": [
+    {
+      "pod": "consumer-sts-2",
+      "evaluation_second": 82.98464298248291,
+      "context": "asynchronous_callback",
+      "errors": [
+        "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+      ],
+      "group_transition": true,
+      "offsets": [
+        {
+          "partition": 26,
+          "failed_offset": 637,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 757
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 29,
+          "failed_offset": 636,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 775
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 32,
+          "failed_offset": 657,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 657
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 35,
+          "failed_offset": 9979,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 10131
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 38,
+          "failed_offset": 643,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 643
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 41,
+          "failed_offset": 698,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 775
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 44,
+          "failed_offset": 668,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 668
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 47,
+          "failed_offset": 669,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 781
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 50,
+          "failed_offset": 644,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 644
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 53,
+          "failed_offset": 632,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 632
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 56,
+          "failed_offset": 608,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 608
+          },
+          "delay_seconds": 1.4937174320220947
+        },
+        {
+          "partition": 59,
+          "failed_offset": 9926,
+          "later_success": {
+            "timestamp": 1789281638.3559935,
+            "pod": "consumer-sts-2",
+            "offset": 9926
+          },
+          "delay_seconds": 1.4937174320220947
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-0",
+      "evaluation_second": 82.98809957504272,
+      "context": "asynchronous_callback",
+      "errors": [
+        "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+      ],
+      "group_transition": true,
+      "offsets": [
+        {
+          "partition": 24,
+          "failed_offset": 834,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 842
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 27,
+          "failed_offset": 888,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 895
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 30,
+          "failed_offset": 917,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 925
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 33,
+          "failed_offset": 14404,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 14580
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 36,
+          "failed_offset": 857,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 864
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 39,
+          "failed_offset": 14262,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 14468
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 42,
+          "failed_offset": 892,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 901
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 45,
+          "failed_offset": 14235,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 14435
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 48,
+          "failed_offset": 856,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 868
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 51,
+          "failed_offset": 14402,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 14624
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 54,
+          "failed_offset": 896,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 906
+          },
+          "delay_seconds": 1.5211760997772217
+        },
+        {
+          "partition": 57,
+          "failed_offset": 901,
+          "later_success": {
+            "timestamp": 1789281638.3869088,
+            "pod": "consumer-sts-0",
+            "offset": 912
+          },
+          "delay_seconds": 1.5211760997772217
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "evaluation_second": 140.1658215522766,
+      "context": "asynchronous_callback",
+      "errors": [
+        "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+      ],
+      "group_transition": true,
+      "offsets": [
+        {
+          "partition": 25,
+          "failed_offset": 17838,
+          "later_success": {
+            "timestamp": 1789281694.1022193,
+            "pod": "consumer-sts-1",
+            "offset": 17842
+          },
+          "delay_seconds": 0.05876469612121582
+        },
+        {
+          "partition": 28,
+          "failed_offset": 1119,
+          "later_success": {
+            "timestamp": 1789281694.1022193,
+            "pod": "consumer-sts-1",
+            "offset": 1124
+          },
+          "delay_seconds": 0.05876469612121582
+        },
+        {
+          "partition": 31,
+          "failed_offset": 1137,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1253
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 34,
+          "failed_offset": 1124,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1269
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 37,
+          "failed_offset": 1117,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1248
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 40,
+          "failed_offset": 1121,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1121
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 43,
+          "failed_offset": 18151,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 18420
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 46,
+          "failed_offset": 1119,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1119
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 49,
+          "failed_offset": 1097,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1201
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 52,
+          "failed_offset": 1160,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 1161
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 55,
+          "failed_offset": 17991,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 18001
+          },
+          "delay_seconds": 1.994734525680542
+        },
+        {
+          "partition": 58,
+          "failed_offset": 18221,
+          "later_success": {
+            "timestamp": 1789281696.0381892,
+            "pod": "consumer-sts-1",
+            "offset": 18236
+          },
+          "delay_seconds": 1.994734525680542
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "evaluation_second": 140.20527124404907,
+      "context": "asynchronous_callback",
+      "errors": [
+        "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+      ],
+      "group_transition": true,
+      "offsets": [
+        {
+          "partition": 26,
+          "failed_offset": 1026,
+          "later_success": {
+            "timestamp": 1789281694.0919678,
+            "pod": "consumer-sts-2",
+            "offset": 1027
+          },
+          "delay_seconds": 0.009063482284545898
+        },
+        {
+          "partition": 29,
+          "failed_offset": 1039,
+          "later_success": {
+            "timestamp": 1789281694.0919678,
+            "pod": "consumer-sts-2",
+            "offset": 1040
+          },
+          "delay_seconds": 0.009063482284545898
+        },
+        {
+          "partition": 32,
+          "failed_offset": 1053,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1153
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 35,
+          "failed_offset": 16385,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 16395
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 38,
+          "failed_offset": 1052,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1054
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 41,
+          "failed_offset": 1060,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1111
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 44,
+          "failed_offset": 1073,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1212
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 47,
+          "failed_offset": 1049,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1049
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 50,
+          "failed_offset": 1040,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1078
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 53,
+          "failed_offset": 1040,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1040
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 56,
+          "failed_offset": 1018,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 1018
+          },
+          "delay_seconds": 2.031306743621826
+        },
+        {
+          "partition": 59,
+          "failed_offset": 16362,
+          "later_success": {
+            "timestamp": 1789281696.114211,
+            "pod": "consumer-sts-2",
+            "offset": 16370
+          },
+          "delay_seconds": 2.031306743621826
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-3",
+      "evaluation_second": 141.17706751823425,
+      "context": "asynchronous_callback",
+      "errors": [
+        "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+      ],
+      "group_transition": true,
+      "offsets": [
+        {
+          "partition": 5,
+          "failed_offset": 20235,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 20429
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 7,
+          "failed_offset": 1262,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1275
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 9,
+          "failed_offset": 1266,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1279
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 11,
+          "failed_offset": 1288,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1310
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 13,
+          "failed_offset": 1262,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1277
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 15,
+          "failed_offset": 1277,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1283
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 17,
+          "failed_offset": 1235,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1249
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 19,
+          "failed_offset": 1228,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1242
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 21,
+          "failed_offset": 1218,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1229
+          },
+          "delay_seconds": 1.9401054382324219
+        },
+        {
+          "partition": 23,
+          "failed_offset": 1253,
+          "later_success": {
+            "timestamp": 1789281696.994806,
+            "pod": "consumer-sts-3",
+            "offset": 1271
+          },
+          "delay_seconds": 1.9401054382324219
+        }
+      ]
+    }
+  ],
+  "final_partition_offsets": [
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 0,
+      "acknowledged_next_offset": 1781,
+      "completed_next_offset": 1781,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1781
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 1,
+      "acknowledged_next_offset": 1829,
+      "completed_next_offset": 1829,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1829
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 2,
+      "acknowledged_next_offset": 1808,
+      "completed_next_offset": 1808,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1808
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 3,
+      "acknowledged_next_offset": 1871,
+      "completed_next_offset": 1871,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1871
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 4,
+      "acknowledged_next_offset": 1882,
+      "completed_next_offset": 1882,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1882
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 5,
+      "acknowledged_next_offset": 30042,
+      "completed_next_offset": 30042,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 30042
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 6,
+      "acknowledged_next_offset": 1850,
+      "completed_next_offset": 1850,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1850
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 7,
+      "acknowledged_next_offset": 1864,
+      "completed_next_offset": 1864,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1864
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 8,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 9,
+      "acknowledged_next_offset": 1894,
+      "completed_next_offset": 1894,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1894
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 10,
+      "acknowledged_next_offset": 29960,
+      "completed_next_offset": 29960,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 29960
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 11,
+      "acknowledged_next_offset": 1903,
+      "completed_next_offset": 1903,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1903
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 12,
+      "acknowledged_next_offset": 1907,
+      "completed_next_offset": 1907,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1907
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 13,
+      "acknowledged_next_offset": 1886,
+      "completed_next_offset": 1886,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1886
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 14,
+      "acknowledged_next_offset": 1929,
+      "completed_next_offset": 1929,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1929
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 15,
+      "acknowledged_next_offset": 1880,
+      "completed_next_offset": 1880,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1880
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 16,
+      "acknowledged_next_offset": 1779,
+      "completed_next_offset": 1779,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1779
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 17,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 18,
+      "acknowledged_next_offset": 1816,
+      "completed_next_offset": 1816,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1816
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 19,
+      "acknowledged_next_offset": 1879,
+      "completed_next_offset": 1879,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1879
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 20,
+      "acknowledged_next_offset": 1886,
+      "completed_next_offset": 1886,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1886
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 21,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 22,
+      "acknowledged_next_offset": 1894,
+      "completed_next_offset": 1894,
+      "last_success": {
+        "timestamp": 1789281913.940171,
+        "pod": "consumer-sts-4",
+        "offset": 1894
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 23,
+      "acknowledged_next_offset": 1872,
+      "completed_next_offset": 1872,
+      "last_success": {
+        "timestamp": 1789281913.962243,
+        "pod": "consumer-sts-3",
+        "offset": 1872
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 24,
+      "acknowledged_next_offset": 1821,
+      "completed_next_offset": 1821,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1821
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 25,
+      "acknowledged_next_offset": 29837,
+      "completed_next_offset": 29837,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 29837
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 26,
+      "acknowledged_next_offset": 1905,
+      "completed_next_offset": 1905,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1905
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 27,
+      "acknowledged_next_offset": 1918,
+      "completed_next_offset": 1918,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1918
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 28,
+      "acknowledged_next_offset": 1837,
+      "completed_next_offset": 1837,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1837
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 29,
+      "acknowledged_next_offset": 1891,
+      "completed_next_offset": 1891,
+      "last_success": {
+        "timestamp": 1789281913.9189339,
+        "pod": "consumer-sts-5",
+        "offset": 1891
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 30,
+      "acknowledged_next_offset": 1919,
+      "completed_next_offset": 1919,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 1919
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 31,
+      "acknowledged_next_offset": 1856,
+      "completed_next_offset": 1856,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1856
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 32,
+      "acknowledged_next_offset": 1909,
+      "completed_next_offset": 1909,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1909
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 33,
+      "acknowledged_next_offset": 29933,
+      "completed_next_offset": 29933,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 29933
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 34,
+      "acknowledged_next_offset": 1892,
+      "completed_next_offset": 1892,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1892
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 35,
+      "acknowledged_next_offset": 29773,
+      "completed_next_offset": 29773,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 29773
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 36,
+      "acknowledged_next_offset": 1835,
+      "completed_next_offset": 1835,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 1835
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 37,
+      "acknowledged_next_offset": 1904,
+      "completed_next_offset": 1904,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1904
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 38,
+      "acknowledged_next_offset": 1893,
+      "completed_next_offset": 1893,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1893
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 39,
+      "acknowledged_next_offset": 30152,
+      "completed_next_offset": 30152,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 30152
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 40,
+      "acknowledged_next_offset": 1842,
+      "completed_next_offset": 1842,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1842
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 41,
+      "acknowledged_next_offset": 1877,
+      "completed_next_offset": 1877,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1877
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 42,
+      "acknowledged_next_offset": 1885,
+      "completed_next_offset": 1885,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 1885
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 43,
+      "acknowledged_next_offset": 30124,
+      "completed_next_offset": 30124,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 30124
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 44,
+      "acknowledged_next_offset": 1936,
+      "completed_next_offset": 1936,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1936
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 45,
+      "acknowledged_next_offset": 30054,
+      "completed_next_offset": 30054,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 30054
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 46,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 47,
+      "acknowledged_next_offset": 1920,
+      "completed_next_offset": 1920,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1920
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 48,
+      "acknowledged_next_offset": 1860,
+      "completed_next_offset": 1860,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 1860
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 49,
+      "acknowledged_next_offset": 1809,
+      "completed_next_offset": 1809,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1809
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 50,
+      "acknowledged_next_offset": 1918,
+      "completed_next_offset": 1918,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1918
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 51,
+      "acknowledged_next_offset": 30256,
+      "completed_next_offset": 30256,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 30256
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 52,
+      "acknowledged_next_offset": 1894,
+      "completed_next_offset": 1894,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 1894
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 53,
+      "acknowledged_next_offset": 1891,
+      "completed_next_offset": 1891,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1891
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 54,
+      "acknowledged_next_offset": 1851,
+      "completed_next_offset": 1851,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 1851
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 55,
+      "acknowledged_next_offset": 29909,
+      "completed_next_offset": 29909,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 29909
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 56,
+      "acknowledged_next_offset": 1851,
+      "completed_next_offset": 1851,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 1851
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 57,
+      "acknowledged_next_offset": 1907,
+      "completed_next_offset": 1907,
+      "last_success": {
+        "timestamp": 1789281913.962375,
+        "pod": "consumer-sts-0",
+        "offset": 1907
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 58,
+      "acknowledged_next_offset": 30269,
+      "completed_next_offset": 30269,
+      "last_success": {
+        "timestamp": 1789281913.969526,
+        "pod": "consumer-sts-1",
+        "offset": 30269
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-003714_0",
+      "partition": 59,
+      "acknowledged_next_offset": 29785,
+      "completed_next_offset": 29785,
+      "last_success": {
+        "timestamp": 1789281913.9333723,
+        "pod": "consumer-sts-2",
+        "offset": 29785
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    }
+  ],
+  "consumer_finish_events": [
+    {
+      "event": "finished",
+      "timestamp": 1789281913.9666197,
+      "failure": null,
+      "lifetime_seconds": 469.5853894359898,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789281913.9771976,
+      "failure": null,
+      "lifetime_seconds": 467.8850211724639,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789281913.9370632,
+      "failure": null,
+      "lifetime_seconds": 467.83262265101075,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789281913.9642336,
+      "failure": null,
+      "lifetime_seconds": 278.5026293779956,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789281913.9423444,
+      "failure": null,
+      "lifetime_seconds": 278.569959663786,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789281913.9217165,
+      "failure": null,
+      "lifetime_seconds": 220.94757022799968,
+      "pod": "consumer-sts-5"
+    }
+  ],
+  "transfers": [
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign_started",
+      "evaluation_second": 81.96649193763733,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign_started",
+      "evaluation_second": 81.9665880203247,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign",
+      "evaluation_second": 81.96666669845581,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign",
+      "evaluation_second": 81.96686291694641,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "revoke_started",
+      "evaluation_second": 81.97929883003235,
+      "partitions": [
+        0,
+        3,
+        6,
+        9,
+        12,
+        15,
+        18,
+        21
+      ]
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "revoke",
+      "evaluation_second": 81.98854088783264,
+      "partitions": [
+        0,
+        3,
+        6,
+        9,
+        12,
+        15,
+        18,
+        21
+      ]
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign_started",
+      "evaluation_second": 81.98857378959656,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign",
+      "evaluation_second": 81.98877954483032,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "revoke_started",
+      "evaluation_second": 82.00026535987854,
+      "partitions": [
+        1,
+        4,
+        7,
+        10,
+        13,
+        16,
+        19,
+        22
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "revoke",
+      "evaluation_second": 82.00900864601135,
+      "partitions": [
+        1,
+        4,
+        7,
+        10,
+        13,
+        16,
+        19,
+        22
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign_started",
+      "evaluation_second": 82.00903415679932,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign",
+      "evaluation_second": 82.0092101097107,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "revoke_started",
+      "evaluation_second": 82.03048324584961,
+      "partitions": [
+        2,
+        5,
+        8,
+        11,
+        14,
+        17,
+        20,
+        23
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "revoke",
+      "evaluation_second": 82.03980708122253,
+      "partitions": [
+        2,
+        5,
+        8,
+        11,
+        14,
+        17,
+        20,
+        23
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign_started",
+      "evaluation_second": 82.03992652893066,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign",
+      "evaluation_second": 82.04001832008362,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign_started",
+      "evaluation_second": 82.98205256462097,
+      "partitions": [
+        23,
+        21,
+        19,
+        17,
+        15,
+        13,
+        11,
+        9,
+        7,
+        5,
+        3,
+        1
+      ]
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign_started",
+      "evaluation_second": 82.98221588134766,
+      "partitions": [
+        22,
+        20,
+        18,
+        16,
+        14,
+        12,
+        10,
+        8,
+        6,
+        4,
+        2,
+        0
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign_started",
+      "evaluation_second": 82.98574304580688,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign",
+      "evaluation_second": 82.98585319519043,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign_started",
+      "evaluation_second": 82.98823714256287,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign",
+      "evaluation_second": 82.98844480514526,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign_started",
+      "evaluation_second": 83.02424454689026,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign",
+      "evaluation_second": 83.02436947822571,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign",
+      "evaluation_second": 83.1012830734253,
+      "partitions": [
+        22,
+        20,
+        18,
+        16,
+        14,
+        12,
+        10,
+        8,
+        6,
+        4,
+        2,
+        0
+      ]
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign",
+      "evaluation_second": 83.1121175289154,
+      "partitions": [
+        23,
+        21,
+        19,
+        17,
+        15,
+        13,
+        11,
+        9,
+        7,
+        5,
+        3,
+        1
+      ]
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "revoke_started",
+      "evaluation_second": 140.1743574142456,
+      "partitions": [
+        1,
+        3
+      ]
+    },
+    {
+      "pod": "consumer-sts-5",
+      "event": "assign_started",
+      "evaluation_second": 140.17440533638,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "revoke_started",
+      "evaluation_second": 140.1744840145111,
+      "partitions": [
+        0,
+        2
+      ]
+    },
+    {
+      "pod": "consumer-sts-5",
+      "event": "assign",
+      "evaluation_second": 140.17464685440063,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "revoke",
+      "evaluation_second": 140.18168473243713,
+      "partitions": [
+        1,
+        3
+      ]
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign_started",
+      "evaluation_second": 140.18180227279663,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "revoke",
+      "evaluation_second": 140.18181490898132,
+      "partitions": [
+        0,
+        2
+      ]
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign_started",
+      "evaluation_second": 140.18189525604248,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign",
+      "evaluation_second": 140.18194103240967,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign",
+      "evaluation_second": 140.18200159072876,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "revoke_started",
+      "evaluation_second": 140.18262934684753,
+      "partitions": [
+        24,
+        27
+      ]
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "revoke",
+      "evaluation_second": 140.19064664840698,
+      "partitions": [
+        24,
+        27
+      ]
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign_started",
+      "evaluation_second": 140.1906702518463,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign",
+      "evaluation_second": 140.1908848285675,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "revoke_started",
+      "evaluation_second": 140.20638394355774,
+      "partitions": [
+        26,
+        29
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "revoke",
+      "evaluation_second": 140.21482515335083,
+      "partitions": [
+        26,
+        29
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign_started",
+      "evaluation_second": 140.2148404121399,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign",
+      "evaluation_second": 140.21499729156494,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "revoke_started",
+      "evaluation_second": 140.2170639038086,
+      "partitions": [
+        25,
+        28
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "revoke",
+      "evaluation_second": 140.22502040863037,
+      "partitions": [
+        25,
+        28
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign_started",
+      "evaluation_second": 140.22504329681396,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign",
+      "evaluation_second": 140.22517728805542,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign_started",
+      "evaluation_second": 141.18609595298767,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-3",
+      "event": "assign",
+      "evaluation_second": 141.18625235557556,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-5",
+      "event": "assign_started",
+      "evaluation_second": 141.1862587928772,
+      "partitions": [
+        29,
+        28,
+        27,
+        26,
+        25,
+        24,
+        3,
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign_started",
+      "evaluation_second": 141.1957812309265,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-2",
+      "event": "assign",
+      "evaluation_second": 141.19588971138,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign_started",
+      "evaluation_second": 141.21004581451416,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-4",
+      "event": "assign",
+      "evaluation_second": 141.21017622947693,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign_started",
+      "evaluation_second": 141.2179262638092,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-0",
+      "event": "assign",
+      "evaluation_second": 141.21837544441223,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign_started",
+      "evaluation_second": 141.22029042243958,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-1",
+      "event": "assign",
+      "evaluation_second": 141.22045230865479,
+      "partitions": []
+    },
+    {
+      "pod": "consumer-sts-5",
+      "event": "assign",
+      "evaluation_second": 141.24667763710022,
+      "partitions": [
+        29,
+        28,
+        27,
+        26,
+        25,
+        24,
+        3,
+        2,
+        1,
+        0
+      ]
+    }
+  ],
+  "lag_covered_seconds": 210.0,
+  "lag_covered_fraction": 0.875,
+  "uncovered_intervals": [
+    {
+      "start": 0.0,
+      "end": 0.0003669261932373047,
+      "reasons": [
+        "unsampled boundary"
+      ]
+    },
+    {
+      "start": 84.00036692619324,
+      "end": 98.00036692619324,
+      "reasons": [
+        "invalid endpoint"
+      ]
+    },
+    {
+      "start": 140.00036692619324,
+      "end": 154.00036692619324,
+      "reasons": [
+        "invalid endpoint"
+      ]
+    },
+    {
+      "start": 238.00036692619324,
+      "end": 240.0,
+      "reasons": [
+        "unsampled boundary"
+      ]
+    }
+  ],
+  "invalid_snapshots": [
+    {
+      "evaluation_second": 86.00036692619324,
+      "reasons": [
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/0",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/12",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/6",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/10",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/16",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/22",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/4",
+        "Duplicate owner for controlled-8020-static-s71-skew-R500-20260913-003714_0/18",
+        "Missing or unexpected partition ownership",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/18",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/8"
+      ]
+    },
+    {
+      "evaluation_second": 88.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/18",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/8",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/17",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/23",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/7",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/9"
+      ]
+    },
+    {
+      "evaluation_second": 90.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/18",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/8",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/17",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/23",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/7",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/9"
+      ]
+    },
+    {
+      "evaluation_second": 92.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/17",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/23",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/9"
+      ]
+    },
+    {
+      "evaluation_second": 94.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/17",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/23",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/9"
+      ]
+    },
+    {
+      "evaluation_second": 96.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/17",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/23",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/9"
+      ]
+    },
+    {
+      "evaluation_second": 142.00036692619324,
+      "reasons": [
+        "Missing or unexpected partition ownership"
+      ]
+    },
+    {
+      "evaluation_second": 144.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/28",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3"
+      ]
+    },
+    {
+      "evaluation_second": 146.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/28",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3"
+      ]
+    },
+    {
+      "evaluation_second": 148.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/28",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3"
+      ]
+    },
+    {
+      "evaluation_second": 150.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/28",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3"
+      ]
+    },
+    {
+      "evaluation_second": 152.00036692619324,
+      "reasons": [
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/1",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/28",
+        "Invalid/stale observation for controlled-8020-static-s71-skew-R500-20260913-003714_0/3"
+      ]
+    }
+  ],
+  "limits": [
+    "Saved client commit acknowledgments, not a new broker query.",
+    "Final offset coverage is not by itself proof of exactly-once processing.",
+    "Cross-pod event alignment has unmeasured clock uncertainty.",
+    "Empty assign callbacks do not themselves show a partition transfer."
+  ]
+}

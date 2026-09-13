@@ -30,7 +30,7 @@ This is one pair with fixed trial order. Initial ownership and original pod plac
 
 ## Recommended next experiment — not started
 
-First examine the recorded commit failures and lag gaps to determine whether they require a runtime correction or reflect expected transition reporting. Preserve this completed pair unchanged.
+The [transition audit](transitions/transition-review.md) is complete: all failed offset entries received later covering commit acknowledgments within 2.04 seconds; final commits matched acknowledged ends for all 60 partitions. Monitoring gaps align with two transfer waves. No commit-recovery fix is indicated by this run, and the 87.5% backlog-coverage limitation remains. Preserve this completed pair unchanged.
 
 Then repeat the same 80/20 configuration and seed with the order reversed: keep-three first, scale second. Retain 1,500 messages/s, 2,000 SHA-256 iterations, the same timing and starting-ownership checks. This gives a repetition without simultaneously changing traffic rate or the hot set. Verify the initial reference afresh and record any difference from this block; do not silently pool blocks with different starting conditions. Continue without adding machine-placement constraints.
 
