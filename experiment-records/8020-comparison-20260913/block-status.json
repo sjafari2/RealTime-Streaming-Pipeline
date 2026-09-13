@@ -1,0 +1,115 @@
+{
+  "status": "complete",
+  "created_epoch": 1789280762.7095559,
+  "seed": 71,
+  "order": [
+    "scale",
+    "none"
+  ],
+  "attempts": [
+    {
+      "stage": "capture_three",
+      "action": "none",
+      "initial_consumers": 3,
+      "preparation_only": true,
+      "capture_reference": true,
+      "started_epoch": 1789280792.034784,
+      "status": "preparation_verified",
+      "run_id": "run-20260913-002723",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-002723",
+      "preparation_seconds": 141.33267174987122,
+      "finished_epoch": 1789280933.3683589
+    },
+    {
+      "stage": "restart_three",
+      "action": "none",
+      "initial_consumers": 3,
+      "preparation_only": true,
+      "capture_reference": false,
+      "started_epoch": 1789280933.371107,
+      "status": "preparation_verified",
+      "run_id": "run-20260913-002938",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-002938",
+      "preparation_seconds": 136.02350204112008,
+      "finished_epoch": 1789281069.395465
+    },
+    {
+      "stage": "prepare_six",
+      "action": "none",
+      "initial_consumers": 6,
+      "preparation_only": true,
+      "capture_reference": true,
+      "started_epoch": 1789281069.396998,
+      "status": "preparation_verified",
+      "run_id": "run-20260913-003213",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-003213",
+      "preparation_seconds": 177.63275266694836,
+      "finished_epoch": 1789281247.03087
+    },
+    {
+      "stage": "return_to_three",
+      "action": "none",
+      "initial_consumers": 3,
+      "preparation_only": true,
+      "capture_reference": false,
+      "started_epoch": 1789281247.033036,
+      "status": "preparation_verified",
+      "run_id": "run-20260913-003458",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-003458",
+      "preparation_seconds": 140.54078866681084,
+      "finished_epoch": 1789281387.550122
+    },
+    {
+      "stage": "scale_trial",
+      "action": "scale",
+      "initial_consumers": 3,
+      "preparation_only": false,
+      "capture_reference": false,
+      "started_epoch": 1789281387.55191,
+      "status": "complete",
+      "run_id": "run-20260913-003714",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-003714",
+      "preparation_seconds": 100.15580616611987,
+      "finished_epoch": 1789282027.375982
+    },
+    {
+      "stage": "keep_trial",
+      "action": "none",
+      "initial_consumers": 3,
+      "preparation_only": false,
+      "capture_reference": false,
+      "started_epoch": 1789282027.3768508,
+      "status": "complete",
+      "run_id": "run-20260913-004819",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-004819",
+      "preparation_seconds": 128.30903654103167,
+      "finished_epoch": 1789282689.2616231
+    }
+  ],
+  "runs": [
+    {
+      "action": "scale",
+      "run_id": "run-20260913-003714",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-003714"
+    },
+    {
+      "action": "none",
+      "run_id": "run-20260913-004819",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-004819"
+    }
+  ],
+  "preparation_seconds_used": 823.9945578319021,
+  "preparation_verified": true,
+  "workload": "80-20",
+  "startup_protocol": "static-observed-reference-v1",
+  "include_comparison": true,
+  "code_commit": "8ebf9f231f193eac9b061ffb81e08401aa257581",
+  "initial_free_bytes": {
+    "producer": 4903141376,
+    "consumer": 312060411904,
+    "local": 17944375296
+  },
+  "reference_sha256": "326e1319f2bfd958d4e5209973b26364d07a36408106b07b7788ec2f66ec41f5",
+  "restoration": "verified",
+  "finished_epoch": 1789282736.179272
+}

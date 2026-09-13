@@ -25,3 +25,5 @@ retained in its evidence and deployment audit, and its historical Git revision i
 explicitly unknown.
 
 The [controlled repeat](static-startup-executed-20260912/README.md) adds four successful empty preparations and two completed performance trials with a common frozen starting reference.
+
+The [80/20 comparison](8020-comparison-20260913/README.md) adds two trials with 80% directed to 12 of 60 partitions, following four successful empty rehearsals.
