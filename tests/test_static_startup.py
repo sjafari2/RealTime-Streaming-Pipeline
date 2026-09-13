@@ -128,8 +128,9 @@ def test_preparation_evidence_must_be_complete_and_empty(tmp_path, problem):
         assert s.audit_preparation(tmp_path)['valid']
 
 
+@pytest.mark.parametrize('order', [('scale', 'none'), ('none', 'scale')])
 @pytest.mark.parametrize('fail_at', [None, 2, 4, 5])
-def test_sequence_freezes_one_reference_and_stops_after_any_failure(monkeypatch, tmp_path, fail_at):
+def test_sequence_freezes_one_reference_and_stops_after_any_failure(monkeypatch, tmp_path, fail_at, order):
     from placement_control import pod_identity
     _, cfg, _, template = example()
     cfg.update(PRODUCER_POD_COUNT='3', CONSUMER_POD_COUNT='3', NUM_PARTITIONS='6',
@@ -146,7 +147,7 @@ def test_sequence_freezes_one_reference_and_stops_after_any_failure(monkeypatch,
                 result.append(item)
         return result
     original = [pod_identity(item) for item in items(3)]
-    block = dict(attempts=[], runs=[], preparation_seconds_used=0, preparation_verified=False)
+    block = dict(attempts=[], runs=[], preparation_seconds_used=0, preparation_verified=False, order=order)
     class Runner:
         def __init__(self):
             self.count=3
@@ -194,8 +195,13 @@ def test_sequence_freezes_one_reference_and_stops_after_any_failure(monkeypatch,
     else:
         execute()
         assert block['status']=='complete' and block['preparation_verified']
-        assert [row['action'] for row in block['runs']]==['scale','none']
+        assert [row['action'] for row in block['runs']]==list(order)
         fixed=[p['placement_reference'] for p in runner.plans if 'placement_reference' in p]
         assert len(fixed)==4 and len({reference_hash(ref) for ref in fixed})==1
         assert fixed[0]['assignment'][0]['pod']=='consumer-sts-1'
     assert all(plan['prepare_only'] for plan in runner.plans[:4])
+
+
+@pytest.mark.parametrize("order", [("none", "none"), ("scale",), ("unknown", "scale")])
+def test_invalid_trial_order_is_rejected(order):
+    with pytest.raises(ValueError): s.stages(True, order)

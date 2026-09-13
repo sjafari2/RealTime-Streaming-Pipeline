@@ -42,11 +42,15 @@ def capacity():
     return free
 
 
-def execute(audit, static_startup=False, include_comparison=False, workload="single-partition"):
+def execute(audit, static_startup=False, include_comparison=False, workload="single-partition", trial_order="scale-first"):
     if workload not in ("single-partition", "80-20"):
         raise ValueError("Unknown workload")
     if workload == "80-20" and not static_startup:
         raise ValueError("80-20 requires the validated static-startup procedure")
+    if trial_order not in ("scale-first", "keep-first"):
+        raise ValueError("Unknown trial order")
+    if trial_order == "keep-first" and not static_startup:
+        raise ValueError("Keep-first requires static-startup")
     audit.mkdir(parents=True, exist_ok=False)
     design = json.loads((Path(__file__).parent / 'review-plan.json').read_text())
     cfg = yaml.safe_load((ROOT / design['base_configuration']['path']).read_text())
@@ -62,7 +66,7 @@ def execute(audit, static_startup=False, include_comparison=False, workload="sin
                            EXP_ID='controlled-8020-static-s71')
     raw = yaml.safe_dump(cfg, sort_keys=False).encode()
     (audit / 'experiment-config.yaml').write_bytes(raw)
-    block = dict(status='preparing', created_epoch=time.time(), seed=71, order=['scale', 'none'],
+    block = dict(status='preparing', created_epoch=time.time(), seed=71, order=['none', 'scale'] if trial_order == 'keep-first' else ['scale', 'none'],
                  attempts=[], runs=[], preparation_seconds_used=0, preparation_verified=False)
     block.update(workload=workload, startup_protocol='static-observed-reference-v1' if static_startup else 'legacy-fixed-reference',
                  include_comparison=include_comparison if static_startup else True)
@@ -218,9 +222,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--audit-dir', type=Path, required=True, help='New directory for block evidence and restoration records')
     parser.add_argument('--static-startup', action='store_true', help='New bounded protocol: capture, restart, six-consumer preparation and return to three')
-    parser.add_argument('--include-comparison', action='store_true', help='After all static-startup checks pass, run scale then keep; requires --static-startup')
+    parser.add_argument('--include-comparison', action='store_true', help='After all static-startup checks pass, run both treatments in the declared order; requires --static-startup')
     parser.add_argument('--workload', choices=['single-partition', '80-20'], default='single-partition', help='Explicit workload; 80-20 sends 80 percent to 12 of 60 partitions')
+    parser.add_argument('--trial-order', choices=['scale-first', 'keep-first'], default='scale-first', help='Order of the two performance trials; keep-first requires static-startup')
     args = parser.parse_args(argv)
+    if args.trial_order == 'keep-first' and not args.static_startup:
+        parser.error('--trial-order keep-first requires --static-startup')
     if args.workload == '80-20' and not args.static_startup:
         parser.error('--workload 80-20 requires --static-startup')
     if args.include_comparison and not args.static_startup:
@@ -231,7 +238,7 @@ def main(argv=None):
     existed = audit.exists()
     try:
         if args.static_startup:
-            execute(audit, static_startup=True, include_comparison=args.include_comparison, workload=args.workload)
+            execute(audit, static_startup=True, include_comparison=args.include_comparison, workload=args.workload, trial_order=args.trial_order)
         else:
             execute(audit)
     except BaseException as exc:

@@ -6,14 +6,16 @@ import time
 from placement_control import PlacementMismatch, pod_identity, reference_hash
 
 
-def stages(include_comparison=False):
+def stages(include_comparison=False, order=('scale', 'none')):
+    if tuple(order) not in (('scale', 'none'), ('none', 'scale')):
+        raise ValueError('Trial order must contain keep-three and scale exactly once')
     sequence = [('capture_three', 3, True, True, 'none'),
                 ('restart_three', 3, True, False, 'none'),
                 ('prepare_six', 6, True, True, 'none'),
                 ('return_to_three', 3, True, False, 'none')]
     if include_comparison:
-        sequence += [('scale_trial', 3, False, False, 'scale'),
-                     ('keep_trial', 3, False, False, 'none')]
+        sequence += [('scale_trial' if action == 'scale' else 'keep_trial',
+                      3, False, False, action) for action in order]
     return sequence
 
 
@@ -91,7 +93,7 @@ def execute_stages(runner, audit, block, config, original_pods, save, write,
                    update_configuration, capacity, include_comparison=False):
     reference = None
     total_limit = 1200
-    for name, count, preparation_only, capture, action in stages(include_comparison):
+    for name, count, preparation_only, capture, action in stages(include_comparison, block.get('order', ('scale', 'none'))):
         remaining = total_limit - block['preparation_seconds_used']
         if remaining <= 0:
             raise RuntimeError('Static-startup cumulative preparation budget exhausted')
