@@ -1,8 +1,8 @@
 # Experiment progress
 
-Updated: 13 September 2026. **22 comparison runs completed. The 80/20 comparison now has two runs per treatment.**
+Updated: 13 September 2026. **24 comparison runs completed. Both controlled skew comparisons now have two runs per treatment.**
 
-The first four conditions each had four runs: twice with three consumers and twice with scaling from three to six. Later comparisons added six runs.
+The first four conditions each had four runs: twice with three consumers and twice with scaling from three to six. Later controlled comparisons added eight runs.
 
 **Balanced pressure — 10 minutes**
 
@@ -26,11 +26,9 @@ The durations above include one minute of warm-up, followed by an additional two
 
 We completed two initial collection checks and separate capacity/pressure diagnostics. Six later startup checks stopped because partition ownership did not match; they sent no experiment messages and added no performance results.
 
-**Single-partition controlled repeat — 5 minutes**
+**Single-partition controlled repetitions — 5 minutes**
 
-Both runs started with the same partition ownership and original pods/machines. Keeping three consumers left **39.49% unfinished**, versus **25.10% after scaling**. Recorded completion p99 was **228.44 versus 192.79 seconds**. Scaling used more requested CPU and backlog still grew. This is one comparison; shared-machine conditions remain a limitation.
-
-All four empty startup rehearsals passed. Both real runs finished, evidence checks passed, and original settings were restored.
+Both pairs started with matching partition ownership and original pods/machines. Scaling **helped in the first pair but worsened the second**. Unfinished messages changed from **39.49% to 25.10%**, then from **39.16% to 61.29%**. Completion p99 changed from **228.44 to 192.79 seconds**, then **228.76 to 294.13 seconds**. In the second scaling run, the hot partition moved to a consumer with a longer recorded application-task time. More consumers did not reliably resolve this single-partition workload.
 
 **80/20 across 12 partitions — 5 minutes**
 
@@ -39,6 +37,6 @@ With **80% of traffic spread across 12 of 60 partitions**, scaling lowered recor
 
 **What is next?**
 
-Repeat the single-partition concentrated-input comparison with keep-three first, then scaling. The 80/20 repetition is complete, restored and backed up. One earlier empty preparation was aborted after an API failure and retained; it produced no performance results.
+Review the repeated results before choosing the next experiment. All requested runs are complete, settings are restored, applications are stopped, and plots and raw-data backups are saved. One empty preparation was aborted after an API failure and retained; it produced no performance results. No further run is queued.
 
-[80/20 second pair and plots](experiment-records/repetitions-20260913/8020/README.md) · [80/20 first pair](experiment-records/8020-comparison-20260913/README.md) · [Single-partition first pair](experiment-records/static-startup-executed-20260912/README.md) · [Earlier detailed results](experiment-records/README.md)
+[Repeated results and plots](experiment-records/repetitions-20260913/README.md) · [Why the second single-partition result differed](experiment-records/repetitions-20260913/single-partition/ownership-review.md) · [Earlier detailed results](experiment-records/README.md)

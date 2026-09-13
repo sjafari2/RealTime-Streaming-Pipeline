@@ -1,0 +1,192 @@
+{
+  "runs": [
+    {
+      "pair": "pair1",
+      "action": "none",
+      "run_id": "run-20260912-234504",
+      "input_event_sha256": {
+        "consumer/consumer-sts-0/c2a36e248254473b872f605544ea9202/events.jsonl": "05b8d02e0f19b840df061366b779f76fe151412b79708f6cddaff6e0daf09fb1",
+        "consumer/consumer-sts-1/b84a328500fa445b85ef3d116e0ecce1/events.jsonl": "a0305ea2c881374e9124fd6d4a9abbf52883e9f4c8186da087df43f27e2b693a",
+        "consumer/consumer-sts-2/6c572cf9451d448a8ba0624333c032f1/events.jsonl": "fc92247561d6443c954be9d4cb0b60b74f3822c364e046e3e8b1af4f45fd216f"
+      },
+      "pods": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "patternlab.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": -104.8585000038147
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 360.072389125824
+            }
+          ],
+          "partition0_completion_attempts": 225559,
+          "mean_application_task_ms": 1.540986781574877
+        }
+      ]
+    },
+    {
+      "pair": "pair1",
+      "action": "scale",
+      "run_id": "run-20260912-233413",
+      "input_event_sha256": {
+        "consumer/consumer-sts-0/a7509ab53e8341b89b0655030bad298a/events.jsonl": "e8ad2091c235f3fc2a384cdd0d2900cb83ffb0115401733d4b9fd6ccc583556b",
+        "consumer/consumer-sts-1/fe1d48a7cf034fbf984617d5303f6ab6/events.jsonl": "8d0429d72989b9d2b66fc030a2be52225b463e03d2076d84684fe9a704f49e0b",
+        "consumer/consumer-sts-2/711f4b7b2d2f44fd9394dc0d6eece219/events.jsonl": "a465cc33c0426e5ec339f5c7110a001c263bada828918bc3e96d48afdf4fe34f",
+        "consumer/consumer-sts-3/a2ec32b9ffdf458bb46f247b81d008d8/events.jsonl": "a9328edeee4cceb5d42d40d18be5e49491b6937bf6b8fc5291f98ba67abc383b",
+        "consumer/consumer-sts-4/98fb12fb820a4a568c5fe93714af6572/events.jsonl": "a5d79d2fad713fbfeccc6f14e558c3de6a07fb30184098010e1cd7e725ffed76",
+        "consumer/consumer-sts-5/40573946d9f340e4b8a79f5770e04d9e/events.jsonl": "3b9d4494507f8b69a488f615c19f83f66f9498104d703afbedc856fce4c8ee13"
+      },
+      "pods": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "patternlab.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": -103.50981736183167
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 79.71067714691162
+            }
+          ],
+          "partition0_completion_attempts": 74905,
+          "mean_application_task_ms": 1.5373135880567692
+        },
+        {
+          "pod": "consumer-sts-4",
+          "node": "k8s-usra-01.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": 83.7654402256012
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 360.042316198349
+            }
+          ],
+          "partition0_completion_attempts": 196218,
+          "mean_application_task_ms": 1.2750022517281732
+        },
+        {
+          "pod": "consumer-sts-5",
+          "node": "k8s-u200-00.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": 80.71375012397766
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 82.82407832145691
+            }
+          ],
+          "partition0_completion_attempts": 0,
+          "mean_application_task_ms": null
+        }
+      ]
+    },
+    {
+      "pair": "pair2",
+      "action": "none",
+      "run_id": "run-20260913-033550",
+      "input_event_sha256": {
+        "consumer/consumer-sts-0/f82872e17048407e9883bad68d9060eb/events.jsonl": "a41dffa639986db6495157e44b43474c13f83c15e6134c6e7bcc2df5d6317f0e",
+        "consumer/consumer-sts-1/13c09f9606494bdc894fadf636f196ad/events.jsonl": "f70bdbaa3f106a5754bedaa8413fde148286095f357088b6cc3468f8062646d4",
+        "consumer/consumer-sts-2/ea4fa878b5fc49f298dd21093c6b7efb/events.jsonl": "41c058d0a97bb8c1dfd7e7683b7a0f568f8547175ae210167099c00c0a90e091"
+      },
+      "pods": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "patternlab.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": -104.86661529541016
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 360.04847717285156
+            }
+          ],
+          "partition0_completion_attempts": 226125,
+          "mean_application_task_ms": 1.523404366413987
+        }
+      ]
+    },
+    {
+      "pair": "pair2",
+      "action": "scale",
+      "run_id": "run-20260913-034633",
+      "input_event_sha256": {
+        "consumer/consumer-sts-0/241bb93433d64aeb8eea4f9a597c018e/events.jsonl": "f3dab30fd307419fafdb96ddf57112b296cdef23873b7869fed4a00af3bb72ec",
+        "consumer/consumer-sts-1/9194861a8cc54aa08db966a84bdaaa1e/events.jsonl": "40148ba84cde39597a056394489de8a3ba8fb1e766c96097f57c94b001bfe33d",
+        "consumer/consumer-sts-2/c104bbd7c46c462c8dbd559092bb547c/events.jsonl": "99bd680d32abd0892bfd0accd0f9898da92b106f0e4b2a0f4ea34b7c3f22ad0a",
+        "consumer/consumer-sts-3/6d07103491f7460bb3fdcb455f8688b0/events.jsonl": "40e940d072decabd32d141ad982fdc4e6c83efd7d11f6e51ce8949d4eba5318a",
+        "consumer/consumer-sts-4/8be27d2823be46729403ff2a3f92ca20/events.jsonl": "20f8f664ac1807ca8594921a6b0161029dd31f82083de8ccf253b09f5b7aa29d",
+        "consumer/consumer-sts-5/2202320a181049e195110506b6ad6393/events.jsonl": "24f431a78db1e8695bf493bff007fcc65d0735037dc347c7bdb93684b88ebdd1"
+      },
+      "pods": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "patternlab.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": -105.6814215183258
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 74.60522198677063
+            }
+          ],
+          "partition0_completion_attempts": 68885,
+          "mean_application_task_ms": 1.5993523208112543
+        },
+        {
+          "pod": "consumer-sts-4",
+          "node": "k8s-usra-01.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": 75.6354992389679
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 82.73995923995972
+            }
+          ],
+          "partition0_completion_attempts": 3310,
+          "mean_application_task_ms": 1.3188759933135774
+        },
+        {
+          "pod": "consumer-sts-5",
+          "node": "k8s-chase-ci-04.calit2.optiputer.net",
+          "ownership_events": [
+            {
+              "event": "assign",
+              "evaluation_second": 83.69818592071533
+            },
+            {
+              "event": "revoke",
+              "evaluation_second": 360.07830834388733
+            }
+          ],
+          "partition0_completion_attempts": 74176,
+          "mean_application_task_ms": 3.5327752902196146
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Counts and task-time means include warm-up, evaluation and drain records, not only the evaluation admission cohort.",
+    "Application-task wall duration is not full consumer service time; overhead and contention are not isolated.",
+    "Cross-pod event times have unmeasured clock uncertainty.",
+    "This is descriptive evidence of effective processing differences, not a controlled hardware causal estimate."
+  ]
+}

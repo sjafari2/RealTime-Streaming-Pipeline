@@ -21,3 +21,5 @@ Save per-run outcomes and plots, commit-transition checks, original/restored con
 Validation before launch: 158 tests passed. The planned four performance trials are not completed results until their records verify.
 
 Operational exception: the initial 80/20 block stopped on a pod-list API failure during empty preparation, with zero performance trials. Restoration, stopped applications and evidence were verified. Preserve [the aborted attempt](../../experiment-records/repetitions-20260913/aborted-8020-preparation/README.md). One fresh block uses `8020-restart/block`; if it fails, stop instead of looping.
+
+Completed: both fresh blocks passed their four empty checks and both trials. All four performance runs, their limitations and the retained aborted preparation are recorded in [the repetition report](../../experiment-records/repetitions-20260913/README.md). Original settings and stopped applications were verified.
