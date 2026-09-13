@@ -1,6 +1,6 @@
 {
   "protocol": "static-observed-reference-v1",
-  "status": "prepared_awaiting_user_confirmation_not_deployed_or_run",
+  "status": "completed_four_preparations_and_two_trials_restoration_verified",
   "supersedes_for_next_invocation": "legacy fixed-reference preparation; all six rejected attempts remain preserved",
   "default_command_behavior": "four preparation-only starts; performance requires --include-comparison",
   "startup": {
@@ -69,5 +69,6 @@
   },
   "restoration": "original shared YAML, original HPA identity/settings and original replica counts, verified",
   "interpretation": "starting placement matched if checks pass; shared-machine contention and post-scale new-pod placement remain uncontrolled; static membership is part of both treatments",
-  "approval_required_before_cluster_actions": true
+  "approval_required_before_cluster_actions": true,
+  "execution_record": "experiment-records/static-startup-executed-20260912/README.md"
 }

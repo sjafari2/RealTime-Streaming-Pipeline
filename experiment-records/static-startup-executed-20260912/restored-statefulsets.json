@@ -1,0 +1,490 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"StatefulSet\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"producer-sts\",\"app.kubernetes.io/name\":\"producer-sts\"},\"name\":\"producer-sts\",\"namespace\":\"kafkastreamingdata\"},\"spec\":{\"podManagementPolicy\":\"Parallel\",\"replicas\":3,\"selector\":{\"matchLabels\":{\"app\":\"producer-sts\"}},\"serviceName\":\"producer-headless-svc\",\"template\":{\"metadata\":{\"labels\":{\"app\":\"producer-sts\",\"app.kubernetes.io/name\":\"producer-sts\"}},\"spec\":{\"affinity\":{\"nodeAffinity\":{\"requiredDuringSchedulingIgnoredDuringExecution\":{\"nodeSelectorTerms\":[{\"matchExpressions\":[{\"key\":\"topology.kubernetes.io/region\",\"operator\":\"In\",\"values\":[\"us-west\"]},{\"key\":\"topology.kubernetes.io/zone\",\"operator\":\"In\",\"values\":[\"ucsd\"]}]}]}},\"podAntiAffinity\":{\"preferredDuringSchedulingIgnoredDuringExecution\":[{\"podAffinityTerm\":{\"labelSelector\":{\"matchLabels\":{\"app.kubernetes.io/name\":\"kafka\"}},\"topologyKey\":\"kubernetes.io/hostname\"},\"weight\":100}]}},\"containers\":[{\"args\":[\"set -e\\nmkdir -p ./logs\\necho \\\"[main] Pod: ${POD_NAME}\\\"\\necho \\\"[main] Using config: ${PIPELINE_CONFIG}\\\"\\nls -l /config || true\\nhead -n 40 \\\"${PIPELINE_CONFIG}\\\" || true\\n\\nchmod +x ./run.sh\\n\\n# Do NOT start yet. You will start via your script across pods.\\necho \\\"[main] Ready. Waiting for manual start...\\\"\\ntail -f /dev/null\\n\"],\"command\":[\"/bin/bash\",\"-lc\"],\"env\":[{\"name\":\"PIPELINE_ROLE\",\"value\":\"producer\"},{\"name\":\"PIPELINE_CONFIG\",\"value\":\"/config/pipeline-configmap.yaml\"},{\"name\":\"PRODUCER_HTTP_PORT\",\"value\":\"8001\"},{\"name\":\"POD_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.name\"}}}],\"image\":\"sjafari2/kafkaconfluentproducer:latest\",\"name\":\"producer-container\",\"ports\":[{\"containerPort\":8001,\"name\":\"metrics\"},{\"containerPort\":9093,\"name\":\"prod-exp-port\"}],\"resources\":{\"limits\":{\"cpu\":\"4\",\"memory\":\"2Gi\"},\"requests\":{\"cpu\":\"2\",\"memory\":\"1Gi\"}},\"securityContext\":{\"runAsGroup\":1000,\"runAsUser\":1000},\"volumeMounts\":[{\"mountPath\":\"/app/producer-data\",\"name\":\"producer-data\"},{\"mountPath\":\"/config\",\"name\":\"pipeline-config\"}],\"workingDir\":\"/app/producer-data\"}],\"initContainers\":[{\"args\":[\"set -e\\necho \\\"[init] Bootstrapping producer config and code...\\\"\\n\\n# /config is a RWX PVC (writable). Ensure permissions.\\nmkdir -p /config\\nchown -R 1000:1000 /config\\nchmod -R u+w /config\\n\\n# Seed config files only if missing\\nif [ ! -f /config/pipeline-configmap.yaml ]; then\\n  echo \\\"[init] Seeding pipeline-configmap.yaml from /defaults\\\"\\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\\n  chmod 644 /config/pipeline-configmap.yaml\\nfi\\n\\nif [ ! -f /config/experiments.yaml ]; then\\n  echo \\\"[init] Seeding experiments.yaml from /defaults\\\"\\n  cp /defaults/experiments.yaml /config/experiments.yaml\\n  chmod 644 /config/experiments.yaml\\nfi\\n# Copy code into /app/producer-data once\\nif [ ! -f /app/producer-data/.code_initialized ]; then\\n  cp -r /code/* /app/producer-data/\\n  touch /app/producer-data/.code_initialized\\nfi\\nchown -R 1000:1000 /app/producer-data\\nchmod -R u+w /app/producer-data\\n\"],\"command\":[\"/bin/sh\",\"-c\"],\"image\":\"sjafari2/kafkaconfluentproducer:latest\",\"imagePullPolicy\":\"Always\",\"name\":\"bootstrap-producer\",\"securityContext\":{\"runAsUser\":0},\"volumeMounts\":[{\"mountPath\":\"/app/producer-data\",\"name\":\"producer-data\"},{\"mountPath\":\"/config\",\"name\":\"pipeline-config\"}]}],\"securityContext\":{\"fsGroup\":1000,\"fsGroupChangePolicy\":\"OnRootMismatch\"},\"volumes\":[{\"name\":\"producer-data\",\"persistentVolumeClaim\":{\"claimName\":\"producer-data\"}},{\"name\":\"pipeline-config\",\"persistentVolumeClaim\":{\"claimName\":\"pipeline-configmap-pvc\"}}]}}}}\n",
+          "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+        },
+        "creationTimestamp": "2026-02-13T03:55:09Z",
+        "generation": 4,
+        "labels": {
+          "app": "producer-sts",
+          "app.kubernetes.io/name": "producer-sts"
+        },
+        "name": "producer-sts",
+        "namespace": "kafkastreamingdata",
+        "resourceVersion": "14686697086",
+        "uid": "5960f240-5e14-4fac-8f12-e25ab3b1a981"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "Parallel",
+        "replicas": 3,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "producer-sts"
+          }
+        },
+        "serviceName": "producer-headless-svc",
+        "template": {
+          "metadata": {
+            "annotations": {
+              "kubectl.kubernetes.io/restartedAt": "2026-02-17T22:55:48-07:00"
+            },
+            "creationTimestamp": null,
+            "labels": {
+              "app": "producer-sts",
+              "app.kubernetes.io/name": "producer-sts"
+            }
+          },
+          "spec": {
+            "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "topology.kubernetes.io/region",
+                          "operator": "In",
+                          "values": [
+                            "us-west"
+                          ]
+                        },
+                        {
+                          "key": "topology.kubernetes.io/zone",
+                          "operator": "In",
+                          "values": [
+                            "ucsd"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "podAntiAffinity": {
+                "preferredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "podAffinityTerm": {
+                      "labelSelector": {
+                        "matchLabels": {
+                          "app.kubernetes.io/name": "kafka"
+                        }
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    },
+                    "weight": 100
+                  }
+                ]
+              }
+            },
+            "containers": [
+              {
+                "args": [
+                  "set -e\nmkdir -p ./logs\necho \"[main] Pod: ${POD_NAME}\"\necho \"[main] Using config: ${PIPELINE_CONFIG}\"\nls -l /config || true\nhead -n 40 \"${PIPELINE_CONFIG}\" || true\n\nchmod +x ./run.sh\n\n# Do NOT start yet. You will start via your script across pods.\necho \"[main] Ready. Waiting for manual start...\"\ntail -f /dev/null\n"
+                ],
+                "command": [
+                  "/bin/bash",
+                  "-lc"
+                ],
+                "env": [
+                  {
+                    "name": "PIPELINE_ROLE",
+                    "value": "producer"
+                  },
+                  {
+                    "name": "PIPELINE_CONFIG",
+                    "value": "/config/pipeline-configmap.yaml"
+                  },
+                  {
+                    "name": "PRODUCER_HTTP_PORT",
+                    "value": "8001"
+                  },
+                  {
+                    "name": "POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  }
+                ],
+                "image": "sjafari2/kafkaconfluentproducer:latest",
+                "imagePullPolicy": "Always",
+                "name": "producer-container",
+                "ports": [
+                  {
+                    "containerPort": 8001,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 9093,
+                    "name": "prod-exp-port",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "4",
+                    "memory": "2Gi"
+                  },
+                  "requests": {
+                    "cpu": "2",
+                    "memory": "1Gi"
+                  }
+                },
+                "securityContext": {
+                  "runAsGroup": 1000,
+                  "runAsUser": 1000
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/app/producer-data",
+                    "name": "producer-data"
+                  },
+                  {
+                    "mountPath": "/config",
+                    "name": "pipeline-config"
+                  }
+                ],
+                "workingDir": "/app/producer-data"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "initContainers": [
+              {
+                "args": [
+                  "set -e\necho \"[init] Bootstrapping producer config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\nif [ ! -f /config/experiments.yaml ]; then\n  echo \"[init] Seeding experiments.yaml from /defaults\"\n  cp /defaults/experiments.yaml /config/experiments.yaml\n  chmod 644 /config/experiments.yaml\nfi\n# Copy code into /app/producer-data once\nif [ ! -f /app/producer-data/.code_initialized ]; then\n  cp -r /code/* /app/producer-data/\n  touch /app/producer-data/.code_initialized\nfi\nchown -R 1000:1000 /app/producer-data\nchmod -R u+w /app/producer-data\n"
+                ],
+                "command": [
+                  "/bin/sh",
+                  "-c"
+                ],
+                "image": "sjafari2/kafkaconfluentproducer:latest",
+                "imagePullPolicy": "Always",
+                "name": "bootstrap-producer",
+                "resources": {},
+                "securityContext": {
+                  "runAsUser": 0
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/app/producer-data",
+                    "name": "producer-data"
+                  },
+                  {
+                    "mountPath": "/config",
+                    "name": "pipeline-config"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 1000,
+              "fsGroupChangePolicy": "OnRootMismatch"
+            },
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "name": "producer-data",
+                "persistentVolumeClaim": {
+                  "claimName": "producer-data"
+                }
+              },
+              {
+                "name": "pipeline-config",
+                "persistentVolumeClaim": {
+                  "claimName": "pipeline-configmap-pvc"
+                }
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "partition": 0
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "availableReplicas": 3,
+        "collisionCount": 0,
+        "currentReplicas": 3,
+        "currentRevision": "producer-sts-656f9f9d8b",
+        "observedGeneration": 4,
+        "readyReplicas": 3,
+        "replicas": 3,
+        "updateRevision": "producer-sts-656f9f9d8b",
+        "updatedReplicas": 3
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"StatefulSet\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"consumer-sts\",\"app.kubernetes.io/name\":\"consumer-sts\"},\"name\":\"consumer-sts\",\"namespace\":\"kafkastreamingdata\"},\"spec\":{\"podManagementPolicy\":\"Parallel\",\"replicas\":6,\"selector\":{\"matchLabels\":{\"app\":\"consumer-sts\"}},\"serviceName\":\"consumer-headless-svc\",\"template\":{\"metadata\":{\"labels\":{\"app\":\"consumer-sts\",\"app.kubernetes.io/name\":\"consumer-sts\"}},\"spec\":{\"affinity\":{\"nodeAffinity\":{\"requiredDuringSchedulingIgnoredDuringExecution\":{\"nodeSelectorTerms\":[{\"matchExpressions\":[{\"key\":\"topology.kubernetes.io/region\",\"operator\":\"In\",\"values\":[\"us-west\"]},{\"key\":\"topology.kubernetes.io/zone\",\"operator\":\"In\",\"values\":[\"ucsd\"]}]}]}},\"podAntiAffinity\":{\"preferredDuringSchedulingIgnoredDuringExecution\":[{\"podAffinityTerm\":{\"labelSelector\":{\"matchLabels\":{\"app\":\"consumer-sts\"}},\"topologyKey\":\"kubernetes.io/hostname\"},\"weight\":100}]}},\"containers\":[{\"args\":[\"set -e\\nmkdir -p ./logs\\necho \\\"[startup] Pod: $POD_NAME\\\"\\necho \\\"[startup] Config: $PIPELINE_CONFIG\\\"\\nls -l /config || true\\n# Wait for save-run.sh to publish a run, then join it automatically.\\nexec python3 /app/consumer-merge-data/supervise.py\\n\"],\"command\":[\"/bin/bash\",\"-lc\"],\"env\":[{\"name\":\"PIPELINE_ROLE\",\"value\":\"consumer\"},{\"name\":\"CONSUMER_HTTP_PORT\",\"value\":\"8002\"},{\"name\":\"POD_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.name\"}}},{\"name\":\"PIPELINE_CONFIG\",\"value\":\"/config/pipeline-configmap.yaml\"}],\"image\":\"sjafari2/kafkaconfluentconsumer:latest\",\"imagePullPolicy\":\"Always\",\"name\":\"consumer-container\",\"ports\":[{\"containerPort\":8002,\"name\":\"metrics\"}],\"resources\":{\"limits\":{\"cpu\":\"4\",\"memory\":\"2Gi\"},\"requests\":{\"cpu\":\"2\",\"memory\":\"1Gi\"}},\"securityContext\":{\"runAsGroup\":1000,\"runAsUser\":1000},\"volumeMounts\":[{\"mountPath\":\"/app/consumer-merge-data\",\"name\":\"consumer-merge-data\"},{\"mountPath\":\"/config\",\"name\":\"pipeline-config\"},{\"mountPath\":\"/tmp/metrics\",\"name\":\"metrics\"}],\"workingDir\":\"/app/consumer-merge-data\"}],\"initContainers\":[{\"args\":[\"set -e\\necho \\\"[init] Bootstrapping config and code...\\\"\\n\\n# /config is a RWX PVC (writable). Ensure permissions.\\nmkdir -p /config\\nchown -R 1000:1000 /config\\nchmod -R u+w /config\\n\\n# Seed config files only if missing\\nif [ ! -f /config/pipeline-configmap.yaml ]; then\\n  echo \\\"[init] Seeding pipeline-configmap.yaml from /defaults\\\"\\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\\n  chmod 644 /config/pipeline-configmap.yaml\\nfi\\n\\n\\n\\n# Copy code into RWX CephFS once (keeps your existing workflow)\\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\\n  cp -r /code/* /app/consumer-merge-data/\\n  touch /app/consumer-merge-data/.code_initialized\\nfi\\nchown -R 1000:1000 /app/consumer-merge-data\\nchmod -R u+w /app/consumer-merge-data\\n\"],\"command\":[\"/bin/sh\",\"-c\"],\"image\":\"sjafari2/kafkaconfluentconsumer:latest\",\"name\":\"bootstrap-consumer\",\"securityContext\":{\"runAsUser\":0},\"volumeMounts\":[{\"mountPath\":\"/app/consumer-merge-data\",\"name\":\"consumer-merge-data\"},{\"mountPath\":\"/config\",\"name\":\"pipeline-config\"}]}],\"securityContext\":{\"fsGroup\":1000,\"fsGroupChangePolicy\":\"OnRootMismatch\"},\"terminationGracePeriodSeconds\":120,\"topologySpreadConstraints\":[{\"labelSelector\":{\"matchLabels\":{\"app\":\"consumer-sts\"}},\"maxSkew\":1,\"topologyKey\":\"kubernetes.io/hostname\",\"whenUnsatisfiable\":\"ScheduleAnyway\"}],\"volumes\":[{\"name\":\"consumer-merge-data\",\"persistentVolumeClaim\":{\"claimName\":\"consumer-merge-cephfs\"}},{\"name\":\"pipeline-config\",\"persistentVolumeClaim\":{\"claimName\":\"pipeline-configmap-pvc\"}},{\"emptyDir\":{},\"name\":\"metrics\"}]}}}}\n",
+          "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+        },
+        "creationTimestamp": "2026-03-16T22:40:47Z",
+        "generation": 31108,
+        "labels": {
+          "app": "consumer-sts",
+          "app.kubernetes.io/name": "consumer-sts"
+        },
+        "name": "consumer-sts",
+        "namespace": "kafkastreamingdata",
+        "resourceVersion": "14791611685",
+        "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "Parallel",
+        "replicas": 6,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "consumer-sts"
+          }
+        },
+        "serviceName": "consumer-headless-svc",
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "app": "consumer-sts",
+              "app.kubernetes.io/name": "consumer-sts"
+            }
+          },
+          "spec": {
+            "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "topology.kubernetes.io/region",
+                          "operator": "In",
+                          "values": [
+                            "us-west"
+                          ]
+                        },
+                        {
+                          "key": "topology.kubernetes.io/zone",
+                          "operator": "In",
+                          "values": [
+                            "ucsd"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "podAntiAffinity": {
+                "preferredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "podAffinityTerm": {
+                      "labelSelector": {
+                        "matchLabels": {
+                          "app": "consumer-sts"
+                        }
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    },
+                    "weight": 100
+                  }
+                ]
+              }
+            },
+            "containers": [
+              {
+                "args": [
+                  "/app/consumer-merge-data/supervise.py"
+                ],
+                "command": [
+                  "python3"
+                ],
+                "env": [
+                  {
+                    "name": "PIPELINE_ROLE",
+                    "value": "consumer"
+                  },
+                  {
+                    "name": "CONSUMER_HTTP_PORT",
+                    "value": "8002"
+                  },
+                  {
+                    "name": "POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "PIPELINE_CONFIG",
+                    "value": "/config/pipeline-configmap.yaml"
+                  }
+                ],
+                "image": "sjafari2/kafkaconfluentconsumer:latest",
+                "imagePullPolicy": "Always",
+                "name": "consumer-container",
+                "ports": [
+                  {
+                    "containerPort": 8002,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "4",
+                    "memory": "2Gi"
+                  },
+                  "requests": {
+                    "cpu": "2",
+                    "memory": "1Gi"
+                  }
+                },
+                "securityContext": {
+                  "runAsGroup": 1000,
+                  "runAsUser": 1000
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/app/consumer-merge-data",
+                    "name": "consumer-merge-data"
+                  },
+                  {
+                    "mountPath": "/config",
+                    "name": "pipeline-config"
+                  },
+                  {
+                    "mountPath": "/tmp/metrics",
+                    "name": "metrics"
+                  }
+                ],
+                "workingDir": "/app/consumer-merge-data"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "initContainers": [
+              {
+                "args": [
+                  "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+                ],
+                "command": [
+                  "/bin/sh",
+                  "-c"
+                ],
+                "image": "sjafari2/kafkaconfluentconsumer:latest",
+                "imagePullPolicy": "Always",
+                "name": "bootstrap-consumer",
+                "resources": {},
+                "securityContext": {
+                  "runAsUser": 0
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/app/consumer-merge-data",
+                    "name": "consumer-merge-data"
+                  },
+                  {
+                    "mountPath": "/config",
+                    "name": "pipeline-config"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 1000,
+              "fsGroupChangePolicy": "OnRootMismatch"
+            },
+            "terminationGracePeriodSeconds": 120,
+            "topologySpreadConstraints": [
+              {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "maxSkew": 1,
+                "topologyKey": "kubernetes.io/hostname",
+                "whenUnsatisfiable": "ScheduleAnyway"
+              }
+            ],
+            "volumes": [
+              {
+                "name": "consumer-merge-data",
+                "persistentVolumeClaim": {
+                  "claimName": "consumer-merge-cephfs"
+                }
+              },
+              {
+                "name": "pipeline-config",
+                "persistentVolumeClaim": {
+                  "claimName": "pipeline-configmap-pvc"
+                }
+              },
+              {
+                "emptyDir": {},
+                "name": "metrics"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "partition": 0
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "availableReplicas": 6,
+        "collisionCount": 0,
+        "currentReplicas": 6,
+        "currentRevision": "consumer-sts-c67f8bb69",
+        "observedGeneration": 31108,
+        "readyReplicas": 6,
+        "replicas": 6,
+        "updateRevision": "consumer-sts-c67f8bb69",
+        "updatedReplicas": 6
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}

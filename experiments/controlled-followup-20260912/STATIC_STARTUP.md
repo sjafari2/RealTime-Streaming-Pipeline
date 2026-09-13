@@ -1,10 +1,10 @@
 # Static-member startup and the proposed controlled pair
 
-Status: implemented for local validation; awaiting user confirmation before deployment or any Nautilus preparation/experiment. The six earlier rejected preparations are a separate, completed record. This revised procedure has not been live validated.
+Status: the user approved this block, and all four empty preparations plus both performance trials completed on 12 September 2026. See the [execution report](../../experiment-records/static-startup-executed-20260912/README.md). Original settings were restored. The six earlier rejected preparations remain a separate record. Any future invocation needs its own authorization; this success does not guarantee every future start.
 
 The consumer has an optional `CONSUMER_STATIC_MEMBERSHIP` setting. Its default is false. When true, each pod supplies its own hostname as Kafka `group.instance.id`; the shared ConfigMap must not give every replica the same identity. The client continues using classic cooperative-sticky subscription and automatic partition assignment. Adding stable identities does not guarantee any particular assignment.
 
-A new controlled block uses one unique consumer group for all its stages. Before each fresh-topic start it stops applications and waits until Kafka reports no members and group state EMPTY or DEAD. This avoids treating departed static members as part of the next starting population. It does not remove group members through an administrative mutation or change Kafka timeouts. The deployed client/broker behavior still requires live validation.
+A new controlled block uses one unique consumer group for all its stages. Before each fresh-topic start it stops applications and waits until Kafka reports no members and group state EMPTY or DEAD. This avoids treating departed static members as part of the next starting population. It does not remove group members through an administrative mutation or change Kafka timeouts. The completed block validated the observed client/broker behavior for its six starts; future starts still undergo the same checks.
 
 ## Sequence for review
 
@@ -21,7 +21,7 @@ The workload remains 3 producers, 60 partitions, 1,500 target messages/s total, 
 
 ## Commands after user confirmation
 
-No command below has been executed for this revision. First synchronize the changed consumer code while applications are stopped, using `my-shell/sync-code.sh --role consumer`. The run preflight must verify the final source hashes in every relevant pod. In this Codex session, use the project workspace as the working directory and address the final script by absolute path; earlier cluster inspection timed out from the Desktop code directory.
+The commands below describe the procedure executed for the completed block. Before a future authorized block, first synchronize the changed consumer code while applications are stopped, using `my-shell/sync-code.sh --role consumer`. The run preflight must verify the final source hashes in every relevant pod. In this Codex session, use the project workspace as the working directory and address the final script by absolute path; earlier cluster inspection timed out from the Desktop code directory.
 
 Preparation only is the default for the new protocol:
 

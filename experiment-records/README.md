@@ -23,3 +23,5 @@ record with a later explanatory commit so the earlier interpretation remains vis
 The run `run-20260911-214924` predates this Git integration; its source identity is
 retained in its evidence and deployment audit, and its historical Git revision is
 explicitly unknown.
+
+The [controlled repeat](static-startup-executed-20260912/README.md) adds four successful empty preparations and two completed performance trials with a common frozen starting reference.
