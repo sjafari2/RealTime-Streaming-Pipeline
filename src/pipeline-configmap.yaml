@@ -55,6 +55,7 @@ data:
   SKEW_PARTITION: "0.2"
 
   CONSUMER_GROUP_ID: "consgroup"
+  CONSUMER_STATIC_MEMBERSHIP: "false" # Controlled startup enables this; each pod supplies its own ID.
   CONSUMER_POD_COUNT: "6"
   CONSUMER_CLIENT_ID: "pipeline-consumer"
   PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"

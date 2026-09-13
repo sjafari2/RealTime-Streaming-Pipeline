@@ -1,0 +1,38 @@
+{
+  "record_type": "implementation_validation_not_experiment_results",
+  "status": "prepared_awaiting_user_confirmation",
+  "automated_tests": {
+    "passed": 145,
+    "failed": 0,
+    "warnings": 0,
+    "final_folder_test_log": "final-tests.log",
+    "sha256": "7187d68e8bd6d4606a246ea206d96cf3cf9355f3907d941285ddf94a59e6e50f"
+  },
+  "additional_checks": [
+    "Changed Python files parsed successfully",
+    "Changed JSON files parsed successfully",
+    "CLI help works without cluster access",
+    "git diff --check passed",
+    "Final source hashes match locally tested stage"
+  ],
+  "live_validation": {
+    "deployed": false,
+    "cluster_preparations_started": 0,
+    "performance_runs_started": 0,
+    "static_membership_restart_behavior": "unvalidated_on_Nautilus"
+  },
+  "pending_approval": "Deploy revised consumer source; perform four empty preparations; optionally continue to the two declared trials only if all checks pass.",
+  "changed_source_files": {
+    "my-shell/placement_control.py": "a9a9e2d36cf774e0b4751cddd429116fc4fe3e17606b14257e0706eb1bd16aee",
+    "my-shell/static_startup.py": "2a6616dfe2de4bc462b98649b2474d876a14ab6d046d09f06e2d25ddb063ac20",
+    "my-shell/run_experiment.py": "8dddbc02d5f98e75eab28957e6179bd6de2ffb041ac6d6f287e5433ef7d91b01",
+    "tests/test_controlled_start.py": "a3cabbd352b51557a1db6243d59e1f00c593327da570d81e8668ee514d49d8fb",
+    "tests/test_static_startup.py": "ee63dc6020d02176b48ef1200ece3de28a6646eeeffb5f73c163635ef6a09ade",
+    "docs/runtime-and-data-flow.md": "808e1a9d11ee0d733b4e6cfb77a3d00256bac1be6e101a19a5ba80d479a2ea7d",
+    "src/pipeline-configmap.yaml": "4328b739aeec10ab32e85ef62339bf67eababbb9d99ff8fb7101d449d74c8442",
+    "src/consumer/consumer.py": "caab1a7e93e6b046a0eeb9a688caea2fb09d887717bc7d6eae719c5ff0a63ed1",
+    "experiments/controlled-followup-20260912/STATIC_STARTUP.md": "e10553e7af226f198d0bb72f8ca8c62bd40afee9963550e8ba645564d845e6d8",
+    "experiments/controlled-followup-20260912/execute_block.py": "59ea1c46c66b0e11686a8626ae3c838dd10f6f056e75f3c41953d5849ddb95e2",
+    "experiments/controlled-followup-20260912/static-startup-plan.json": "bc8f048d7e6e045dcdd6f6c202a87fb32750766c0291cb21276eed7e5206279e"
+  }
+}

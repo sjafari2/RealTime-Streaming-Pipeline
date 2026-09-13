@@ -13,7 +13,7 @@ from placement_control import PlacementMismatch
 from test_placement_control import example
 
 
-@pytest.mark.parametrize('mode', ['prepare', 'run', 'wrong_owner', 'budget'])
+@pytest.mark.parametrize('mode', ['prepare', 'capture', 'run', 'wrong_owner', 'budget'])
 def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     ref, cfg, rows, items = example()
     cfg['RUN_ID'] = 'run'
@@ -24,7 +24,12 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
         a, b = rows['consumer-sts-0'], rows['consumer-sts-1']
         a['assignments'], b['assignments'] = b['assignments'], a['assignments']
     plan = dict(action='none', initial_consumers=2, target_consumers=None,
-                after_evaluation_start_seconds=60, placement_reference=ref, prepare_only=mode == 'prepare')
+                after_evaluation_start_seconds=60, placement_reference=ref, prepare_only=mode in ('prepare', 'capture'))
+    if mode == 'capture':
+        plan.pop('placement_reference')
+        plan['capture_placement_pods'] = ref['pods']
+        a, b = rows['consumer-sts-0'], rows['consumer-sts-1']
+        a['assignments'], b['assignments'] = b['assignments'], a['assignments']
     if mode == 'budget':
         plan['preparation_budget_seconds'] = 1e-12
     published, journal = [], []
@@ -54,10 +59,13 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
         assert journal[-1]['valid'] is (mode == 'budget')
     else:
         control = r.start(plan)
-        assert [c['state'] for c in published] == ['preparing', 'stopped' if mode == 'prepare' else 'running']
+        assert [c['state'] for c in published] == ['preparing', 'stopped' if mode in ('prepare', 'capture') else 'running']
         assert journal[-1]['valid'] is True
         assert control['initial_placement_processes']
         assert ('start_epoch' in control) == (mode == 'run')
+        if mode == 'capture':
+            assert control['placement_reference']['assignment'][0]['pod'] == 'consumer-sts-1'
+            assert 'placement_reference' not in published[0]
 
 
 def test_shared_stop_during_gate_prevents_scale(monkeypatch):

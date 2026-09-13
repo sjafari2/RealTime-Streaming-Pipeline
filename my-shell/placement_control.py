@@ -13,12 +13,9 @@ def reference_hash(reference):
                                      allow_nan=False).encode()).hexdigest()
 
 
-def validate_reference(reference, config=None):
-    if not isinstance(reference, dict) or reference.get('schema_version') != 1:
-        raise ValueError('Placement reference requires schema_version=1')
-    assignments, pods = reference.get('assignment'), reference.get('pods')
-    if not isinstance(assignments, list) or not assignments or not isinstance(pods, list) or not pods:
-        raise ValueError('Placement reference needs complete assignment and pod records')
+def validate_pod_reference(pods, config=None):
+    if not isinstance(pods, list) or not pods:
+        raise ValueError('Placement reference needs complete pod records')
     names = set()
     consumers = set()
     for pod in pods:
@@ -38,6 +35,20 @@ def validate_reference(reference, config=None):
             raise ValueError('Placement reference needs a valid restart count')
     if not consumers or not any(p['role'] == 'producer' for p in pods):
         raise ValueError('Placement reference needs both producers and consumers')
+    if config is not None:
+        for role in ('producer', 'consumer'):
+            if sum(p['role'] == role for p in pods) != int(config[role.upper() + '_POD_COUNT']):
+                raise ValueError('Placement reference replica count differs from configuration')
+    return consumers
+
+
+def validate_reference(reference, config=None):
+    if not isinstance(reference, dict) or reference.get('schema_version') != 1:
+        raise ValueError('Placement reference requires schema_version=1')
+    assignments, pods = reference.get('assignment'), reference.get('pods')
+    if not isinstance(assignments, list) or not assignments:
+        raise ValueError('Placement reference needs complete assignment and pod records')
+    consumers = validate_pod_reference(pods, config)
     seen = set()
     for row in assignments:
         if any(type(row.get(k)) is not int or row[k] < 0 for k in ('topic_index', 'partition')):
@@ -51,9 +62,24 @@ def validate_reference(reference, config=None):
                     for p in range(int(config['NUM_PARTITIONS']))}
         if seen != expected:
             raise ValueError('Placement reference must cover every configured partition exactly once')
-        for role in ('producer', 'consumer'):
-            if sum(p['role'] == role for p in pods) != int(config[role.upper() + '_POD_COUNT']):
-                raise ValueError('Placement reference replica count differs from configuration')
+    return reference
+
+
+def capture_reference(expected_pods, config, run_id, config_hash, status_rows, pod_items):
+    """Capture observed ownership only after verifying the previously fixed pods."""
+    validate_pod_reference(expected_pods, config)
+    topics = {f"{config['TOPIC_TITLE']}_{i}": i for i in range(int(config['TOPIC_COUNT']))}
+    assignment = []
+    for pod in expected_pods:
+        if pod['role'] != 'consumer':
+            continue
+        for topic, partition in status_rows.get(pod['pod'], {}).get('assignments', []):
+            if topic not in topics:
+                raise PlacementMismatch('Unexpected topic while capturing initial ownership')
+            assignment.append(dict(topic_index=topics[topic], partition=partition, pod=pod['pod']))
+    reference = dict(schema_version=1, pods=copy.deepcopy(expected_pods),
+                     assignment=sorted(assignment, key=lambda row: (row['topic_index'], row['partition'])))
+    check_placement(reference, config, run_id, config_hash, status_rows, pod_items, preparing=True)
     return reference
 
 
@@ -103,6 +129,9 @@ def check_placement(reference, config, run_id, config_hash, status_rows, pod_ite
             raise PlacementMismatch(name + ': unexpected application phase')
         processes[name] = {'incarnation': row['incarnation']}
         if role == 'consumer':
+            if (str(config.get('CONSUMER_STATIC_MEMBERSHIP', 'false')).lower() == 'true' and
+                    row.get('group_instance_id') != name):
+                raise PlacementMismatch(name + ': missing or different static member identity')
             if type(row.get('assignment_epoch')) is not int:
                 raise PlacementMismatch(name + ': missing assignment epoch')
             processes[name]['assignment_epoch'] = row['assignment_epoch']

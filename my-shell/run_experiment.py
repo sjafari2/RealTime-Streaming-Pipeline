@@ -17,7 +17,8 @@ import uuid
 import urllib.parse
 import urllib.request
 from managed_hpa import paused_for_experiment
-from placement_control import PlacementMismatch, check_placement, pod_identity, reference_hash, validate_reference
+from placement_control import (PlacementMismatch, capture_reference, check_placement,
+                               pod_identity, reference_hash, validate_pod_reference, validate_reference)
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = os.getenv('NAMESPACE', 'kafkastreamingdata')
@@ -234,15 +235,21 @@ def validate_intervention(plan, config):
     duration, _, warmup, _ = validate_config(config)
     if plan['action'] not in ('none', 'scale'):
         raise ValueError('Only scheduled no-action and scale-up pilots are implemented; targeted reassignment is not implemented')
+    capture_pods = plan.get('capture_placement_pods')
+    if capture_pods is not None:
+        if not plan.get('prepare_only') or plan.get('placement_reference') is not None:
+            raise ValueError('Reference capture is preparation-only and cannot replace a frozen reference')
+        validate_pod_reference(capture_pods, config)
+    controlled = plan.get('placement_reference') is not None or capture_pods is not None
     if plan.get('placement_reference') is not None:
         validate_reference(plan['placement_reference'], config)
+    if controlled:
         if plan.get('initial_consumers') != int(config['CONSUMER_POD_COUNT']):
             raise ValueError('Controlled placement requires matching explicit initial consumers')
-    if plan.get('prepare_only') and plan.get('placement_reference') is None:
+    if plan.get('prepare_only') and not controlled:
         raise ValueError('Preparation-only validation requires a placement reference')
     budget = plan.get('preparation_budget_seconds')
-    if budget is not None and (plan.get('placement_reference') is None or
-                               not math.isfinite(budget) or budget <= 0):
+    if budget is not None and (not controlled or not math.isfinite(budget) or budget <= 0):
         raise ValueError('A positive preparation budget requires a placement reference')
     after = plan['after_evaluation_start_seconds']
     if not math.isfinite(after) or not 0 <= after < duration-warmup:
@@ -303,19 +310,29 @@ def resource_snapshot(control):
 
 def verify_placement(control, stage):
     reference = control.get('placement_reference')
-    if reference is None:
+    capture_pods = control.get('capture_placement_pods')
+    if reference is None and capture_pods is None:
         return
     started = time.monotonic()
     record = dict(stage=stage, request_started_epoch=time.time(), valid=False,
-                  reference_sha256=reference_hash(reference))
+                  reference_sha256=reference_hash(reference) if reference is not None else None,
+                  reference_capture=reference is None)
     try:
-        if record['reference_sha256'] != control['placement_reference_sha256']:
+        if capture_pods is not None and (stage != 'before_production' or
+                not control.get('preparation_only') or 'start_epoch' in control):
+            raise PlacementMismatch('Reference capture cannot release production or run before an action')
+        if reference is not None and record['reference_sha256'] != control['placement_reference_sha256']:
             raise PlacementMismatch('Frozen placement reference hash changed')
-        rows = {p['pod']: status(p['role'], p['pod']) for p in reference['pods']}
+        expected_pods = reference['pods'] if reference is not None else capture_pods
+        rows = {p['pod']: status(p['role'], p['pod']) for p in expected_pods}
         record['application_status'] = rows
         items = json.loads(kubectl('get', 'pods', '-l', 'app in (producer-sts,consumer-sts)',
                                   '-o', 'json', timeout=10))['items']
         record['observed_pods'] = [pod_identity(item) for item in items]
+        if reference is None:
+            reference = capture_reference(capture_pods, control['config'], control['run_id'],
+                                          control['config_sha256'], rows, items)
+            record['reference_sha256'] = reference_hash(reference)
         processes = check_placement(reference, control['config'], control['run_id'],
                                     control['config_sha256'], rows, items,
                                     expected_processes=control.get('initial_placement_processes'),
@@ -324,6 +341,10 @@ def verify_placement(control, stage):
         if elapsed > 30:
             raise PlacementMismatch('Placement observation exceeded the 30-second freshness budget')
         record.update(valid=True, processes=processes, observation_seconds=elapsed)
+        if record['reference_capture']:
+            control['placement_reference'] = reference
+            control['placement_reference_sha256'] = record['reference_sha256']
+            control['reference_captured_epoch'] = time.time()
         if stage == 'before_production':
             control['initial_placement_processes'] = processes
     except Exception as exc:
@@ -427,6 +448,8 @@ def start(plan=None):
     if (plan or {}).get('placement_reference') is not None:
         control['placement_reference'] = plan['placement_reference']
         control['placement_reference_sha256'] = reference_hash(plan['placement_reference'])
+    if (plan or {}).get('capture_placement_pods') is not None:
+        control['capture_placement_pods'] = plan['capture_placement_pods']
     if (plan or {}).get('prepare_only'):
         control['preparation_only'] = True
     control['capacity_estimate'] = estimate_capacity(config, len(producer_pods), len(consumer_pods))
