@@ -23,4 +23,4 @@ Interpretation and limits. The 80/20 latency benefit repeated, while the single-
 
 Next research stage. Hot-key splitting, targeted reassignment and the complete decision policy remain to be implemented and evaluated. The planned comparison will test no intervention, scaling alone, splitting alone and their combination with equivalent workloads, verified output correctness and explicit resource costs. The research question is whether better action selection improves outcomes beyond established scaling, assignment and routing methods.
 
-Evidence: github.com/sjafari2/RealTime-Streaming-Pipeline, branch codex/managed-experiments-2026; experiment-records/campaign-20260912 and experiment-records/repetitions-20260913.
+Evidence: github.com/sjafari2/RealTime-Streaming-Pipeline; experiment-records/campaign-20260912 and experiment-records/repetitions-20260913.
