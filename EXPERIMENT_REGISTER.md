@@ -14,7 +14,7 @@ Scaling lowered p99 in both repetitions. However, one three-consumer run also co
 
 **Concentrated input — 5 minutes**
 
-With **80% of traffic directed to one partition**, backlog continued growing after scaling. Approximately **44–46% remained unfinished** in the scaling runs. The runs started with different partition owners and machines, a later repeat checked matching starting conditions (below).
+With **80% of traffic directed to one partition**, backlog continued growing after scaling. Approximately **44–46% remained unfinished** in the scaling runs. The runs started with different partition owners and machines. A later repeat checked matching starting conditions (below).
 
 **Lower input — 3 minutes**
 
@@ -38,6 +38,8 @@ With **80% of traffic spread across 12 of 60 partitions**, keeping three consume
 
 **What is next?**
 
-Review the 80/20 result before choosing another experiment. No additional run has started.
+The 80/20 review is complete: scaling helped in this pair, using more requested CPU. Next, check transition errors and monitoring gaps, then repeat the same workload with keep-three first and scaling second. This is a recommendation; no additional run has started.
+
+[Short result review and next experiment](experiment-records/8020-comparison-20260913/result-review.md)
 
 [80/20 result and plots](experiment-records/8020-comparison-20260913/README.md) · [Single-partition repeat](experiment-records/static-startup-executed-20260912/README.md) · [Earlier detailed results](experiment-records/README.md)
