@@ -728,6 +728,11 @@ def export_metrics(directory, control):
     # query_range timestamps are evaluation times, not the original scrape times.
     # Preserve the latter as a named series alongside the exporter-local ages.
     selector = add_lag_sample_timestamps(selector, control['run_id'])
+    for role in ('producer', 'consumer'):
+        for suffix in ('cpu_percent', 'memory_bytes'):
+            name = role + '_' + suffix
+            resource_selector = name + '{run_id=' + json.dumps(control['run_id']) + '}'
+            selector += ' or on(__name__) label_replace(timestamp(' + resource_selector + '), "__name__", "' + name + '_scrape_timestamp_seconds", "", "")'
     (directory / 'prometheus-query.json').write_text(json.dumps(dict(query=selector, start=start, end=end, step=2), indent=2))
     params = urllib.parse.urlencode(dict(query=selector, start=start, end=end, step=2))
     url = os.getenv('PROM_URL', 'http://localhost:9090').rstrip('/') + '/api/v1/query_range?' + params
@@ -910,6 +915,13 @@ def analyze_collected(directory, control):
         (directory / 'execution-summary.json').write_text(json.dumps(execution, indent=2, allow_nan=False) + '\n')
     except Exception as exc:
         issues.append('Execution analysis: ' + str(exc))
+    try:
+        from audit_measurements import analyze as measurement_analysis
+        measurement = measurement_analysis(directory)
+        (directory / 'measurement-audit.json').write_text(json.dumps(measurement, indent=2, allow_nan=False) + '\n')
+        issues.extend(measurement['issues'])
+    except Exception as exc:
+        issues.append('Measurement audit: ' + str(exc))
     result = dict(run_id=control['run_id'], status='failed' if issues else 'complete', issues=issues)
     (directory / 'runner-status.json').write_text(json.dumps(result, indent=2) + '\n')
     print('[RESULTS]', directory.resolve(), flush=True)

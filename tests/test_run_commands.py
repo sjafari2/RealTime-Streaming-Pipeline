@@ -152,7 +152,14 @@ def test_complete_run_waits_before_collecting_and_analyzes(monkeypatch, tmp_path
     monkeypatch.setattr(runner, 'collect', lambda: calls.append('collect') or directory)
     def export(target, value):
         calls.append('export')
-        (target / 'prometheus.json').write_text(json.dumps(dict(status='success', data=dict(result=[]))))
+        series=[]
+        for role,incarnation in [('producer','p'),('consumer','c')]:
+            for suffix in ('cpu_percent','memory_bytes'):
+                name=role+'_'+suffix
+                for metric,points in [(name,[[100,'20'],[102,'40']]),
+                                      (name+'_scrape_timestamp_seconds',[[100,'100'],[102,'102']])]:
+                    series.append(dict(metric={'__name__':metric,'run_id':'run-a','incarnation':incarnation}, values=points))
+        (target / 'prometheus.json').write_text(json.dumps(dict(status='success', data=dict(result=series))))
     monkeypatch.setattr(runner, 'export_metrics', export)
     assert runner.complete_run() == directory
     assert calls == ['start', 'wait-through-drain', 'collect', 'export']

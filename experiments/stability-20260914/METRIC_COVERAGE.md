@@ -26,11 +26,8 @@ For CPU plots, convert percent to cores by dividing by 100. Sum simultaneous
 per-process cores only when all expected live processes are covered. For memory,
 sum simultaneous process RSS and convert bytes to MiB/GiB; this is process memory,
 not pod working set or reserved memory. Report per-process and aggregate traces,
-covered duration, mean and peak; do not fill missing samples with zero. Existing
-run summaries do not yet automatically produce these CPU/RSS aggregates.
+covered duration, mean and peak; do not fill missing samples with zero. New `measurement-audit.json` reports per-process CPU/RSS mean, peak, integral and covered duration. Whole-pipeline aggregates remain separate work.
 
 Report each run separately, then descriptive mean/range of like-for-like runs.
 Averaging two run p99s is not a pooled-message p99. Two repetitions do not justify
-strong uncertainty or infinite-horizon stability claims. The new sustained-window
-trend report and CPU/RSS aggregate report still need implementation/validation
-before these trials can be described as a complete stability evaluation.
+strong uncertainty or infinite-horizon stability claims. The new sustained-window trend report and whole-pipeline CPU/RSS aggregates remain pending. Explicit processing-backlog growth and per-process resource summaries are now implemented locally; deployment and live validation are pending. See docs/metric-definitions.md for coverage limitations.

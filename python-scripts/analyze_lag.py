@@ -19,6 +19,7 @@ def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persisten
     for snapshot in snapshots:
         row = dict(snapshot)
         row.update(growth_offsets_per_second=None, window_growth_offsets_per_second=None,
+                   processing_backlog_growth_offsets_per_second=None, window_processing_backlog_growth_offsets_per_second=None,
                    window_mean_backlog=None, window_mean_skew=None, persistence=None, persistent_hot=None)
         if not row['valid']:
             chain = []
@@ -39,6 +40,8 @@ def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persisten
             contiguous = 0 < dt <= max_gap and row['owners'] == previous['owners'] and monotonic_offsets
             if contiguous:
                 row['growth_offsets_per_second'] = (total-previous['total_lag'])/dt
+                if 'processing_backlog' in row and 'processing_backlog' in previous:
+                    row['processing_backlog_growth_offsets_per_second'] = (row['processing_backlog']-previous['processing_backlog'])/dt
                 area += .5*(total+previous['total_lag'])*dt
                 covered += dt
             else:
@@ -53,6 +56,8 @@ def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persisten
         if len(chain) > window_samples:
             first = chain[-window_samples-1]
             row['window_growth_offsets_per_second'] = (total-first['total_lag'])/(row['timestamp']-first['timestamp'])
+            if 'processing_backlog' in row and 'processing_backlog' in first:
+                row['window_processing_backlog_growth_offsets_per_second'] = (row['processing_backlog']-first['processing_backlog'])/(row['timestamp']-first['timestamp'])
         chain = chain[-(window_samples+1):]
         output.append(row)
     valid = [x for x in output if x['valid']]

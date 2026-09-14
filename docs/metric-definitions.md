@@ -167,3 +167,38 @@ Protocol revision 4 records this empty-topic initialization rule. The preceding
 readiness attempt (`run-20260912-063614`) sent no workload: it was correctly
 blocked by a check that was too strict for positions on a fresh empty topic.
 The production validity rule, limits, workload and scheduled action are unchanged.
+
+## Retained process-resource measurements and processing-backlog growth
+
+New complete runs save `measurement-audit.json` automatically. It reports missing
+CPU/RSS series or their original scrape timestamps for every collected process
+incarnation and checks that outcome, lag and execution summaries exist. Missing
+required process measurements fail the run's measurement checks while preserving
+all collected evidence and outcome analysis. This is not proof of complete coverage
+of every proposal metric, container, broker or node.
+
+The Prometheus export retains CPU/RSS scrape timestamps in addition to the raw
+process gauges. Per-process evaluation and evaluation-plus-drain summaries report
+covered duration, mean, peak and integral. Mean is trapezoidal area divided by
+covered seconds. CPU percent divided by 100 gives cores; its integrated value
+divided by 100 gives observed CPU-seconds. Memory remains RSS bytes. Only finite,
+nonnegative values with scrape age at most ten seconds contribute; adjacent samples
+must be at most three seconds apart. No extrapolation or missing-to-zero conversion
+is performed. Scrape freshness does not prove the exporter sampling loop is fresh.
+Coverage uses the whole window and therefore includes time before a scaled process
+starts; it must not be interpreted as live-process coverage. These are not
+whole-pipeline aggregate peaks, pod working sets, or requested-resource cost.
+
+`lag-summary.json` now also contains instantaneous and windowed processing-backlog
+(Q) growth in offsets/second. Q growth is (Q_now-Q_previous)/elapsed time, while
+window growth uses m intervals and m+1 contiguous snapshots. These are distinct
+from existing consumer-position lag (B) growth. Missing snapshots, ownership
+changes and offset resets interrupt both growth calculations. Longer windows can
+be recomputed from retained valid snapshots, subject to coverage; absent monitoring
+cannot be reconstructed. Growth alone does not establish infinite-horizon stability.
+
+Retain `events.jsonl`, `final.json`, `final.prom`, the frozen manifest and run config,
+raw `prometheus.json`/CSV with timestamp series, resource histories, intervention
+journals and analysis summaries. Small Git records do not replace a separate backup
+of raw evidence. Container/broker resource monitoring and complete sampling-loop
+freshness remain unverified; historical exports lacking timestamps remain limited.
