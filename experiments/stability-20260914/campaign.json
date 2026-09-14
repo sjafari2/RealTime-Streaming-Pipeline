@@ -1,0 +1,52 @@
+{
+  "status": "blocked_before_calibration",
+  "trials": [
+    {
+      "name": "lower-keep3-run1",
+      "configuration": "lower-keep3-run1.yaml",
+      "intervention": "lower-keep3-run1-plan.json",
+      "status": "prepared_not_run"
+    },
+    {
+      "name": "pressure-keep3-run1",
+      "configuration": "pressure-keep3-run1.yaml",
+      "intervention": "pressure-keep3-run1-plan.json",
+      "status": "prepared_not_run"
+    },
+    {
+      "name": "pressure-scale6-run1",
+      "configuration": "pressure-scale6-run1.yaml",
+      "intervention": "pressure-scale6-run1-plan.json",
+      "status": "prepared_not_run"
+    },
+    {
+      "name": "pressure-scale6-run2",
+      "configuration": "pressure-scale6-run2.yaml",
+      "intervention": "pressure-scale6-run2-plan.json",
+      "status": "prepared_not_run"
+    },
+    {
+      "name": "pressure-keep3-run2",
+      "configuration": "pressure-keep3-run2.yaml",
+      "intervention": "pressure-keep3-run2-plan.json",
+      "status": "prepared_not_run"
+    },
+    {
+      "name": "lower-keep3-run2",
+      "configuration": "lower-keep3-run2.yaml",
+      "intervention": "lower-keep3-run2-plan.json",
+      "status": "prepared_not_run"
+    }
+  ],
+  "warmup_seconds": 60,
+  "evaluation_seconds": 1200,
+  "drain_seconds": 120,
+  "planned_workload_seconds": 8280,
+  "calibration_required": true,
+  "automatic_execution_ready": false,
+  "blockers": [
+    "Producer exec timeout",
+    "Consumer pods still terminating",
+    "Live metric availability and resource sizing not yet verified"
+  ]
+}
