@@ -6,7 +6,7 @@
 \textbf{Workload and total time} & \textbf{Run pair 1} & \textbf{Run pair 2}\\
  & \multicolumn{2}{c}{Completion p99 latency (s): 3 consumers $\rightarrow$ 6 consumers}\\
 \midrule
-Balanced, lower input, 5 min & 0.82 $\rightarrow$ 0.94 & 0.82 $\rightarrow$ 0.90\\
+Balanced, lower target rate, 5 min & 0.82 $\rightarrow$ 0.94 & 0.82 $\rightarrow$ 0.90\\
 Balanced, 12 min & 292.4 $\rightarrow$ 95.6 & 266.3 $\rightarrow$ 79.1\\
 Balanced, 5 min & 121.8 $\rightarrow$ 75.9 & 115.8 $\rightarrow$ 62.9\\
 80\% across 12 partitions, 7 min & 121.1 $\rightarrow$ 49.4 & 115.7 $\rightarrow$ 51.0\\
@@ -16,7 +16,7 @@ Single partition, 7 min (ownership matched) & 228.4 $\rightarrow$ 192.8 & 228.8 
 \end{tabular*}
 \refstepcounter{table}\label{tab:paired-p99}
 \par\smallskip
-\textbf{Table \thetable:} Completion p99 latency for all 24 performance trials. Each arrow compares a keep-three trial with its paired trial that starts with three consumers and scales to six; it is not a within-run before/after measurement. Each run pair contains two trials. Durations include 60 s warm-up, evaluated production, and 120 s drain; preparation and collection are excluded. Warm-up messages are excluded from the evaluation cohort, but residual warm-up backlog is retained. Latency is conditional on completion by the drain cutoff; see the unfinished-message table. Ownership matching refers to the starting partition-to-consumer assignment. The ownership-matched single-partition and 80/20 comparisons verified matching starting conditions; this does not fix ownership after scaling or shared-machine contention. The earlier comparisons did not require matching starting ownership.
+\textbf{Table \thetable:} Completion p99 latency for all 24 performance trials. Each arrow compares a keep-three trial with its paired trial that starts with three consumers and scales to six; it is not a within-run before/after measurement. Each run pair contains two trials. Durations include 60 s warm-up, evaluated production, and 120 s drain; preparation and collection are excluded. The lower target rate is 600 messages/s in total (200 per producer); all other workloads target 1,500 messages/s in total (500 per producer), with three producers. These are configured sending rates, not measured consumer capacities. Warm-up messages are excluded from the evaluation cohort, but residual warm-up backlog is retained. Latency is conditional on completion by the drain cutoff; see the unfinished-message table. Ownership matching refers to the starting partition-to-consumer assignment. The ownership-matched single-partition and 80/20 comparisons verified matching starting conditions; this does not fix ownership after scaling or shared-machine contention. The earlier comparisons did not require matching starting ownership.
 \end{center}
 
 \begin{center}
@@ -27,7 +27,7 @@ Single partition, 7 min (ownership matched) & 228.4 $\rightarrow$ 192.8 & 228.8 
 \textbf{Workload and total time} & \textbf{Run pair 1} & \textbf{Run pair 2}\\
  & \multicolumn{2}{c}{Unfinished messages (\%): 3 consumers $\rightarrow$ 6 consumers}\\
 \midrule
-Balanced, lower input, 5 min & 0.0 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
+Balanced, lower target rate, 5 min & 0.0 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
 Balanced, 12 min & 11.4 $\rightarrow$ 0.0 & 9.6 $\rightarrow$ 0.0\\
 Balanced, 5 min & 1.2 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
 80\% across 12 partitions, 7 min & 0.5 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
@@ -37,5 +37,5 @@ Single partition, 7 min (ownership matched) & 39.5 $\rightarrow$ 25.1 & 39.2 $\r
 \end{tabular*}
 \refstepcounter{table}\label{tab:paired-unfinished}
 \par\smallskip
-\textbf{Table \thetable:} Unfinished messages for all 24 performance trials. Each arrow compares a keep-three trial with its paired trial that starts with three consumers and scales to six; it is not a within-run before/after measurement. Each run pair contains two trials. Durations include 60 s warm-up, evaluated production, and 120 s drain; preparation and collection are excluded. Warm-up messages are excluded from the evaluation cohort, but residual warm-up backlog is retained. Unfinished percentages are measured at the drain cutoff using acknowledged evaluation messages as the denominator. Ownership matching refers to the starting partition-to-consumer assignment. The ownership-matched single-partition and 80/20 comparisons verified matching starting conditions; this does not fix ownership after scaling or shared-machine contention. The earlier comparisons did not require matching starting ownership.
+\textbf{Table \thetable:} Unfinished messages for all 24 performance trials. Each arrow compares a keep-three trial with its paired trial that starts with three consumers and scales to six; it is not a within-run before/after measurement. Each run pair contains two trials. Durations include 60 s warm-up, evaluated production, and 120 s drain; preparation and collection are excluded. The lower target rate is 600 messages/s in total (200 per producer); all other workloads target 1,500 messages/s in total (500 per producer), with three producers. These are configured sending rates, not measured consumer capacities. Warm-up messages are excluded from the evaluation cohort, but residual warm-up backlog is retained. Unfinished percentages are measured at the drain cutoff using acknowledged evaluation messages as the denominator. Ownership matching refers to the starting partition-to-consumer assignment. The ownership-matched single-partition and 80/20 comparisons verified matching starting conditions; this does not fix ownership after scaling or shared-machine contention. The earlier comparisons did not require matching starting ownership.
 \end{center}
