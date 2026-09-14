@@ -1,0 +1,1761 @@
+{
+  "schema_version": 1,
+  "status": "review_only_not_executable",
+  "warning": "Capacities and planner outputs below are illustrative, not Nautilus measurements. No live assignment adapter exists.",
+  "workload": {
+    "partitions": 60,
+    "hot_partitions": [
+      5,
+      10,
+      25,
+      33,
+      35,
+      39,
+      43,
+      45,
+      51,
+      55,
+      58,
+      59
+    ],
+    "hot_fraction": 0.8,
+    "producers": 3,
+    "candidate_rate_per_producer": 300,
+    "payload_bytes": 100,
+    "sha256_iterations": 2000,
+    "added_sleep_ms": 0,
+    "production_seconds": 600,
+    "warmup_seconds": 60,
+    "drain_seconds": 120,
+    "decision_after_evaluation_start_seconds": 120,
+    "workload_seeds": [
+      71,
+      72
+    ]
+  },
+  "consumer_count": 3,
+  "cases": {
+    "imbalanced": {
+      "initial_assignment": [
+        {
+          "partition": 0,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 1,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 2,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 3,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 4,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 5,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 6,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 7,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 8,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 9,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 10,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 11,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 12,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 13,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 14,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 15,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 16,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 17,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 18,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 19,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 20,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 21,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 22,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 23,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 24,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 25,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 26,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 27,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 28,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 29,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 30,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 31,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 32,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 33,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 34,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 35,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 36,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 37,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 38,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 39,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 40,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 41,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 42,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 43,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 44,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 45,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 46,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 47,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 48,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 49,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 50,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 51,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 52,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 53,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 54,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 55,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 56,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 57,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 58,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 59,
+          "owner": "consumer-sts-1"
+        }
+      ],
+      "hot_partition_counts": [
+        8,
+        4,
+        0
+      ],
+      "illustrative_snapshot": {
+        "schema_version": 1,
+        "work_model": "equal_cost_records",
+        "run_id": "illustration-not-a-run",
+        "assignment_epoch": 0,
+        "observed_at": 100,
+        "maximum_age_seconds": 10,
+        "capacity_observed_at": 95,
+        "capacity_maximum_age_seconds": 30,
+        "capacity_records_per_second": {
+          "consumer-sts-0": 400,
+          "consumer-sts-1": 400,
+          "consumer-sts-2": 400
+        },
+        "expected_partitions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59
+        ],
+        "partitions": [
+          {
+            "partition": 0,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 1,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 2,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 3,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 4,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 5,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 6,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 7,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 8,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 9,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 10,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 11,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 12,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 13,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 14,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 15,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 16,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 17,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 18,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 19,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 20,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 21,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 22,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 23,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 24,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 25,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 26,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 27,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 28,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 29,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 30,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 31,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 32,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 33,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 34,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 35,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 36,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 37,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 38,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 39,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 40,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 41,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 42,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 43,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 44,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 45,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 100,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 46,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 47,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 48,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 49,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 50,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 51,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 52,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 53,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 54,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 55,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 56,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 57,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 58,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 59,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          }
+        ]
+      },
+      "illustrative_planner_output": {
+        "schema_version": 1,
+        "run_id": "illustration-not-a-run",
+        "assignment_epoch": 0,
+        "executable": false,
+        "before_utilization": {
+          "consumer-sts-0": 1.3125,
+          "consumer-sts-1": 0.75,
+          "consumer-sts-2": 0.1875
+        },
+        "after_utilization": {
+          "consumer-sts-0": 0.721875,
+          "consumer-sts-1": 0.75,
+          "consumer-sts-2": 0.778125
+        },
+        "moves": [
+          {
+            "partition": 5,
+            "source": "consumer-sts-0",
+            "destination": "consumer-sts-2"
+          },
+          {
+            "partition": 10,
+            "source": "consumer-sts-0",
+            "destination": "consumer-sts-2"
+          },
+          {
+            "partition": 25,
+            "source": "consumer-sts-0",
+            "destination": "consumer-sts-2"
+          },
+          {
+            "partition": 31,
+            "source": "consumer-sts-2",
+            "destination": "consumer-sts-0"
+          },
+          {
+            "partition": 33,
+            "source": "consumer-sts-0",
+            "destination": "consumer-sts-2"
+          }
+        ],
+        "status": "candidate",
+        "reason": "Estimated load fits the declared headroom; live revalidation is required"
+      }
+    },
+    "balanced": {
+      "initial_assignment": [
+        {
+          "partition": 0,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 1,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 2,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 3,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 4,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 5,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 6,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 7,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 8,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 9,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 10,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 11,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 12,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 13,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 14,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 15,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 16,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 17,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 18,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 19,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 20,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 21,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 22,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 23,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 24,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 25,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 26,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 27,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 28,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 29,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 30,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 31,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 32,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 33,
+          "owner": "consumer-sts-0"
+        },
+        {
+          "partition": 34,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 35,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 36,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 37,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 38,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 39,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 40,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 41,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 42,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 43,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 44,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 45,
+          "owner": "consumer-sts-1"
+        },
+        {
+          "partition": 46,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 47,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 48,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 49,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 50,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 51,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 52,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 53,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 54,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 55,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 56,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 57,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 58,
+          "owner": "consumer-sts-2"
+        },
+        {
+          "partition": 59,
+          "owner": "consumer-sts-2"
+        }
+      ],
+      "hot_partition_counts": [
+        4,
+        4,
+        4
+      ],
+      "illustrative_snapshot": {
+        "schema_version": 1,
+        "work_model": "equal_cost_records",
+        "run_id": "illustration-not-a-run",
+        "assignment_epoch": 0,
+        "observed_at": 100,
+        "maximum_age_seconds": 10,
+        "capacity_observed_at": 95,
+        "capacity_maximum_age_seconds": 30,
+        "capacity_records_per_second": {
+          "consumer-sts-0": 400,
+          "consumer-sts-1": 400,
+          "consumer-sts-2": 400
+        },
+        "expected_partitions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59
+        ],
+        "partitions": [
+          {
+            "partition": 0,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 1,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 2,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 3,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 4,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 5,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 6,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 7,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 8,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 9,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 10,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 11,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 12,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 13,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 14,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 15,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 16,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 17,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 18,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 19,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 20,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 21,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 22,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 23,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 24,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 25,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 26,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 27,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 28,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 29,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 30,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 31,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 32,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 33,
+            "owner": "consumer-sts-0",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 34,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 35,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 36,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 37,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 38,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 39,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 40,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 41,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 42,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 43,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 44,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 45,
+            "owner": "consumer-sts-1",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 46,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 47,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 48,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 49,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 50,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 51,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 52,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 53,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 54,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 55,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 56,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 57,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 3.75,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 58,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          },
+          {
+            "partition": 59,
+            "owner": "consumer-sts-2",
+            "arrival_records_per_second": 60,
+            "processing_backlog": 0,
+            "observed_at": 100,
+            "valid": true
+          }
+        ]
+      },
+      "illustrative_planner_output": {
+        "schema_version": 1,
+        "run_id": "illustration-not-a-run",
+        "assignment_epoch": 0,
+        "executable": false,
+        "before_utilization": {
+          "consumer-sts-0": 0.75,
+          "consumer-sts-1": 0.75,
+          "consumer-sts-2": 0.75
+        },
+        "after_utilization": {
+          "consumer-sts-0": 0.75,
+          "consumer-sts-1": 0.75,
+          "consumer-sts-2": 0.75
+        },
+        "moves": [],
+        "status": "no_action",
+        "reason": "No measured consumer overload"
+      }
+    }
+  },
+  "trial_order": [
+    {
+      "case": "imbalanced",
+      "seed": 71,
+      "actions": [
+        "keep",
+        "redistribution_policy"
+      ]
+    },
+    {
+      "case": "imbalanced",
+      "seed": 72,
+      "actions": [
+        "redistribution_policy",
+        "keep"
+      ]
+    },
+    {
+      "case": "balanced",
+      "seed": 71,
+      "actions": [
+        "keep",
+        "redistribution_policy"
+      ]
+    },
+    {
+      "case": "balanced",
+      "seed": 72,
+      "actions": [
+        "redistribution_policy",
+        "keep"
+      ]
+    }
+  ],
+  "performance_trials": 8,
+  "release_gates": [
+    "User confirms exact trial configuration",
+    "A reviewed live ownership adapter passes failure and nonempty-topic handoff tests",
+    "Separate calibration establishes source overload and destination spare capacity",
+    "Freeze workload, capacity estimates, source revision and full starting maps",
+    "Matched empty preparations verify exact ownership and unchanged original processes"
+  ]
+}
