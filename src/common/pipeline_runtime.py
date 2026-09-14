@@ -71,7 +71,11 @@ class EvidenceWriter:
                     row = self.queue.get(timeout=0.1)
                 except queue.Empty:
                     row = None
-                if row is not None:
+                if isinstance(row, threading.Event):
+                    self.stream.flush()
+                    os.fsync(self.stream.fileno())
+                    row.set()
+                elif row is not None:
                     self.stream.write(json.dumps(row, allow_nan=False, separators=(',', ':')) + '\n')
                 if time.monotonic() - last_flush >= 1:
                     self.stream.flush()
@@ -82,6 +86,15 @@ class EvidenceWriter:
             self.error = str(exc)
         finally:
             self.stream.close()
+
+    def flush(self, timeout=10):
+        """Wait for all preceding records to reach durable storage."""
+        if self.stopping.is_set() or self.error or self.dropped:
+            raise RuntimeError('Cannot confirm durable evidence')
+        barrier = threading.Event()
+        self.queue.put(barrier, timeout=timeout)
+        if not barrier.wait(timeout) or self.error or self.dropped:
+            raise RuntimeError('Evidence flush was not confirmed')
 
     def close(self):
         self.stopping.set()

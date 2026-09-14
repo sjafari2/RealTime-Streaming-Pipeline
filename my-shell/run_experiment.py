@@ -21,6 +21,7 @@ from placement_control import (PlacementMismatch, capture_reference, check_place
                                pod_identity, reference_hash, validate_pod_reference, validate_reference)
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'src/common'))
 NS = os.getenv('NAMESPACE', 'kafkastreamingdata')
 CONTROL = '/config/run-control.json'
 CONFIG = '/config/pipeline-configmap.yaml'
@@ -233,8 +234,21 @@ def validate_intervention(plan, config):
     if plan is None:
         return
     duration, _, warmup, _ = validate_config(config)
-    if plan['action'] not in ('none', 'scale'):
-        raise ValueError('Only scheduled no-action and scale-up pilots are implemented; targeted reassignment is not implemented')
+    if plan['action'] not in ('none', 'scale', 'redistribute'):
+        raise ValueError('Unknown scheduled pilot action')
+    explicit = config.get('CONSUMER_ASSIGNMENT_MODE', 'cooperative') == 'explicit'
+    if explicit:
+        from explicit_assignment import ownership_map
+        names = ['consumer-sts-' + str(i) for i in range(int(config['CONSUMER_POD_COUNT']))]
+        if int(config['TOPIC_COUNT']) != 1 or str(config.get('CONSUMER_STATIC_MEMBERSHIP', 'false')).lower() != 'false':
+            raise ValueError('Explicit pilot requires one topic and no static group membership')
+        ownership_map(json.loads(config['EXPLICIT_ASSIGNMENT_JSON']), int(config['NUM_PARTITIONS']), names)
+        if plan['action'] == 'scale':
+            raise ValueError('Explicit pilot requires fixed membership')
+    if plan['action'] == 'redistribute':
+        if not explicit or plan.get('target_consumers') is not None:
+            raise ValueError('Redistribution requires fixed explicit membership')
+        ownership_map(plan['target_assignment'], int(config['NUM_PARTITIONS']), names)
     capture_pods = plan.get('capture_placement_pods')
     if capture_pods is not None:
         if not plan.get('prepare_only') or plan.get('placement_reference') is not None:
@@ -372,6 +386,9 @@ def apply_intervention(control):
     if plan['action'] == 'scale':
         kubectl('scale', 'statefulset', 'consumer-sts', '--current-replicas=' + str(plan['initial_consumers']),
                 '--replicas=' + str(plan['target_consumers']))
+    if plan['action'] == 'redistribute':
+        from explicit_control import transfer
+        transfer(sys.modules[__name__], control, plan['target_assignment'])
     journal(control, 'intervention-events.jsonl', dict(event='request_completed', timestamp=time.time(), action=plan['action']))
 
 
@@ -774,7 +791,7 @@ def preflight():
         sources = [ROOT / 'src' / role / (role + '.py'), ROOT / 'src' / role / 'run.sh',
                    ROOT / 'src/common/launch.py', ROOT / 'src/common/pipeline_runtime.py']
         if role == 'consumer':
-            sources += [ROOT / 'src/consumer/supervise.py', ROOT / 'src/consumer/create_topics.sh']
+            sources += [ROOT / 'src/common/explicit_assignment.py', ROOT / 'src/consumer/supervise.py', ROOT / 'src/consumer/create_topics.sh']
         expected = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
         for pod in names:
             code = f'''import confluent_kafka,prometheus_client,psutil,yaml,hashlib,json
@@ -1030,7 +1047,8 @@ One-time code/configuration/monitoring setup must already be complete.
     parser.add_argument('action', choices=['run', 'repeat', 'interactive', 'start', 'stop', 'collect', 'export', 'status', 'backup', 'sweep'], nargs='?', default='run')
     parser.add_argument('--rates', type=int, nargs='+')
     parser.add_argument('--repetitions', type=int, default=1)
-    parser.add_argument('--intervention', choices=['none', 'scale'], help='Optional scheduled pilot action; not an automatic selector')
+    parser.add_argument('--intervention', choices=['none', 'scale', 'redistribute'], help='Optional scheduled pilot action; not an automatic selector')
+    parser.add_argument('--target-assignment', type=Path, help='Complete JSON ownership list for the experimental explicit pilot')
     parser.add_argument('--intervention-after', type=float, help='Seconds after evaluation starts; also use for the no-action baseline')
     parser.add_argument('--initial-consumers', type=int, help='Explicitly restore this replica baseline before EACH pilot run')
     parser.add_argument('--target-consumers', type=int, help='Consumer count after the scale-up action')
@@ -1043,6 +1061,8 @@ One-time code/configuration/monitoring setup must already be complete.
     parser.add_argument('--preparation-budget', type=float,
                         help='Maximum seconds to prepare a controlled run before releasing production')
     args = parser.parse_args()
+    if (args.intervention == 'redistribute') != (args.target_assignment is not None):
+        parser.error('Redistribute requires --target-assignment; other actions must omit it')
     plan_values = (args.intervention_after, args.initial_consumers, args.target_consumers, args.recovery_threshold, args.recovery_hold)
     plan = None
     if args.intervention:
@@ -1051,8 +1071,10 @@ One-time code/configuration/monitoring setup must already be complete.
         plan = dict(action=args.intervention, after_evaluation_start_seconds=args.intervention_after,
                     initial_consumers=args.initial_consumers, target_consumers=args.target_consumers,
                     recovery_threshold_offsets=args.recovery_threshold, recovery_hold_seconds=args.recovery_hold)
+        if args.target_assignment is not None:
+            plan['target_assignment'] = json.loads(args.target_assignment.read_text())
     elif any(value is not None for value in plan_values):
-        parser.error('Pilot settings require --intervention none or scale')
+        parser.error('Pilot settings require --intervention')
     if args.placement_reference is not None or args.prepare_only or args.preparation_budget is not None:
         if plan is None or (args.prepare_only and args.action != 'run'):
             parser.error('Placement checks need a scheduled action; --prepare-only is for a single run command')

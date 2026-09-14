@@ -11,6 +11,7 @@ import psutil
 from confluent_kafka import Consumer, TopicPartition, KafkaError, KafkaException
 from prometheus_client import Counter, Gauge, Histogram, generate_latest
 from pipeline_runtime import Runtime, latency_seconds, valid_lag
+from explicit_assignment import ExplicitAssignment
 
 LABELS = ['pod', 'group', 'client_id', 'exp_id', 'run_id', 'traffic_mode', 'incarnation']
 PARTITION_LABELS = LABELS + ['topic', 'partition']
@@ -76,6 +77,11 @@ def membership_settings(pod, environment=None):
 class MetricConsumer:
     def __init__(self):
         self.runtime = Runtime('consumer')
+        mode = os.getenv('CONSUMER_ASSIGNMENT_MODE', 'cooperative')
+        if mode not in ('cooperative', 'explicit'):
+            raise ValueError('Unknown CONSUMER_ASSIGNMENT_MODE')
+        self.explicit_mode = mode == 'explicit'
+        self.topic_partition = TopicPartition
         self.metrics_lock = threading.RLock()
         self.group = os.environ['CONSUMER_GROUP_ID']
         self.labels = dict(pod=self.runtime.pod, group=self.group,
@@ -134,7 +140,11 @@ class MetricConsumer:
         self.consumer = Consumer(self.config)
         self.runtime.event('consumer_config', config={k: v for k, v in self.config.items() if k != 'on_commit'},
                            task=dict(wait_seconds=self.delay, sha256_iterations=self.cpu_iterations))
-        self.consumer.subscribe(self.topics, on_assign=self.on_assign, on_revoke=self.on_revoke, on_lost=self.on_lost)
+        self.explicit = ExplicitAssignment(self) if self.explicit_mode else None
+        if self.explicit:
+            self.explicit.initialize()
+        else:
+            self.consumer.subscribe(self.topics, on_assign=self.on_assign, on_revoke=self.on_revoke, on_lost=self.on_lost)
         self.runtime.phase = 'ready'
         self.runtime.start_http(int(os.getenv('CONSUMER_HTTP_PORT', '8002')), self.metrics_snapshot)
 
@@ -153,6 +163,10 @@ class MetricConsumer:
         self.runtime.event('assign_started', partitions=[[p.topic, p.partition] for p in partitions])
         # Resolve the exact starting offsets before a batch can advance position().
         offsets = consumer.committed(partitions, timeout=5)
+        if self.explicit_mode and (len(offsets) != len(partitions) or
+                any(tp.error for tp in offsets) or
+                [(tp.topic, tp.partition) for tp in offsets] != [(tp.topic, tp.partition) for tp in partitions]):
+            raise RuntimeError('Explicit assignment offset lookup failed')
         for tp, committed in zip(partitions, offsets):
             low, high = consumer.get_watermark_offsets(tp, timeout=5)
             if committed.offset >= 0:
@@ -167,7 +181,10 @@ class MetricConsumer:
             self.query_queue.append(key)
             owner_metric.labels(**self.partition_labels(key)).set(1)
             valid_metric.labels(**self.partition_labels(key)).set(0)
-        consumer.incremental_assign(partitions)
+        if self.explicit_mode:
+            consumer.assign(partitions)
+        else:
+            consumer.incremental_assign(partitions)
         self.ownership_event('assign', partitions)
 
     def ownership_event(self, event, partitions):
@@ -367,6 +384,9 @@ class MetricConsumer:
     def run(self):
         try:
             while not self.runtime.should_stop() and not self.runtime.consumer_finished():
+                if self.explicit and not self.explicit.check():
+                    time.sleep(.05)
+                    continue
                 messages = self.consumer.consume(num_messages=self.poll_count, timeout=self.poll_timeout)
                 for msg in messages:
                     if self.runtime.stop_event.is_set() or self.runtime.consumer_finished():
@@ -385,7 +405,7 @@ class MetricConsumer:
                     self.runtime.phase = 'draining' if time.time() >= control['producer_end_epoch'] else 'running'
                 self.update_lag()
                 if time.monotonic() - self.last_commit >= self.commit_interval:
-                    self.commit(asynchronous=True)
+                    self.commit(asynchronous=not self.explicit_mode)
                     self.last_commit = time.monotonic()
                 if time.monotonic() - self.last_system > 2:
                     cpu.labels(**self.labels).set(self.process.cpu_percent())
