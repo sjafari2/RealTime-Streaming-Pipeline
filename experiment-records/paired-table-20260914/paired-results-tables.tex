@@ -1,0 +1,41 @@
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrr@{}}
+\toprule
+\textbf{Workload and total time} & \textbf{Repetition 1} & \textbf{Repetition 2}\\
+ & \multicolumn{2}{c}{Completion p99 latency (s): 3 consumers $\rightarrow$ 6 consumers}\\
+\midrule
+Balanced, lower input, 5 min & 0.82 $\rightarrow$ 0.94 & 0.82 $\rightarrow$ 0.90\\
+Balanced, 12 min & 292.4 $\rightarrow$ 95.6 & 266.3 $\rightarrow$ 79.1\\
+Balanced, 5 min & 121.8 $\rightarrow$ 75.9 & 115.8 $\rightarrow$ 62.9\\
+80\% across 12 partitions, 7 min & 121.1 $\rightarrow$ 49.4 & 115.7 $\rightarrow$ 51.0\\
+Single partition, earlier, 7 min & 259.7 $\rightarrow$ 246.7 & 268.5 $\rightarrow$ 250.3\\
+Single partition, matched, 7 min & 228.4 $\rightarrow$ 192.8 & 228.8 $\rightarrow$ 294.1\\
+\bottomrule
+\end{tabular*}
+\refstepcounter{table}\label{tab:paired-p99}
+\par\smallskip
+\textbf{Table \thetable:} Completion p99 latency for all 24 performance trials. Each arrow compares a keep-three trial with its paired trial that starts with three consumers and scales to six; it is not a within-run before/after measurement. Each repetition contains two trials. Durations include 60 s warm-up, evaluated production, and 120 s drain; preparation and collection are excluded. Warm-up messages are excluded from the evaluation cohort, but residual warm-up backlog is retained. Latency is conditional on completion by the drain cutoff; see the unfinished-message table. Matched identifies verified matching starting conditions; the 80/20 comparisons used the same checks. Earlier single-partition comparisons remain separately identified.
+\end{center}
+
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrr@{}}
+\toprule
+\textbf{Workload and total time} & \textbf{Repetition 1} & \textbf{Repetition 2}\\
+ & \multicolumn{2}{c}{Unfinished messages (\%): 3 consumers $\rightarrow$ 6 consumers}\\
+\midrule
+Balanced, lower input, 5 min & 0.0 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
+Balanced, 12 min & 11.4 $\rightarrow$ 0.0 & 9.6 $\rightarrow$ 0.0\\
+Balanced, 5 min & 1.2 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
+80\% across 12 partitions, 7 min & 0.5 $\rightarrow$ 0.0 & 0.0 $\rightarrow$ 0.0\\
+Single partition, earlier, 7 min & 51.4 $\rightarrow$ 44.4 & 53.1 $\rightarrow$ 45.7\\
+Single partition, matched, 7 min & 39.5 $\rightarrow$ 25.1 & 39.2 $\rightarrow$ 61.3\\
+\bottomrule
+\end{tabular*}
+\refstepcounter{table}\label{tab:paired-unfinished}
+\par\smallskip
+\textbf{Table \thetable:} Unfinished messages for all 24 performance trials. Each arrow compares a keep-three trial with its paired trial that starts with three consumers and scales to six; it is not a within-run before/after measurement. Each repetition contains two trials. Durations include 60 s warm-up, evaluated production, and 120 s drain; preparation and collection are excluded. Warm-up messages are excluded from the evaluation cohort, but residual warm-up backlog is retained. Unfinished percentages are measured at the drain cutoff using acknowledged evaluation messages as the denominator. Matched identifies verified matching starting conditions; the 80/20 comparisons used the same checks. Earlier single-partition comparisons remain separately identified.
+\end{center}
