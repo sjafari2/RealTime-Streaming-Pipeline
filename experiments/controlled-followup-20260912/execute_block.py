@@ -43,10 +43,10 @@ def capacity():
 
 
 def execute(audit, static_startup=False, include_comparison=False, workload="single-partition", trial_order="scale-first"):
-    if workload not in ("single-partition", "80-20"):
+    if workload not in ("single-partition", "80-20", "balanced-low", "balanced-short", "balanced-sustained"):
         raise ValueError("Unknown workload")
-    if workload == "80-20" and not static_startup:
-        raise ValueError("80-20 requires the validated static-startup procedure")
+    if workload != "single-partition" and not static_startup:
+        raise ValueError("This workload requires the validated static-startup procedure")
     if trial_order not in ("scale-first", "keep-first"):
         raise ValueError("Unknown trial order")
     if trial_order == "keep-first" and not static_startup:
@@ -64,6 +64,13 @@ def execute(audit, static_startup=False, include_comparison=False, workload="sin
         # Use the existing producer's common seeded subset: 12 of 60 partitions.
         cfg['data'].update(SKEW_PARTITION='0.2', SKEW_FRACTION='0.8',
                            EXP_ID='controlled-8020-static-s71')
+    if workload.startswith('balanced-'):
+        cfg['data'].update(TRAFFIC_MODE='balanced',
+            TARGET_RATE='200' if workload == 'balanced-low' else '500',
+            EXP_DURATION_SEC='600' if workload == 'balanced-sustained' else '180',
+            WARMUP_SECONDS='60', DRAIN_SECONDS='120',
+            CONSUMER_ASSIGNMENT_MODE='cooperative',
+            EXP_ID='controlled-' + workload + '-static-s71')
     raw = yaml.safe_dump(cfg, sort_keys=False).encode()
     (audit / 'experiment-config.yaml').write_bytes(raw)
     block = dict(status='preparing', created_epoch=time.time(), seed=71, order=['none', 'scale'] if trial_order == 'keep-first' else ['scale', 'none'],
@@ -75,7 +82,15 @@ def execute(audit, static_startup=False, include_comparison=False, workload="sin
     with r.command_lock():
         if r.kubectl('config', 'current-context').decode().strip() != 'nautilus':
             raise RuntimeError('This block is restricted to the nautilus context')
-        dirty = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT).decode()
+        tracked = set(subprocess.check_output(['git', 'ls-files'], cwd=ROOT).decode().splitlines())
+        untracked = subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=ROOT).decode().splitlines()
+        unexpected = [name for name in untracked if
+                      not (Path(name).stem.endswith(' 2') and
+                           str(Path(name).with_name(Path(name).stem[:-2] + Path(name).suffix)) in tracked)]
+        if unexpected:
+            raise RuntimeError('Untracked source requires review before execution: ' + repr(unexpected))
+        block['excluded_duplicate_paths'] = untracked
+        dirty = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], cwd=ROOT).decode()
         if dirty: raise RuntimeError('Commit the tested code before the block: ' + dirty)
         block['code_commit'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip()
         original = r.shared_read(r.CONFIG)
@@ -223,13 +238,13 @@ def main(argv=None):
     parser.add_argument('--audit-dir', type=Path, required=True, help='New directory for block evidence and restoration records')
     parser.add_argument('--static-startup', action='store_true', help='New bounded protocol: capture, restart, six-consumer preparation and return to three')
     parser.add_argument('--include-comparison', action='store_true', help='After all static-startup checks pass, run both treatments in the declared order; requires --static-startup')
-    parser.add_argument('--workload', choices=['single-partition', '80-20'], default='single-partition', help='Explicit workload; 80-20 sends 80 percent to 12 of 60 partitions')
+    parser.add_argument('--workload', choices=['single-partition', '80-20', 'balanced-low', 'balanced-short', 'balanced-sustained'], default='single-partition', help='Explicit workload; 80-20 sends 80 percent to 12 of 60 partitions')
     parser.add_argument('--trial-order', choices=['scale-first', 'keep-first'], default='scale-first', help='Order of the two performance trials; keep-first requires static-startup')
     args = parser.parse_args(argv)
     if args.trial_order == 'keep-first' and not args.static_startup:
         parser.error('--trial-order keep-first requires --static-startup')
-    if args.workload == '80-20' and not args.static_startup:
-        parser.error('--workload 80-20 requires --static-startup')
+    if args.workload != 'single-partition' and not args.static_startup:
+        parser.error('This workload requires --static-startup')
     if args.include_comparison and not args.static_startup:
         parser.error('--include-comparison requires --static-startup')
     audit = args.audit_dir.resolve()

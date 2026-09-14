@@ -32,3 +32,23 @@ def test_invalid_protocol_stops_before_creating_audit(tmp_path, workload):
     audit = tmp_path/'block'
     with pytest.raises(ValueError): block.execute(audit, workload=workload)
     assert not audit.exists()
+
+
+@pytest.mark.parametrize('workload,rate,duration', [
+    ('balanced-low',200,180), ('balanced-short',500,180), ('balanced-sustained',500,600)])
+def test_balanced_matched_config_is_frozen_before_cluster_access(tmp_path, monkeypatch, workload, rate, duration):
+    class BeforeCluster(Exception): pass
+    def stop_before_cluster(): raise BeforeCluster()
+    monkeypatch.setattr(block.r, 'command_lock', stop_before_cluster)
+    audit = tmp_path / 'balanced'
+    with pytest.raises(BeforeCluster):
+        block.execute(audit, static_startup=True, include_comparison=True, workload=workload)
+    config=yaml.safe_load((audit/'experiment-config.yaml').read_text())['data']
+    assert config['TRAFFIC_MODE']=='balanced'
+    assert int(config['TARGET_RATE'])==rate
+    assert int(config['EXP_DURATION_SEC'])==duration
+    assert int(config['WARMUP_SECONDS'])==60
+    assert int(config['DRAIN_SECONDS'])==120
+    assert config['CONSUMER_STATIC_MEMBERSHIP']=='true'
+    assert config['CONSUMER_ASSIGNMENT_MODE']=='cooperative'
+    assert int(config['WORKLOAD_SEED'])==71
