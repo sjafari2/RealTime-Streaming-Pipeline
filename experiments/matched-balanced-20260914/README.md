@@ -37,3 +37,12 @@ root is rejected to prevent overwriting previous evidence. The matched runner
 requires clean tracked code; pre-existing untracked duplicate copies named ` 2`
 are recorded and excluded only when their original path is tracked. Other
 untracked source still blocks execution. Shared code hashes must match every pod.
+
+## Start attempt, 2026-09-14
+
+210 local tests passed; the six-block dry-run listed the expected 12 trials.
+Two read-only pod requests succeeded, but both managed shared-state checks
+timed out. A bounded follow-up reported an OIDC discovery timeout against
+Authentik. No shared configuration/source was changed, no backup/sync step
+was reached, and no preparation or performance traffic started. Cluster
+access must be reliable before executing this block. Earlier results remain intact.
