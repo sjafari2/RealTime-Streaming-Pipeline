@@ -1,0 +1,28 @@
+\noindent\textbf{Names and run summaries used in the preliminary results.}
+In the results, \emph{completion p99} means the p99 end-to-end completion latency defined above, using the earliest valid completion of each acknowledged evaluation message completed by the fixed drain cutoff. It is conditional on completion and is always accompanied by unfinished count or percentage. The current synthetic endpoint follows the configured work but precedes measurement-output hashing/logging, offset storage and commit acknowledgment. Planned application experiments additionally include required prediction-output recording or combining before completion.
+
+\emph{Useful throughput} counts distinct message IDs with at least one completion inside evaluation, divided by $D_{\mathrm{eval}}$. Those messages can have been produced during warm-up. It differs from the completion-attempt throughput in Equation (3), which counts replays, and from admitted-cohort completion by drain. The \emph{admitted rate} is $N_{\mathrm{eval}}/D_{\mathrm{eval}}$; per-partition versions restrict the numerator to that partition.
+
+Let $F_p(t)$ be the contiguous completion frontier. \emph{Processing backlog} is
+\[
+Q_p(t)=\max\{0,O_p^{\mathrm{high}}(t)-F_p(t)\},\qquad Q(t)=\sum_{p\in P}Q_p(t).
+\]
+Only valid offsets and unique current owners are included. $Q(t)$ differs from the position-based operational backlog $B(t)$ in Equation (2) and from $U_{\mathrm{end}}$: it is an offset span that can include warm-up work, and concurrent completed records beyond a gap. The preliminary backlog plots and recovery diagnostic use $Q$, not $B$. A negative offset difference is invalid, rather than evidence of zero work.
+
+For valid contiguous evaluation intervals $[t_j,t_{j+1}]$ in $\mathcal V_Q$, with unchanged ownership and valid offset progression, the implemented trapezoidal summaries are
+\[
+A_Q=\sum_{j\in\mathcal V_Q}\frac{Q(t_j)+Q(t_{j+1})}{2}\Delta t_j,\qquad
+\overline Q_{\mathrm{covered}}=\frac{A_Q}{\sum_{j\in\mathcal V_Q}\Delta t_j}.
+\]
+Boundary intervals are clipped to evaluation using linear interpolation. $A_Q$ has units offset-seconds; the mean has units offsets. \emph{Processing-backlog coverage} is $100\sum_{j\in\mathcal V_Q}\Delta t_j/D_{\mathrm{eval}}$. No covered duration makes the area and mean unavailable. The 90\% comparison screen requires sufficient coverage in both paired runs and does not reconstruct missing time. These covered-interval summaries are distinct from the rolling snapshot mean $B_W$ below.
+
+\emph{Requested consumer CPU time} is an observed resource integral over the common evaluation-through-drain horizon. If $r_{cj}$ is consumer-container $c$'s CPU request in cores at the left sample of valid interval $j$, then
+\[
+C_{\mathrm{req}}=\frac1{60}\sum_{j\in\mathcal V_R}\Delta t_j\sum_{c\in S_j}r_{cj}
+\quad\text{core-minutes}.
+\]
+$S_j$ contains scheduled, nonterminal consumer pods, including pods not yet ready or terminating. The implementation holds the left sample to the next valid sample, rejects gaps longer than 15 s, and clips intervals to the declared horizon. Unsupported resource quantities make accounting unavailable. \emph{Resource coverage} is the covered duration divided by that horizon, expressed as a percentage. Partial coverage is never treated as zero cost. This metric excludes preparation and warm-up in the displayed comparisons and excludes producer, broker, sidecar and controller requests. It is not actual CPU use, total application cost or monetary expense; memory request-time is the analogous integral in GiB-seconds.
+
+\emph{Processing-backlog recovery confirmation time} is measured from the scheduled action anchor to the first observed confirmation of $Q\leq q_0$ throughout a valid same-owner hold interval. The pilot uses $q_0=1{,}500$ offsets and a 20 s hold, ending follow-up when production ends. Gaps or owner changes restart the hold. No observed recovery is censored; insufficient observations are unavailable. An initially healthy workload yields a health confirmation, not recovery from overload. This diagnostic does not implement the planned joint latency-and-growth recovery objective.
+
+\emph{Decision-to-first-completion delay} for an added consumer is its first recorded completion after the decision minus the recorded decision timestamp. The legacy exported field \texttt{request\_to\_first\_completion\_seconds} uses this decision origin, not scale-request completion. Scheduled-to-decision delay is separate. Kubernetes Ready transition and coordinator readiness observation are also separate endpoints. Cross-node timestamp uncertainty applies; none is an exact broker rebalance duration. \emph{Application-task duration} is the local monotonic time around configured work, excluding the surrounding consumer loop, output evidence and commit; a diagnostic averaged over warm-up, evaluation and drain is explicitly labeled and is not a capacity estimate. The calibration's admission-count coefficient of variation is $100\sigma_n/\overline n$ across all partitions using population standard deviation, undefined when the mean count is zero. It measures arrival balance, not lag skew.

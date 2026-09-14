@@ -1,3 +1,5 @@
+> Current consolidated proposal results: [unified 24-trial report](../proposal-results-unified-20260913/README.md). The files and page numbers below document the earlier delivery and remain as history.
+
 # Proposal progress update — 13 September 2026
 
 The proposal now reports **24 completed performance trials**: the original 16-trial campaign and eight later trials with verified matching starts. This documentation update adds no experiments.
