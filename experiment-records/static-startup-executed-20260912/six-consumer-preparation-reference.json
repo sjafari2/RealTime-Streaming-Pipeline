@@ -1,0 +1,496 @@
+{
+  "schema_version": 1,
+  "pods": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "node": "patternlab.calit2.optiputer.net",
+      "container_id": "containerd://39e3885a0715da090e58dab3feb7dd81f4ee0c65aad5f1c17994200da2c8440b",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330",
+      "node": "k8s-gpu-01.calit2.optiputer.net",
+      "container_id": "containerd://5c3fde256c645b3c0bfb3af515309e976b193a0dc48ded931e85670a70c09104",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d",
+      "node": "unseenu.crbs.ucsd.edu",
+      "container_id": "containerd://ea9cee78c39e20f3b4e0e2fd3fbce2ace81e3417832845393f9c2460ed27cf51",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-3",
+      "uid": "2f6976d0-7340-4cab-b0de-527cf3108489",
+      "node": "k8s-chase-ci-04.calit2.optiputer.net",
+      "container_id": "containerd://2491a26dff1bfc11edf163e4c3c27ad04f58d74c0d4dc07c89813175a2cb6c80",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-4",
+      "uid": "19e21090-a6a1-44b7-a1b4-f355fa82d6fd",
+      "node": "k8s-usra-01.calit2.optiputer.net",
+      "container_id": "containerd://7401458e465f024d2686ee3f2df0630a74861569470ad85c4748ab3e8c365e16",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-5",
+      "uid": "9bb09b37-b6ea-4b4f-a5a1-0761e3088b4a",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "container_id": "containerd://b9004005117d101c56e617d29cb22fb10f64a06debeb20d27318810cd85567b8",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-0",
+      "uid": "2b849105-4510-4904-a73d-b18a52e50f18",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "container_id": "containerd://384f5c67616d7f605b6372be99dd54b9427a9f4786eda5dfc94dcb02570f6ef7",
+      "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-1",
+      "uid": "e2c9fbd8-7d0e-495d-879a-929cbf99ab58",
+      "node": "k8s-usra-01.calit2.optiputer.net",
+      "container_id": "containerd://f01691ea125d205af8c8213949cf992f2951e0a85ae60a492ce0b075860eed70",
+      "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+      "restart_count": 1,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-2",
+      "uid": "64bb61fb-fbd1-4205-9983-e55e536c1dd6",
+      "node": "k8s-ravi-01.calit2.optiputer.net",
+      "container_id": "containerd://58c01a13d4b863db6d88d32b6be786279c05c745bc4e9175f50f38ef0f0574a3",
+      "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+      "restart_count": 1,
+      "resources": {
+        "limits": {
+          "cpu": "4",
+          "ephemeral-storage": "50Gi",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "1Gi"
+        }
+      }
+    }
+  ],
+  "assignment": [
+    {
+      "topic_index": 0,
+      "partition": 0,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 1,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 2,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 3,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 4,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 5,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 6,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 7,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 8,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 9,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 10,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 11,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 12,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 13,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 14,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 15,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 16,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 17,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 18,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 19,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 20,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 21,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 22,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 23,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 24,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 25,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 26,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 27,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 28,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 29,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 30,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 31,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 32,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 33,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 34,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 35,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 36,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 37,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 38,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 39,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 40,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 41,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 42,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 43,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 44,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 45,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 46,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 47,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 48,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 49,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 50,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 51,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 52,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 53,
+      "pod": "consumer-sts-5"
+    },
+    {
+      "topic_index": 0,
+      "partition": 54,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "topic_index": 0,
+      "partition": 55,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "topic_index": 0,
+      "partition": 56,
+      "pod": "consumer-sts-2"
+    },
+    {
+      "topic_index": 0,
+      "partition": 57,
+      "pod": "consumer-sts-3"
+    },
+    {
+      "topic_index": 0,
+      "partition": 58,
+      "pod": "consumer-sts-4"
+    },
+    {
+      "topic_index": 0,
+      "partition": 59,
+      "pod": "consumer-sts-5"
+    }
+  ]
+}

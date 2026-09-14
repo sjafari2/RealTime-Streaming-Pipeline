@@ -1,0 +1,51 @@
+{
+  "status": "failed",
+  "created_epoch": 1789287533.776299,
+  "seed": 71,
+  "order": [
+    "none",
+    "scale"
+  ],
+  "attempts": [
+    {
+      "stage": "capture_three",
+      "action": "none",
+      "initial_consumers": 3,
+      "preparation_only": true,
+      "capture_reference": true,
+      "started_epoch": 1789287572.087574,
+      "status": "preparation_verified",
+      "run_id": "run-20260913-022024",
+      "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-022024",
+      "preparation_seconds": 140.33876379206777,
+      "finished_epoch": 1789287712.426424
+    },
+    {
+      "stage": "restart_three",
+      "action": "none",
+      "initial_consumers": 3,
+      "preparation_only": true,
+      "capture_reference": false,
+      "started_epoch": 1789287712.431482,
+      "status": "failed",
+      "error": "Command '['kubectl', '-n', 'kafkastreamingdata', '--request-timeout=30s', 'get', 'pods', '-l', 'app=consumer-sts', '-o', 'json']' returned non-zero exit status 1.",
+      "preparation_seconds": 64.84548112517223
+    }
+  ],
+  "runs": [],
+  "preparation_seconds_used": 205.18424491724,
+  "preparation_verified": false,
+  "workload": "80-20",
+  "startup_protocol": "static-observed-reference-v1",
+  "include_comparison": true,
+  "code_commit": "1ec749c6735e5b93cf846dfcd8c7373422dcaaac",
+  "initial_free_bytes": {
+    "producer": 4592762880,
+    "consumer": 312060411904,
+    "local": 18121715712
+  },
+  "reference_sha256": "326e1319f2bfd958d4e5209973b26364d07a36408106b07b7788ec2f66ec41f5",
+  "error": "Command '['kubectl', '-n', 'kafkastreamingdata', '--request-timeout=30s', 'get', 'pods', '-l', 'app=consumer-sts', '-o', 'json']' returned non-zero exit status 1.",
+  "restoration": "verified",
+  "finished_epoch": 1789288827.341535
+}

@@ -1,0 +1,852 @@
+{
+  "run_id": "run-20260913-025849",
+  "evaluation_start_epoch": 1789290046.02799,
+  "input_sha256": {
+    "consumer/consumer-sts-0/ae9ddc3a4b294c8e87a18c0f67f88a26/events.jsonl": "ad88956f010d5a7347a1ab8a8fad112aec36b9a925c63b8683f15de7fc0ccfe3",
+    "consumer/consumer-sts-1/04fa652345a349898f63cd9323645a76/events.jsonl": "2bb92839a8f30eeeca08a5ae68676a2f2b0f46f02687791ba5ff9e563b7ef109",
+    "consumer/consumer-sts-2/67151321f4e14498bf64fa7d48ca7ada/events.jsonl": "ad88efb14a3121973c5caaee6c0c492c5a8d3769aed99cee8e5320837b54318e",
+    "producer/producer-sts-0/195833a240644af5b8ec77cfdadf8e70/events.jsonl": "56331f99171054bf2b922247eb9df37a95e2624ddef6f038b8863e352640aa01",
+    "producer/producer-sts-1/5ba6e769cf7b49c69434a36d6bbd8220/events.jsonl": "ee6f1c8781a34c2d12f9741766ec535a663080fc761c9334f94a45c349a5df0c",
+    "producer/producer-sts-2/5e9366dca8d6457b8dc2263c59fe003a/events.jsonl": "6752a0692fa7fa5e4df5c77dffbbf8093d6b4b77098f2100ba2f9e959a85cbb6",
+    "lag-summary.json": "8e4b6b93d7c49380ca4d1abb751bb6bd0bbb75e16b048eeeebc9a6d988a318c3",
+    "manifest.json": "8c00ec4aa715867e6f6167c2d0b584121a44f9c8ac2f7dc1664644e0791bf806"
+  },
+  "event_counts": {
+    "completed": 449942,
+    "acknowledged": 449942
+  },
+  "successful_commit_events": 623,
+  "failed_commit_events": 0,
+  "failures": [],
+  "final_partition_offsets": [
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 0,
+      "acknowledged_next_offset": 1781,
+      "completed_next_offset": 1781,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1781
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 1,
+      "acknowledged_next_offset": 1829,
+      "completed_next_offset": 1829,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1829
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 2,
+      "acknowledged_next_offset": 1808,
+      "completed_next_offset": 1808,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1808
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 3,
+      "acknowledged_next_offset": 1871,
+      "completed_next_offset": 1871,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1871
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 4,
+      "acknowledged_next_offset": 1882,
+      "completed_next_offset": 1882,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1882
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 5,
+      "acknowledged_next_offset": 30041,
+      "completed_next_offset": 30041,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 30041
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 6,
+      "acknowledged_next_offset": 1850,
+      "completed_next_offset": 1850,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1850
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 7,
+      "acknowledged_next_offset": 1864,
+      "completed_next_offset": 1864,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1864
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 8,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 9,
+      "acknowledged_next_offset": 1894,
+      "completed_next_offset": 1894,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1894
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 10,
+      "acknowledged_next_offset": 29960,
+      "completed_next_offset": 29960,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 29960
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 11,
+      "acknowledged_next_offset": 1903,
+      "completed_next_offset": 1903,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1903
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 12,
+      "acknowledged_next_offset": 1907,
+      "completed_next_offset": 1907,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1907
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 13,
+      "acknowledged_next_offset": 1886,
+      "completed_next_offset": 1886,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1886
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 14,
+      "acknowledged_next_offset": 1929,
+      "completed_next_offset": 1929,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1929
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 15,
+      "acknowledged_next_offset": 1880,
+      "completed_next_offset": 1880,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1880
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 16,
+      "acknowledged_next_offset": 1779,
+      "completed_next_offset": 1779,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1779
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 17,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 18,
+      "acknowledged_next_offset": 1816,
+      "completed_next_offset": 1816,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1816
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 19,
+      "acknowledged_next_offset": 1879,
+      "completed_next_offset": 1879,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1879
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 20,
+      "acknowledged_next_offset": 1886,
+      "completed_next_offset": 1886,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1886
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 21,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 22,
+      "acknowledged_next_offset": 1894,
+      "completed_next_offset": 1894,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1894
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 23,
+      "acknowledged_next_offset": 1872,
+      "completed_next_offset": 1872,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1872
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 24,
+      "acknowledged_next_offset": 1821,
+      "completed_next_offset": 1821,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1821
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 25,
+      "acknowledged_next_offset": 29837,
+      "completed_next_offset": 29837,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 29837
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 26,
+      "acknowledged_next_offset": 1905,
+      "completed_next_offset": 1905,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1905
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 27,
+      "acknowledged_next_offset": 1918,
+      "completed_next_offset": 1918,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1918
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 28,
+      "acknowledged_next_offset": 1837,
+      "completed_next_offset": 1837,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1837
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 29,
+      "acknowledged_next_offset": 1891,
+      "completed_next_offset": 1891,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1891
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 30,
+      "acknowledged_next_offset": 1919,
+      "completed_next_offset": 1919,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1919
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 31,
+      "acknowledged_next_offset": 1856,
+      "completed_next_offset": 1856,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1856
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 32,
+      "acknowledged_next_offset": 1909,
+      "completed_next_offset": 1909,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1909
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 33,
+      "acknowledged_next_offset": 29933,
+      "completed_next_offset": 29933,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 29933
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 34,
+      "acknowledged_next_offset": 1892,
+      "completed_next_offset": 1892,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1892
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 35,
+      "acknowledged_next_offset": 29773,
+      "completed_next_offset": 29773,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 29773
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 36,
+      "acknowledged_next_offset": 1835,
+      "completed_next_offset": 1835,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1835
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 37,
+      "acknowledged_next_offset": 1904,
+      "completed_next_offset": 1904,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1904
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 38,
+      "acknowledged_next_offset": 1893,
+      "completed_next_offset": 1893,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1893
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 39,
+      "acknowledged_next_offset": 30152,
+      "completed_next_offset": 30152,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 30152
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 40,
+      "acknowledged_next_offset": 1842,
+      "completed_next_offset": 1842,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1842
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 41,
+      "acknowledged_next_offset": 1877,
+      "completed_next_offset": 1877,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1877
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 42,
+      "acknowledged_next_offset": 1885,
+      "completed_next_offset": 1885,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1885
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 43,
+      "acknowledged_next_offset": 30123,
+      "completed_next_offset": 30123,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 30123
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 44,
+      "acknowledged_next_offset": 1936,
+      "completed_next_offset": 1936,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1936
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 45,
+      "acknowledged_next_offset": 30054,
+      "completed_next_offset": 30054,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 30054
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 46,
+      "acknowledged_next_offset": 1855,
+      "completed_next_offset": 1855,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1855
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 47,
+      "acknowledged_next_offset": 1920,
+      "completed_next_offset": 1920,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1920
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 48,
+      "acknowledged_next_offset": 1860,
+      "completed_next_offset": 1860,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1860
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 49,
+      "acknowledged_next_offset": 1809,
+      "completed_next_offset": 1809,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1809
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 50,
+      "acknowledged_next_offset": 1918,
+      "completed_next_offset": 1918,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1918
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 51,
+      "acknowledged_next_offset": 30256,
+      "completed_next_offset": 30256,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 30256
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 52,
+      "acknowledged_next_offset": 1893,
+      "completed_next_offset": 1893,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 1893
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 53,
+      "acknowledged_next_offset": 1891,
+      "completed_next_offset": 1891,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1891
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 54,
+      "acknowledged_next_offset": 1851,
+      "completed_next_offset": 1851,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1851
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 55,
+      "acknowledged_next_offset": 29909,
+      "completed_next_offset": 29909,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 29909
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 56,
+      "acknowledged_next_offset": 1851,
+      "completed_next_offset": 1851,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 1851
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 57,
+      "acknowledged_next_offset": 1907,
+      "completed_next_offset": 1907,
+      "last_success": {
+        "timestamp": 1789290406.0802865,
+        "pod": "consumer-sts-0",
+        "offset": 1907
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 58,
+      "acknowledged_next_offset": 30269,
+      "completed_next_offset": 30269,
+      "last_success": {
+        "timestamp": 1789290406.0729983,
+        "pod": "consumer-sts-1",
+        "offset": 30269
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    },
+    {
+      "topic": "controlled-8020-static-s71-skew-R500-20260913-025849_0",
+      "partition": 59,
+      "acknowledged_next_offset": 29785,
+      "completed_next_offset": 29785,
+      "last_success": {
+        "timestamp": 1789290406.1342688,
+        "pod": "consumer-sts-2",
+        "offset": 29785
+      },
+      "final_commit_covers_acknowledged": true,
+      "final_commit_covers_completed": true
+    }
+  ],
+  "consumer_finish_events": [
+    {
+      "event": "finished",
+      "timestamp": 1789290406.085907,
+      "failure": null,
+      "lifetime_seconds": 467.27400083304383,
+      "pod": "consumer-sts-0"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789290406.0810828,
+      "failure": null,
+      "lifetime_seconds": 465.3592470707372,
+      "pod": "consumer-sts-1"
+    },
+    {
+      "event": "finished",
+      "timestamp": 1789290406.1402926,
+      "failure": null,
+      "lifetime_seconds": 464.5376849081367,
+      "pod": "consumer-sts-2"
+    }
+  ],
+  "transfers": [],
+  "lag_covered_seconds": 238.0,
+  "lag_covered_fraction": 0.9916666666666667,
+  "uncovered_intervals": [
+    {
+      "start": 0.0,
+      "end": 1.0013580322265625e-05,
+      "reasons": [
+        "unsampled boundary"
+      ]
+    },
+    {
+      "start": 238.00001001358032,
+      "end": 240.0,
+      "reasons": [
+        "unsampled boundary"
+      ]
+    }
+  ],
+  "invalid_snapshots": [],
+  "limits": [
+    "Saved client commit acknowledgments, not a new broker query.",
+    "Final offset coverage is not by itself proof of exactly-once processing.",
+    "Cross-pod event alignment has unmeasured clock uncertainty.",
+    "Empty assign callbacks do not themselves show a partition transfer."
+  ]
+}

@@ -60,6 +60,19 @@ def synchronized_lag(method):
     return call
 
 
+def membership_settings(pod, environment=None):
+    """The shared setting enables membership; each pod supplies its own identity."""
+    environment = os.environ if environment is None else environment
+    enabled = environment.get('CONSUMER_STATIC_MEMBERSHIP', 'false').lower()
+    if enabled not in ('true', 'false'):
+        raise ValueError('CONSUMER_STATIC_MEMBERSHIP must be true or false')
+    if enabled == 'false':
+        return {}
+    if not isinstance(pod, str) or not pod or any(c.isspace() for c in pod):
+        raise ValueError('Static membership needs a nonempty, unique pod name')
+    return {'group.instance.id': pod}
+
+
 class MetricConsumer:
     def __init__(self):
         self.runtime = Runtime('consumer')
@@ -105,6 +118,8 @@ class MetricConsumer:
             'partition.assignment.strategy': os.getenv('PARTITION_ASSIGNMENT_STRATEGY', 'cooperative-sticky'),
             'on_commit': self.on_commit,
         }
+        self.config.update(membership_settings(self.runtime.pod))
+        self.runtime.details['group_instance_id'] = self.config.get('group.instance.id')
         settings = {'FETCH_MAX_BYTES': 'fetch.max.bytes', 'FETCH_MIN_BYTES': 'fetch.min.bytes',
                     'FETCH_MAX_WAIT_MS': 'fetch.wait.max.ms', 'MAX_PARTITION_FETCH_BYTES': 'max.partition.fetch.bytes',
                     'MAX_POLL_INTERVAL_MS': 'max.poll.interval.ms', 'SESSION_TIMEOUT_MS': 'session.timeout.ms',

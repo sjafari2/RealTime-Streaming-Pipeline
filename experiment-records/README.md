@@ -1,5 +1,7 @@
 # Small experiment records kept in Git
 
+**Start here:** [Experiment register and progress](../EXPERIMENT_REGISTER.md). Update it after each reviewed run or bounded block; keep exclusions and approval status visible.
+
 This directory keeps reviewable summaries and frozen configurations. Raw per-message
 evidence and full monitoring exports remain in the ignored `results/` directory and
 on separately managed storage. These records are not a replacement for a data backup.
@@ -21,3 +23,7 @@ record with a later explanatory commit so the earlier interpretation remains vis
 The run `run-20260911-214924` predates this Git integration; its source identity is
 retained in its evidence and deployment audit, and its historical Git revision is
 explicitly unknown.
+
+The [controlled repeat](static-startup-executed-20260912/README.md) adds four successful empty preparations and two completed performance trials with a common frozen starting reference.
+
+The [80/20 comparison](8020-comparison-20260913/README.md) adds two trials with 80% directed to 12 of 60 partitions, following four successful empty rehearsals.

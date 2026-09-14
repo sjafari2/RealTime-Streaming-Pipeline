@@ -1,0 +1,106 @@
+{
+  "status": "complete",
+  "workload": "single-partition",
+  "code_commit": "f15279aeb2e7bb5400a1b7044d751d2148b081d2",
+  "order": [
+    "none",
+    "scale"
+  ],
+  "preparations": 4,
+  "performance_trials": 2,
+  "verified_evidence_files": 126,
+  "restoration": "verified",
+  "all_applications_stopped": true,
+  "reference_comparison": {
+    "previous_record": "experiment-records/static-startup-executed-20260912",
+    "same_assignment": true,
+    "same_original_pod_identities": true
+  },
+  "runs": [
+    {
+      "action": "none",
+      "run_id": "run-20260913-033550",
+      "admitted": 360000,
+      "completed": 219015,
+      "unfinished": 140985,
+      "unfinished_percent": 39.1625,
+      "completion_p99_seconds": 228.76100206375122,
+      "completion_mean_seconds": 118.1438207725198,
+      "requested_cpu_core_minutes": 36.0,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.9916666666666667,
+      "selected_traffic_percent": 79.97805555555556,
+      "duplicate_completion_attempts": 0,
+      "recovery": {
+        "status": "not_observed_by_evaluation_end",
+        "threshold_offsets": 1500,
+        "hold_seconds": 20,
+        "seconds_to_confirmation": null,
+        "censored": true,
+        "followup_seconds": 180.0
+      },
+      "timing": {
+        "scheduled_epoch": 1789292331.546121,
+        "action": "none",
+        "decision_delay_seconds": 7.294816017150879,
+        "new_consumers": []
+      },
+      "quality_flags": []
+    },
+    {
+      "action": "scale",
+      "run_id": "run-20260913-034633",
+      "admitted": 360000,
+      "completed": 139341,
+      "unfinished": 220659,
+      "unfinished_percent": 61.29416666666667,
+      "completion_p99_seconds": 294.12830901145935,
+      "completion_mean_seconds": 104.32913879234795,
+      "requested_cpu_core_minutes": 65.13927538394928,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.8166666666666667,
+      "selected_traffic_percent": 79.97777777777777,
+      "duplicate_completion_attempts": 0,
+      "recovery": {
+        "status": "not_observed_by_evaluation_end",
+        "threshold_offsets": 1500,
+        "hold_seconds": 20,
+        "seconds_to_confirmation": null,
+        "censored": true,
+        "followup_seconds": 180.0
+      },
+      "timing": {
+        "scheduled_epoch": 1789292975.852347,
+        "action": "scale",
+        "decision_delay_seconds": 7.562912940979004,
+        "new_consumers": [
+          {
+            "pod": "consumer-sts-3",
+            "node": "k8s-u200-00.calit2.optiputer.net",
+            "request_to_kubernetes_ready_seconds": 13.584740161895752,
+            "request_to_ready_observed_seconds": 17.812859296798706,
+            "request_to_first_completion_seconds": 16.123865127563477
+          },
+          {
+            "pod": "consumer-sts-4",
+            "node": "k8s-usra-01.calit2.optiputer.net",
+            "request_to_kubernetes_ready_seconds": 5.584740161895752,
+            "request_to_ready_observed_seconds": 6.613327264785767,
+            "request_to_first_completion_seconds": 8.074908256530762
+          },
+          {
+            "pod": "consumer-sts-5",
+            "node": "k8s-chase-ci-04.calit2.optiputer.net",
+            "request_to_kubernetes_ready_seconds": 13.584740161895752,
+            "request_to_ready_observed_seconds": 17.812859296798706,
+            "request_to_first_completion_seconds": 16.13981342315674
+          }
+        ]
+      },
+      "quality_flags": [
+        "Lag coverage below 90%; transition gaps remain part of the result"
+      ]
+    }
+  ],
+  "aggregate_backlog_comparison_eligible": false
+}

@@ -1,0 +1,2083 @@
+{
+  "pairs": [
+    {
+      "pair": "80-20-s71-repeat",
+      "runs": {
+        "none": {
+          "run_id": "run-20260913-025849",
+          "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-025849",
+          "action": "none",
+          "workload_seed": "71",
+          "config": {
+            "ACKS": "all",
+            "APP_CPU_ITERATIONS": "2000",
+            "APP_DELAY_MAX_MS": "0",
+            "APP_DELAY_MODE": "fixed",
+            "APP_DELAY_MS": "0",
+            "AUTO_COMMIT_INTERVAL_MS": "0",
+            "AUTO_OFFSET_RESET": "earliest",
+            "BATCH_SIZE": "65536",
+            "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+            "BROKER_COUNT": "3",
+            "CLEANUP_POLICY": "delete",
+            "COMPRESSION_TYPE": "lz4",
+            "CONNECTION_MAX_IDLE_MS": "30000",
+            "CONSUMER_CLIENT_ID": "pipeline-consumer",
+            "CONSUMER_DEBUG": "false",
+            "CONSUMER_DEBUG_EVERY_N": "20000",
+            "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+            "CONSUMER_GROUP_ID": "controlled-static-1789289262763084000",
+            "CONSUMER_HEARTBEAT_SEC": "10",
+            "CONSUMER_HTTP_PORT": "8002",
+            "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+            "CONSUMER_POD_COUNT": "3",
+            "CSV_LATENCY_WINDOW_SEC": "30",
+            "CSV_LOG_INTERVAL_SEC": "30",
+            "DELAY_BETWEEN_MESSAGES": "0",
+            "DELIVERY_TIMEOUT_MS": "30000",
+            "DRAIN_SECONDS": "120",
+            "DROP_CATCHUP": "false",
+            "ENABLE_AUTO_COMMIT": "false",
+            "ENABLE_IDEMPOTENCE": "true",
+            "EVIDENCE_MAX_BUFFER": "100000",
+            "EXP_DURATION_SEC": "300",
+            "EXP_ID": "controlled-8020-static-s71",
+            "FETCH_MAX_BYTES": "5242880",
+            "FETCH_MAX_WAIT_MS": "5",
+            "FETCH_MIN_BYTES": "1",
+            "FINAL_SCRAPE_SECONDS": "15",
+            "HEARTBEAT_INTERVAL_MS": "1000",
+            "LAG_FRESHNESS_SECONDS": "10",
+            "LAG_QUERY_BUDGET_SEC": "0.2",
+            "LAG_QUERY_INTERVAL": "2",
+            "LAG_QUERY_TIMEOUT": "3",
+            "LINGER_MS": "5",
+            "MAX_BURST": "2",
+            "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+            "MAX_PARTITION_FETCH_BYTES": "1048576",
+            "MAX_POLL_INTERVAL_MS": "120000",
+            "MAX_POLL_RECORDS": "100",
+            "MAX_REQUEST_SIZE": "1048576",
+            "METADATA_MAX_AGE_MS": "120000",
+            "MIN_BURST": "1",
+            "MIN_INSYNC_REPLICAS": "1",
+            "MITIGATION_POLICY": "none",
+            "MSG_MAX_BYTES": "1048576",
+            "NAMESPACE": "kafkastreamingdata",
+            "NUM_PARTITIONS": "60",
+            "OUTCOME_LOG_ENABLED": "true",
+            "PACING_MODE": "per_message",
+            "PACING_TICK_SEC": "0.005",
+            "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+            "PARTITION_LAG_CSV_ENABLED": "false",
+            "PAYLOAD_SIZE_BYTES": "100",
+            "PER_MSG_LAT_ENABLED": "false",
+            "PER_MSG_LAT_FLUSH_SEC": "10",
+            "PER_MSG_LAT_MAX_BUFFER": "20000",
+            "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+            "POLL_MAX_MSG": "25",
+            "POLL_TIMEOUT": "0.1",
+            "PROCESSED_DIR": "/tmp/metrics/processed",
+            "PRODUCER_CLIENT_ID": "pipeline-producer",
+            "PRODUCER_DEBUG": "false",
+            "PRODUCER_DEBUG_EVERY_N": "20000",
+            "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+            "PRODUCER_FLUSH_SECONDS": "30",
+            "PRODUCER_HEARTBEAT_SEC": "10",
+            "PRODUCER_HTTP_PORT": "8001",
+            "PRODUCER_INPUT_PATH": "producer-data",
+            "PRODUCER_MAX_MESSAGES": "0",
+            "PRODUCER_POD_COUNT": "3",
+            "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+            "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+            "RANDOM_RANGE": "1000",
+            "READINESS_TIMEOUT_SECONDS": "180",
+            "REBALANCE_CSV_ENABLED": "false",
+            "RECONNECT_BACKOFF_MAX_MS": "1000",
+            "RECONNECT_BACKOFF_MS": "100",
+            "RELEASE_NAME": "pip",
+            "REPLICATION_FACTOR": "1",
+            "REQUEST_TIMEOUT_MS": "10000",
+            "RETENTION_MS": "86400000",
+            "RETRIES": "2",
+            "RETRY_BACKOFF_MS": "20",
+            "RUN_ID": "run-20260913-025849",
+            "SEGMENT_MS": "30000",
+            "SESSION_TIMEOUT_MS": "20000",
+            "SKEW_FRACTION": "0.8",
+            "SKEW_PARTITION": "0.2",
+            "SLO_THRESHOLD_MS": "99",
+            "SLO_WINDOW_SECONDS": "30",
+            "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+            "SOCKET_SEND_BUFFER_BYTES": "524288",
+            "SOCKET_TIMEOUT_MS": "30000",
+            "TARGET_RATE": "500",
+            "TOPIC_COUNT": "1",
+            "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+            "TOPIC_TITLE": "controlled-8020-static-s71-skew-R500-20260913-025849",
+            "TRAFFIC_MODE": "skew",
+            "WARMUP_SECONDS": "60",
+            "WORKLOAD_SEED": "71",
+            "CONSUMER_STATIC_MEMBERSHIP": "true"
+          },
+          "intervention": {
+            "action": "none",
+            "initial_consumers": 3,
+            "target_consumers": null,
+            "after_evaluation_start_seconds": 60,
+            "recovery_threshold_offsets": 1500,
+            "recovery_hold_seconds": 20,
+            "prepare_only": false,
+            "placement_reference": {
+              "schema_version": 1,
+              "pods": [
+                {
+                  "role": "consumer",
+                  "pod": "consumer-sts-0",
+                  "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+                  "node": "patternlab.calit2.optiputer.net",
+                  "container_id": "containerd://39e3885a0715da090e58dab3feb7dd81f4ee0c65aad5f1c17994200da2c8440b",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "consumer",
+                  "pod": "consumer-sts-1",
+                  "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330",
+                  "node": "k8s-gpu-01.calit2.optiputer.net",
+                  "container_id": "containerd://5c3fde256c645b3c0bfb3af515309e976b193a0dc48ded931e85670a70c09104",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "consumer",
+                  "pod": "consumer-sts-2",
+                  "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d",
+                  "node": "unseenu.crbs.ucsd.edu",
+                  "container_id": "containerd://ea9cee78c39e20f3b4e0e2fd3fbce2ace81e3417832845393f9c2460ed27cf51",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "producer",
+                  "pod": "producer-sts-0",
+                  "uid": "2b849105-4510-4904-a73d-b18a52e50f18",
+                  "node": "k8s-u200-00.calit2.optiputer.net",
+                  "container_id": "containerd://384f5c67616d7f605b6372be99dd54b9427a9f4786eda5dfc94dcb02570f6ef7",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "producer",
+                  "pod": "producer-sts-1",
+                  "uid": "e2c9fbd8-7d0e-495d-879a-929cbf99ab58",
+                  "node": "k8s-usra-01.calit2.optiputer.net",
+                  "container_id": "containerd://f01691ea125d205af8c8213949cf992f2951e0a85ae60a492ce0b075860eed70",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+                  "restart_count": 1,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "producer",
+                  "pod": "producer-sts-2",
+                  "uid": "64bb61fb-fbd1-4205-9983-e55e536c1dd6",
+                  "node": "k8s-ravi-01.calit2.optiputer.net",
+                  "container_id": "containerd://58c01a13d4b863db6d88d32b6be786279c05c745bc4e9175f50f38ef0f0574a3",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+                  "restart_count": 1,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                }
+              ],
+              "assignment": [
+                {
+                  "topic_index": 0,
+                  "partition": 0,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 1,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 2,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 3,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 4,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 5,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 6,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 7,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 8,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 9,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 10,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 11,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 12,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 13,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 14,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 15,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 16,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 17,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 18,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 19,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 20,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 21,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 22,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 23,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 24,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 25,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 26,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 27,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 28,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 29,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 30,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 31,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 32,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 33,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 34,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 35,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 36,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 37,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 38,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 39,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 40,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 41,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 42,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 43,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 44,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 45,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 46,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 47,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 48,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 49,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 50,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 51,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 52,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 53,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 54,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 55,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 56,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 57,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 58,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 59,
+                  "pod": "consumer-sts-2"
+                }
+              ]
+            },
+            "preparation_budget_seconds": 603.541714708088,
+            "at_epoch": 1789290106.02799
+          },
+          "metrics": {
+            "admitted_evaluation_cohort": 360000,
+            "completed_by_drain": 360000,
+            "incomplete_by_drain": 0,
+            "duplicate_completion_attempts": 0,
+            "admitted_messages_per_second": 1500.0,
+            "useful_throughput_per_second": 1281.8416666666667,
+            "deadline_miss_fraction": 0.7776888888888889,
+            "admitted_cohort_completion_mean_seconds": 34.27169470247163,
+            "admitted_cohort_completion_p50_seconds": 30.885420083999634,
+            "admitted_cohort_completion_p95_seconds": 101.6061360836029,
+            "admitted_cohort_completion_p99_seconds": 115.68209099769592,
+            "unfinished_fraction": 0.0,
+            "target_admission_fraction": 1.0,
+            "lag_covered_fraction": 0.9916666666666667,
+            "consumer_process_seconds": 1397.1709328119177,
+            "processing_backlog_area_offset_seconds": 9106537.0,
+            "mean_processing_backlog_offsets": 38262.76050420168,
+            "evaluation_and_drain_requested_cpu_seconds": 2160.0,
+            "evaluation_and_drain_resource_coverage": 1.0
+          },
+          "processing_backlog_integrals": {
+            "evaluation": {
+              "area_offset_seconds": 9106537.0,
+              "covered_seconds": 238.0,
+              "covered_fraction": 0.9916666666666667,
+              "mean_offsets": 38262.76050420168
+            },
+            "after_scheduled_action": {
+              "area_offset_seconds": 7971718.255246142,
+              "covered_seconds": 178.00001001358032,
+              "covered_fraction": 0.9888889445198907,
+              "mean_offsets": 44784.93149881255
+            }
+          },
+          "resource_windows": {
+            "production": {
+              "covered_seconds": 300.0,
+              "observation_seconds": 300.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 900.0,
+              "consumer_container_requested_cpu_seconds_observed": 1800.0,
+              "consumer_container_requested_gib_seconds_observed": 900.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation": {
+              "covered_seconds": 240.0,
+              "observation_seconds": 240.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 720.0,
+              "consumer_container_requested_cpu_seconds_observed": 1440.0,
+              "consumer_container_requested_gib_seconds_observed": 720.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation_and_drain": {
+              "covered_seconds": 360.0,
+              "observation_seconds": 360.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 1080.0,
+              "consumer_container_requested_cpu_seconds_observed": 2160.0,
+              "consumer_container_requested_gib_seconds_observed": 1080.0,
+              "intervals_with_unsupported_resources": 0
+            },
+            "after_scheduled_action": {
+              "covered_seconds": 180.0,
+              "observation_seconds": 180.0,
+              "covered_fraction": 1.0,
+              "scheduled_consumer_pod_seconds_observed": 540.0,
+              "consumer_container_requested_cpu_seconds_observed": 1080.0,
+              "consumer_container_requested_gib_seconds_observed": 540.0,
+              "intervals_with_unsupported_resources": 0
+            }
+          },
+          "timing": {
+            "scheduled_epoch": 1789290106.02799,
+            "action": "none",
+            "decision_delay_seconds": 7.140646934509277,
+            "new_consumers": []
+          },
+          "recovery": {
+            "status": "not_observed_by_evaluation_end",
+            "threshold_offsets": 1500,
+            "hold_seconds": 20,
+            "seconds_to_confirmation": null,
+            "censored": true,
+            "followup_seconds": 180.0
+          },
+          "commit_results": {
+            "successful": 623
+          },
+          "commit_errors": [],
+          "source_signatures": [
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"consumer\", \"source\": {\"consumer.py\": \"caab1a7e93e6b046a0eeb9a688caea2fb09d887717bc7d6eae719c5ff0a63ed1\", \"consumer1.py\": \"5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68\", \"delete-empty-dirs.py\": \"65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"supervise.py\": \"35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.15.1\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}"
+          ],
+          "quality_flags": [],
+          "evidence_valid": true,
+          "validity_failures": []
+        },
+        "scale": {
+          "run_id": "run-20260913-030934",
+          "directory": "/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260913-030934",
+          "action": "scale",
+          "workload_seed": "71",
+          "config": {
+            "ACKS": "all",
+            "APP_CPU_ITERATIONS": "2000",
+            "APP_DELAY_MAX_MS": "0",
+            "APP_DELAY_MODE": "fixed",
+            "APP_DELAY_MS": "0",
+            "AUTO_COMMIT_INTERVAL_MS": "0",
+            "AUTO_OFFSET_RESET": "earliest",
+            "BATCH_SIZE": "65536",
+            "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+            "BROKER_COUNT": "3",
+            "CLEANUP_POLICY": "delete",
+            "COMPRESSION_TYPE": "lz4",
+            "CONNECTION_MAX_IDLE_MS": "30000",
+            "CONSUMER_CLIENT_ID": "pipeline-consumer",
+            "CONSUMER_DEBUG": "false",
+            "CONSUMER_DEBUG_EVERY_N": "20000",
+            "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+            "CONSUMER_GROUP_ID": "controlled-static-1789289262763084000",
+            "CONSUMER_HEARTBEAT_SEC": "10",
+            "CONSUMER_HTTP_PORT": "8002",
+            "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+            "CONSUMER_POD_COUNT": "3",
+            "CSV_LATENCY_WINDOW_SEC": "30",
+            "CSV_LOG_INTERVAL_SEC": "30",
+            "DELAY_BETWEEN_MESSAGES": "0",
+            "DELIVERY_TIMEOUT_MS": "30000",
+            "DRAIN_SECONDS": "120",
+            "DROP_CATCHUP": "false",
+            "ENABLE_AUTO_COMMIT": "false",
+            "ENABLE_IDEMPOTENCE": "true",
+            "EVIDENCE_MAX_BUFFER": "100000",
+            "EXP_DURATION_SEC": "300",
+            "EXP_ID": "controlled-8020-static-s71",
+            "FETCH_MAX_BYTES": "5242880",
+            "FETCH_MAX_WAIT_MS": "5",
+            "FETCH_MIN_BYTES": "1",
+            "FINAL_SCRAPE_SECONDS": "15",
+            "HEARTBEAT_INTERVAL_MS": "1000",
+            "LAG_FRESHNESS_SECONDS": "10",
+            "LAG_QUERY_BUDGET_SEC": "0.2",
+            "LAG_QUERY_INTERVAL": "2",
+            "LAG_QUERY_TIMEOUT": "3",
+            "LINGER_MS": "5",
+            "MAX_BURST": "2",
+            "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+            "MAX_PARTITION_FETCH_BYTES": "1048576",
+            "MAX_POLL_INTERVAL_MS": "120000",
+            "MAX_POLL_RECORDS": "100",
+            "MAX_REQUEST_SIZE": "1048576",
+            "METADATA_MAX_AGE_MS": "120000",
+            "MIN_BURST": "1",
+            "MIN_INSYNC_REPLICAS": "1",
+            "MITIGATION_POLICY": "none",
+            "MSG_MAX_BYTES": "1048576",
+            "NAMESPACE": "kafkastreamingdata",
+            "NUM_PARTITIONS": "60",
+            "OUTCOME_LOG_ENABLED": "true",
+            "PACING_MODE": "per_message",
+            "PACING_TICK_SEC": "0.005",
+            "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+            "PARTITION_LAG_CSV_ENABLED": "false",
+            "PAYLOAD_SIZE_BYTES": "100",
+            "PER_MSG_LAT_ENABLED": "false",
+            "PER_MSG_LAT_FLUSH_SEC": "10",
+            "PER_MSG_LAT_MAX_BUFFER": "20000",
+            "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+            "POLL_MAX_MSG": "25",
+            "POLL_TIMEOUT": "0.1",
+            "PROCESSED_DIR": "/tmp/metrics/processed",
+            "PRODUCER_CLIENT_ID": "pipeline-producer",
+            "PRODUCER_DEBUG": "false",
+            "PRODUCER_DEBUG_EVERY_N": "20000",
+            "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+            "PRODUCER_FLUSH_SECONDS": "30",
+            "PRODUCER_HEARTBEAT_SEC": "10",
+            "PRODUCER_HTTP_PORT": "8001",
+            "PRODUCER_INPUT_PATH": "producer-data",
+            "PRODUCER_MAX_MESSAGES": "0",
+            "PRODUCER_POD_COUNT": "3",
+            "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+            "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+            "RANDOM_RANGE": "1000",
+            "READINESS_TIMEOUT_SECONDS": "180",
+            "REBALANCE_CSV_ENABLED": "false",
+            "RECONNECT_BACKOFF_MAX_MS": "1000",
+            "RECONNECT_BACKOFF_MS": "100",
+            "RELEASE_NAME": "pip",
+            "REPLICATION_FACTOR": "1",
+            "REQUEST_TIMEOUT_MS": "10000",
+            "RETENTION_MS": "86400000",
+            "RETRIES": "2",
+            "RETRY_BACKOFF_MS": "20",
+            "RUN_ID": "run-20260913-030934",
+            "SEGMENT_MS": "30000",
+            "SESSION_TIMEOUT_MS": "20000",
+            "SKEW_FRACTION": "0.8",
+            "SKEW_PARTITION": "0.2",
+            "SLO_THRESHOLD_MS": "99",
+            "SLO_WINDOW_SECONDS": "30",
+            "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+            "SOCKET_SEND_BUFFER_BYTES": "524288",
+            "SOCKET_TIMEOUT_MS": "30000",
+            "TARGET_RATE": "500",
+            "TOPIC_COUNT": "1",
+            "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+            "TOPIC_TITLE": "controlled-8020-static-s71-skew-R500-20260913-030934",
+            "TRAFFIC_MODE": "skew",
+            "WARMUP_SECONDS": "60",
+            "WORKLOAD_SEED": "71",
+            "CONSUMER_STATIC_MEMBERSHIP": "true"
+          },
+          "intervention": {
+            "action": "scale",
+            "initial_consumers": 3,
+            "target_consumers": 6,
+            "after_evaluation_start_seconds": 60,
+            "recovery_threshold_offsets": 1500,
+            "recovery_hold_seconds": 20,
+            "prepare_only": false,
+            "placement_reference": {
+              "schema_version": 1,
+              "pods": [
+                {
+                  "role": "consumer",
+                  "pod": "consumer-sts-0",
+                  "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+                  "node": "patternlab.calit2.optiputer.net",
+                  "container_id": "containerd://39e3885a0715da090e58dab3feb7dd81f4ee0c65aad5f1c17994200da2c8440b",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "consumer",
+                  "pod": "consumer-sts-1",
+                  "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330",
+                  "node": "k8s-gpu-01.calit2.optiputer.net",
+                  "container_id": "containerd://5c3fde256c645b3c0bfb3af515309e976b193a0dc48ded931e85670a70c09104",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "consumer",
+                  "pod": "consumer-sts-2",
+                  "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d",
+                  "node": "unseenu.crbs.ucsd.edu",
+                  "container_id": "containerd://ea9cee78c39e20f3b4e0e2fd3fbce2ace81e3417832845393f9c2460ed27cf51",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "producer",
+                  "pod": "producer-sts-0",
+                  "uid": "2b849105-4510-4904-a73d-b18a52e50f18",
+                  "node": "k8s-u200-00.calit2.optiputer.net",
+                  "container_id": "containerd://384f5c67616d7f605b6372be99dd54b9427a9f4786eda5dfc94dcb02570f6ef7",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+                  "restart_count": 0,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "producer",
+                  "pod": "producer-sts-1",
+                  "uid": "e2c9fbd8-7d0e-495d-879a-929cbf99ab58",
+                  "node": "k8s-usra-01.calit2.optiputer.net",
+                  "container_id": "containerd://f01691ea125d205af8c8213949cf992f2951e0a85ae60a492ce0b075860eed70",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+                  "restart_count": 1,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                },
+                {
+                  "role": "producer",
+                  "pod": "producer-sts-2",
+                  "uid": "64bb61fb-fbd1-4205-9983-e55e536c1dd6",
+                  "node": "k8s-ravi-01.calit2.optiputer.net",
+                  "container_id": "containerd://58c01a13d4b863db6d88d32b6be786279c05c745bc4e9175f50f38ef0f0574a3",
+                  "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+                  "restart_count": 1,
+                  "resources": {
+                    "limits": {
+                      "cpu": "4",
+                      "ephemeral-storage": "50Gi",
+                      "memory": "2Gi"
+                    },
+                    "requests": {
+                      "cpu": "2",
+                      "ephemeral-storage": "0",
+                      "memory": "1Gi"
+                    }
+                  }
+                }
+              ],
+              "assignment": [
+                {
+                  "topic_index": 0,
+                  "partition": 0,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 1,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 2,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 3,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 4,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 5,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 6,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 7,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 8,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 9,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 10,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 11,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 12,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 13,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 14,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 15,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 16,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 17,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 18,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 19,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 20,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 21,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 22,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 23,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 24,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 25,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 26,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 27,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 28,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 29,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 30,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 31,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 32,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 33,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 34,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 35,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 36,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 37,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 38,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 39,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 40,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 41,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 42,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 43,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 44,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 45,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 46,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 47,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 48,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 49,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 50,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 51,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 52,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 53,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 54,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 55,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 56,
+                  "pod": "consumer-sts-2"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 57,
+                  "pod": "consumer-sts-0"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 58,
+                  "pod": "consumer-sts-1"
+                },
+                {
+                  "topic_index": 0,
+                  "partition": 59,
+                  "pod": "consumer-sts-2"
+                }
+              ]
+            },
+            "preparation_budget_seconds": 494.5444802499842,
+            "at_epoch": 1789290753.8450549
+          },
+          "metrics": {
+            "admitted_evaluation_cohort": 360000,
+            "completed_by_drain": 360000,
+            "incomplete_by_drain": 0,
+            "duplicate_completion_attempts": 0,
+            "admitted_messages_per_second": 1500.0,
+            "useful_throughput_per_second": 1486.5125,
+            "deadline_miss_fraction": 0.7481111111111111,
+            "admitted_cohort_completion_mean_seconds": 15.576687823859189,
+            "admitted_cohort_completion_p50_seconds": 18.768168687820435,
+            "admitted_cohort_completion_p95_seconds": 39.5794563293457,
+            "admitted_cohort_completion_p99_seconds": 50.95355701446533,
+            "unfinished_fraction": 0.0,
+            "target_admission_fraction": 1.0,
+            "lag_covered_fraction": 0.9083333333333333,
+            "consumer_process_seconds": 2061.5195987646566,
+            "processing_backlog_area_offset_seconds": 4849734.0,
+            "mean_processing_backlog_offsets": 22246.48623853211,
+            "evaluation_and_drain_requested_cpu_seconds": 3809.9528102874756,
+            "evaluation_and_drain_resource_coverage": 0.9583212892214458
+          },
+          "processing_backlog_integrals": {
+            "evaluation": {
+              "area_offset_seconds": 4849734.0,
+              "covered_seconds": 218.0,
+              "covered_fraction": 0.9083333333333333,
+              "mean_offsets": 22246.48623853211
+            },
+            "after_scheduled_action": {
+              "area_offset_seconds": 3673695.5347190984,
+              "covered_seconds": 159.9999451637268,
+              "covered_fraction": 0.8888885842429267,
+              "mean_offsets": 22960.604961206904
+            }
+          },
+          "resource_windows": {
+            "production": {
+              "covered_seconds": 284.99566411972046,
+              "observation_seconds": 300.0,
+              "covered_fraction": 0.9499855470657349,
+              "scheduled_consumer_pod_seconds_observed": 1364.9764051437378,
+              "consumer_container_requested_cpu_seconds_observed": 2729.9528102874756,
+              "consumer_container_requested_gib_seconds_observed": 1364.9764051437378,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation": {
+              "covered_seconds": 224.99566411972046,
+              "observation_seconds": 240.0,
+              "covered_fraction": 0.9374819338321686,
+              "scheduled_consumer_pod_seconds_observed": 1184.9764051437378,
+              "consumer_container_requested_cpu_seconds_observed": 2369.9528102874756,
+              "consumer_container_requested_gib_seconds_observed": 1184.9764051437378,
+              "intervals_with_unsupported_resources": 0
+            },
+            "evaluation_and_drain": {
+              "covered_seconds": 344.99566411972046,
+              "observation_seconds": 360.0,
+              "covered_fraction": 0.9583212892214458,
+              "scheduled_consumer_pod_seconds_observed": 1904.9764051437378,
+              "consumer_container_requested_cpu_seconds_observed": 3809.9528102874756,
+              "consumer_container_requested_gib_seconds_observed": 1904.9764051437378,
+              "intervals_with_unsupported_resources": 0
+            },
+            "after_scheduled_action": {
+              "covered_seconds": 169.99647092819214,
+              "observation_seconds": 180.0,
+              "covered_fraction": 0.9444248384899563,
+              "scheduled_consumer_pod_seconds_observed": 1019.9788255691528,
+              "consumer_container_requested_cpu_seconds_observed": 2039.9576511383057,
+              "consumer_container_requested_gib_seconds_observed": 1019.9788255691528,
+              "intervals_with_unsupported_resources": 0
+            }
+          },
+          "timing": {
+            "scheduled_epoch": 1789290753.8450549,
+            "action": "scale",
+            "decision_delay_seconds": 8.992828130722046,
+            "new_consumers": [
+              {
+                "pod": "consumer-sts-3",
+                "node": "k8s-chase-ci-07.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 182.16211700439453,
+                "request_to_ready_observed_seconds": 184.89450097084045,
+                "request_to_first_completion_seconds": 185.22418189048767
+              },
+              {
+                "pod": "consumer-sts-4",
+                "node": "k8s-u200-00.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 15.162117004394531,
+                "request_to_ready_observed_seconds": 17.66939616203308,
+                "request_to_first_completion_seconds": 17.85296940803528
+              },
+              {
+                "pod": "consumer-sts-5",
+                "node": "k8s-chase-ci-04.calit2.optiputer.net",
+                "request_to_kubernetes_ready_seconds": 16.16211700439453,
+                "request_to_ready_observed_seconds": 17.66939616203308,
+                "request_to_first_completion_seconds": 17.91781234741211
+              }
+            ]
+          },
+          "recovery": {
+            "status": "not_observed_by_evaluation_end",
+            "threshold_offsets": 1500,
+            "hold_seconds": 20,
+            "seconds_to_confirmation": null,
+            "censored": true,
+            "followup_seconds": 180.0
+          },
+          "commit_results": {
+            "successful": 950,
+            "group_transition_failure": 6
+          },
+          "commit_errors": [
+            {
+              "event": "commit_result",
+              "timestamp": 1789290781.7231529,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 24,
+                  "offset": 861,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 27,
+                  "offset": 914,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 30,
+                  "offset": 942,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 33,
+                  "offset": 14881,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 36,
+                  "offset": 881,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 39,
+                  "offset": 14727,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 42,
+                  "offset": 917,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 45,
+                  "offset": 14696,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 48,
+                  "offset": 889,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 51,
+                  "offset": 14864,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 54,
+                  "offset": 929,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 57,
+                  "offset": 926,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-0"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789290780.6204886,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 16,
+                  "offset": 713,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 19,
+                  "offset": 729,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 22,
+                  "offset": 719,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 25,
+                  "offset": 11576,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 28,
+                  "offset": 717,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 31,
+                  "offset": 772,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 34,
+                  "offset": 716,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 37,
+                  "offset": 741,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 40,
+                  "offset": 715,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 43,
+                  "offset": 11790,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 46,
+                  "offset": 737,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 49,
+                  "offset": 723,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 52,
+                  "offset": 756,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 55,
+                  "offset": 11722,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 58,
+                  "offset": 11809,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789290947.9701385,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 31,
+                  "offset": 1814,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 34,
+                  "offset": 1862,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 37,
+                  "offset": 1865,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 40,
+                  "offset": 1842,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 43,
+                  "offset": 29461,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 46,
+                  "offset": 1808,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 49,
+                  "offset": 1770,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 52,
+                  "offset": 1894,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 55,
+                  "offset": 29267,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 58,
+                  "offset": 29907,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-1"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789290781.7219229,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 26,
+                  "offset": 757,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 29,
+                  "offset": 652,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 32,
+                  "offset": 708,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 35,
+                  "offset": 10190,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 38,
+                  "offset": 656,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 41,
+                  "offset": 658,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 44,
+                  "offset": 677,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 47,
+                  "offset": 678,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 50,
+                  "offset": 656,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 53,
+                  "offset": 648,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 56,
+                  "offset": 620,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 59,
+                  "offset": 10115,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-2"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789290947.9632123,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 4,
+                  "offset": 1883,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 6,
+                  "offset": 1850,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 8,
+                  "offset": 1855,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 10,
+                  "offset": 29963,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 12,
+                  "offset": 1907,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 14,
+                  "offset": 1929,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 16,
+                  "offset": 1780,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 18,
+                  "offset": 1817,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 20,
+                  "offset": 1887,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 22,
+                  "offset": 1894,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-4"
+            },
+            {
+              "event": "commit_result",
+              "timestamp": 1789290947.9632266,
+              "context": "asynchronous_callback",
+              "success": false,
+              "group_transition": true,
+              "errors": [
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}",
+                "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+              ],
+              "offsets": [
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 5,
+                  "offset": 30044,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 7,
+                  "offset": 1864,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 9,
+                  "offset": 1894,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 11,
+                  "offset": 1903,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 13,
+                  "offset": 1886,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 15,
+                  "offset": 1881,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 17,
+                  "offset": 1855,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 19,
+                  "offset": 1879,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 21,
+                  "offset": 1855,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                },
+                {
+                  "topic": "controlled-8020-static-s71-skew-R500-20260913-030934_0",
+                  "partition": 23,
+                  "offset": 1872,
+                  "error": "KafkaError{code=ILLEGAL_GENERATION,val=22,str=\"Broker: Specified group generation id is not valid\"}"
+                }
+              ],
+              "pod": "consumer-sts-5"
+            }
+          ],
+          "source_signatures": [
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"consumer\", \"source\": {\"consumer.py\": \"caab1a7e93e6b046a0eeb9a688caea2fb09d887717bc7d6eae719c5ff0a63ed1\", \"consumer1.py\": \"5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68\", \"delete-empty-dirs.py\": \"65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"supervise.py\": \"35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.12.2\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}",
+            "{\"packages\": {\"PyYAML\": \"6.0.3\", \"confluent-kafka\": \"2.15.1\", \"prometheus-client\": \"0.23.1\", \"psutil\": \"7.1.3\"}, \"python\": \"3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]\", \"role\": \"producer\", \"source\": {\"delete-empty-dirs.py\": \"cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a\", \"launch.py\": \"731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981\", \"pipeline_runtime.py\": \"8a0454b4ccbfaaf0980ce225ed1b7a09034f4fc991c58d25f67b63627b8136fa\", \"producer.py\": \"886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc\", \"render_configmap.py\": \"eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55\"}}"
+          ],
+          "quality_flags": [],
+          "evidence_valid": true,
+          "validity_failures": []
+        }
+      },
+      "compatibility_failures": [],
+      "scale_minus_none": {
+        "admitted_evaluation_cohort": 0,
+        "completed_by_drain": 0,
+        "incomplete_by_drain": 0,
+        "duplicate_completion_attempts": 0,
+        "admitted_messages_per_second": 0.0,
+        "useful_throughput_per_second": 204.67083333333335,
+        "deadline_miss_fraction": -0.029577777777777814,
+        "admitted_cohort_completion_mean_seconds": -18.69500687861244,
+        "admitted_cohort_completion_p50_seconds": -12.1172513961792,
+        "admitted_cohort_completion_p95_seconds": -62.0266797542572,
+        "admitted_cohort_completion_p99_seconds": -64.72853398323059,
+        "unfinished_fraction": 0.0,
+        "target_admission_fraction": 0.0,
+        "lag_covered_fraction": -0.08333333333333337,
+        "consumer_process_seconds": 664.3486659527389,
+        "processing_backlog_area_offset_seconds": -4256803.0,
+        "mean_processing_backlog_offsets": -16016.27426566957,
+        "evaluation_and_drain_requested_cpu_seconds": 1649.9528102874756,
+        "evaluation_and_drain_resource_coverage": -0.04167871077855423
+      }
+    }
+  ],
+  "descriptive_paired_differences": {
+    "admitted_evaluation_cohort": {
+      "pair_count": 1,
+      "mean_paired_difference": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "sample_standard_deviation": null
+    },
+    "completed_by_drain": {
+      "pair_count": 1,
+      "mean_paired_difference": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "sample_standard_deviation": null
+    },
+    "incomplete_by_drain": {
+      "pair_count": 1,
+      "mean_paired_difference": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "sample_standard_deviation": null
+    },
+    "duplicate_completion_attempts": {
+      "pair_count": 1,
+      "mean_paired_difference": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "sample_standard_deviation": null
+    },
+    "admitted_messages_per_second": {
+      "pair_count": 1,
+      "mean_paired_difference": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.0,
+      "sample_standard_deviation": null
+    },
+    "useful_throughput_per_second": {
+      "pair_count": 1,
+      "mean_paired_difference": 204.67083333333335,
+      "minimum": 204.67083333333335,
+      "maximum": 204.67083333333335,
+      "sample_standard_deviation": null
+    },
+    "deadline_miss_fraction": {
+      "pair_count": 1,
+      "mean_paired_difference": -0.029577777777777814,
+      "minimum": -0.029577777777777814,
+      "maximum": -0.029577777777777814,
+      "sample_standard_deviation": null
+    },
+    "admitted_cohort_completion_mean_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": -18.69500687861244,
+      "minimum": -18.69500687861244,
+      "maximum": -18.69500687861244,
+      "sample_standard_deviation": null
+    },
+    "admitted_cohort_completion_p50_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": -12.1172513961792,
+      "minimum": -12.1172513961792,
+      "maximum": -12.1172513961792,
+      "sample_standard_deviation": null
+    },
+    "admitted_cohort_completion_p95_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": -62.0266797542572,
+      "minimum": -62.0266797542572,
+      "maximum": -62.0266797542572,
+      "sample_standard_deviation": null
+    },
+    "admitted_cohort_completion_p99_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": -64.72853398323059,
+      "minimum": -64.72853398323059,
+      "maximum": -64.72853398323059,
+      "sample_standard_deviation": null
+    },
+    "unfinished_fraction": {
+      "pair_count": 1,
+      "mean_paired_difference": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.0,
+      "sample_standard_deviation": null
+    },
+    "target_admission_fraction": {
+      "pair_count": 1,
+      "mean_paired_difference": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.0,
+      "sample_standard_deviation": null
+    },
+    "lag_covered_fraction": {
+      "pair_count": 1,
+      "mean_paired_difference": -0.08333333333333337,
+      "minimum": -0.08333333333333337,
+      "maximum": -0.08333333333333337,
+      "sample_standard_deviation": null
+    },
+    "consumer_process_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": 664.3486659527389,
+      "minimum": 664.3486659527389,
+      "maximum": 664.3486659527389,
+      "sample_standard_deviation": null
+    },
+    "processing_backlog_area_offset_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": -4256803.0,
+      "minimum": -4256803.0,
+      "maximum": -4256803.0,
+      "sample_standard_deviation": null
+    },
+    "mean_processing_backlog_offsets": {
+      "pair_count": 1,
+      "mean_paired_difference": -16016.27426566957,
+      "minimum": -16016.27426566957,
+      "maximum": -16016.27426566957,
+      "sample_standard_deviation": null
+    },
+    "evaluation_and_drain_requested_cpu_seconds": {
+      "pair_count": 1,
+      "mean_paired_difference": 1649.9528102874756,
+      "minimum": 1649.9528102874756,
+      "maximum": 1649.9528102874756,
+      "sample_standard_deviation": null
+    },
+    "evaluation_and_drain_resource_coverage": {
+      "pair_count": 1,
+      "mean_paired_difference": -0.04167871077855423,
+      "minimum": -0.04167871077855423,
+      "maximum": -0.04167871077855423,
+      "sample_standard_deviation": null
+    }
+  },
+  "notes": [
+    "Every pair and quality flag remains visible. Completed evidence-valid compatible pairs contribute message outcomes even when monitoring is incomplete. Coverage screens apply only to backlog and resource aggregates; each metric reports its own pair count.",
+    "Low achieved admission is reported alongside outcomes and limits a matched-load causal interpretation; it is not silently removed to improve the treatment result.",
+    "Scale-minus-none latency differences compare per-run conditional completion quantiles; unfinished fractions must be read alongside them.",
+    "A mean of per-run p99 values is not a pooled message p99. No pooled p99 or confidence interval is claimed.",
+    "Processing-backlog integrals use trapezoids only across valid contiguous same-owner monotonic-offset observations; coverage is explicit.",
+    "Common resource horizons use evaluation start through drain end and the same declared duration for both conditions. Preparation remains separate.",
+    "Resource quantities describe requested consumer-container CPU time, not actual whole-cluster cost.",
+    "Scheduled scale-out tests an action, not an automatic selector, a tuned HPA baseline or novelty over prior systems."
+  ]
+}

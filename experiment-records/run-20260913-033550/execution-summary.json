@@ -1,0 +1,1827 @@
+{
+  "run_id": "run-20260913-033550",
+  "process_lifetimes": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "started_epoch": 1789292160.4601955,
+      "finished_epoch": 1789292631.605137,
+      "process_seconds": 471.1539248180343,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-0/f82872e17048407e9883bad68d9060eb/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "started_epoch": 1789292162.41025,
+      "finished_epoch": 1789292631.6037104,
+      "process_seconds": 469.20398019626737,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-1/13c09f9606494bdc894fadf636f196ad/events.jsonl"
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "started_epoch": 1789292162.9253047,
+      "finished_epoch": 1789292631.6590006,
+      "process_seconds": 468.7448703292757,
+      "duration_source": "monotonic",
+      "evidence": "consumer/consumer-sts-2/ea4fa878b5fc49f298dd21093c6b7efb/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-0",
+      "incarnation": "952765809220482e823f1cdf41196327",
+      "started_epoch": 1789292164.881425,
+      "finished_epoch": 1789292511.5480535,
+      "process_seconds": 346.9349007913843,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-0/952765809220482e823f1cdf41196327/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-1",
+      "incarnation": "6def5ea17f3a4dea8df6d5ee207bbdbc",
+      "started_epoch": 1789292165.4468288,
+      "finished_epoch": 1789292511.5478754,
+      "process_seconds": 346.50365114898887,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-1/6def5ea17f3a4dea8df6d5ee207bbdbc/events.jsonl"
+    },
+    {
+      "role": "producer",
+      "pod": "producer-sts-2",
+      "incarnation": "77bc36dcf8984bb5b863e9824d94b719",
+      "started_epoch": 1789292166.0503693,
+      "finished_epoch": 1789292511.5480094,
+      "process_seconds": 345.7663805449847,
+      "duration_source": "monotonic",
+      "evidence": "producer/producer-sts-2/77bc36dcf8984bb5b863e9824d94b719/events.jsonl"
+    }
+  ],
+  "consumer_process_seconds": 1409.1027753435774,
+  "consumer_lifetime_coverage_complete": true,
+  "ownership_events": [
+    {
+      "event": "assign_started",
+      "timestamp": 1789292166.608102,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          1
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          4
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          7
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          10
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          13
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          16
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          19
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          22
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          25
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          28
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          31
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          34
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          37
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          40
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          43
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          46
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          49
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          52
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          55
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789292166.608113,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          2
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          5
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          8
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          11
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          14
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          17
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          20
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          23
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          26
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          29
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          32
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          35
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          38
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          41
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          44
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          47
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          50
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          53
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          56
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb"
+    },
+    {
+      "event": "assign_started",
+      "timestamp": 1789292166.6081939,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          0
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          3
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          6
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          9
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          12
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          15
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          18
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          21
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          24
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          27
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          30
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          33
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          36
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          39
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          42
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          45
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          48
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          51
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          54
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789292166.6337264,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          1
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          4
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          7
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          10
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          13
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          16
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          19
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          22
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          25
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          28
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          31
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          34
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          37
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          40
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          43
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          46
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          49
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          52
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          55
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          58
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789292166.6795056,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          0
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          3
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          6
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          9
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          12
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          15
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          18
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          21
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          24
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          27
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          30
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          33
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          36
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          39
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          42
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          45
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          48
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          51
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          54
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          57
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb"
+    },
+    {
+      "event": "assign",
+      "timestamp": 1789292166.7221186,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          2
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          5
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          8
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          11
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          14
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          17
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          20
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          23
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          26
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          29
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          32
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          35
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          38
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          41
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          44
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          47
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          50
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          53
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          56
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          59
+        ]
+      ],
+      "epoch": 1,
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789292631.585702,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          0
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          3
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          6
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          9
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          12
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          15
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          18
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          21
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          24
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          27
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          30
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          33
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          36
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          39
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          42
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          45
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          48
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          51
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          54
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          57
+        ]
+      ],
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789292631.5924075,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          1
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          4
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          7
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          10
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          13
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          16
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          19
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          22
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          25
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          28
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          31
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          34
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          37
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          40
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          43
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          46
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          49
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          52
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          55
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          58
+        ]
+      ],
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789292631.594598,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          0
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          3
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          6
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          9
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          12
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          15
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          18
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          21
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          24
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          27
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          30
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          33
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          36
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          39
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          42
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          45
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          48
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          51
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          54
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          57
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789292631.6028087,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          1
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          4
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          7
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          10
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          13
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          16
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          19
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          22
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          25
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          28
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          31
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          34
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          37
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          40
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          43
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          46
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          49
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          52
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          55
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          58
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad"
+    },
+    {
+      "event": "revoke_started",
+      "timestamp": 1789292631.6479673,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          2
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          5
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          8
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          11
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          14
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          17
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          20
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          23
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          26
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          29
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          32
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          35
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          38
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          41
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          44
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          47
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          50
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          53
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          56
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          59
+        ]
+      ],
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb"
+    },
+    {
+      "event": "revoke",
+      "timestamp": 1789292631.6586466,
+      "partitions": [
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          2
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          5
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          8
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          11
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          14
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          17
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          20
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          23
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          26
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          29
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          32
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          35
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          38
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          41
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          44
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          47
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          50
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          53
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          56
+        ],
+        [
+          "controlled-static-s71-skew-R500-20260913-033550_0",
+          59
+        ]
+      ],
+      "epoch": 2,
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb"
+    }
+  ],
+  "callback_blocking_intervals": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "event": "assign",
+      "started_epoch": 1789292166.6081939,
+      "finished_epoch": 1789292166.6795056,
+      "blocked_seconds": 0.07131171226501465
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "event": "revoke",
+      "started_epoch": 1789292631.585702,
+      "finished_epoch": 1789292631.594598,
+      "blocked_seconds": 0.008896112442016602
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "event": "assign",
+      "started_epoch": 1789292166.608102,
+      "finished_epoch": 1789292166.6337264,
+      "blocked_seconds": 0.02562427520751953
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "event": "revoke",
+      "started_epoch": 1789292631.5924075,
+      "finished_epoch": 1789292631.6028087,
+      "blocked_seconds": 0.010401248931884766
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "event": "assign",
+      "started_epoch": 1789292166.608113,
+      "finished_epoch": 1789292166.7221186,
+      "blocked_seconds": 0.11400556564331055
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "event": "revoke",
+      "started_epoch": 1789292631.6479673,
+      "finished_epoch": 1789292631.6586466,
+      "blocked_seconds": 0.010679244995117188
+    }
+  ],
+  "assignment_first_completions": [
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 0,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292211.6058662,
+      "assign_to_first_completion_seconds": 44.92636060714722
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 3,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.304407,
+      "assign_to_first_completion_seconds": 45.62490129470825
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 6,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292211.6415122,
+      "assign_to_first_completion_seconds": 44.96200656890869
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 9,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.55264,
+      "assign_to_first_completion_seconds": 45.87313437461853
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 12,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292213.7936196,
+      "assign_to_first_completion_seconds": 47.1141140460968
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 15,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.9339767,
+      "assign_to_first_completion_seconds": 46.25447106361389
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 18,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.9393163,
+      "assign_to_first_completion_seconds": 46.25981068611145
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 21,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292213.8442004,
+      "assign_to_first_completion_seconds": 47.16469478607178
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 24,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292211.657431,
+      "assign_to_first_completion_seconds": 44.977925300598145
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 27,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.5776384,
+      "assign_to_first_completion_seconds": 45.89813280105591
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 30,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.3965993,
+      "assign_to_first_completion_seconds": 45.71709370613098
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 33,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292211.8034303,
+      "assign_to_first_completion_seconds": 45.12392473220825
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 36,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292213.1063042,
+      "assign_to_first_completion_seconds": 46.426798582077026
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 39,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292213.746711,
+      "assign_to_first_completion_seconds": 47.06720542907715
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 42,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292211.86408,
+      "assign_to_first_completion_seconds": 45.184574365615845
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 45,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292214.2531948,
+      "assign_to_first_completion_seconds": 47.573689222335815
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 48,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292214.7033358,
+      "assign_to_first_completion_seconds": 48.02383017539978
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 51,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292213.1249647,
+      "assign_to_first_completion_seconds": 46.44545912742615
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 54,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.941762,
+      "assign_to_first_completion_seconds": 46.262256383895874
+    },
+    {
+      "pod": "consumer-sts-0",
+      "incarnation": "f82872e17048407e9883bad68d9060eb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 57,
+      "assigned_epoch": 1789292166.6795056,
+      "first_completion_epoch": 1789292212.576019,
+      "assign_to_first_completion_seconds": 45.89651346206665
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 1,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.3492756,
+      "assign_to_first_completion_seconds": 45.71554923057556
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 4,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8240087,
+      "assign_to_first_completion_seconds": 45.190282344818115
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 7,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.0240893,
+      "assign_to_first_completion_seconds": 45.39036297798157
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 10,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.1828005,
+      "assign_to_first_completion_seconds": 45.54907417297363
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 13,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.827962,
+      "assign_to_first_completion_seconds": 45.1942355632782
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 16,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8180912,
+      "assign_to_first_completion_seconds": 45.184364795684814
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 19,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.805836,
+      "assign_to_first_completion_seconds": 45.172109603881836
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 22,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8038568,
+      "assign_to_first_completion_seconds": 45.170130491256714
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 25,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8298855,
+      "assign_to_first_completion_seconds": 45.19615912437439
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 28,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.02217,
+      "assign_to_first_completion_seconds": 45.3884437084198
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 31,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8080277,
+      "assign_to_first_completion_seconds": 45.17430138587952
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 34,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8112652,
+      "assign_to_first_completion_seconds": 45.17753887176514
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 37,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.1807196,
+      "assign_to_first_completion_seconds": 45.546993255615234
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 40,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.1767592,
+      "assign_to_first_completion_seconds": 45.54303288459778
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 43,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.814208,
+      "assign_to_first_completion_seconds": 45.18048167228699
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 46,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.0065224,
+      "assign_to_first_completion_seconds": 45.372796058654785
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 49,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8220513,
+      "assign_to_first_completion_seconds": 45.18832492828369
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 52,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.864712,
+      "assign_to_first_completion_seconds": 46.23098564147949
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 55,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292211.8015273,
+      "assign_to_first_completion_seconds": 45.16780090332031
+    },
+    {
+      "pod": "consumer-sts-1",
+      "incarnation": "13c09f9606494bdc894fadf636f196ad",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 58,
+      "assigned_epoch": 1789292166.6337264,
+      "first_completion_epoch": 1789292212.0026362,
+      "assign_to_first_completion_seconds": 45.36890983581543
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 2,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8240542,
+      "assign_to_first_completion_seconds": 45.101935625076294
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 5,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8205886,
+      "assign_to_first_completion_seconds": 45.098469972610474
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 8,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8674948,
+      "assign_to_first_completion_seconds": 45.145376205444336
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 11,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292212.3955488,
+      "assign_to_first_completion_seconds": 45.67343020439148
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 14,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8339922,
+      "assign_to_first_completion_seconds": 45.111873626708984
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 17,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.637706,
+      "assign_to_first_completion_seconds": 44.915587425231934
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 20,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8172023,
+      "assign_to_first_completion_seconds": 45.095083713531494
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 23,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.6411536,
+      "assign_to_first_completion_seconds": 44.91903495788574
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 26,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292212.049041,
+      "assign_to_first_completion_seconds": 45.32692241668701
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 29,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.840756,
+      "assign_to_first_completion_seconds": 45.11863732337952
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 32,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292212.0323126,
+      "assign_to_first_completion_seconds": 45.31019401550293
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 35,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292212.5802565,
+      "assign_to_first_completion_seconds": 45.85813784599304
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 38,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.6339924,
+      "assign_to_first_completion_seconds": 44.91187381744385
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 41,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8374562,
+      "assign_to_first_completion_seconds": 45.11533761024475
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 44,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.857492,
+      "assign_to_first_completion_seconds": 45.13537335395813
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 47,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8508222,
+      "assign_to_first_completion_seconds": 45.128703594207764
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 50,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292212.4245365,
+      "assign_to_first_completion_seconds": 45.702417850494385
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 53,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8608122,
+      "assign_to_first_completion_seconds": 45.1386935710907
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 56,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292212.3922215,
+      "assign_to_first_completion_seconds": 45.67010283470154
+    },
+    {
+      "pod": "consumer-sts-2",
+      "incarnation": "ea4fa878b5fc49f298dd21093c6b7efb",
+      "topic": "controlled-static-s71-skew-R500-20260913-033550_0",
+      "partition": 59,
+      "assigned_epoch": 1789292166.7221186,
+      "first_completion_epoch": 1789292211.8541234,
+      "assign_to_first_completion_seconds": 45.132004737854004
+    }
+  ],
+  "resource_requests": {
+    "covered_seconds": 476.715407371521,
+    "observation_seconds": 507.6779420375824,
+    "covered_fraction": 0.9390114635633129,
+    "scheduled_consumer_pod_seconds_observed": 1430.146222114563,
+    "consumer_container_requested_cpu_seconds_observed": 2860.292444229126,
+    "consumer_container_requested_gib_seconds_observed": 1430.146222114563,
+    "intervals_with_unsupported_resources": 0
+  },
+  "recovery": {
+    "status": "not_observed_by_evaluation_end",
+    "threshold_offsets": 1500,
+    "hold_seconds": 20,
+    "seconds_to_confirmation": null,
+    "censored": true,
+    "followup_seconds": 180.0
+  },
+  "observed_consumer_pods": [
+    {
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "pod": "consumer-sts-0",
+      "node": "patternlab.calit2.optiputer.net",
+      "created_at": "2026-09-12T00:46:56Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T00:47:02Z"
+    },
+    {
+      "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330",
+      "pod": "consumer-sts-1",
+      "node": "k8s-gpu-01.calit2.optiputer.net",
+      "created_at": "2026-09-12T14:56:44Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T14:56:51Z"
+    },
+    {
+      "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d",
+      "pod": "consumer-sts-2",
+      "node": "unseenu.crbs.ucsd.edu",
+      "created_at": "2026-09-12T21:16:17Z",
+      "deleting_at": null,
+      "phase": "Running",
+      "cpu_request_cores": 2.0,
+      "memory_request_gib": 1.0,
+      "unsupported_resource_accounting": false,
+      "ready": true,
+      "ready_transition": "2026-09-12T21:16:26Z"
+    }
+  ],
+  "intervention_events": [
+    {
+      "event": "decision",
+      "timestamp": 1789292338.840937,
+      "scheduled_epoch": 1789292331.546121,
+      "scheduling_delay_seconds": 7.294816017150879,
+      "action": "none"
+    },
+    {
+      "event": "request_completed",
+      "timestamp": 1789292338.8417358,
+      "action": "none"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789292339.375363,
+      "pod": "consumer-sts-0",
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+      "kubernetes_ready_transition": "2026-09-12T00:47:02Z"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789292339.375363,
+      "pod": "consumer-sts-1",
+      "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330",
+      "kubernetes_ready_transition": "2026-09-12T14:56:51Z"
+    },
+    {
+      "event": "pod_ready_observed",
+      "timestamp": 1789292339.375363,
+      "pod": "consumer-sts-2",
+      "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d",
+      "kubernetes_ready_transition": "2026-09-12T21:16:26Z"
+    }
+  ],
+  "notes": [
+    "Consumer process-seconds sum every recorded started-to-finished lifetime, including preparation, warm-up and drain; new runtime evidence uses a local monotonic timer.",
+    "Final scrape hold after the finished event is outside process-seconds; scheduled-pod accounting includes observed hold time.",
+    "Resource request integrals use left-held samples on covered intervals. Transition times are uncertain by up to a sample gap.",
+    "CPU/GiB request-time covers only consumer-container declarations on scheduled pods, not broker/producer/sidecar/whole-cluster cost or actual usage.",
+    "Missing samples and unsupported pod-level resources/resize are not silently treated as zero. Report coverage.",
+    "Recovery requires processing backlog at or below the declared threshold for the full hold interval with valid contiguous same-owner samples.",
+    "Recovery is confirmed at the end of the hold interval; missing/unobserved recovery is censored, not zero.",
+    "Ownership callbacks are observable boundaries, not proof of broker-coordinator timing or a precise processing pause.",
+    "Callback blocking intervals bracket the sequential consumer callback; assignment-to-first-completion also includes idle time and work."
+  ]
+}

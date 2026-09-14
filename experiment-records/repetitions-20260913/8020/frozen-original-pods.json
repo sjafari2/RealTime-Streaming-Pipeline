@@ -1,0 +1,128 @@
+[
+  {
+    "role": "consumer",
+    "pod": "consumer-sts-0",
+    "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0",
+    "node": "patternlab.calit2.optiputer.net",
+    "container_id": "containerd://39e3885a0715da090e58dab3feb7dd81f4ee0c65aad5f1c17994200da2c8440b",
+    "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+    "restart_count": 0,
+    "resources": {
+      "limits": {
+        "cpu": "4",
+        "ephemeral-storage": "50Gi",
+        "memory": "2Gi"
+      },
+      "requests": {
+        "cpu": "2",
+        "ephemeral-storage": "0",
+        "memory": "1Gi"
+      }
+    }
+  },
+  {
+    "role": "consumer",
+    "pod": "consumer-sts-1",
+    "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330",
+    "node": "k8s-gpu-01.calit2.optiputer.net",
+    "container_id": "containerd://5c3fde256c645b3c0bfb3af515309e976b193a0dc48ded931e85670a70c09104",
+    "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+    "restart_count": 0,
+    "resources": {
+      "limits": {
+        "cpu": "4",
+        "ephemeral-storage": "50Gi",
+        "memory": "2Gi"
+      },
+      "requests": {
+        "cpu": "2",
+        "ephemeral-storage": "0",
+        "memory": "1Gi"
+      }
+    }
+  },
+  {
+    "role": "consumer",
+    "pod": "consumer-sts-2",
+    "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d",
+    "node": "unseenu.crbs.ucsd.edu",
+    "container_id": "containerd://ea9cee78c39e20f3b4e0e2fd3fbce2ace81e3417832845393f9c2460ed27cf51",
+    "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+    "restart_count": 0,
+    "resources": {
+      "limits": {
+        "cpu": "4",
+        "ephemeral-storage": "50Gi",
+        "memory": "2Gi"
+      },
+      "requests": {
+        "cpu": "2",
+        "ephemeral-storage": "0",
+        "memory": "1Gi"
+      }
+    }
+  },
+  {
+    "role": "producer",
+    "pod": "producer-sts-0",
+    "uid": "2b849105-4510-4904-a73d-b18a52e50f18",
+    "node": "k8s-u200-00.calit2.optiputer.net",
+    "container_id": "containerd://384f5c67616d7f605b6372be99dd54b9427a9f4786eda5dfc94dcb02570f6ef7",
+    "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+    "restart_count": 0,
+    "resources": {
+      "limits": {
+        "cpu": "4",
+        "ephemeral-storage": "50Gi",
+        "memory": "2Gi"
+      },
+      "requests": {
+        "cpu": "2",
+        "ephemeral-storage": "0",
+        "memory": "1Gi"
+      }
+    }
+  },
+  {
+    "role": "producer",
+    "pod": "producer-sts-1",
+    "uid": "e2c9fbd8-7d0e-495d-879a-929cbf99ab58",
+    "node": "k8s-usra-01.calit2.optiputer.net",
+    "container_id": "containerd://f01691ea125d205af8c8213949cf992f2951e0a85ae60a492ce0b075860eed70",
+    "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+    "restart_count": 1,
+    "resources": {
+      "limits": {
+        "cpu": "4",
+        "ephemeral-storage": "50Gi",
+        "memory": "2Gi"
+      },
+      "requests": {
+        "cpu": "2",
+        "ephemeral-storage": "0",
+        "memory": "1Gi"
+      }
+    }
+  },
+  {
+    "role": "producer",
+    "pod": "producer-sts-2",
+    "uid": "64bb61fb-fbd1-4205-9983-e55e536c1dd6",
+    "node": "k8s-ravi-01.calit2.optiputer.net",
+    "container_id": "containerd://58c01a13d4b863db6d88d32b6be786279c05c745bc4e9175f50f38ef0f0574a3",
+    "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+    "restart_count": 1,
+    "resources": {
+      "limits": {
+        "cpu": "4",
+        "ephemeral-storage": "50Gi",
+        "memory": "2Gi"
+      },
+      "requests": {
+        "cpu": "2",
+        "ephemeral-storage": "0",
+        "memory": "1Gi"
+      }
+    }
+  }
+]

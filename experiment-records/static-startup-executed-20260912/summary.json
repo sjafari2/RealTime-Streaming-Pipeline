@@ -1,0 +1,52 @@
+{
+  "status": "complete",
+  "code_commit": "411bae61af51bcb3d0cbf1adfb33b5d559288ddf",
+  "preparations": 4,
+  "performance_trials": 2,
+  "all_evidence_files_match": true,
+  "verified_evidence_files": 126,
+  "restoration": "verified",
+  "all_applications_stopped": true,
+  "reference_sha256": "326e1319f2bfd958d4e5209973b26364d07a36408106b07b7788ec2f66ec41f5",
+  "runs": [
+    {
+      "action": "none",
+      "run_id": "run-20260912-234504",
+      "admitted": 360000,
+      "completed": 217819,
+      "unfinished": 142181,
+      "unfinished_percent": 39.49472222222222,
+      "completion_p99_seconds": 228.4425060749054,
+      "requested_cpu_core_minutes": 36.0,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.9916666666666667,
+      "partition0_unfinished": 134217,
+      "other_partitions_unfinished": 7964,
+      "partition0_arrivals_per_second": 1199.6791666666666,
+      "partition0_completions_per_second": 545.3583333333333
+    },
+    {
+      "action": "scale",
+      "run_id": "run-20260912-233413",
+      "admitted": 360000,
+      "completed": 269628,
+      "unfinished": 90372,
+      "unfinished_percent": 25.10333333333333,
+      "completion_p99_seconds": 192.79164171218872,
+      "requested_cpu_core_minutes": 65.00913312435151,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.9,
+      "partition0_unfinished": 88825,
+      "other_partitions_unfinished": 1547,
+      "partition0_arrivals_per_second": 1199.6666666666667,
+      "partition0_completions_per_second": 649.1083333333333
+    }
+  ],
+  "limitations": [
+    "One pair, scale first; no independent repetition of this revised setup.",
+    "Shared-machine contention and new-consumer placement remain uncontrolled.",
+    "Static membership differs from the earlier campaign; do not pool as identical treatment.",
+    "Completion is before commit acknowledgment; p99 excludes unfinished messages.",
+    "99 ms threshold remains provisional; cross-node clock precision is not established."
+  ]
+}

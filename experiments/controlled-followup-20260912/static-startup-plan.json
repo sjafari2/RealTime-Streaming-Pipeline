@@ -1,0 +1,74 @@
+{
+  "protocol": "static-observed-reference-v1",
+  "status": "completed_four_preparations_and_two_trials_restoration_verified",
+  "supersedes_for_next_invocation": "legacy fixed-reference preparation; all six rejected attempts remain preserved",
+  "default_command_behavior": "four preparation-only starts; performance requires --include-comparison",
+  "startup": {
+    "membership": "CONSUMER_STATIC_MEMBERSHIP=true; group.instance.id derives from each pod hostname",
+    "consumer_group": "one new group per block, same group for both treatments; wait for EMPTY/DEAD and zero members before each start",
+    "assignment_strategy": "classic cooperative-sticky",
+    "reference": "capture first complete stable 3-consumer map before traffic; freeze it for all later 3-consumer stages",
+    "machines": "freeze original P0-P2/C0-C2 pod identities, nodes, container/image IDs, restart counts, requests and limits"
+  },
+  "preparations": [
+    {
+      "stage": "capture_three",
+      "consumers": 3,
+      "traffic": false,
+      "purpose": "capture actual complete map and check zero-message evidence"
+    },
+    {
+      "stage": "restart_three",
+      "consumers": 3,
+      "traffic": false,
+      "purpose": "fresh topics and application restart must reproduce frozen map"
+    },
+    {
+      "stage": "prepare_six",
+      "consumers": 6,
+      "traffic": false,
+      "purpose": "verify six distinct static members, complete ownership and empty evidence"
+    },
+    {
+      "stage": "return_to_three",
+      "consumers": 3,
+      "traffic": false,
+      "purpose": "after removed members clear, fresh restart must reproduce original 3-consumer map"
+    }
+  ],
+  "comparison": {
+    "workload_seed": 71,
+    "order": [
+      "scale",
+      "none"
+    ],
+    "producer_count": 3,
+    "initial_consumers": 3,
+    "scaled_consumers": 6,
+    "partitions": 60,
+    "topic_count": 1,
+    "total_target_messages_per_second": 1500,
+    "hot_partition": 0,
+    "hot_fraction": 0.8,
+    "payload_bytes": 100,
+    "sha256_iterations_per_message": 2000,
+    "artificial_sleep_ms": 0,
+    "production_seconds": 300,
+    "warmup_included_seconds": 60,
+    "drain_seconds": 120,
+    "action_after_production_seconds": 120,
+    "checks": "same exact starting reference before production and before action; preserve all evidence and report both outcomes"
+  },
+  "bounds": {
+    "maximum_starts": 6,
+    "empty_preparations": 4,
+    "maximum_performance_trials": 2,
+    "cumulative_preparation_seconds": 1200,
+    "failure_rule": "stop on first failure, retain evidence, restore settings; no retries or changed reference",
+    "budget_scope": "stage stop/config/group-clearance/replica/capacity checks plus preparation; empty preparation includes collection; admitted production/drain/analysis excluded"
+  },
+  "restoration": "original shared YAML, original HPA identity/settings and original replica counts, verified",
+  "interpretation": "starting placement matched if checks pass; shared-machine contention and post-scale new-pod placement remain uncontrolled; static membership is part of both treatments",
+  "approval_required_before_cluster_actions": true,
+  "execution_record": "experiment-records/static-startup-executed-20260912/README.md"
+}

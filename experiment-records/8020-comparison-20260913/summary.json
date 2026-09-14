@@ -1,0 +1,102 @@
+{
+  "status": "complete",
+  "code_commit": "8ebf9f231f193eac9b061ffb81e08401aa257581",
+  "selected_partitions": [
+    5,
+    10,
+    25,
+    33,
+    35,
+    39,
+    43,
+    45,
+    51,
+    55,
+    58,
+    59
+  ],
+  "preparations": 4,
+  "performance_trials": 2,
+  "all_evidence_files_match": true,
+  "verified_evidence_files": 126,
+  "restoration": "verified",
+  "all_applications_stopped": true,
+  "reference_sha256": "326e1319f2bfd958d4e5209973b26364d07a36408106b07b7788ec2f66ec41f5",
+  "runs": [
+    {
+      "action": "none",
+      "run_id": "run-20260913-004819",
+      "admitted": 360000,
+      "completed": 358085,
+      "unfinished": 1915,
+      "unfinished_percent": 0.5319444444444444,
+      "completion_p99_seconds": 121.14581799507141,
+      "requested_cpu_core_minutes": 36.0,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.9916666666666667,
+      "selected_traffic_percent": 80.01944444444445,
+      "selected_unfinished": 1399,
+      "other_unfinished": 516,
+      "selected_rate_range": [
+        99.05,
+        101.12083333333334
+      ],
+      "other_rate_range": [
+        5.908333333333333,
+        6.5625
+      ],
+      "quality_flags": [],
+      "decision_delay_seconds": 7.627051115036011,
+      "recovery": {
+        "status": "not_observed_by_evaluation_end",
+        "threshold_offsets": 1500,
+        "hold_seconds": 20,
+        "seconds_to_confirmation": null,
+        "censored": true,
+        "followup_seconds": 180.0
+      }
+    },
+    {
+      "action": "scale",
+      "run_id": "run-20260913-003714",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "completion_p99_seconds": 49.369972229003906,
+      "requested_cpu_core_minutes": 65.16300420761108,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.875,
+      "selected_traffic_percent": 80.01944444444445,
+      "selected_unfinished": 0,
+      "other_unfinished": 0,
+      "selected_rate_range": [
+        99.05833333333334,
+        101.125
+      ],
+      "other_rate_range": [
+        5.908333333333333,
+        6.5625
+      ],
+      "quality_flags": [
+        "Lag coverage below 90%; transition gaps remain part of the result"
+      ],
+      "decision_delay_seconds": 7.244920969009399,
+      "recovery": {
+        "status": "not_observed_by_evaluation_end",
+        "threshold_offsets": 1500,
+        "hold_seconds": 20,
+        "seconds_to_confirmation": null,
+        "censored": true,
+        "followup_seconds": 180.0
+      }
+    }
+  ],
+  "aggregate_backlog_comparison_eligible": false,
+  "limitations": [
+    "One pair, scale first; no independent repetition of this workload comparison.",
+    "Starting ownership and original pod placement matched; shared contention and new-pod placement remain uncontrolled.",
+    "P99 includes only completed evaluation messages, completion before commit acknowledgment.",
+    "99 ms deadline is provisional; cross-node timestamp precision is not independently established."
+  ]
+}

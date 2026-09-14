@@ -1,5 +1,7 @@
 # Kafka Skew and Consumer Elasticity
 
+**Experiment progress:** [Open the experiment register](EXPERIMENT_REGISTER.md) for all completed runs, plots, rejected preparations and the next approved step.
+
 A research platform for studying how workload imbalance affects a Kafka stream-processing pipeline, when additional consumers help, and how the cost of changing the configuration should influence mitigation decisions.
 
 This repository supports the PhD research project **Skew-Resilient Kafka: A Lag-Driven Autoscaling Approach**, by **Soheila Jafari Khouzani**, Department of Computer Science, University of New Mexico. It combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and reproducible analysis of message completion and partition-level behavior.

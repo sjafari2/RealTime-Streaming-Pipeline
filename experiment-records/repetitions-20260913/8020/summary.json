@@ -1,0 +1,104 @@
+{
+  "status": "complete",
+  "workload": "80-20",
+  "code_commit": "602649709a3a0485b72bac3317f374958e2ca60e",
+  "order": [
+    "none",
+    "scale"
+  ],
+  "preparations": 4,
+  "performance_trials": 2,
+  "verified_evidence_files": 126,
+  "restoration": "verified",
+  "all_applications_stopped": true,
+  "reference_comparison": {
+    "previous_record": "experiment-records/8020-comparison-20260913",
+    "same_assignment": true,
+    "same_original_pod_identities": true
+  },
+  "runs": [
+    {
+      "action": "none",
+      "run_id": "run-20260913-025849",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "completion_p99_seconds": 115.68209099769592,
+      "completion_mean_seconds": 34.27169470247163,
+      "requested_cpu_core_minutes": 36.0,
+      "resource_coverage": 1.0,
+      "lag_coverage": 0.9916666666666667,
+      "selected_traffic_percent": 80.01944444444445,
+      "duplicate_completion_attempts": 0,
+      "recovery": {
+        "status": "not_observed_by_evaluation_end",
+        "threshold_offsets": 1500,
+        "hold_seconds": 20,
+        "seconds_to_confirmation": null,
+        "censored": true,
+        "followup_seconds": 180.0
+      },
+      "timing": {
+        "scheduled_epoch": 1789290106.02799,
+        "action": "none",
+        "decision_delay_seconds": 7.140646934509277,
+        "new_consumers": []
+      },
+      "quality_flags": []
+    },
+    {
+      "action": "scale",
+      "run_id": "run-20260913-030934",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "completion_p99_seconds": 50.95355701446533,
+      "completion_mean_seconds": 15.576687823859189,
+      "requested_cpu_core_minutes": 63.49921350479126,
+      "resource_coverage": 0.9583212892214458,
+      "lag_coverage": 0.9083333333333333,
+      "selected_traffic_percent": 80.01861111111111,
+      "duplicate_completion_attempts": 0,
+      "recovery": {
+        "status": "not_observed_by_evaluation_end",
+        "threshold_offsets": 1500,
+        "hold_seconds": 20,
+        "seconds_to_confirmation": null,
+        "censored": true,
+        "followup_seconds": 180.0
+      },
+      "timing": {
+        "scheduled_epoch": 1789290753.8450549,
+        "action": "scale",
+        "decision_delay_seconds": 8.992828130722046,
+        "new_consumers": [
+          {
+            "pod": "consumer-sts-3",
+            "node": "k8s-chase-ci-07.calit2.optiputer.net",
+            "request_to_kubernetes_ready_seconds": 182.16211700439453,
+            "request_to_ready_observed_seconds": 184.89450097084045,
+            "request_to_first_completion_seconds": 185.22418189048767
+          },
+          {
+            "pod": "consumer-sts-4",
+            "node": "k8s-u200-00.calit2.optiputer.net",
+            "request_to_kubernetes_ready_seconds": 15.162117004394531,
+            "request_to_ready_observed_seconds": 17.66939616203308,
+            "request_to_first_completion_seconds": 17.85296940803528
+          },
+          {
+            "pod": "consumer-sts-5",
+            "node": "k8s-chase-ci-04.calit2.optiputer.net",
+            "request_to_kubernetes_ready_seconds": 16.16211700439453,
+            "request_to_ready_observed_seconds": 17.66939616203308,
+            "request_to_first_completion_seconds": 17.91781234741211
+          }
+        ]
+      },
+      "quality_flags": []
+    }
+  ],
+  "aggregate_backlog_comparison_eligible": true
+}

@@ -408,3 +408,11 @@ Python cleanup; the file is a recovery record, not an automatic cluster-side tim
 Manual `start` and standalone preflight still require intentionally paused,
 compatible controller settings. These changes control experiment isolation; they
 do not implement an HPA baseline or the proposed adaptive mitigation selector.
+
+## Matched starting conditions for controlled comparisons
+
+The coordinator can check a frozen complete partition ownership and pod-placement reference with `--placement-reference`. It rejects a mismatch before publishing the running state and checks again before a scheduled action. `--prepare-only` saves a preparation without releasing production; `--preparation-budget` bounds time to the production gate. The reference and observations are retained with run evidence. For the bounded concentrated-input scale/no-action comparison and its restoration rules, see [controlled execution](../experiments/controlled-followup-20260912/EXECUTION.md).
+
+## Optional controlled static startup
+
+The revised preparation protocol derives a unique static Kafka member ID from each consumer pod, waits for previous group members to leave, and captures actual complete ownership before any production. Four empty preparations check capture, restart, six consumers and return to three. The complete original three-consumer reference remains fixed. Performance trials require an explicit option and all four checks to pass. See `experiments/controlled-followup-20260912/STATIC_STARTUP.md` and its reviewed JSON plan. This code is awaiting user confirmation and live validation; the six earlier failed preparations remain separate evidence.

@@ -1,0 +1,4459 @@
+[
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "aed2365c3f8d6da21cb7117d47ba8ccb798ecd7ebcb6202e90d30777b3419f30",
+        "cni.projectcalico.org/podIP": "10.244.101.20/32",
+        "cni.projectcalico.org/podIPs": "10.244.101.20/32,fdf0:17b3:c3ec:1f79:10:0:5:9912/128",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-consumer; cpu, memory limit for init container bootstrap-consumer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-12T00:46:56Z",
+      "generateName": "consumer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "consumer-sts",
+        "app.kubernetes.io/name": "consumer-sts",
+        "apps.kubernetes.io/pod-index": "0",
+        "controller-revision-hash": "consumer-sts-c67f8bb69",
+        "statefulset.kubernetes.io/pod-name": "consumer-sts-0"
+      },
+      "name": "consumer-sts-0",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "consumer-sts",
+          "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+        }
+      ],
+      "resourceVersion": "14777613536",
+      "uid": "f00853ac-1d59-46a3-b1e3-fb842ae861f0"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "/app/consumer-merge-data/supervise.py"
+          ],
+          "command": [
+            "python3"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "consumer"
+            },
+            {
+              "name": "CONSUMER_HTTP_PORT",
+              "value": "8002"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "consumer-container",
+          "ports": [
+            {
+              "containerPort": 8002,
+              "name": "metrics",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-t888l",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/consumer-merge-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "consumer-sts-0",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-t888l",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "patternlab.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "consumer-headless-svc",
+      "terminationGracePeriodSeconds": 120,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "topologySpreadConstraints": [
+        {
+          "labelSelector": {
+            "matchLabels": {
+              "app": "consumer-sts"
+            }
+          },
+          "maxSkew": 1,
+          "topologyKey": "kubernetes.io/hostname",
+          "whenUnsatisfiable": "ScheduleAnyway"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "consumer-merge-data",
+          "persistentVolumeClaim": {
+            "claimName": "consumer-merge-cephfs"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "emptyDir": {},
+          "name": "metrics"
+        },
+        {
+          "name": "kube-api-access-t888l",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T00:47:01Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T00:47:01Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T00:47:02Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T00:47:02Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T00:46:56Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://39e3885a0715da090e58dab3feb7dd81f4ee0c65aad5f1c17994200da2c8440b",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-12T00:47:01Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-t888l",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.140",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.140"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://cc6331733ad9575a1950501199d89bd4a65f589712dc5dc2b3b34870fbaf2a6b",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "bootstrap-consumer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://cc6331733ad9575a1950501199d89bd4a65f589712dc5dc2b3b34870fbaf2a6b",
+              "exitCode": 0,
+              "finishedAt": "2026-09-12T00:47:00Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-12T00:47:00Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-t888l",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.101.20",
+      "podIPs": [
+        {
+          "ip": "10.244.101.20"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:5:9912"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-12T00:46:56Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "11ff8bd8956226ebd7a251b258582cebf58aa27802a529f5f56e070c8704903f",
+        "cni.projectcalico.org/podIP": "10.244.28.61/32",
+        "cni.projectcalico.org/podIPs": "10.244.28.61/32,fdf0:17b3:c3ec:1f79:10:0:5:eeda/128",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-consumer; cpu, memory limit for init container bootstrap-consumer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-12T14:56:44Z",
+      "generateName": "consumer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "consumer-sts",
+        "app.kubernetes.io/name": "consumer-sts",
+        "apps.kubernetes.io/pod-index": "1",
+        "controller-revision-hash": "consumer-sts-c67f8bb69",
+        "statefulset.kubernetes.io/pod-name": "consumer-sts-1"
+      },
+      "name": "consumer-sts-1",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "consumer-sts",
+          "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+        }
+      ],
+      "resourceVersion": "14784365718",
+      "uid": "306b4da7-cc98-4f9b-ae50-9bfea2808330"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "/app/consumer-merge-data/supervise.py"
+          ],
+          "command": [
+            "python3"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "consumer"
+            },
+            {
+              "name": "CONSUMER_HTTP_PORT",
+              "value": "8002"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "consumer-container",
+          "ports": [
+            {
+              "containerPort": 8002,
+              "name": "metrics",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-7tdmf",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/consumer-merge-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "consumer-sts-1",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-7tdmf",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-gpu-01.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "consumer-headless-svc",
+      "terminationGracePeriodSeconds": 120,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "topologySpreadConstraints": [
+        {
+          "labelSelector": {
+            "matchLabels": {
+              "app": "consumer-sts"
+            }
+          },
+          "maxSkew": 1,
+          "topologyKey": "kubernetes.io/hostname",
+          "whenUnsatisfiable": "ScheduleAnyway"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "consumer-merge-data",
+          "persistentVolumeClaim": {
+            "claimName": "consumer-merge-cephfs"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "emptyDir": {},
+          "name": "metrics"
+        },
+        {
+          "name": "kube-api-access-7tdmf",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T14:56:48Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T14:56:50Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T14:56:51Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T14:56:51Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T14:56:44Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://5c3fde256c645b3c0bfb3af515309e976b193a0dc48ded931e85670a70c09104",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-12T14:56:51Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-7tdmf",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.142",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.142"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://6604d430fc97f029e6ff53774fe15ce2628a79aff857cefdc5f0c10b4272c22a",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "bootstrap-consumer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://6604d430fc97f029e6ff53774fe15ce2628a79aff857cefdc5f0c10b4272c22a",
+              "exitCode": 0,
+              "finishedAt": "2026-09-12T14:56:50Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-12T14:56:48Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-7tdmf",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.28.61",
+      "podIPs": [
+        {
+          "ip": "10.244.28.61"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:5:eeda"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-12T14:56:44Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "bfe384dcb59fe2948f39a50f4955bfd8d4d95e9f30b4876aa41db541ed72dcf6",
+        "cni.projectcalico.org/podIP": "10.244.47.165/32",
+        "cni.projectcalico.org/podIPs": "10.244.47.165/32,fdf0:17b3:c3ec:1f79:10::f865/128",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-consumer; cpu, memory limit for init container bootstrap-consumer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-12T21:16:17Z",
+      "generateName": "consumer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "consumer-sts",
+        "app.kubernetes.io/name": "consumer-sts",
+        "apps.kubernetes.io/pod-index": "2",
+        "controller-revision-hash": "consumer-sts-c67f8bb69",
+        "statefulset.kubernetes.io/pod-name": "consumer-sts-2"
+      },
+      "name": "consumer-sts-2",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "consumer-sts",
+          "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+        }
+      ],
+      "resourceVersion": "14787370637",
+      "uid": "78c22b03-7254-499d-bf0f-43d2f0d7880d"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "/app/consumer-merge-data/supervise.py"
+          ],
+          "command": [
+            "python3"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "consumer"
+            },
+            {
+              "name": "CONSUMER_HTTP_PORT",
+              "value": "8002"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "consumer-container",
+          "ports": [
+            {
+              "containerPort": 8002,
+              "name": "metrics",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-g7ndp",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/consumer-merge-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "consumer-sts-2",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-g7ndp",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "unseenu.crbs.ucsd.edu",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "consumer-headless-svc",
+      "terminationGracePeriodSeconds": 120,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "topologySpreadConstraints": [
+        {
+          "labelSelector": {
+            "matchLabels": {
+              "app": "consumer-sts"
+            }
+          },
+          "maxSkew": 1,
+          "topologyKey": "kubernetes.io/hostname",
+          "whenUnsatisfiable": "ScheduleAnyway"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "consumer-merge-data",
+          "persistentVolumeClaim": {
+            "claimName": "consumer-merge-cephfs"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "emptyDir": {},
+          "name": "metrics"
+        },
+        {
+          "name": "kube-api-access-g7ndp",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T21:16:23Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T21:16:25Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T21:16:26Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T21:16:26Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T21:16:17Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://ea9cee78c39e20f3b4e0e2fd3fbce2ace81e3417832845393f9c2460ed27cf51",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-12T21:16:26Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-g7ndp",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.56.45",
+      "hostIPs": [
+        {
+          "ip": "67.58.56.45"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://8cf77f0534894df05afd6d7c4900db51014d0a4943d8b75928ad798a57332279",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "bootstrap-consumer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://8cf77f0534894df05afd6d7c4900db51014d0a4943d8b75928ad798a57332279",
+              "exitCode": 0,
+              "finishedAt": "2026-09-12T21:16:24Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-12T21:16:23Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-g7ndp",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.47.165",
+      "podIPs": [
+        {
+          "ip": "10.244.47.165"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10::f865"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-12T21:16:17Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "88fbc7cd0a18c092e5a64b3a5e510a9db525944ff8f377f3ea610dc7a3ac1381",
+        "cni.projectcalico.org/podIP": "10.244.241.69/32",
+        "cni.projectcalico.org/podIPs": "10.244.241.69/32,fdf0:17b3:c3ec:1f79:10:0:b:5c9c/128",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-consumer; cpu, memory limit for init container bootstrap-consumer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-12T23:18:44Z",
+      "generateName": "consumer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "consumer-sts",
+        "app.kubernetes.io/name": "consumer-sts",
+        "apps.kubernetes.io/pod-index": "3",
+        "controller-revision-hash": "consumer-sts-c67f8bb69",
+        "statefulset.kubernetes.io/pod-name": "consumer-sts-3"
+      },
+      "name": "consumer-sts-3",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "consumer-sts",
+          "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+        }
+      ],
+      "resourceVersion": "14788350370",
+      "uid": "a93c5267-5982-4f6e-82e7-74890e8801a1"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "/app/consumer-merge-data/supervise.py"
+          ],
+          "command": [
+            "python3"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "consumer"
+            },
+            {
+              "name": "CONSUMER_HTTP_PORT",
+              "value": "8002"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "consumer-container",
+          "ports": [
+            {
+              "containerPort": 8002,
+              "name": "metrics",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-p8z6m",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/consumer-merge-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "consumer-sts-3",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-p8z6m",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-usra-01.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "consumer-headless-svc",
+      "terminationGracePeriodSeconds": 120,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "topologySpreadConstraints": [
+        {
+          "labelSelector": {
+            "matchLabels": {
+              "app": "consumer-sts"
+            }
+          },
+          "maxSkew": 1,
+          "topologyKey": "kubernetes.io/hostname",
+          "whenUnsatisfiable": "ScheduleAnyway"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "consumer-merge-data",
+          "persistentVolumeClaim": {
+            "claimName": "consumer-merge-cephfs"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "emptyDir": {},
+          "name": "metrics"
+        },
+        {
+          "name": "kube-api-access-p8z6m",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:50Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:53Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:54Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:54Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:44Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://7c389d6640a8658e2b034cd979608e7874d5ff9ec4338ae730dba6b0304d0a58",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-12T23:18:53Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-p8z6m",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.158",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.158"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://98bd871ece25377272ca2ae75c798628a8728aad223e36ec6446ff2077d6f4bf",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "bootstrap-consumer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://98bd871ece25377272ca2ae75c798628a8728aad223e36ec6446ff2077d6f4bf",
+              "exitCode": 0,
+              "finishedAt": "2026-09-12T23:18:52Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-12T23:18:49Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-p8z6m",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.241.69",
+      "podIPs": [
+        {
+          "ip": "10.244.241.69"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:b:5c9c"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-12T23:18:44Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "c9620bd6da6c3221dfe2fddd9e055247509edaa8f27b1e4402fadbffaac4f374",
+        "cni.projectcalico.org/podIP": "10.244.235.161/32",
+        "cni.projectcalico.org/podIPs": "10.244.235.161/32,fdf0:17b3:c3ec:1f79:10:0:8:3afd/128",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: ephemeral-storage request for container consumer-container; ephemeral-storage limit for container consumer-container; ephemeral-storage request for init container bootstrap-consumer; ephemeral-storage limit for init container bootstrap-consumer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-12T23:18:44Z",
+      "generateName": "consumer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "consumer-sts",
+        "app.kubernetes.io/name": "consumer-sts",
+        "apps.kubernetes.io/pod-index": "4",
+        "controller-revision-hash": "consumer-sts-c67f8bb69",
+        "statefulset.kubernetes.io/pod-name": "consumer-sts-4"
+      },
+      "name": "consumer-sts-4",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "consumer-sts",
+          "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+        }
+      ],
+      "resourceVersion": "14788350368",
+      "uid": "793c8f87-ada9-4157-b64e-9f750ef25d71"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "/app/consumer-merge-data/supervise.py"
+          ],
+          "command": [
+            "python3"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "consumer"
+            },
+            {
+              "name": "CONSUMER_HTTP_PORT",
+              "value": "8002"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "consumer-container",
+          "ports": [
+            {
+              "containerPort": 8002,
+              "name": "metrics",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-h6v8c",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/consumer-merge-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "consumer-sts-4",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-h6v8c",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-u200-00.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "consumer-headless-svc",
+      "terminationGracePeriodSeconds": 120,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "topologySpreadConstraints": [
+        {
+          "labelSelector": {
+            "matchLabels": {
+              "app": "consumer-sts"
+            }
+          },
+          "maxSkew": 1,
+          "topologyKey": "kubernetes.io/hostname",
+          "whenUnsatisfiable": "ScheduleAnyway"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "consumer-merge-data",
+          "persistentVolumeClaim": {
+            "claimName": "consumer-merge-cephfs"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "emptyDir": {},
+          "name": "metrics"
+        },
+        {
+          "name": "kube-api-access-h6v8c",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:52Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:53Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:54Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:54Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-12T23:18:44Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://c0efad38dff5a118bae03ec78d61606b4e0785267f6a529eeb91d3b955010224",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-12T23:18:54Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-h6v8c",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.152",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.152"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://661a20e06d7642b7debeb134fbce1ceafc46db0f4a667d11db2264b31e8e1d17",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "bootstrap-consumer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://661a20e06d7642b7debeb134fbce1ceafc46db0f4a667d11db2264b31e8e1d17",
+              "exitCode": 0,
+              "finishedAt": "2026-09-12T23:18:52Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-12T23:18:51Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-h6v8c",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.235.161",
+      "podIPs": [
+        {
+          "ip": "10.244.235.161"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:8:3afd"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-12T23:18:44Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "4970239e2c13f1551c45ce68cb6c37842fb9f8d7320df8fc4fc5a5dde9b65e11",
+        "cni.projectcalico.org/podIP": "10.244.207.224/32",
+        "cni.projectcalico.org/podIPs": "10.244.207.224/32,fdf0:17b3:c3ec:1f79:10:0:6:7da6/128",
+        "k8s.v1.cni.cncf.io/network-status": "[{\n    \"name\": \"k8s-pod-network\",\n    \"interface\": \"eth0\",\n    \"ips\": [\n        \"10.244.207.224\",\n        \"fdf0:17b3:c3ec:1f79:10:0:6:7da6\"\n    ],\n    \"mac\": \"aa:a5:c1:d6:5f:80\",\n    \"default\": true,\n    \"dns\": {}\n}]",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-consumer; cpu, memory limit for init container bootstrap-consumer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-13T01:48:55Z",
+      "generateName": "consumer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "consumer-sts",
+        "app.kubernetes.io/name": "consumer-sts",
+        "apps.kubernetes.io/pod-index": "5",
+        "controller-revision-hash": "consumer-sts-c67f8bb69",
+        "statefulset.kubernetes.io/pod-name": "consumer-sts-5"
+      },
+      "name": "consumer-sts-5",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "consumer-sts",
+          "uid": "0f0bcca1-48c8-4635-b7b5-67b1a8143601"
+        }
+      ],
+      "resourceVersion": "14789552727",
+      "uid": "936e380e-9084-4468-8e5a-da17bfbc6c64"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "/app/consumer-merge-data/supervise.py"
+          ],
+          "command": [
+            "python3"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "consumer"
+            },
+            {
+              "name": "CONSUMER_HTTP_PORT",
+              "value": "8002"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "consumer-container",
+          "ports": [
+            {
+              "containerPort": 8002,
+              "name": "metrics",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-26q57",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/consumer-merge-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "consumer-sts-5",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\n\n\n# Copy code into RWX CephFS once (keeps your existing workflow)\nif [ ! -f /app/consumer-merge-data/.code_initialized ]; then\n  cp -r /code/* /app/consumer-merge-data/\n  touch /app/consumer-merge-data/.code_initialized\nfi\nchown -R 1000:1000 /app/consumer-merge-data\nchmod -R u+w /app/consumer-merge-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentconsumer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-26q57",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-chase-ci-04.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "consumer-headless-svc",
+      "terminationGracePeriodSeconds": 120,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "topologySpreadConstraints": [
+        {
+          "labelSelector": {
+            "matchLabels": {
+              "app": "consumer-sts"
+            }
+          },
+          "maxSkew": 1,
+          "topologyKey": "kubernetes.io/hostname",
+          "whenUnsatisfiable": "ScheduleAnyway"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "consumer-merge-data",
+          "persistentVolumeClaim": {
+            "claimName": "consumer-merge-cephfs"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "emptyDir": {},
+          "name": "metrics"
+        },
+        {
+          "name": "kube-api-access-26q57",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-13T01:49:04Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-13T01:49:07Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-13T01:49:08Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-13T01:49:08Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-13T01:48:55Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://cc5e20b9106b7a5c2f766f3810f9064801936f162b1654cb5c6cdb85376596d8",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-13T01:49:07Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-26q57",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.147",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.147"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://131b444d7e8dc911bc97d71b2a5c2a96bf0030d1611864c091a8ce34988ad967",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "bootstrap-consumer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://131b444d7e8dc911bc97d71b2a5c2a96bf0030d1611864c091a8ce34988ad967",
+              "exitCode": 0,
+              "finishedAt": "2026-09-13T01:49:06Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-13T01:49:04Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-26q57",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.207.224",
+      "podIPs": [
+        {
+          "ip": "10.244.207.224"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:6:7da6"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-13T01:48:55Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "0ce9a93cec698c1cbd72de026f8cc6e6196dd05026df2c391d07289e84cb4c58",
+        "cni.projectcalico.org/podIP": "10.244.235.171/32",
+        "cni.projectcalico.org/podIPs": "10.244.235.171/32,fdf0:17b3:c3ec:1f79:10:0:8:3b0f/128",
+        "kubectl.kubernetes.io/restartedAt": "2026-02-17T22:55:48-07:00",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-producer; cpu, memory limit for init container bootstrap-producer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-09-04T05:58:56Z",
+      "generateName": "producer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "producer-sts",
+        "app.kubernetes.io/name": "producer-sts",
+        "apps.kubernetes.io/pod-index": "0",
+        "controller-revision-hash": "producer-sts-656f9f9d8b",
+        "statefulset.kubernetes.io/pod-name": "producer-sts-0"
+      },
+      "name": "producer-sts-0",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "producer-sts",
+          "uid": "5960f240-5e14-4fac-8f12-e25ab3b1a981"
+        }
+      ],
+      "resourceVersion": "14686697085",
+      "uid": "2b849105-4510-4904-a73d-b18a52e50f18"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "kafka"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "set -e\nmkdir -p ./logs\necho \"[main] Pod: ${POD_NAME}\"\necho \"[main] Using config: ${PIPELINE_CONFIG}\"\nls -l /config || true\nhead -n 40 \"${PIPELINE_CONFIG}\" || true\n\nchmod +x ./run.sh\n\n# Do NOT start yet. You will start via your script across pods.\necho \"[main] Ready. Waiting for manual start...\"\ntail -f /dev/null\n"
+          ],
+          "command": [
+            "/bin/bash",
+            "-lc"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "producer"
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "PRODUCER_HTTP_PORT",
+              "value": "8001"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentproducer:latest",
+          "imagePullPolicy": "Always",
+          "name": "producer-container",
+          "ports": [
+            {
+              "containerPort": 8001,
+              "name": "metrics",
+              "protocol": "TCP"
+            },
+            {
+              "containerPort": 9093,
+              "name": "prod-exp-port",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-5vj9c",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/producer-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "producer-sts-0",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping producer config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\nif [ ! -f /config/experiments.yaml ]; then\n  echo \"[init] Seeding experiments.yaml from /defaults\"\n  cp /defaults/experiments.yaml /config/experiments.yaml\n  chmod 644 /config/experiments.yaml\nfi\n# Copy code into /app/producer-data once\nif [ ! -f /app/producer-data/.code_initialized ]; then\n  cp -r /code/* /app/producer-data/\n  touch /app/producer-data/.code_initialized\nfi\nchown -R 1000:1000 /app/producer-data\nchmod -R u+w /app/producer-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentproducer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-producer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-5vj9c",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-u200-00.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "producer-headless-svc",
+      "terminationGracePeriodSeconds": 30,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "producer-data",
+          "persistentVolumeClaim": {
+            "claimName": "producer-data"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "name": "kube-api-access-5vj9c",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-04T05:59:50Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-04T05:59:53Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-04T05:59:54Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-04T05:59:54Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-04T05:58:56Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://384f5c67616d7f605b6372be99dd54b9427a9f4786eda5dfc94dcb02570f6ef7",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "producer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-04T05:59:54Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-5vj9c",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.152",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.152"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://d38e4462c239ae9cc798e06b0d9a26a89a25b044f9d5f9dd3fc6218c2749981c",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "bootstrap-producer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://d38e4462c239ae9cc798e06b0d9a26a89a25b044f9d5f9dd3fc6218c2749981c",
+              "exitCode": 0,
+              "finishedAt": "2026-09-04T05:59:50Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-04T05:59:50Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-5vj9c",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.235.171",
+      "podIPs": [
+        {
+          "ip": "10.244.235.171"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:8:3b0f"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-09-04T05:58:56Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "1e5cb64f0f96d7e72265813f122db59821abc39e6c7c3c945068a34fee35aac2",
+        "cni.projectcalico.org/podIP": "10.244.241.87/32",
+        "cni.projectcalico.org/podIPs": "10.244.241.87/32,fdf0:17b3:c3ec:1f79:10:0:b:5c95/128",
+        "kubectl.kubernetes.io/restartedAt": "2026-02-17T22:55:48-07:00",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-producer; cpu, memory limit for init container bootstrap-producer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-07-23T01:56:42Z",
+      "generateName": "producer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "producer-sts",
+        "app.kubernetes.io/name": "producer-sts",
+        "apps.kubernetes.io/pod-index": "1",
+        "controller-revision-hash": "producer-sts-656f9f9d8b",
+        "statefulset.kubernetes.io/pod-name": "producer-sts-1"
+      },
+      "name": "producer-sts-1",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "producer-sts",
+          "uid": "5960f240-5e14-4fac-8f12-e25ab3b1a981"
+        }
+      ],
+      "resourceVersion": "14669390197",
+      "uid": "e2c9fbd8-7d0e-495d-879a-929cbf99ab58"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "kafka"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "set -e\nmkdir -p ./logs\necho \"[main] Pod: ${POD_NAME}\"\necho \"[main] Using config: ${PIPELINE_CONFIG}\"\nls -l /config || true\nhead -n 40 \"${PIPELINE_CONFIG}\" || true\n\nchmod +x ./run.sh\n\n# Do NOT start yet. You will start via your script across pods.\necho \"[main] Ready. Waiting for manual start...\"\ntail -f /dev/null\n"
+          ],
+          "command": [
+            "/bin/bash",
+            "-lc"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "producer"
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "PRODUCER_HTTP_PORT",
+              "value": "8001"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentproducer:latest",
+          "imagePullPolicy": "Always",
+          "name": "producer-container",
+          "ports": [
+            {
+              "containerPort": 8001,
+              "name": "metrics",
+              "protocol": "TCP"
+            },
+            {
+              "containerPort": 9093,
+              "name": "prod-exp-port",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-8k7fh",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/producer-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "producer-sts-1",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping producer config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\nif [ ! -f /config/experiments.yaml ]; then\n  echo \"[init] Seeding experiments.yaml from /defaults\"\n  cp /defaults/experiments.yaml /config/experiments.yaml\n  chmod 644 /config/experiments.yaml\nfi\n# Copy code into /app/producer-data once\nif [ ! -f /app/producer-data/.code_initialized ]; then\n  cp -r /code/* /app/producer-data/\n  touch /app/producer-data/.code_initialized\nfi\nchown -R 1000:1000 /app/producer-data\nchmod -R u+w /app/producer-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentproducer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-producer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-8k7fh",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-usra-01.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "producer-headless-svc",
+      "terminationGracePeriodSeconds": 30,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "producer-data",
+          "persistentVolumeClaim": {
+            "claimName": "producer-data"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "name": "kube-api-access-8k7fh",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-02T20:48:48Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-07-23T01:56:55Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-02T20:48:49Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-02T20:48:49Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-07-23T01:56:42Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://f01691ea125d205af8c8213949cf992f2951e0a85ae60a492ce0b075860eed70",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {
+            "terminated": {
+              "containerID": "containerd://e35eac14c14ed2f7b1677b1a2153c479857d969527103c2372b60f7abab7246c",
+              "exitCode": 255,
+              "finishedAt": "2026-09-02T20:33:14Z",
+              "reason": "Unknown",
+              "startedAt": "2026-07-23T01:56:55Z"
+            }
+          },
+          "name": "producer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 1,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-02T20:48:49Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-8k7fh",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.158",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.158"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://3008bb83d7506240f08d3d84b2efb032d4c86fb50ba79f468e6a09c8640076af",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "bootstrap-producer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 1,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://3008bb83d7506240f08d3d84b2efb032d4c86fb50ba79f468e6a09c8640076af",
+              "exitCode": 0,
+              "finishedAt": "2026-09-02T20:48:48Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-02T20:48:47Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-8k7fh",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.241.87",
+      "podIPs": [
+        {
+          "ip": "10.244.241.87"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:b:5c95"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-07-23T01:56:42Z"
+    }
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "40c89001bc64b608e77bbd8a1001cf267fe0d55563d12303f490856c92f483e2",
+        "cni.projectcalico.org/podIP": "10.244.179.75/32",
+        "cni.projectcalico.org/podIPs": "10.244.179.75/32,fdf0:17b3:c3ec:1f79:10:0:8:51b7/128",
+        "kubectl.kubernetes.io/restartedAt": "2026-02-17T22:55:48-07:00",
+        "kubernetes.io/limit-ranger": "LimitRanger plugin set: cpu, memory request for init container bootstrap-producer; cpu, memory limit for init container bootstrap-producer",
+        "nrp.ai/username": "http://cilogon.org/serverB/users/41300207"
+      },
+      "creationTimestamp": "2026-07-18T23:50:28Z",
+      "generateName": "producer-sts-",
+      "generation": 1,
+      "labels": {
+        "app": "producer-sts",
+        "app.kubernetes.io/name": "producer-sts",
+        "apps.kubernetes.io/pod-index": "2",
+        "controller-revision-hash": "producer-sts-656f9f9d8b",
+        "statefulset.kubernetes.io/pod-name": "producer-sts-2"
+      },
+      "name": "producer-sts-2",
+      "namespace": "kafkastreamingdata",
+      "ownerReferences": [
+        {
+          "apiVersion": "apps/v1",
+          "blockOwnerDeletion": true,
+          "controller": true,
+          "kind": "StatefulSet",
+          "name": "producer-sts",
+          "uid": "5960f240-5e14-4fac-8f12-e25ab3b1a981"
+        }
+      ],
+      "resourceVersion": "14669388028",
+      "uid": "64bb61fb-fbd1-4205-9983-e55e536c1dd6"
+    },
+    "spec": {
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "kafka"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "containers": [
+        {
+          "args": [
+            "set -e\nmkdir -p ./logs\necho \"[main] Pod: ${POD_NAME}\"\necho \"[main] Using config: ${PIPELINE_CONFIG}\"\nls -l /config || true\nhead -n 40 \"${PIPELINE_CONFIG}\" || true\n\nchmod +x ./run.sh\n\n# Do NOT start yet. You will start via your script across pods.\necho \"[main] Ready. Waiting for manual start...\"\ntail -f /dev/null\n"
+          ],
+          "command": [
+            "/bin/bash",
+            "-lc"
+          ],
+          "env": [
+            {
+              "name": "PIPELINE_ROLE",
+              "value": "producer"
+            },
+            {
+              "name": "PIPELINE_CONFIG",
+              "value": "/config/pipeline-configmap.yaml"
+            },
+            {
+              "name": "PRODUCER_HTTP_PORT",
+              "value": "8001"
+            },
+            {
+              "name": "POD_NAME",
+              "valueFrom": {
+                "fieldRef": {
+                  "apiVersion": "v1",
+                  "fieldPath": "metadata.name"
+                }
+              }
+            },
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentproducer:latest",
+          "imagePullPolicy": "Always",
+          "name": "producer-container",
+          "ports": [
+            {
+              "containerPort": 8001,
+              "name": "metrics",
+              "protocol": "TCP"
+            },
+            {
+              "containerPort": 9093,
+              "name": "prod-exp-port",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-cfcbs",
+              "readOnly": true
+            }
+          ],
+          "workingDir": "/app/producer-data"
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": true,
+      "hostname": "producer-sts-2",
+      "initContainers": [
+        {
+          "args": [
+            "set -e\necho \"[init] Bootstrapping producer config and code...\"\n\n# /config is a RWX PVC (writable). Ensure permissions.\nmkdir -p /config\nchown -R 1000:1000 /config\nchmod -R u+w /config\n\n# Seed config files only if missing\nif [ ! -f /config/pipeline-configmap.yaml ]; then\n  echo \"[init] Seeding pipeline-configmap.yaml from /defaults\"\n  cp /defaults/pipeline-configmap.yaml /config/pipeline-configmap.yaml\n  chmod 644 /config/pipeline-configmap.yaml\nfi\n\nif [ ! -f /config/experiments.yaml ]; then\n  echo \"[init] Seeding experiments.yaml from /defaults\"\n  cp /defaults/experiments.yaml /config/experiments.yaml\n  chmod 644 /config/experiments.yaml\nfi\n# Copy code into /app/producer-data once\nif [ ! -f /app/producer-data/.code_initialized ]; then\n  cp -r /code/* /app/producer-data/\n  touch /app/producer-data/.code_initialized\nfi\nchown -R 1000:1000 /app/producer-data\nchmod -R u+w /app/producer-data\n"
+          ],
+          "command": [
+            "/bin/sh",
+            "-c"
+          ],
+          "env": [
+            {
+              "name": "NVIDIA_VISIBLE_DEVICES",
+              "value": "void"
+            }
+          ],
+          "image": "sjafari2/kafkaconfluentproducer:latest",
+          "imagePullPolicy": "Always",
+          "name": "bootstrap-producer",
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "securityContext": {
+            "runAsUser": 0
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-cfcbs",
+              "readOnly": true
+            }
+          ]
+        }
+      ],
+      "nodeName": "k8s-ravi-01.calit2.optiputer.net",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Always",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 1000,
+        "fsGroupChangePolicy": "OnRootMismatch"
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "subdomain": "producer-headless-svc",
+      "terminationGracePeriodSeconds": 30,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "PreferNoSchedule",
+          "key": "nvidia.com/gpu",
+          "operator": "Exists"
+        }
+      ],
+      "volumes": [
+        {
+          "name": "producer-data",
+          "persistentVolumeClaim": {
+            "claimName": "producer-data"
+          }
+        },
+        {
+          "name": "pipeline-config",
+          "persistentVolumeClaim": {
+            "claimName": "pipeline-configmap-pvc"
+          }
+        },
+        {
+          "name": "kube-api-access-cfcbs",
+          "projected": {
+            "defaultMode": 420,
+            "sources": [
+              {
+                "serviceAccountToken": {
+                  "expirationSeconds": 3607,
+                  "path": "token"
+                }
+              },
+              {
+                "configMap": {
+                  "items": [
+                    {
+                      "key": "ca.crt",
+                      "path": "ca.crt"
+                    }
+                  ],
+                  "name": "kube-root-ca.crt"
+                }
+              },
+              {
+                "downwardAPI": {
+                  "items": [
+                    {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      },
+                      "path": "namespace"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-02T20:48:38Z",
+          "status": "True",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-07-18T23:50:47Z",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-02T20:48:41Z",
+          "status": "True",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-09-02T20:48:41Z",
+          "status": "True",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-07-18T23:50:29Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://58c01a13d4b863db6d88d32b6be786279c05c745bc4e9175f50f38ef0f0574a3",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {
+            "terminated": {
+              "containerID": "containerd://0d8bad5f3ae73e61bb9733046fa00bd3840d1a820f7dec15898b5cf9a2fe1e15",
+              "exitCode": 255,
+              "finishedAt": "2026-09-02T20:34:00Z",
+              "reason": "Unknown",
+              "startedAt": "2026-07-18T23:50:47Z"
+            }
+          },
+          "name": "producer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "2Gi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 1,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-09-02T20:48:41Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-cfcbs",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "hostIP": "67.58.51.143",
+      "hostIPs": [
+        {
+          "ip": "67.58.51.143"
+        }
+      ],
+      "initContainerStatuses": [
+        {
+          "allocatedResources": {
+            "cpu": "100m",
+            "ephemeral-storage": "0",
+            "memory": "1Gi"
+          },
+          "containerID": "containerd://8957385ee715c77c0d01faac2df29d9fad61400e4533af65bda29260ea5b11e9",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "bootstrap-producer",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "100m",
+              "ephemeral-storage": "50Gi",
+              "memory": "1Gi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "ephemeral-storage": "0",
+              "memory": "1Gi"
+            }
+          },
+          "restartCount": 1,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://8957385ee715c77c0d01faac2df29d9fad61400e4533af65bda29260ea5b11e9",
+              "exitCode": 0,
+              "finishedAt": "2026-09-02T20:48:39Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-02T20:48:38Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1000
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-cfcbs",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "phase": "Running",
+      "podIP": "10.244.179.75",
+      "podIPs": [
+        {
+          "ip": "10.244.179.75"
+        },
+        {
+          "ip": "fdf0:17b3:c3ec:1f79:10:0:8:51b7"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-07-18T23:50:29Z"
+    }
+  }
+]

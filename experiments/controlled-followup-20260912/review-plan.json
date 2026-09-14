@@ -1,0 +1,641 @@
+{
+  "document_type": "experiment_design_review_not_runtime_plan",
+  "status": "prepared_not_run",
+  "execution_ready": false,
+  "scope": "Feasibility and review configuration only; no cluster actions, deployment, or runtime source changes.",
+  "priority": "Controlled repeat of existing no-action versus scaling, before building targeted reassignment",
+  "feasibility": {
+    "targeted_reassignment": "not_implemented_not_validated",
+    "none_and_scale": "implemented_previous_campaign",
+    "reference_assignment_and_pod_placement_gate": "not_implemented",
+    "hot_partition_list_0_3": "supported_by_current_producer"
+  },
+  "source_evidence": {
+    "reviewed_utc": "2026-09-12T20:28:51.306238+00:00",
+    "scope": "Design and feasibility only; no cluster commands or runtime changes",
+    "code_commit": "cbb16b971f910e2e2f46ade0b37533909021aa45",
+    "sources": {
+      "src/consumer/consumer.py": "e2b722776773c47822e3b66b4279ed278d097194ffb386eb0f560b418e6dd92f",
+      "src/producer/producer.py": "886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc",
+      "my-shell/run_experiment.py": "f2dd6e59400e11ae9a0aeea9991f64ea24ed6592aba2295734f7fe925d01e039",
+      "k8s/statefullsets/consumer-sts.yaml": "9628226e704949cc6fecfa3f6ab0c5410b90dadfb62e5fb3a8d0196f17f54a73",
+      "dockerfiles_confluent/runtime-requirements.txt": "deba41dc5e4a59cce1fc458491d298bac0496466da045029ff75832f143594ac"
+    },
+    "placement_evidence": {
+      "run-20260912-085711": {
+        "manifest_sha256": "5501b37ff52bed45e71c32a6b2356e280f107e741f03a67fd0fa282cdd51b320",
+        "initial_resources": [
+          {
+            "pod": "consumer-sts-0",
+            "node": "patternlab.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-1",
+            "node": "k8s-gpu-01.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-2",
+            "node": "k8s-chase-ci-07.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          }
+        ],
+        "partition_0_owner": "consumer-sts-1"
+      },
+      "run-20260912-090802": {
+        "manifest_sha256": "31efa4df1628462bda7a4a0d52e7fe964f68d2901466944a4977e2e7c2c5ae3f",
+        "initial_resources": [
+          {
+            "pod": "consumer-sts-0",
+            "node": "patternlab.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-1",
+            "node": "k8s-gpu-01.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-2",
+            "node": "k8s-chase-ci-07.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          }
+        ],
+        "partition_0_owner": "consumer-sts-0"
+      },
+      "run-20260912-093023": {
+        "manifest_sha256": "762957ddc0d7e4f0683574b4bf5b8249b64150245925e4c29481e66758ca2f2e",
+        "initial_resources": [
+          {
+            "pod": "consumer-sts-0",
+            "node": "patternlab.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-1",
+            "node": "k8s-gpu-01.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-2",
+            "node": "k8s-chase-ci-07.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          }
+        ],
+        "partition_0_owner": "consumer-sts-1"
+      },
+      "run-20260912-091909": {
+        "manifest_sha256": "a1dbc9de9c7239ee05ff06eb0e6a439cce520bb252ffefb90ae7ab9bbd0a3cec",
+        "initial_resources": [
+          {
+            "pod": "consumer-sts-0",
+            "node": "patternlab.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-1",
+            "node": "k8s-gpu-01.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          },
+          {
+            "pod": "consumer-sts-2",
+            "node": "k8s-chase-ci-07.calit2.optiputer.net",
+            "cpu_request_cores": 2.0,
+            "memory_request_gib": 1.0
+          }
+        ],
+        "partition_0_owner": "consumer-sts-0"
+      }
+    },
+    "local_checks": {
+      "explicit_hot_partition_list": "0,3 parsed correctly",
+      "reassignment_rejected_by_runner": "Only scheduled no-action and scale-up pilots are implemented; targeted reassignment is not implemented"
+    }
+  },
+  "base_configuration": {
+    "path": "experiments/preliminary-campaign-20260912/isolated-seed-41.yaml",
+    "sha256": "1db9c81a134e58768b81403f1fe421c7fd2e7784345a1209164659f3493a3950",
+    "use": "Proposed candidates inherit this reviewed configuration except for the listed overrides. They do not change the shared configuration."
+  },
+  "reference": {
+    "initial_assignment": [
+      {
+        "topic_index": 0,
+        "partition": 0,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 1,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 2,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 3,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 4,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 5,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 6,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 7,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 8,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 9,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 10,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 11,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 12,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 13,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 14,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 15,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 16,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 17,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 18,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 19,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 20,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 21,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 22,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 23,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 24,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 25,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 26,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 27,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 28,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 29,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 30,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 31,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 32,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 33,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 34,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 35,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 36,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 37,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 38,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 39,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 40,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 41,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 42,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 43,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 44,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 45,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 46,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 47,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 48,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 49,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 50,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 51,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 52,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 53,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 54,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 55,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 56,
+        "pod": "consumer-sts-2"
+      },
+      {
+        "topic_index": 0,
+        "partition": 57,
+        "pod": "consumer-sts-0"
+      },
+      {
+        "topic_index": 0,
+        "partition": 58,
+        "pod": "consumer-sts-1"
+      },
+      {
+        "topic_index": 0,
+        "partition": 59,
+        "pod": "consumer-sts-2"
+      }
+    ],
+    "historical_pod_node_map": {
+      "consumer-sts-0": "patternlab.calit2.optiputer.net",
+      "consumer-sts-1": "k8s-gpu-01.calit2.optiputer.net",
+      "consumer-sts-2": "k8s-chase-ci-07.calit2.optiputer.net"
+    },
+    "status": "historical_candidate_revalidate_live_before_freezing_block",
+    "pod_uids": null,
+    "container_ids": null,
+    "image_digests": null,
+    "block_reference_must_be_frozen_before_production": true,
+    "matching_requirements": [
+      "full normalized ownership map",
+      "initial consumer and producer replicas",
+      "original consumer pod UIDs/container identities and nodes",
+      "requests and limits",
+      "same consumer/source/runtime signatures",
+      "same producer placement within a block when possible; disclose any change"
+    ],
+    "placement_change_rule": "Stop the controlled block and preserve results. Do not silently relabel a changed initial placement as matched."
+  },
+  "priority_repeat": {
+    "configuration_overrides": {
+      "PRODUCER_POD_COUNT": "3",
+      "CONSUMER_POD_COUNT": "3",
+      "TOPIC_COUNT": "1",
+      "NUM_PARTITIONS": "60",
+      "TRAFFIC_MODE": "skew",
+      "SKEW_FRACTION": "0.8",
+      "PAYLOAD_SIZE_BYTES": "100",
+      "APP_CPU_ITERATIONS": "2000",
+      "APP_DELAY_MS": "0",
+      "WARMUP_SECONDS": "60",
+      "DRAIN_SECONDS": "120",
+      "RETENTION_MS": "86400000",
+      "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+      "OUTCOME_LOG_ENABLED": "true",
+      "TARGET_RATE": "500",
+      "SKEW_PARTITION": "0",
+      "EXP_DURATION_SEC": "300",
+      "EXP_ID": "controlled-concentrated-review",
+      "WORKLOAD_SEED": "71"
+    },
+    "target_total_messages_per_second": 1500,
+    "expected_hot_partition_messages_per_second": 1200,
+    "action_seconds_after_production_start": 120,
+    "action_seconds_after_evaluation_start": 60,
+    "minimum_trials": 2,
+    "maximum_proposed_trials": 4,
+    "blocks": [
+      {
+        "workload_seed": 71,
+        "treatment_order": [
+          "scale",
+          "none"
+        ],
+        "required": true
+      },
+      {
+        "workload_seed": 72,
+        "treatment_order": [
+          "none",
+          "scale"
+        ],
+        "required": false
+      }
+    ],
+    "treatments": {
+      "none": {
+        "initial_consumers": 3
+      },
+      "scale": {
+        "initial_consumers": 3,
+        "target_consumers": 6
+      }
+    },
+    "production_plus_drain_minutes_per_trial": 7,
+    "preparation_limits": {
+      "attempts_per_treatment": 6,
+      "total_minutes_per_block": 15,
+      "selection": "reference map and identity only; no outcome-based selection",
+      "exhaustion": "stop and report preparation failure"
+    },
+    "remaining_blocker": "Implement/test fail-closed map and placement gate before state=running, and verify again before the action; preparation-only validation before live trial release."
+  },
+  "later_reassignment": {
+    "configuration_overrides": {
+      "PRODUCER_POD_COUNT": "3",
+      "CONSUMER_POD_COUNT": "3",
+      "TOPIC_COUNT": "1",
+      "NUM_PARTITIONS": "60",
+      "TRAFFIC_MODE": "skew",
+      "SKEW_FRACTION": "0.8",
+      "PAYLOAD_SIZE_BYTES": "100",
+      "APP_CPU_ITERATIONS": "2000",
+      "APP_DELAY_MS": "0",
+      "WARMUP_SECONDS": "60",
+      "DRAIN_SECONDS": "120",
+      "RETENTION_MS": "86400000",
+      "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+      "OUTCOME_LOG_ENABLED": "true",
+      "TARGET_RATE": "300",
+      "SKEW_PARTITION": "0,3",
+      "EXP_DURATION_SEC": "600",
+      "EXP_ID": "assignment-imbalance-review",
+      "WORKLOAD_SEED": "81"
+    },
+    "calibration_status": "uncalibrated_candidate",
+    "target_total_messages_per_second": 900,
+    "expected_rate_each_hot_partition": 360,
+    "expected_rate_each_cold_partition": 3.103448275862069,
+    "expected_initial_consumer_rates": [
+      775.8620689655172,
+      62.06896551724138,
+      62.06896551724138
+    ],
+    "transfer": {
+      "topic_index": 0,
+      "partition": 3,
+      "source_pod": "consumer-sts-0",
+      "destination_pod": "consumer-sts-1",
+      "requested_partition_moves": 1,
+      "partition_counts_after": [
+        19,
+        21,
+        20
+      ],
+      "producer_routing_changes": false,
+      "hot_key_splitting": false
+    },
+    "expected_post_transfer_consumer_rates": [
+      415.8620689655172,
+      422.0689655172414,
+      62.06896551724138
+    ],
+    "qualification_margins": {
+      "maximum_destination_demand_fraction_of_conservative_calibrated_rate": 0.8,
+      "minimum_source_demand_fraction_of_calibrated_rate": 1.2,
+      "actual_source_backlog_growth_required": true,
+      "every_post_transfer_assignment_requires_measured_headroom": true
+    },
+    "action_seconds_after_production_start": 120,
+    "continued_production_seconds_after_action": 480,
+    "treatments": [
+      "keep_three",
+      "supported_fixed_count_reassignment_three",
+      "scheduled_scale_three_to_six"
+    ],
+    "randomized_complete_blocks": 2,
+    "total_proposed_trials": 6,
+    "blocking_work": [
+      "supported coordinated transfer mechanism with declared eager/cooperative scope",
+      "handover failure and offset-continuity validation",
+      "calibration on actual source and eligible destination with cold workload",
+      "same new client/mechanism and instrumentation in all three treatments",
+      "reference map/placement gate",
+      "per-partition transition and interruption analysis"
+    ],
+    "ready": false
+  },
+  "measurement_rules": {
+    "completion_endpoint": "after application task, before commit acknowledgement",
+    "latency_population": "distinct acknowledged evaluation-admission cohort completed by the fixed drain cutoff",
+    "unfinished": "report count/share with every conditional latency result",
+    "resource_horizon": "evaluation start through drain end",
+    "resource_quantity": "requested consumer-container CPU integrated over covered intervals",
+    "minimum_lag_coverage_for_aggregate_comparison": 0.9,
+    "resource_coverage": "report; require complete coverage for unqualified full-horizon cost comparisons",
+    "recovery_threshold_offsets": 1500,
+    "recovery_hold_seconds": 20,
+    "recovery_only_until_production_end": true,
+    "already_healthy_hold_is_not_recovery": true,
+    "application_scrape_seconds": 5,
+    "prometheus_export_query_grid_seconds": 2,
+    "deadline_ms_provisional": 99,
+    "deadline_SLA_claim_permitted": false,
+    "cross_node_handover_times": "Report uncertainty or interval censoring; no unverified millisecond precision",
+    "multiple_runs": "paired run-level outcomes first; pooled message statistics separately; no averaged consumer p99 or message-count-as-replication"
+  },
+  "literature_limits": [
+    "Scheduled action efficacy is not selector novelty",
+    "CC-MWF full-text comparisons remain unresolved",
+    "Hot-key splitting remains optional RQ4"
+  ],
+  "launch_command": null,
+  "validation": {
+    "priority_repeat": {
+      "timing_retention_ack_validation": "passed",
+      "duration_drain_warmup_readiness": [
+        300.0,
+        120.0,
+        60.0,
+        180.0
+      ],
+      "existing_none_scale_plan_validation": "passed; does not validate placement or implement reassignment"
+    },
+    "later_reassignment": {
+      "timing_retention_ack_validation": "passed",
+      "duration_drain_warmup_readiness": [
+        600.0,
+        120.0,
+        60.0,
+        180.0
+      ],
+      "existing_none_scale_plan_validation": "passed; does not validate placement or implement reassignment"
+    }
+  }
+}

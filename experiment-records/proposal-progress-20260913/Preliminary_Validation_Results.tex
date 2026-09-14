@@ -1,0 +1,188 @@
+% Actual measurements; original 16 trials and eight later matched-start trials remain distinct.
+\textbf{Twenty-four performance trials provide preliminary evidence about the benefits, resource costs, and limits of consumer scaling.} We completed an original 16-trial campaign and eight later trials with verified matching starting conditions. The original campaign covers balanced pressure, short balanced pressure, concentrated partition input, and lower input. The later trials repeat two skew cases: 80\% across 12 of 60 partitions and 80\% to partition 0. Each later case contains two keep-three versus scale-to-six pairs, with opposite treatment orders. Pilots, capacity calibrations, and empty preparations are excluded from the 24 performance trials.
+
+The main observation is that scaling lowered recorded completion p99 in both later 80/20 pairs, whereas its effect in the single-partition pairs was mixed. These are scheduled-action experiments with synthetic CPU work, not evaluations of a complete autoscaler or hot-key splitting. The historical results are retained below, followed by the later comparisons and their limitations.
+
+\textbf{The original campaign comprised 16 trials.} We ran four workload conditions on Nautilus with three producers and 60 Kafka partitions. Each condition contained two workload-seed pairs: one run kept three consumers and the other scheduled an increase from three to six. The two pairs used opposite action orders. The decision was scheduled two minutes after production began. Every comparison included a one-minute warm-up within production and a two-minute bounded drain afterward.
+
+Each message performed the same synthetic CPU task of 2,000 SHA-256 iterations, with no added sleep. Recorded completion latency ends after this work and before commit acknowledgment. It follows distinct acknowledged evaluation messages to their earliest valid completion by drain; unfinished messages are reported separately. Table~\ref{tab:preliminary-overview} summarizes the main observations, followed by the calibration evidence, both repetitions and their measurement limits.
+
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.13\linewidth}>{\raggedright\arraybackslash}p{0.62\linewidth}@{}}
+\toprule
+\textbf{Condition} & \textbf{Production} & \textbf{Observed outcome}\\
+\midrule
+Balanced pressure & 10 minutes & The baselines left 11.38\% and 9.62\% unfinished; both scale runs finished every admitted evaluation message. Recorded completed-cohort p99 ranged from 266--292 s in the baselines and 79--96 s after scaling.\\[5pt]
+Short balanced pressure & 3 minutes & Scaling lowered recorded p99 in both pairs. One baseline also finished every evaluation message, while the other left 1.245\% unfinished.\\[5pt]
+Concentrated input & 5 minutes & With 80\% of input routed to one partition, its backlog continued growing in valid observations after scaling. The scale runs still left 44.40\% and 45.71\% of their evaluation cohorts unfinished.\\[5pt]
+Lower input & 3 minutes & All four runs finished every admitted evaluation message. Scaling increased requested consumer resources; recorded p99 was slightly higher in both scale conditions.\\
+\bottomrule
+\end{tabular}
+\caption{Summary of the original 16 comparison runs. The eight later trials appear separately in Table~\ref{tab:preliminary-matched-skew}. The first three conditions targeted 1,500 messages/s in total; the lower-input controls targeted 600/s. Durations include warm-up and exclude drain. Reported p99 ranges span the two run-level values in a condition; they are not pooled percentiles. Detailed results below retain both repetitions.}
+\label{tab:preliminary-overview}
+\end{table}
+
+These observations motivate identifying the limiting stage before choosing an action and evaluating completion outcomes together with resource cost. Additional consumers helped the measured balanced-pressure episodes but did not remove the concentrated partition bottleneck. The lower-input controls also motivate checking whether an intervention is warranted when existing consumers already keep up. Two repetitions per condition, synthetic work, shared machines, incomplete monitoring intervals and different initial hot-partition placements limit the conclusions. In particular, the concentrated comparison does not isolate a causal effect of consumer count. The results support further investigation of the measurement and scaling questions; they do not yet validate the proposed decision rule or establish novelty.
+
+\textbf{Pressure was measured before the comparison.} Initial five-minute balanced and skewed pilots, with three producers, six consumers, 60 partitions and a total target of 9,000 messages/s, completed their respective 2,699,808 and 2,699,197 evaluation admissions. These were collection checks with the existing HPA active, although six consumers were observed. Subsequent no-added-work calibrations at 12,000 messages/s did not produce the intended sustained backlog. The controlled pressure workload therefore used 2,000 SHA-256 iterations per message, no added sleep, and a total target of 1,500 messages/s. This task makes processing demand explicit; it is not a validated model of a particular application.
+
+The qualified balanced-input calibration, \texttt{run-20260912-054927}, used three producers, three consumers and 60 partitions. Production lasted 180 s, including 60 s of excluded warm-up, followed by a 120 s drain. The HPA was paused and each consumer retained 20 partitions throughout production and drain. Evaluation admissions to the three consumers' partitions were 60,044, 59,812 and 60,144. The population coefficient of variation of partition admission counts was 1.868\%, yet all 3,103 unfinished cohort messages belonged to Consumer 1's partitions (Figure~\ref{fig:preliminary-calibration}). Across the full 180,000-message cohort, the unfinished share was 1.724\%. Among completed messages, recorded mean latency was 31.675 s and p99 was 123.677 s. Lag integration covered 98.33\% of evaluation. This is an observed imbalance in processing progress under near-uniform arrivals; the experiment does not isolate hardware differences, contention or another cause on shared nodes.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/preliminary-calibration.pdf}
+\caption{Qualified balanced-input pressure calibration with fixed ownership. The bars use distinct cohort evidence. The backlog curves use saved five-second guard observations. Warm-up develops the initial backlog but is excluded from the admission cohort. Backlog is the current owner's high-offset-to-completion-frontier distance; it is not a count of unique unfinished evaluation messages.}
+\label{fig:preliminary-calibration}
+\end{figure}
+
+\textbf{The balanced comparison contains eight completed trials.} Two matched seed pairs use 600 s of production and two use 180 s. Every trial starts with three consumers; one condition keeps three, while the other schedules six at production +120 s (evaluation +60 s). Both conditions have a 60 s warm-up and a 120 s bounded drain. Each family uses opposite action orders across its two pairs. Workload settings are matched within a pair, while assignments and shared-node placement are recorded rather than forced identical. All eight trials achieved the 1,500-message/s evaluation target and reported no duplicate cohort completion attempts or evidence-validity failures.
+
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Pair} & \textbf{Admissions} & \textbf{Unfinished (\%)} & \textbf{p99 (s)} & \textbf{CPU (core-min)}\\
+\midrule
+L1 & 810,000 & 11.376 $\to$ 0.000 & 292.42 $\to$ 95.58 & 66.00 $\to$ 125.75\\
+L2 & 810,000 & 9.623 $\to$ 0.000 & 266.32 $\to$ 79.10 & 66.00 $\to$ 125.64\\
+S1 & 180,000 & 1.245 $\to$ 0.000 & 121.82 $\to$ 75.92 & 24.00 $\to$ 41.77\\
+S2 & 180,000 & 0.000 $\to$ 0.000 & 115.82 $\to$ 62.94 & 24.00 $\to$ 41.78\\
+\bottomrule
+\end{tabular}
+\caption{Actual balanced-input results. Each arrow compares keeping three consumers with scheduling an increase to six. L1/L2 are the 600 s production episodes; S1/S2 are the 180 s episodes. Admissions are per run. Completion p99 is conditional on completion by drain. CPU is the integral of requested consumer-container CPU over the common evaluation-through-drain horizon, with 100\% resource coverage in all eight trials.}
+\label{tab:preliminary-core}
+\end{table}
+
+In the sustained-pressure pairs, keeping three consumers left 92,148 and 77,946 evaluation messages unfinished by drain; the corresponding scale trials completed all 810,000 admissions. Recorded completed-cohort p99 fell in both pairs, accompanied by approximately 59.69 additional requested consumer core-minutes on average. These observations show an outcome/resource tradeoff for this workload. They do not establish that scaling is always needed or that it is the best available action.
+
+The short pairs also had lower recorded p99 with scaling, but unfinished outcomes differed across repetitions. S1 left 2,241 messages unfinished without scaling and none with scaling; S2 finished every evaluation message in both conditions. Scaling added approximately 17.78 requested consumer core-minutes in each short comparison. The short episode still left 60 s of production after the scheduled request, and new consumers began completing work within that period. It therefore does not demonstrate an episode ending before added consumers become useful. Production ended at zero input, so this is an episode-duration pilot rather than the full planned burst-to-normal-demand condition.
+
+Lag coverage was 99.63\% for both sustained baselines and 93.70\% and 95.93\% for their scale counterparts. Covered mean backlog was approximately 85,073 $\to$ 20,994 and 79,050 $\to$ 16,554 offsets. Short baseline coverage was 98.33\%, whereas the two short scale trials covered only 65\% and 80\%. Both short backlog comparisons therefore fail the predeclared 90\% coverage screen and are excluded from aggregate backlog claims. Their reconciled message and resource outcomes remain usable. No core trial confirmed the predeclared recovery condition of backlog at or below 1,500 offsets for 20 s before production ended; these recovery times are censored. Completion during the later drain is a different outcome.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/preliminary-sustained-L1.pdf}
+\caption{Sustained pair L1. The backlog curves use valid same-owner intervals and leave ownership or freshness gaps visible. The lower panel shows rolling 30 s completion rates, not whole-cohort latency. The scheduled request occurs 60 s after evaluation begins; production continues to evaluation +540 s. Both sustained pairs are retained in the accompanying campaign report.}
+\label{fig:preliminary-sustained}
+\end{figure}
+
+\textbf{A dedicated partition check qualified the next concentrated-input comparison.} Before running that comparison, \texttt{run-20260912-083417} used one partition and one consumer with the same 2,000-iteration task and 1,200 admissions/s. During the 120 s evaluation, distinct completions averaged 639.183/s. Median backlog in the three predeclared boundary windows grew from 37,580 to 65,910 to 98,837 offsets. At the bounded drain, 24,687 of 144,000 evaluation admissions remained unfinished (17.144\%). Ownership stayed fixed and lag coverage was 98.33\%. These checks establish overload for the recorded consumer on that node and interval, not a universal per-partition capacity. A later owner can run on a different node and have additional cold-partition work.
+
+% Additional completed-family results are inserted here after reconciliation.
+\textbf{Concentrated input left a hot partition overloaded after scaling.} Four further trials used 300 s of production, 60 s of warm-up, a 120 s drain, and the same 1,500-message/s total target and synthetic processing task. Each producer sent 80\% of its generated messages to partition 0 and distributed the rest among the other 59 partitions. Two matched workload-seed pairs used opposite action orders. The scale request remained at production +120 s, leaving 180 s of continued production. This is a controlled partition-routing case, not a validation of original-key splitting or a stateful downstream application.
+
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Condition} & \textbf{Admissions} & \textbf{Hot unfinished} & \textbf{Other unfinished} & \textbf{p99 (s)}\\
+\midrule
+D1 keep 3 & 360,000 & 171,754 & 13,285 & 259.66\\
+D1 3$\to$6 & 359,999 & 155,189 & 4,658 & 246.73\\
+D2 keep 3 & 360,000 & 180,878 & 10,249 & 268.53\\
+D2 3$\to$6 & 360,000 & 159,615 & 4,957 & 250.33\\
+\bottomrule
+\end{tabular}
+\caption{Actual concentrated-input outcomes. Unfinished columns partition the same evaluation-admission cohort into partition 0 and all other partitions at the fixed drain cutoff. Completion p99 uses only the cohort messages completed by that cutoff. It must be read with the unfinished counts.}
+\label{tab:preliminary-concentrated}
+\end{table}
+
+In D1, the unfinished cohort share was 51.400 $\to$ 44.402\%, while requested consumer CPU was 36.00 $\to$ 65.78 core-minutes. Lag coverage was 99.17\% and 89.17\%, respectively. In D2, the unfinished cohort share was 53.091 $\to$ 45.714\%, while requested consumer CPU was 36.00 $\to$ 65.78 core-minutes. Lag coverage was 99.17\% and 94.17\%, respectively. The arrows compare keeping three consumers with scheduling six, over the same evaluation-through-drain resource horizon. Only 1 of the two pairs qualified for aggregate backlog comparison under the 90\% coverage rule. Valid message outcomes remain retained when monitoring coverage fails this screen.
+
+Across these runs, measured partition-0 admissions ranged from 1200.07 to 1200.17/s, whereas its distinct completions during evaluation ranged from 438.23 to 486.76/s. The completion rate includes messages admitted before evaluation; the unfinished counts instead follow the evaluation-admission cohort. These measured rates and the valid backlog observations show the continuing partition bottleneck. Adding consumers did not divide partition 0 between simultaneous owners.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/preliminary-concentrated-D1.pdf}
+\caption{First concentrated-input pair D1. Partition 0 receives approximately 1,200 admissions/s but completes substantially fewer messages per evaluation second. Its backlog continues growing in valid observations after scaling. The other 59 partitions are shown separately. Gaps remain missing observations, and this pair's aggregate-backlog comparison is excluded because scale-trial lag coverage was 89.17\%. The second pair remains in Table~\ref{tab:preliminary-concentrated} and the complete campaign report.}
+\label{fig:preliminary-concentrated}
+\end{figure}
+
+Placement must remain part of the interpretation. In both pairs, partition 0 stayed on Consumer 1 on \texttt{k8s-gpu-01} in the baseline, whereas the scale trial started it on Consumer 0 on \texttt{patternlab}. After transfer, valid observations showed Consumer 5 on \texttt{k8s-ravi-01} in D1 and Consumer 3 on \texttt{k8s-chase-ci-10} in D2. The curves already differ before the scheduled request. Reversing action order therefore did not remove the initial-placement confounding. Full owner/process intervals and node records are retained for both pairs. Therefore, the observed difference is not an isolated causal estimate of replica count. The evidence establishes continuing overload in these measured concentrated-input episodes; it does not establish a universal partition capacity or prove which alternative action would be best.
+
+
+\textbf{Lower-input controls completed without scaling.} Four separate balanced trials reduced the total target to 600 messages/s while retaining three producers, 60 partitions and the same 2,000-iteration processing task. Production lasted 180 s, including 60 s of warm-up, followed by a 120 s drain. Two matched workload-seed pairs again used opposite action orders; the scale request remained at production +120 s. All four runs completed their 72,000 evaluation admissions by the drain cutoff.
+
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Condition} & \textbf{Unfinished} & \textbf{Mean (s)} & \textbf{p99 (s)} & \textbf{CPU (core-min)}\\
+\midrule
+A1 keep 3 & 0 & 0.169 & 0.824 & 24.00\\
+A1 3$\to$6 & 0 & 0.173 & 0.939 & 41.78\\
+A2 keep 3 & 0 & 0.178 & 0.825 & 24.00\\
+A2 3$\to$6 & 0 & 0.163 & 0.900 & 41.73\\
+\bottomrule
+\end{tabular}
+\caption{Actual lower-input controls. Each run admitted 72,000 evaluation messages. Mean and p99 use the completed evaluation-admission cohort, while CPU integrates requested consumer-container CPU over evaluation and drain.}
+\label{tab:preliminary-low-input}
+\end{table}
+
+The two no-action runs had valid evaluation backlog observations between 14 and 200 offsets. Their completed cohorts and bounded observed backlog support adequate processing capacity for these measured episodes. They do not determine a universal spare-capacity percentage or establish behavior during missing observations. Lag coverage ranged from 91.67\% to 98.33\%. Scheduled scaling added 17.75 requested consumer core-minutes on average across the two pairs. Recorded p99 was higher in both scale conditions, although the small number of shared-cluster trials does not establish a general latency penalty caused by scaling. The threshold-hold diagnostic is a health check here because observed backlog was already below the 1,500-offset threshold before the scheduled action. It is not recovery from observed prior overload.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/preliminary-low-input-A1.pdf}
+\caption{First lower-input pair A1. Valid backlog observations remain small and the rolling 30 s completion-attempt rate follows the 600-message/s target. Missing ownership-transition observations remain gaps. Whole-cohort latency and unfinished outcomes for both pairs are reported in Table~\ref{tab:preliminary-low-input}; rolling curves are not substitutes for these outcomes.}
+\label{fig:preliminary-low-input}
+\end{figure}
+
+Together, the lower-input, balanced-pressure and concentrated-input episodes motivate measuring the limiting stage and recording action costs before choosing a mitigation. They provide initial evidence for the measurement and scaling questions. They do not yet validate the proposed selector or show that an alternative action would outperform scaling under the same placement and workload.
+
+
+
+\textbf{Measurement and scope limit the conclusions.} Each admitted evaluation message is identified distinctly and followed to its earliest valid processing completion by drain, after application work and before commit acknowledgment. Unfinished messages are reported separately because they have no observed completion latency. Whole-cohort percentiles come from durable event evidence, not averages of consumer means or rolling Prometheus p99 values. The original closed-run event files are retained on the Nautilus PVCs and reconciled with local evidence using SHA-256. Compressed copies are checked losslessly.
+
+Earlier technical attempts exposed competing HPA replica changes, group-generation commit handling, concurrent metric-field exposition and a freshness check that compared clocks across machines. The corrections and excluded attempts remain recorded. At campaign verification, the relevant automated suite passed 96 tests. Current lag freshness combines local monotonic observation age with the age of the original Prometheus sample. Actual scraping is every 5 s; the 2 s historical query grid does not create new independent scrapes. Invalid or missing lag observations are not treated as zero. Empty-topic readiness can be established before usable offsets exist, while unresolved offset observations remain invalid for backlog analysis.
+
+Recorded latency uses producer and consumer wall timestamps. Coordinator clock probes do not independently establish a sufficiently tight cross-node bound for the provisional 99 ms deadline, so these results make no deadline-based SLA claim. Requested consumer CPU is not measured whole-cluster cost or a monetary estimate. The two pairs per family are descriptive repetitions, not a basis for a strong confidence interval; millions of messages do not substitute for independent runs. Shared-node effects and ordinary assignment changes remain possible confounders. The evidence supports the project's measurement and scaling questions, while tuned HPA and stronger action baselines, stateful output validation, targeted reassignment, moving hotspots, variable record costs and the complete selector remain future evaluation. Existing literature already studies scaling, skew and reconfiguration; these initial results do not by themselves establish novelty.
+
+\textbf{Eight later performance trials verified matching starting conditions.} The first follow-up rejected six empty preparations on 12 September because Kafka did not reproduce the frozen partition-to-consumer map. No messages were released. A revised startup procedure then used static membership and captured the actual complete assignment before observing performance. Four empty preparations per block checked initial capture, a fresh three-consumer restart, six consumers, and return to the original three-consumer assignment. The six-consumer preparation was an empty readiness check, not a performance trial or a scaling transition under traffic.
+
+Before production and again before the scheduled decision, the coordinator verified the complete initial partition map, original producer and consumer pod identities, nodes, versions, restart counts, and requested resources. These checks passed for all eight later performance trials. Both treatments within a pair used the same static-membership setting and frozen initial reference. The initial map and original pods also matched across the two pairs of each workload. No additional node-pinning constraint was imposed; newly added consumers could be placed on different machines. One separate repetition attempt stopped during empty preparation after a Kubernetes API failure, contributed no performance trial, and remains recorded. The final prelaunch suite passed 158 local tests. This validates the exercised startup and scheduled-action paths, not every proposed action.
+
+\textbf{The later trials separate two forms of partition skew.} All eight used three producers, 60 partitions, a total target of 1,500 messages/s, a 100-byte payload setting, 2,000 SHA-256 iterations per message, and no added sleep. Production lasted 300 s, including 60 s of excluded warm-up; the evaluation admission interval was 240 s and drain lasted 120 s. Each run admitted 360,000 distinct acknowledged evaluation messages. The decision was scheduled at production +120 s, or evaluation +60 s; actual request times and first completions were recorded separately. Pair 1 ran scaling first; pair 2 ran keep-three first. Both pairs retained workload seed 71.
+
+For the 80/20 case, 80\% of input was distributed uniformly over 12 selected partitions, with the remaining 20\% sent only to the other 48. The selected set was \{5, 10, 25, 33, 35, 39, 43, 45, 51, 55, 58, 59\}; measured selected traffic was approximately 80.019\%. The separate concentrated case directed approximately 80\% to partition 0 and the remainder to the other 59. The producer selected partitions explicitly and supplied no original message keys. These cases therefore measure partition skew, not identified hot-key skew or splitting.
+
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Workload} & \textbf{Pair} & \textbf{Unfinished (\%)} & \textbf{p99 (s)} & \textbf{CPU (core-min)}\\
+\midrule
+80/20 over 12 & 1 & 0.532 $\to$ 0.000 & 121.15 $\to$ 49.37 & 36.00 $\to$ 65.16\\
+80/20 over 12 & 2 & 0.000 $\to$ 0.000 & 115.68 $\to$ 50.95 & 36.00 $\to$ 63.50$^{*}$\\
+80\% to P0 & 1 & 39.495 $\to$ 25.103 & 228.44 $\to$ 192.79 & 36.00 $\to$ 65.01\\
+80\% to P0 & 2 & 39.163 $\to$ 61.294 & 228.76 $\to$ 294.13 & 36.00 $\to$ 65.14\\
+\bottomrule
+\end{tabular}
+\caption{Eight later trials with matching verified starting conditions. Each arrow compares keep-three with scheduled scale-to-six; admissions are 360,000 per run. P99 is conditional on completion by drain. CPU integrates requested consumer-container CPU over the common 360 s evaluation-through-drain horizon. $^{*}$The second 80/20 scale trial has 95.83\% resource coverage: 63.50 is the observed-interval integral, not a complete-horizon cost. All other resource values have 100\% coverage.}
+\label{tab:preliminary-matched-skew}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/preliminary-repeated-skew.pdf}
+\caption{Run-level outcomes for the two later skew comparisons. Each bar represents one run, not a mean over messages or independent repetitions. Left panels show unfinished evaluation admissions at the common drain cutoff; right panels show p99 among messages completed by that cutoff. The same workload seed is retained and treatment order is reversed in pair 2. Matching the starting state does not control new-consumer placement or changing contention on shared nodes.}
+\label{fig:preliminary-repeated-skew}
+\end{figure}
+
+\textbf{Scaling's latency benefit repeated for the 80/20 case.} Completion p99 decreased from 121.15 to 49.37 s in pair 1 and from 115.68 to 50.95 s in pair 2. Both scaling runs completed every admitted evaluation message. Keep-three left 1,915 messages unfinished in pair 1 and none in pair 2, so the unfinished-fraction benefit did not repeat in both pairs. Requested resources increased in the complete observations; the second scale run's partial resource integral remains explicitly qualified. In that run, two added consumers first completed work about 18 s after the scale request, but the third first completed work after 185.22 s, during drain. Requesting six consumers therefore did not provide six useful consumers throughout the remaining production interval.
+
+\textbf{Single-partition scaling produced mixed results despite matching starts.} Pair 1 improved: unfinished admissions decreased from 142,181 to 90,372, and p99 fell from 228.44 to 192.79 s. Pair 2 worsened: unfinished admissions increased from 140,985 to 220,659, and p99 rose from 228.76 to 294.13 s. In both baselines the hot partition remained on the original consumer. After scaling it eventually moved to different new owners: Consumer 4 on \texttt{k8s-usra-01} in pair 1 and Consumer 5 on \texttt{k8s-chase-ci-04} in pair 2. Their mean recorded application-task wall durations for partition 0 were 1.275 and 3.533 ms, respectively. These diagnostic means include recorded completions from warm-up, evaluation, and drain; they are not full consumer service-time or isolated hardware-capacity measurements. The longer recorded task duration is consistent with the worse second outcome, while scheduling and contention remain unseparated. Scaling did not divide one partition between simultaneous consumers.
+
+\textbf{The later evidence retains unsuccessful outcomes and missing intervals.} All eight trials passed the reconciled message-evidence checks and recorded no duplicate cohort completion attempts. This does not establish exactly-once business effects or permanent-loss guarantees in an application with a durable downstream sink. Lag coverage for the 80/20 keep/scale pairs was 99.17/87.50\% and 99.17/90.83\%; the single-partition pairs had 99.17/90.00\% and 99.17/81.67\%. The first 80/20 and second single-partition pairs are excluded from aggregate backlog claims under the 90\% screen. Missing intervals remain gaps, while their valid cohort outcomes stay in the comparison. None of these eight runs confirmed the configured backlog recovery condition before production ended. Completion by the later drain is not proof of recovery under continued input.
+
+Two pairs per later workload, one retained workload seed, shared machines, variable placement of added consumers, and synthetic work support descriptive preliminary conclusions. They do not establish statistical significance, generalize across workload seeds, or isolate replica count from the full scaling transition. Producer-to-consumer clock uncertainty also prevents treating the provisional 99 ms threshold as a validated SLA. These observations motivate measuring assignment, effective processing progress, action delay, and resource use together; they do not prove that a particular alternative would have performed better.
+
+\textbf{Completed work and proposed research remain distinct.} The implemented evidence comprises managed runs, durable distinct-message measurements, offline cohort evaluation, monitored lag and requested-resource histories, verified starting-condition checks, and scheduled no-action versus scaling comparisons. The 24 performance trials do not evaluate targeted whole-partition reassignment, an original-key generator or detector, hot-key splitting, scaling with splitting, the complete selector, or tuned competing research policies. Splitting remains a core part of the proposed main study for compatible independent-record or correctly decomposable computations. Its next correctness pilot will compare no intervention, scaling alone, splitting alone, and the combination using the same keyed workload and permitted execution mechanisms. Superiority and novelty claims require those implementations and controlled comparisons with existing methods.
+
+The source evidence, reviewed configurations, run identifiers, coverage limits, and checksums are retained in the experiment register and versioned reports. The original 16-trial campaign is retained separately from the eight later trials so that its initial-placement limitations are not silently removed by the later controls.
