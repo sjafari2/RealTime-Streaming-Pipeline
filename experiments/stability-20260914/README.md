@@ -3,8 +3,9 @@
 Status: no new trial started. The shared configuration storage has been replaced
 with a tested UCSD volume; both live workload templates use it. A fresh consumer
 completed initialization and started, then was stopped. The original claim remains
-intact for historical recovery. Producer data access, the execution wrapper,
-calibration, source synchronization and live metric/resource checks are pending.
+intact for historical recovery. Producer data storage has also been replaced, source synchronization passed on
+one pod per role, and 214 local tests passed under Python 3.12. The execution
+wrapper, calibration and live metric/resource checks are pending.
 See the [storage replacement record](../../experiment-records/config-storage-replacement-20260915/README.md).
 
 ## Six planned trials

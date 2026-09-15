@@ -45,8 +45,8 @@
   "calibration_required": true,
   "automatic_execution_ready": false,
   "blockers": [
-    "Producer data volume access and restart readiness not yet verified",
-    "Stability execution wrapper, calibration, source deployment and live metric/resource checks pending"
+    "Stability execution wrapper and sustained-window/aggregate reporting pending",
+    "Calibration, resource sizing, metric coverage and matching-start verification pending"
   ],
   "latest_preflight": {
     "checked_utc": "2026-09-15T17:42:21.950243+00:00",
@@ -89,6 +89,17 @@
     "producer_replicas": 0,
     "consumer_replicas": 0,
     "original_claim": "retained; historical contents not migrated",
+    "new_trials_started": 0
+  },
+  "producer_recovery": {
+    "checked_utc": "2026-09-15T18:55:33.332284+00:00",
+    "replacement_claim": "producer-data-ucsd-20260915",
+    "original_claim": "retained; historical contents not migrated",
+    "producer_and_consumer_exec": "passed",
+    "managed_source_sync": "11 files verified on one pod per role",
+    "prometheus_ready": "passed",
+    "python312_tests_passed": 214,
+    "calibration_started": false,
     "new_trials_started": 0
   }
 }
