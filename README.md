@@ -8,7 +8,7 @@ This repository supports the PhD research project **Skew-Resilient Kafka: A Lag-
 
 **Current implementation:** managed measurements, evidence collection, repeated-run analysis, and scheduled no-action or consumer scale-up experiments. Targeted partition reassignment, the adaptive action selector, and optional hot-key splitting are research stages still to be implemented. The existing smoke test validates parts of the measurement pipeline; it does not establish the effectiveness or novelty of a mitigation policy.
 
-The active development branch is [`codex/managed-experiments-2026`](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/codex/managed-experiments-2026). Earlier implementations remain available in Git history and the documented archive.
+The active development branch is [`main`](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/main). Earlier implementations remain available in Git history and the documented archive.
 
 ## Start here
 

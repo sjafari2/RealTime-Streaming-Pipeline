@@ -2,8 +2,8 @@
 
 The active code is in `/Users/soheila/Desktop/Thesis-26-27/code`. It continues the
 history of `sjafari2/RealTime-Streaming-Pipeline`; it is not a new unrelated repository.
-The managed measurement update uses `codex/managed-experiments-2026`. The original
-`main` is preserved until the update is reviewed and merged.
+The active implementation and managed measurement updates are on `main`.
+Earlier implementations remain preserved in Git history and the documented backups.
 
 ## What I keep in Git
 
