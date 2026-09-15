@@ -1,13 +1,11 @@
 # Sustained-input stability experiment
 
-Status: configurations validated locally; no new trial started. On 15 September,
-a fresh consumer failed to mount the shared `/config` PVC. A temporary pod without
-persistent storage started and accepted remote commands successfully. The six old
-terminated consumer records were removed; consumer replicas are back at zero.
-The HPA has both directions disabled and minimum 1, avoiding its former minimum
-of 6 when preparation resumes. The wrapper, calibration, source deployment and
-live monitoring verification are still pending. See the
-[recovery record](../../experiment-records/stability-recovery-20260915/README.md).
+Status: no new trial started. The shared configuration storage has been replaced
+with a tested UCSD volume; both live workload templates use it. A fresh consumer
+completed initialization and started, then was stopped. The original claim remains
+intact for historical recovery. Producer data access, the execution wrapper,
+calibration, source synchronization and live metric/resource checks are pending.
+See the [storage replacement record](../../experiment-records/config-storage-replacement-20260915/README.md).
 
 ## Six planned trials
 
@@ -35,7 +33,7 @@ A stability-specific execution wrapper remains pending the blocked preflight.
 
 ## Before production
 
-Resolve the configuration-volume mount failure and producer remote execution; verify shared config
+Verify producer data access and remote execution; verify shared config
 and evidence storage. Verify actual resource usage and size requests consistently
 for both arms. Preserve the paused HPA and check its minimum remains at or below the
 three-consumer baseline. Restore application pods only when preparation can proceed.

@@ -37,9 +37,9 @@ With **80% of traffic spread across 12 of 60 partitions**, scaling lowered recor
 
 **What is next?**
 
-Six balanced stability trials are planned: lower target rate with three consumers, pressure with three consumers, and pressure with scaling to six, each twice. Each lasts 23 minutes total (1 warm-up + 20 evaluation + 2 drain). They test whether backlog settles while production continues. **None has started:** the shared configuration volume currently fails to mount on a fresh consumer. Remote commands worked in a temporary pod without that volume. The execution wrapper and live calibration/checks also remain pending.
+Six balanced stability trials are planned: lower target rate with three consumers, pressure with three consumers, and pressure with scaling to six, each twice. Each lasts 23 minutes total (1 warm-up + 20 evaluation + 2 drain). They test whether backlog settles while production continues. **None has started:** the configuration storage has now been replaced successfully, and a fresh consumer started. Producer data access, the execution wrapper and live calibration/checks remain pending.
 
-[Latest recovery status](experiment-records/stability-recovery-20260915/README.md)
+[Latest recovery status](experiment-records/config-storage-replacement-20260915/README.md)
 
 [Repeated results and plots](experiment-records/repetitions-20260913/README.md) · [Why the second single-partition result differed](experiment-records/repetitions-20260913/single-partition/ownership-review.md) · [Earlier detailed results](experiment-records/README.md)
 

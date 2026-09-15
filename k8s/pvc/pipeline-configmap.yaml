@@ -1,10 +1,11 @@
+# Shared runtime config; the former central PVC is retained for historical recovery.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pipeline-configmap-pvc
+  name: pipeline-config-recovery-ucsd-20260915
   namespace: kafkastreamingdata
 spec:
-  storageClassName: rook-cephfs-central
+  storageClassName: rook-cephfs-ucsd
   accessModes:
     - ReadWriteMany
   resources:

@@ -45,8 +45,7 @@
   "calibration_required": true,
   "automatic_execution_ready": false,
   "blockers": [
-    "Shared /config PVC pipeline-configmap-pvc fails to mount on fresh consumer",
-    "Existing producer exec still unresolved",
+    "Producer data volume access and restart readiness not yet verified",
     "Stability execution wrapper, calibration, source deployment and live metric/resource checks pending"
   ],
   "latest_preflight": {
@@ -80,5 +79,16 @@
       "consumer_pod_records": "six old Error pods still present",
       "new_trials_started": 0
     }
-  ]
+  ],
+  "storage_recovery": {
+    "checked_utc": "2026-09-15T18:12:18.171084+00:00",
+    "replacement_claim": "pipeline-config-recovery-ucsd-20260915",
+    "storage_class": "rook-cephfs-ucsd",
+    "config_readback": "byte-for-byte verified against local template",
+    "consumer_container": "started, then stopped",
+    "producer_replicas": 0,
+    "consumer_replicas": 0,
+    "original_claim": "retained; historical contents not migrated",
+    "new_trials_started": 0
+  }
 }
