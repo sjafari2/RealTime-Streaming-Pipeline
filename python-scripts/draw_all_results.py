@@ -66,7 +66,7 @@ def make(index, output):
                 rates=event_rates(directory,m,hashes)
             except OSError as exc:
                 rates=dict(consumer=[],producer=[],seconds=[],archive_error=str(exc))
-            
+
             outcomes=load(directory/'outcome-summary.json')
             expected=outcomes['useful_throughput_per_second']
             complete=bool(rates['consumer']) and math.isclose(sum(rates['consumer'])/len(rates['consumer']),expected,rel_tol=1e-9,abs_tol=1e-8)
