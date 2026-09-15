@@ -21,7 +21,7 @@ The workload remains 3 producers, 60 partitions, 1,500 target messages/s total, 
 
 ## Commands after user confirmation
 
-The commands below describe the procedure executed for the completed block. Before a future authorized block, first synchronize the changed consumer code while applications are stopped, using `my-shell/sync-code.sh --role consumer`. The run preflight must verify the final source hashes in every relevant pod. In this Codex session, use the project workspace as the working directory and address the final script by absolute path; earlier cluster inspection timed out from the Desktop code directory.
+The commands below describe the procedure executed for the completed block. Before a future authorized block, first synchronize the changed consumer code while applications are stopped, using `my-shell/sync-code.sh --role consumer`. The run preflight must verify the final source hashes in every relevant pod. In this execution environment, use the project workspace as the working directory and address the final script by absolute path; earlier cluster inspection timed out from the Desktop code directory.
 
 Preparation only is the default for the new protocol:
 

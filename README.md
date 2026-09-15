@@ -1,12 +1,14 @@
 # Kafka Skew and Consumer Elasticity
 
+**Current status:** [Completed evidence and pending work](docs/current-status.md).
+
 **Experiment progress:** [Open the experiment register](EXPERIMENT_REGISTER.md) for all completed runs, plots, rejected preparations and the next approved step.
 
 A research platform for studying how workload imbalance affects a Kafka stream-processing pipeline, when additional consumers help, and how the cost of changing the configuration should influence mitigation decisions.
 
 This repository supports the PhD research project **Skew-Resilient Kafka: A Lag-Driven Autoscaling Approach**, by **Soheila Jafari Khouzani**, Department of Computer Science, University of New Mexico. It combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and reproducible analysis of message completion and partition-level behavior.
 
-**Current implementation:** managed measurements, evidence collection, repeated-run analysis, and scheduled no-action or consumer scale-up experiments. Targeted partition reassignment, the adaptive action selector, and optional hot-key splitting are research stages still to be implemented. The existing smoke test validates parts of the measurement pipeline; it does not establish the effectiveness or novelty of a mitigation policy.
+**Current implementation:** managed measurements, evidence collection, repeated-run analysis, and scheduled no-action or consumer scale-up experiments. Targeted partition reassignment has experimental code paths but has not been evaluated in completed performance trials. The adaptive action selector and optional hot-key splitting remain future implementation stages. The existing smoke test validates parts of the measurement pipeline; it does not establish the effectiveness or novelty of a mitigation policy.
 
 The active development branch is [`main`](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/main). Earlier implementations remain available in Git history and the documented archive.
 
@@ -20,7 +22,7 @@ The active development branch is [`main`](https://github.com/sjafari2/RealTime-S
 | Prepare and operate the deployed environment | [Nautilus setup](docs/nautilus-measurement-update.md) and [runtime guide](docs/runtime-and-data-flow.md) |
 | Interpret measurements correctly | [Metric definitions](docs/metric-definitions.md) |
 | Design a comparison and assess its evidence | [Experiment methodology](docs/experiment-methodology.md) |
-| Review the next proposed configuration | [Next experiment plan](experiments/next-run-review/README.md) |
+| Review the next proposed configuration | [Next experiment plan](experiments/stability-20260914/README.md) |
 | Inspect completed runs and their limitations | [Experiment records](experiment-records/README.md) |
 | Read the project overview on GitHub | [Project wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) |
 

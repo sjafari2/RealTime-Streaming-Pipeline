@@ -19,7 +19,9 @@ A later boundary case isolates one overloaded partition. A later reassignment ca
 
 ## Timing and workload
 
-The current proposal table uses a provisional 5-minute warm-up, 5-minute pre-change interval, 15-minute post-change interval and bounded drain, with five pilot repetitions. The [next-run review folder](../experiments/next-run-review/README.md) also contains a shorter screening alternative. Any deviation must be stated with its purpose; shorter runs do not silently become the final protocol.
+Completed comparisons used one minute of warm-up and two minutes of drain. Their total durations were 5, 7 or 12 minutes, leaving 2, 4 or 9 minutes of evaluation production. Warm-up messages are excluded from the evaluation cohort, but their outstanding backlog remains in the pipeline. Each category has Run 1 and Run 2, each containing separate keep-three and scale-to-six trials.
+
+The next [six stability trials](../experiments/stability-20260914/README.md) are planned for 23 minutes total: 1 warm-up, 20 evaluation and 2 drain. They have not started. Use each saved run manifest for actual boundaries; older review-only schedules are not descriptions of completed experiments.
 
 Intervention timing is relative to evaluation start, excluding warm-up. Bounded drain is part of observing outstanding work; records unfinished at its end remain explicitly unfinished. Select rate, work per record, duration and repetition count through bounded calibration before freezing a comparison. Record achieved admission separately from the requested rate.
 

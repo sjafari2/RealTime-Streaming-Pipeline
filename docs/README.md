@@ -2,6 +2,8 @@
 
 This documentation connects the Kafka pipeline implementation to its research questions and experimental evidence. Start with the conceptual guides, then use the operational references for exact commands and metric definitions.
 
+[Current status](current-status.md): 24 completed performance trials, storage recovery and the six pending stability trials.
+
 ## Understand the research
 
 - [Research questions](research-questions.md): the five proposal topics and their current implementation status.
@@ -14,7 +16,7 @@ This documentation connects the Kafka pipeline implementation to its research qu
 - [Nautilus measurement update](nautilus-measurement-update.md): initial deployment and synchronization prerequisites.
 - [Runtime and data flow](runtime-and-data-flow.md): supported commands, timing, file relationships and troubleshooting.
 - [Metric definitions](metric-definitions.md): cohorts, completion, lag, percentiles, coverage, resource accounting and recovery.
-- [Next experiment configuration](../experiments/next-run-review/README.md): review-only configurations and their deviations from the proposal schedule.
+- [Next stability experiments](../experiments/stability-20260914/README.md): six prepared configurations; execution and calibration remain pending.
 - [Experiment records](../experiment-records/README.md): small records of completed runs, with explicit limitations.
 - [12 September preliminary campaign](../experiment-records/campaign-20260912/campaign-report.md): all 16 controlled trials, paired plots, technical exclusions and the connection to the proposal experiment table.
 - [Git history and backups](git-history-and-backups.md): source history, commits and separate raw-data preservation.

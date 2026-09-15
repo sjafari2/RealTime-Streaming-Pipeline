@@ -2,6 +2,8 @@
 
 **Start here:** [Experiment register and progress](../EXPERIMENT_REGISTER.md). Update it after each reviewed run or bounded block; keep exclusions and approval status visible.
 
+The completed inventory now totals 24 performance trials; the 16-trial report below covers the earlier subset. See [current status](../docs/current-status.md) for later controlled results and pending work.
+
 This directory keeps reviewable summaries and frozen configurations. Raw per-message
 evidence and full monitoring exports remain in the ignored `results/` directory and
 on separately managed storage. These records are not a replacement for a data backup.
