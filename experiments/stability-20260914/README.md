@@ -1,8 +1,13 @@
 # Sustained-input stability experiment
 
-Status: configurations validated locally; no new trial started. Producer remote
-execution times out, and old consumer pods remain terminating. Calibration,
-source deployment and live monitoring verification are still required.
+Status: configurations validated locally; no new trial started. On 15 September,
+a fresh consumer failed to mount the shared `/config` PVC. A temporary pod without
+persistent storage started and accepted remote commands successfully. The six old
+terminated consumer records were removed; consumer replicas are back at zero.
+The HPA has both directions disabled and minimum 1, avoiding its former minimum
+of 6 when preparation resumes. The wrapper, calibration, source deployment and
+live monitoring verification are still pending. See the
+[recovery record](../../experiment-records/stability-recovery-20260915/README.md).
 
 ## Six planned trials
 
@@ -30,10 +35,10 @@ A stability-specific execution wrapper remains pending the blocked preflight.
 
 ## Before production
 
-Resolve producer remote execution and consumer termination; verify shared config
+Resolve the configuration-volume mount failure and producer remote execution; verify shared config
 and evidence storage. Verify actual resource usage and size requests consistently
-for both arms. Preserve the paused HPA so its minimum of six does not override the
-baseline. Restore application pods only when preparation can proceed.
+for both arms. Preserve the paused HPA and check its minimum remains at or below the
+three-consumer baseline. Restore application pods only when preparation can proceed.
 
 Run short capacity calibration at both targets. Record achieved acknowledgments,
 completion rate and processing-backlog trend. If the rates no longer represent a
