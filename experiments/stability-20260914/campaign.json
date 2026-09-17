@@ -45,18 +45,18 @@
   "calibration_required": true,
   "automatic_execution_ready": false,
   "blockers": [
-    "Stability execution wrapper and sustained-window/aggregate reporting pending",
+    "Kafka metadata/scheduler threads blocked on filesystem I/O; fresh-topic creation times out",
     "Calibration, resource sizing, metric coverage and matching-start verification pending"
   ],
   "latest_preflight": {
-    "checked_utc": "2026-09-15T17:42:21.950243+00:00",
-    "cluster_queries": "succeeded",
-    "storage_free_diagnostic_exec": "succeeded",
-    "producer_exec": "still unresolved; earlier probes timed out",
-    "consumer_config_volume": "FailedMount: DeadlineExceeded, then operation already exists",
-    "consumer_replicas": 0,
-    "hpa_min_replicas": 1,
-    "hpa_scale_policies": "both Disabled",
+    "checked_utc": "2026-09-17T08:04:20.727626+00:00",
+    "cluster_access": "passed",
+    "source_and_import_checks": "passed on three producers and three consumers",
+    "prometheus_connection": "passed",
+    "topic_creation": "timeout before workload release",
+    "controller_recovery": "single graceful restart requested; shutdown pending",
+    "broker_io": "Raft and scheduler threads observed in uninterruptible filesystem waits",
+    "application_replica_targets": 0,
     "new_trials_started": 0
   },
   "preflight_history": [

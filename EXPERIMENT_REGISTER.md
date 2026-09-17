@@ -44,3 +44,7 @@ Six balanced stability trials are planned: lower target rate with three consumer
 [Repeated results and plots](experiment-records/repetitions-20260913/README.md) · [Why the second single-partition result differed](experiment-records/repetitions-20260913/single-partition/ownership-review.md) · [Earlier detailed results](experiment-records/README.md)
 
 [Proposal update and one-page summary](experiment-records/proposal-progress-20260913/README.md)
+
+## Stability check — 17 September 2026
+
+**Not run yet.** Preparation found a Kafka storage/I/O failure before traffic started. The stability runner is implemented and locally tested; the six trials remain pending infrastructure recovery and calibration. [Preparation record](experiment-records/stability-preflight-20260917/README.md).

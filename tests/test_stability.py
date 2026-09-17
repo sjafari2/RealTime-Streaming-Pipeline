@@ -22,3 +22,11 @@ def test_missing_data_is_unavailable_not_zero():
     assert result['covered_interval_growth_offsets_per_second'] is None
     assert result['time_weighted_mean_backlog'] is None
     assert result['coverage_fraction']==0
+
+
+def test_offset_reset_breaks_the_growth_segment():
+    a,b,c,d=[point(t,t) for t in range(4)]
+    for p,high in zip((a,b,c,d),(10,11,1,2)): p['highs']={'0':high}
+    result=window([a,b,c,d],0,3)
+    assert result['covered_seconds']==2
+    assert len(result['segments'])==2

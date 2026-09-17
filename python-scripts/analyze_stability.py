@@ -16,7 +16,8 @@ def window(snapshots, start, end, max_gap=3):
         if current:
             previous = current[-1]
             dt = point['timestamp']-previous['timestamp']
-            if not (0 < dt <= max_gap) or point.get('owners') != previous.get('owners'):
+            reset = any(point.get(name, {}).get(k, v) < v for name in ('highs', 'positions') for k,v in previous.get(name, {}).items())
+            if not (0 < dt <= max_gap) or point.get('owners') != previous.get('owners') or reset:
                 segments.append(current);current = []
         current.append(point)
     if current: segments.append(current)

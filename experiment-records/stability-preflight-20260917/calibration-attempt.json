@@ -1,0 +1,17 @@
+{
+  "phase": "calibration",
+  "started_epoch": 1789631699.7066839,
+  "runs": [],
+  "status": "failed",
+  "rate_per_producer": 200,
+  "free_bytes": {
+    "producer": 10737418240,
+    "consumer": 310516908032,
+    "local": 35024310272
+  },
+  "error": "Command '['kubectl', '-n', 'kafkastreamingdata', '--request-timeout=30s', 'exec', 'consumer-sts-0', '-c', 'consumer-container', '--', 'bash', '/app/consumer-merge-data/create_topics.sh']' returned non-zero exit status 1.",
+  "command_stderr": "[2026-09-17 07:57:10,347] ERROR org.apache.kafka.common.errors.TimeoutException: Call(callName=createTopics, deadlineMs=1789631830279, tries=1, nextAllowedTryMs=1789631830443) timed out at 1789631830345 after 1 attempt(s)\nCaused by: org.apache.kafka.common.errors.DisconnectException: Cancelled createTopics request with correlation id 3 due to node 2 being disconnected\n (org.apache.kafka.tools.TopicCommand)\n[ERROR] Topic creation failed: stability-calibration-200-20260917-balanced-R200-20260917-015607_0\ncommand terminated with exit code 1\n",
+  "command_stdout": "[INFO] Using kafka-topics at: /kafka/bin/kafka-topics.sh\n[INFO] Bootstrap servers: pip-kafka:9092\n[INFO] RUN_ID=run-20260917-015607\n[INFO] TOPIC_TITLE=stability-calibration-200-20260917-balanced-R200-20260917-015607\n[INFO] TOPIC_COUNT=1 PARTITIONS=60 RF=1\n[INFO] Creating topic: stability-calibration-200-20260917-balanced-R200-20260917-015607_0\nWARNING: Due to limitations in metric names, topics with a period ('.') or underscore ('_') could collide. To avoid issues it is best to use either, but not both.\nError while executing topic command : Call(callName=createTopics, deadlineMs=1789631830279, tries=1, nextAllowedTryMs=1789631830443) timed out at 1789631830345 after 1 attempt(s)\n",
+  "configuration_restored": true,
+  "finished_epoch": 1789631847.151065
+}
