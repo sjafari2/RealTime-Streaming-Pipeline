@@ -10,5 +10,12 @@
     "replicas": 0,
     "result": "third volume mount/attachment failure; full message smoke test failed; volumes retained"
   },
-  "validation": "three-replica topic and exact three-message round trip passed"
+  "validation": "three-replica topic and exact three-message round trip passed",
+  "monitoring_endpoints_verified": 3,
+  "retained_messages_after_sequential_restarts": 3,
+  "live_pipeline_endpoint": "still original pip-kafka selector",
+  "allowed_hosts": [
+    "k8s-u200-00.calit2.optiputer.net",
+    "k8s-gpu-01.calit2.optiputer.net"
+  ]
 }

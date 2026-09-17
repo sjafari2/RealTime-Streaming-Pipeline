@@ -162,7 +162,6 @@
                           "key": "kubernetes.io/hostname",
                           "operator": "In",
                           "values": [
-                            "k8s-chase-ci-07.calit2.optiputer.net",
                             "k8s-u200-00.calit2.optiputer.net",
                             "k8s-gpu-01.calit2.optiputer.net"
                           ]
@@ -229,6 +228,10 @@
                         "fieldPath": "metadata.name"
                       }
                     }
+                  },
+                  {
+                    "name": "KAFKA_JMX_OPTS",
+                    "value": "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1"
                   }
                 ],
                 "image": "docker.io/bitnamilegacy/kafka:4.0.0-debian-12-r10",
