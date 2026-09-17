@@ -1,0 +1,16 @@
+{
+  "job_name": "kafka-brokers-recovery",
+  "scrape_interval": "10s",
+  "static_configs": [
+    {
+      "targets": [
+        "pip-kafka-recovery-ucsd-controller-0.pip-kafka-recovery-ucsd-controller-headless.kafkastreamingdata.svc.cluster.local:5556",
+        "pip-kafka-recovery-ucsd-controller-1.pip-kafka-recovery-ucsd-controller-headless.kafkastreamingdata.svc.cluster.local:5556",
+        "pip-kafka-recovery-ucsd-controller-2.pip-kafka-recovery-ucsd-controller-headless.kafkastreamingdata.svc.cluster.local:5556"
+      ],
+      "labels": {
+        "kafka_cluster": "recovery-ucsd"
+      }
+    }
+  ]
+}

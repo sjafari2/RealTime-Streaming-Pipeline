@@ -1,0 +1,20 @@
+[
+  {
+    "op": "test",
+    "path": "/spec/selector",
+    "value": {
+      "app.kubernetes.io/instance": "pip-kafka",
+      "app.kubernetes.io/name": "kafka",
+      "app.kubernetes.io/part-of": "kafka"
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/spec/selector",
+    "value": {
+      "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+      "app.kubernetes.io/name": "kafka",
+      "app.kubernetes.io/part-of": "kafka"
+    }
+  }
+]

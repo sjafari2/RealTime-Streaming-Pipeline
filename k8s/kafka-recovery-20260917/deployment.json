@@ -1,0 +1,634 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "pip-kafka-recovery-ucsd-controller-configuration",
+        "namespace": "kafkastreamingdata",
+        "labels": {
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/managed-by": "research-deployment"
+        }
+      },
+      "data": {
+        "server.properties": "advertised.listeners=CLIENT://advertised-address-placeholder:9092,INTERNAL://advertised-address-placeholder:9094\ncontroller.listener.names=CONTROLLER\ncontroller.quorum.bootstrap.servers=pip-kafka-recovery-ucsd-controller-0.pip-kafka-recovery-ucsd-controller-headless.kafkastreamingdata.svc.cluster.local:9093,pip-kafka-recovery-ucsd-controller-1.pip-kafka-recovery-ucsd-controller-headless.kafkastreamingdata.svc.cluster.local:9093,pip-kafka-recovery-ucsd-controller-2.pip-kafka-recovery-ucsd-controller-headless.kafkastreamingdata.svc.cluster.local:9093\ninter.broker.listener.name=INTERNAL\nlistener.security.protocol.map=CONTROLLER:PLAINTEXT,CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT\nlisteners=CLIENT://:9092,INTERNAL://:9094,CONTROLLER://:9093\nlog.dir=/bitnami/kafka/data\nlogs.dir=/opt/bitnami/kafka/logs\nprocess.roles=controller,broker"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "pip-kafka-recovery-ucsd-jmx-configuration",
+        "namespace": "kafkastreamingdata",
+        "labels": {
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/managed-by": "research-deployment"
+        }
+      },
+      "data": {
+        "jmx-kafka-prometheus.yml": "jmxUrl: service:jmx:rmi:///jndi/rmi://127.0.0.1:5555/jmxrmi\nlowercaseOutputName: true\nlowercaseOutputLabelNames: true\nssl: false\nwhitelistObjectNames: [\"kafka.controller:*\",\"kafka.server:*\",\"java.lang:*\",\"kafka.network:*\",\"kafka.log:*\"]\nrules:\n  - pattern: kafka.controller<type=(ControllerChannelManager), name=(QueueSize), broker-id=(\\d+)><>(Value)\n    name: kafka_controller_$1_$2_$4\n    labels:\n      broker_id: \"$3\"\n  - pattern: kafka.controller<type=(ControllerChannelManager), name=(TotalQueueSize)><>(Value)\n    name: kafka_controller_$1_$2_$3\n  - pattern: kafka.controller<type=(KafkaController), name=(.+)><>(Value)\n    name: kafka_controller_$1_$2_$3\n  - pattern: kafka.controller<type=(ControllerStats), name=(.+)><>(Count)\n    name: kafka_controller_$1_$2_$3\n  - pattern : kafka.network<type=(Processor), name=(IdlePercent), networkProcessor=(.+)><>(Value)\n    name: kafka_network_$1_$2_$4\n    labels:\n      network_processor: $3\n  - pattern : kafka.network<type=(RequestMetrics), name=(.+), request=(.+)><>(Count|Value)\n    name: kafka_network_$1_$2_$4\n    labels:\n      request: $3\n  - pattern : kafka.network<type=(SocketServer), name=(.+)><>(Count|Value)\n    name: kafka_network_$1_$2_$3\n  - pattern : kafka.network<type=(RequestChannel), name=(.+)><>(Count|Value)\n    name: kafka_network_$1_$2_$3\n  - pattern: kafka.server<type=(.+), name=(.+), topic=(.+)><>(Count|OneMinuteRate)\n    name: kafka_server_$1_$2_$4\n    labels:\n      topic: $3\n  - pattern: kafka.server<type=(ReplicaFetcherManager), name=(.+), clientId=(.+)><>(Value)\n    name: kafka_server_$1_$2_$4\n    labels:\n      client_id: \"$3\"\n  - pattern: kafka.server<type=(DelayedOperationPurgatory), name=(.+), delayedOperation=(.+)><>(Value)\n    name: kafka_server_$1_$2_$3_$4\n  - pattern: kafka.server<type=(.+), name=(.+)><>(Count|Value|OneMinuteRate)\n    name: kafka_server_$1_total_$2_$3\n  - pattern: kafka.server<type=(.+)><>(queue-size)\n    name: kafka_server_$1_$2\n  - pattern: java.lang<type=(.+), name=(.+)><(.+)>(\\w+)\n    name: java_lang_$1_$4_$3_$2\n  - pattern: java.lang<type=(.+), name=(.+)><>(\\w+)\n    name: java_lang_$1_$3_$2\n  - pattern : java.lang<type=(.*)>\n  - pattern: kafka.log<type=(.+), name=(.+), topic=(.+), partition=(.+)><>Value\n    name: kafka_log_$1_$2\n    labels:\n      topic: $3\n      partition: $4"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "pip-kafka-recovery-ucsd",
+        "namespace": "kafkastreamingdata",
+        "labels": {
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/managed-by": "research-deployment"
+        }
+      },
+      "spec": {
+        "internalTrafficPolicy": "Cluster",
+        "ports": [
+          {
+            "name": "tcp-client",
+            "port": 9092,
+            "protocol": "TCP",
+            "targetPort": "client"
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/part-of": "kafka"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "pip-kafka-recovery-ucsd-controller-headless",
+        "namespace": "kafkastreamingdata",
+        "labels": {
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/managed-by": "research-deployment"
+        }
+      },
+      "spec": {
+        "internalTrafficPolicy": "Cluster",
+        "ports": [
+          {
+            "name": "tcp-interbroker",
+            "port": 9094,
+            "protocol": "TCP",
+            "targetPort": "interbroker"
+          },
+          {
+            "name": "tcp-client",
+            "port": 9092,
+            "protocol": "TCP",
+            "targetPort": "client"
+          },
+          {
+            "name": "tcp-controller",
+            "port": 9093,
+            "protocol": "TCP",
+            "targetPort": "controller"
+          }
+        ],
+        "publishNotReadyAddresses": true,
+        "selector": {
+          "app.kubernetes.io/component": "controller-eligible",
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/part-of": "kafka"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP",
+        "clusterIP": "None"
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "name": "pip-kafka-recovery-ucsd-controller",
+        "namespace": "kafkastreamingdata",
+        "labels": {
+          "app.kubernetes.io/name": "kafka",
+          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+          "app.kubernetes.io/managed-by": "research-deployment"
+        }
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "Parallel",
+        "replicas": 3,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka"
+          }
+        },
+        "serviceName": "pip-kafka-recovery-ucsd-controller-headless",
+        "template": {
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/component": "controller-eligible",
+              "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd",
+              "app.kubernetes.io/managed-by": "research-deployment",
+              "app.kubernetes.io/name": "kafka",
+              "app.kubernetes.io/part-of": "kafka",
+              "app.kubernetes.io/version": "4.0.0"
+            }
+          },
+          "spec": {
+            "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "kubernetes.io/hostname",
+                          "operator": "In",
+                          "values": [
+                            "k8s-chase-ci-07.calit2.optiputer.net",
+                            "k8s-u200-00.calit2.optiputer.net",
+                            "k8s-gpu-01.calit2.optiputer.net"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "podAntiAffinity": {
+                "preferredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "weight": 100,
+                    "podAffinityTerm": {
+                      "labelSelector": {
+                        "matchLabels": {
+                          "app.kubernetes.io/instance": "pip-kafka-recovery-ucsd"
+                        }
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    }
+                  }
+                ]
+              }
+            },
+            "automountServiceAccountToken": false,
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "KAFKA_HEAP_OPTS",
+                    "value": "-Xms512m -Xmx1g"
+                  },
+                  {
+                    "name": "KAFKA_CFG_PROCESS_ROLES",
+                    "value": "controller,broker"
+                  },
+                  {
+                    "name": "KAFKA_INITIAL_CONTROLLERS_FILE",
+                    "value": "/shared/initial-controllers.txt"
+                  },
+                  {
+                    "name": "BITNAMI_DEBUG",
+                    "value": "false"
+                  },
+                  {
+                    "name": "KAFKA_KRAFT_CLUSTER_ID",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "cluster-id",
+                        "name": "pip-kafka-recovery-ucsd-kraft"
+                      }
+                    }
+                  },
+                  {
+                    "name": "JMX_PORT",
+                    "value": "5555"
+                  },
+                  {
+                    "name": "HOSTNAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  }
+                ],
+                "image": "docker.io/bitnamilegacy/kafka:4.0.0-debian-12-r10",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "exec": {
+                    "command": [
+                      "pgrep",
+                      "-f",
+                      "kafka"
+                    ]
+                  },
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 10,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 5
+                },
+                "name": "kafka",
+                "ports": [
+                  {
+                    "containerPort": 9093,
+                    "name": "controller",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 9092,
+                    "name": "client",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 9094,
+                    "name": "interbroker",
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "failureThreshold": 6,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": "controller"
+                  },
+                  "timeoutSeconds": 5
+                },
+                "resources": {
+                  "requests": {
+                    "cpu": "1",
+                    "memory": "2Gi"
+                  },
+                  "limits": {
+                    "cpu": "4",
+                    "memory": "4Gi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true,
+                  "runAsGroup": 1001,
+                  "runAsNonRoot": true,
+                  "runAsUser": 1001,
+                  "seLinuxOptions": {}
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/bitnami/kafka",
+                    "name": "data"
+                  },
+                  {
+                    "mountPath": "/opt/bitnami/kafka/logs",
+                    "name": "logs"
+                  },
+                  {
+                    "mountPath": "/opt/bitnami/kafka/config/server.properties",
+                    "name": "kafka-config",
+                    "subPath": "server.properties"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  },
+                  {
+                    "mountPath": "/shared",
+                    "name": "init-shared"
+                  }
+                ]
+              },
+              {
+                "args": [
+                  "-XX:MaxRAMPercentage=100",
+                  "-XshowSettings:vm",
+                  "-jar",
+                  "jmx_prometheus_standalone.jar",
+                  "5556",
+                  "/etc/jmx-kafka/jmx-kafka-prometheus.yml"
+                ],
+                "command": [
+                  "java"
+                ],
+                "image": "docker.io/bitnami/jmx-exporter:latest",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 60,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": "metrics"
+                  },
+                  "timeoutSeconds": 10
+                },
+                "name": "jmx-exporter",
+                "ports": [
+                  {
+                    "containerPort": 5556,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/",
+                    "port": "metrics",
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 30,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 10
+                },
+                "resources": {
+                  "limits": {
+                    "cpu": "375m",
+                    "ephemeral-storage": "2Gi",
+                    "memory": "384Mi"
+                  },
+                  "requests": {
+                    "cpu": "250m",
+                    "ephemeral-storage": "50Mi",
+                    "memory": "256Mi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true,
+                  "runAsGroup": 1001,
+                  "runAsNonRoot": true,
+                  "runAsUser": 1001,
+                  "seLinuxOptions": {}
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/etc/jmx-kafka",
+                    "name": "jmx-config"
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "enableServiceLinks": true,
+            "initContainers": [
+              {
+                "args": [
+                  "-ec",
+                  ". /opt/bitnami/scripts/libkafka.sh\n\ncp /configmaps/server.properties $KAFKA_CONF_FILE\n\n# Get pod ID and role, last and second last fields in the pod name respectively\nPOD_ID=\"${MY_POD_NAME##*-}\"\nPOD_ROLE=\"${MY_POD_NAME%-*}\"; POD_ROLE=\"${POD_ROLE##*-}\"\n\n# Configure node.id\nID=$((POD_ID + KAFKA_MIN_ID))\n[[ -f \"/bitnami/kafka/data/meta.properties\" ]] && ID=\"$(grep \"node.id\" /bitnami/kafka/data/meta.properties | awk -F '=' '{print $2}')\"\nkafka_server_conf_set \"node.id\" \"$ID\"\n# Configure initial controllers\nif [[ \"controller\" =~ \"$POD_ROLE\" ]]; then\n    INITIAL_CONTROLLERS=()\n    for ((i = 0; i < 3; i++)); do\n        var=\"KAFKA_CONTROLLER_${i}_DIR_ID\"; DIR_ID=\"${!var}\"\n        [[ $i -eq $POD_ID ]] && [[ -f \"/bitnami/kafka/data/meta.properties\" ]] && DIR_ID=\"$(grep \"directory.id\" /bitnami/kafka/data/meta.properties | awk -F '=' '{print $2}')\"\n        INITIAL_CONTROLLERS+=(\"${i}@${KAFKA_FULLNAME}-${POD_ROLE}-${i}.${KAFKA_CONTROLLER_SVC_NAME}.${MY_POD_NAMESPACE}.svc.${CLUSTER_DOMAIN}:${KAFKA_CONTROLLER_PORT}:${DIR_ID}\")\n    done\n    echo \"${INITIAL_CONTROLLERS[*]}\" | awk -v OFS=',' '{$1=$1}1' > /shared/initial-controllers.txt\nfi\nreplace_in_file \"$KAFKA_CONF_FILE\" \"advertised-address-placeholder\" \"${MY_POD_NAME}.${KAFKA_FULLNAME}-${POD_ROLE}-headless.${MY_POD_NAMESPACE}.svc.${CLUSTER_DOMAIN}\"\nif [[ -f /secret-config/server-secret.properties ]]; then\n    cat /secret-config/server-secret.properties >> $KAFKA_CONF_FILE\nfi\n"
+                ],
+                "command": [
+                  "/bin/bash"
+                ],
+                "env": [
+                  {
+                    "name": "BITNAMI_DEBUG",
+                    "value": "false"
+                  },
+                  {
+                    "name": "MY_POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MY_POD_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "KAFKA_FULLNAME",
+                    "value": "pip-kafka-recovery-ucsd"
+                  },
+                  {
+                    "name": "CLUSTER_DOMAIN",
+                    "value": "cluster.local"
+                  },
+                  {
+                    "name": "KAFKA_VOLUME_DIR",
+                    "value": "/bitnami/kafka"
+                  },
+                  {
+                    "name": "KAFKA_CONF_FILE",
+                    "value": "/config/server.properties"
+                  },
+                  {
+                    "name": "KAFKA_MIN_ID",
+                    "value": "0"
+                  },
+                  {
+                    "name": "KAFKA_CONTROLLER_SVC_NAME",
+                    "value": "pip-kafka-recovery-ucsd-controller-headless"
+                  },
+                  {
+                    "name": "KAFKA_CONTROLLER_PORT",
+                    "value": "9093"
+                  },
+                  {
+                    "name": "KAFKA_CONTROLLER_0_DIR_ID",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "controller-0-id",
+                        "name": "pip-kafka-recovery-ucsd-kraft"
+                      }
+                    }
+                  },
+                  {
+                    "name": "KAFKA_CONTROLLER_1_DIR_ID",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "controller-1-id",
+                        "name": "pip-kafka-recovery-ucsd-kraft"
+                      }
+                    }
+                  },
+                  {
+                    "name": "KAFKA_CONTROLLER_2_DIR_ID",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "controller-2-id",
+                        "name": "pip-kafka-recovery-ucsd-kraft"
+                      }
+                    }
+                  }
+                ],
+                "image": "docker.io/bitnamilegacy/kafka:4.0.0-debian-12-r10",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "prepare-config",
+                "resources": {
+                  "limits": {
+                    "cpu": "150m",
+                    "ephemeral-storage": "2Gi",
+                    "memory": "192Mi"
+                  },
+                  "requests": {
+                    "cpu": "100m",
+                    "ephemeral-storage": "50Mi",
+                    "memory": "128Mi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "privileged": false,
+                  "readOnlyRootFilesystem": true,
+                  "runAsGroup": 1001,
+                  "runAsNonRoot": true,
+                  "runAsUser": 1001,
+                  "seLinuxOptions": {},
+                  "seccompProfile": {
+                    "type": "RuntimeDefault"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/bitnami/kafka",
+                    "name": "data"
+                  },
+                  {
+                    "mountPath": "/config",
+                    "name": "kafka-config"
+                  },
+                  {
+                    "mountPath": "/configmaps",
+                    "name": "kafka-configmaps"
+                  },
+                  {
+                    "mountPath": "/secret-config",
+                    "name": "kafka-secret-config"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  },
+                  {
+                    "mountPath": "/shared",
+                    "name": "init-shared"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 1001,
+              "fsGroupChangePolicy": "OnRootMismatch",
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "serviceAccountName": "default",
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "name": "pip-kafka-recovery-ucsd-controller-configuration"
+                },
+                "name": "kafka-configmaps"
+              },
+              {
+                "emptyDir": {},
+                "name": "kafka-secret-config"
+              },
+              {
+                "emptyDir": {},
+                "name": "kafka-config"
+              },
+              {
+                "emptyDir": {},
+                "name": "tmp"
+              },
+              {
+                "emptyDir": {},
+                "name": "init-shared"
+              },
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "name": "pip-kafka-recovery-ucsd-jmx-configuration"
+                },
+                "name": "jmx-config"
+              },
+              {
+                "emptyDir": {},
+                "name": "logs"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "type": "OnDelete"
+        },
+        "volumeClaimTemplates": [
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "data"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "20Gi"
+                }
+              },
+              "storageClassName": "rook-ceph-block",
+              "volumeMode": "Filesystem"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
