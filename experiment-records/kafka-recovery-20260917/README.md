@@ -6,4 +6,4 @@ An earlier replacement attempt, `pip-kafka-recovery`, was stopped at zero replic
 
 The original three 300 GiB Kafka claims were not deleted or migrated. The new cluster has separate identity and fresh volumes. Old records and offsets are not part of it. Saved experiment evidence remains separate.
 
-The pipeline bootstrap-service switch and persistent Prometheus configuration change were blocked by automatic approval review and are pending explicit authorization. The running replacement alone does not mean the pipeline has switched. No stability trial has started. Deployment and rollback specifications are in `k8s/kafka-recovery-20260917`.
+The pipeline bootstrap-service switch and persistent Prometheus configuration change have not been applied. The running replacement alone does not mean the pipeline has switched. No stability trial has started. Deployment and rollback specifications are in `k8s/kafka-recovery-20260917`.

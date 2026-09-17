@@ -12,6 +12,6 @@ The recorded deployment already exists. Do not create a new identity for populat
 
 The reviewed `bootstrap-cutover.json` changes only the selector of service `pip-kafka` to the recovery instance and tests the original selector first. `bootstrap-rollback.json` provides the reverse patch. Producers and consumers must be stopped for either operation. Recovery of the old cluster is required before rollback could provide a functioning service.
 
-At initial publication, cutover and the Prometheus update are pending explicit approval after automatic approval review blocked those actions. `prometheus-job.json` is the separate three-target scrape job prepared for the existing Prometheus configuration. Verify live status and the recovery record before applying changes; these files are not evidence that cutover happened.
+At initial publication, traffic and monitoring cutover have not been applied; the existing bootstrap service still selects the original cluster. `prometheus-job.json` is the separate three-target scrape job prepared for the existing Prometheus configuration. Verify live status and the recovery record before applying changes; these files are not evidence that cutover happened.
 
 Functional validation includes storage write/fsync/hash verification, remount/hash verification, a three-voter Kafka quorum, a three-partition topic with all three replicas in sync, and an exact three-message produce/consume check. This is readiness evidence, not a stability performance trial. No historical Kafka records or offsets have been migrated.
