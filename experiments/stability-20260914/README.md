@@ -1,12 +1,11 @@
 # Sustained-input stability experiment
 
-Status: no new trial started. The shared configuration storage has been replaced
-with a tested UCSD volume; both live workload templates use it. A fresh consumer
-completed initialization and started, then was stopped. The original claim remains
-intact for historical recovery. Producer data storage has also been replaced, source synchronization passed on
-one pod per role, and 214 local tests passed under Python 3.12. The execution
-wrapper, calibration and live metric/resource checks are pending.
-See the [storage replacement record](../../experiment-records/config-storage-replacement-20260915/README.md).
+Status (17 September 2026): no stability trial has started. Runtime source and
+imports passed on three producers and three consumers. The six-trial wrapper and
+continuous-input window report are implemented; 219 local tests passed. Live
+calibration is blocked by Kafka topic-creation timeouts and repeated controller
+heartbeat errors. Failed preparations released no workload. Calibration, resource
+sizing and live metric coverage must pass before the long trials.
 
 ## Six planned trials
 
@@ -30,7 +29,24 @@ a matching reference must be captured and checked using the existing empty-start
 protocol before the pressure pair is released. Do not directly apply these YAMLs
 or bypass the frozen-run coordinator. The existing matched-balanced runner describes
 an older 12-trial campaign and must not be used to launch this six-trial design.
-A stability-specific execution wrapper remains pending the blocked preflight.
+`run.py` implements this six-trial design and requires a recorded calibration
+review before execution. It reuses the empty-start procedure for each pressure
+comparison and reverses treatment order in the second comparison.
+
+```bash
+python3 experiments/stability-20260914/run.py --audit-root results/stability-campaign
+# After both calibration results have been reviewed:
+python3 experiments/stability-20260914/run.py --audit-root results/stability-campaign \
+  --calibration-review /path/to/calibration-review.json --execute
+```
+
+The review JSON must have `status: "approved_for_stability"` and two `runs`
+entries containing the collected calibration `directory` paths. The runner checks
+each calibration's saved evidence-validation status before starting. Its dry-run
+mode shows the schedule without changing the cluster. `stability-summary.json`
+reports covered backlog-growth segments; it does not automatically declare a
+pipeline stable. Existing run evidence retains throughput, CPU/RSS and cohort
+outcomes for interpretation alongside these trends.
 
 ## Before production
 

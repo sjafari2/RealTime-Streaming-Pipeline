@@ -122,7 +122,7 @@ def execute_stages(runner, audit, block, config, original_pods, save, write,
             check_original_pods(original_pods, observed)
             plan = dict(action=action, initial_consumers=count,
                         target_consumers=6 if action == 'scale' else None,
-                        after_evaluation_start_seconds=60, recovery_threshold_offsets=1500,
+                        after_evaluation_start_seconds=block.get('intervention_after_seconds', 60), recovery_threshold_offsets=1500,
                         recovery_hold_seconds=20, prepare_only=preparation_only)
             if capture:
                 plan['capture_placement_pods'] = observed

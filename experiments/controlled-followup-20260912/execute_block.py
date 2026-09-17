@@ -43,7 +43,7 @@ def capacity():
 
 
 def execute(audit, static_startup=False, include_comparison=False, workload="single-partition", trial_order="scale-first"):
-    if workload not in ("single-partition", "80-20", "balanced-low", "balanced-short", "balanced-sustained"):
+    if workload not in ("single-partition", "80-20", "balanced-low", "balanced-short", "balanced-sustained", "stability-pressure"):
         raise ValueError("Unknown workload")
     if workload != "single-partition" and not static_startup:
         raise ValueError("This workload requires the validated static-startup procedure")
@@ -71,10 +71,14 @@ def execute(audit, static_startup=False, include_comparison=False, workload="sin
             WARMUP_SECONDS='60', DRAIN_SECONDS='120',
             CONSUMER_ASSIGNMENT_MODE='cooperative',
             EXP_ID='controlled-' + workload + '-static-s71')
+    if workload == 'stability-pressure':
+        cfg = yaml.safe_load((ROOT / 'experiments/stability-20260914/pressure-keep3-run1.yaml').read_text())
+        cfg['data']['CONSUMER_GROUP_ID'] = 'stability-pressure-' + str(time.time_ns())
     raw = yaml.safe_dump(cfg, sort_keys=False).encode()
     (audit / 'experiment-config.yaml').write_bytes(raw)
     block = dict(status='preparing', created_epoch=time.time(), seed=71, order=['none', 'scale'] if trial_order == 'keep-first' else ['scale', 'none'],
                  attempts=[], runs=[], preparation_seconds_used=0, preparation_verified=False)
+    block['intervention_after_seconds'] = 300 if workload == 'stability-pressure' else 60
     block.update(workload=workload, startup_protocol='static-observed-reference-v1' if static_startup else 'legacy-fixed-reference',
                  include_comparison=include_comparison if static_startup else True)
     def save(): write(audit / 'block-status.json', block)
@@ -238,7 +242,7 @@ def main(argv=None):
     parser.add_argument('--audit-dir', type=Path, required=True, help='New directory for block evidence and restoration records')
     parser.add_argument('--static-startup', action='store_true', help='New bounded protocol: capture, restart, six-consumer preparation and return to three')
     parser.add_argument('--include-comparison', action='store_true', help='After all static-startup checks pass, run both treatments in the declared order; requires --static-startup')
-    parser.add_argument('--workload', choices=['single-partition', '80-20', 'balanced-low', 'balanced-short', 'balanced-sustained'], default='single-partition', help='Explicit workload; 80-20 sends 80 percent to 12 of 60 partitions')
+    parser.add_argument('--workload', choices=['single-partition', '80-20', 'balanced-low', 'balanced-short', 'balanced-sustained', 'stability-pressure'], default='single-partition', help='Explicit workload; 80-20 sends 80 percent to 12 of 60 partitions')
     parser.add_argument('--trial-order', choices=['scale-first', 'keep-first'], default='scale-first', help='Order of the two performance trials; keep-first requires static-startup')
     args = parser.parse_args(argv)
     if args.trial_order == 'keep-first' and not args.static_startup:

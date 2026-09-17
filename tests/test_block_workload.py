@@ -35,7 +35,7 @@ def test_invalid_protocol_stops_before_creating_audit(tmp_path, workload):
 
 
 @pytest.mark.parametrize('workload,rate,duration', [
-    ('balanced-low',200,180), ('balanced-short',500,180), ('balanced-sustained',500,600)])
+    ('balanced-low',200,180), ('balanced-short',500,180), ('balanced-sustained',500,600), ('stability-pressure',500,1260)])
 def test_balanced_matched_config_is_frozen_before_cluster_access(tmp_path, monkeypatch, workload, rate, duration):
     class BeforeCluster(Exception): pass
     def stop_before_cluster(): raise BeforeCluster()
@@ -52,3 +52,15 @@ def test_balanced_matched_config_is_frozen_before_cluster_access(tmp_path, monke
     assert config['CONSUMER_STATIC_MEMBERSHIP']=='true'
     assert config['CONSUMER_ASSIGNMENT_MODE']=='cooperative'
     assert int(config['WORKLOAD_SEED'])==71
+
+
+def test_stability_scaling_time_is_frozen_before_cluster_access(tmp_path, monkeypatch):
+    class BeforeCluster(Exception): pass
+    def stop(): raise BeforeCluster()
+    monkeypatch.setattr(block.r, 'command_lock', stop)
+    audit = tmp_path/'stability'
+    with pytest.raises(BeforeCluster):
+        block.execute(audit, static_startup=True, include_comparison=True, workload='stability-pressure', trial_order='keep-first')
+    saved=json.loads((audit/'block-status.json').read_text())
+    assert saved['intervention_after_seconds']==300
+    assert saved['order']==['none','scale']
