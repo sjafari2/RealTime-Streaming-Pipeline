@@ -22,7 +22,7 @@ All four runs finished every evaluation message. Scaling increased requested res
 
 All durations include one minute of warm-up and two minutes of drain; the remaining time is evaluation production. Unfinished means still incomplete at that cutoff; p99 includes only completed evaluation messages. These are preliminary results.
 
-**What else is done?**
+**Additional preparation and calibration**
 
 We completed two initial collection checks and separate capacity/pressure diagnostics. Six later startup checks stopped because partition ownership did not match; they sent no experiment messages and added no performance results.
 
@@ -35,7 +35,7 @@ Both pairs started with matching partition ownership and original pods/machines.
 With **80% of traffic spread across 12 of 60 partitions**, scaling lowered recorded completion p99 in both pairs: **121.15 to 49.37 seconds**, then **115.68 to 50.95 seconds**. Scaling finished every evaluation message in both runs; keep-three left **0.53%** unfinished in the first and **0%** in the second. Scaling used more requested CPU; monitoring coverage and delayed capacity remain limitations.
 
 
-**What is next?**
+**Planned stability evaluation**
 
 Six balanced stability trials are planned: lower target rate with three consumers, pressure with three consumers, and pressure with scaling to six, each twice. Each lasts 23 minutes total (1 warm-up + 20 evaluation + 2 drain). They test whether backlog settles while production continues. **None has started:** configuration and producer storage have been replaced successfully; both application pods started, source hashes matched, and 214 local tests passed. The execution wrapper, resource/rate calibration and live metric checks remain pending.
 

@@ -34,6 +34,6 @@ These stages are research dependencies, not promised completion dates. The [date
 
 ## Decisions still open
 
-The representative application and durable completion endpoint, numerical performance target or resource budget, reassignment protocol, fallback behavior and final experiment durations require explicit choices. Keep a numerical SLA/SLO provisional until its application basis and measurement accuracy are established. Evaluate latency/resource trade-offs directly while that choice remains open.
+The representative application and durable completion endpoint, numerical performance target or resource budget, reassignment protocol, fallback behavior and final experiment durations require explicit choices. A numerical SLA/SLO remains provisional until its application basis and measurement accuracy are established. Current comparisons therefore report latency and resource trade-offs directly.
 
-The intended contribution is a supported account of when a decision rule helps and what it costs. Neither a different programming language nor the absence of an identical implementation name in prior work is sufficient evidence of novelty.
+The intended contribution is an experimentally supported account of when the decision policy improves performance, when it does not, and what its actions cost relative to the selected baselines.

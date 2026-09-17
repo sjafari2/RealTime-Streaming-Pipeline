@@ -1,6 +1,6 @@
 # Static startup implementation verification
 
-The optional startup fix is applied to the final code folder and passed 145 automated tests with no failures or warnings in the final recorded check. No deployment, Nautilus preparation or performance experiment has been performed for this revision. The user requested confirmation of the exact plan before starting.
+The optional startup fix is applied to the final code folder and passed 145 automated tests with no failures or warnings in the final recorded check. No deployment, Nautilus preparation or performance experiment has been performed for this revision. The exact live protocol had not yet been finalized at this checkpoint.
 
 The changes give consumers unique per-pod static member identities, require prior group membership to clear, capture the actual complete initial assignment only in an empty preparation, and retain strict map and original pod/resource checks for every later three-consumer stage. Four empty preparations check three consumers, a three-consumer restart, six consumers and return to three. Only the explicit comparison option admits the scale-then-keep pair after all four stages pass. Any failure stops the block; there are no retries.
 

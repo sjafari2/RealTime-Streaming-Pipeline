@@ -1,18 +1,18 @@
-# Applying the measurement update on Nautilus
+# Nautilus deployment and measurement setup
 
 **Current deployment note (15 September 2026):** active shared claims are `pipeline-config-recovery-ucsd-20260915` and `producer-data-ucsd-20260915`. Original central claims remain retained for historical recovery. Read the [current recovery status](../experiment-records/producer-storage-recovery-20260915/README.md) before applying historical setup instructions. Use Python 3.12 for the verified local runner.
 
-The code keeps my shared-file workflow: stop the applications, edit the shared YAML, troubleshoot if needed, and use `my-shell/save-run.sh` to start the experiment. Python source remains on the existing shared producer and consumer volumes. Prometheus stores aggregate measurements. The extra files contain message outcomes, configuration, ownership events and final metric snapshots.
+The deployment uses a shared configuration file. Between experiments, applications are stopped, the shared YAML is updated, and `my-shell/save-run.sh` launches the next run. Python source remains on the existing shared producer and consumer volumes. Prometheus stores aggregate measurements. The extra files contain message outcomes, configuration, ownership events and final metric snapshots.
 
 The updated application runtime was synchronized and exercised on Nautilus during the 12 September 2026 preliminary campaign, including scheduled three-to-six consumer increases. See the [campaign report](../experiment-records/campaign-20260912/campaign-report.md) for exact run evidence and limits. The prepared dynamic Prometheus discovery update was rejected during deployment; the existing static six-consumer/three-producer targets were used with 5-second application scrapes. Broker monitoring remains incomplete. These setup instructions remain useful after future source or deployment changes; do not repeat the whole setup before every run. The original local files are preserved in `backups/before-measurement-update.tar.gz`.
 
-## Which steps I run once and which I repeat
+## Initial setup and per-run operations
 
 Complete the source/dependency, shared configuration, consumer startup and monitoring setup sections once for the first update. Repeat source sync after changing runtime source, and change workload settings between runs as needed. These are setup instructions, not a list to execute from top to bottom for every experiment. Existing monitoring must be checked before applying any monitoring manifests.
 
 After setup, use `bash my-shell/save-run.sh` for one complete run or `bash my-shell/run_pipeline.sh --repetitions 5` for five repetitions. These commands wait, collect, export and analyze automatically. The separate `start`, `status`, `stop`, `collect` and `export` actions remain available for troubleshooting.
 
-## What changed
+## Measurement behavior
 
 - Completion latency is now measured after the configured waiting/CPU work. Processing-start latency remains a separate diagnostic. The old `consumer_e2e_latency_seconds` name now means **completion latency**; do not combine earlier runs with new ones as the same measurement.
 - Offset storage is explicit and commits use the sequential completion frontier. Invalid records stop the run with a recorded error instead of being skipped and committed past. Ownership callbacks remove revoked lag series; a lost owner does not commit.
@@ -31,7 +31,7 @@ The older controller prototypes and analysis notebooks are preserved under `arch
 Run commands from the local code directory. Confirm that kubectl points to Nautilus and your intended namespace.
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 kubectl config current-context
 bash my-shell/save-run.sh backup
 bash my-shell/save-run.sh stop
@@ -77,7 +77,7 @@ Compare the shared YAML with the new local `src/pipeline-configmap.yaml`. Keep y
 | PRODUCER_EVIDENCE_DIR | /app/producer-data/evidence | Producer shared persistent storage |
 | CONSUMER_EVIDENCE_DIR | /app/consumer-merge-data/evidence | Consumer shared persistent storage |
 
-`EXP_DURATION_SEC` is the entire production interval. `WARMUP_SECONDS` excludes its initial part from the admitted evaluation cohort. For the proposal's pilot, a possible schedule is 1500 seconds of production with 300 seconds of warm-up; a controlled intervention would occur after a further 300 seconds. Optional scheduled no-action and scale-up pilots are now supported; targeted reassignment and the adaptive selector remain planned. The default 300-second run is for development, not the complete thesis pilot.
+`EXP_DURATION_SEC` is the entire production interval. `WARMUP_SECONDS` excludes its initial part from the admitted evaluation cohort. Completed performance comparisons used 60 seconds of warm-up and 120 seconds of drain, with 120, 240, or 540 seconds of evaluation production. The saved manifest defines each run's actual boundaries. Planned stability runs use a longer schedule, documented separately in `experiments/stability-20260914/`. Scheduled no-action and scale-up runs are supported; targeted reassignment still requires live evaluation and the adaptive selector remains planned.
 
 The shared `run-control.json` is managed by the coordinator. Do not edit it during a measurement run. A frozen YAML and manifest are stored under `/config/runs/RUN_ID/`. Runtime configuration hashes must agree. Directly editing the original shared YAML while a managed run is active does not alter its frozen configuration.
 
@@ -86,7 +86,7 @@ The shared `run-control.json` is managed by the coordinator. Do not edit it duri
 The revised consumer StatefulSet runs `supervise.py` instead of `tail -f /dev/null`. Run these commands from the local code folder between experiments. Run each command only after the previous one succeeds. Stopping and syncing first ensures that the supervisor and its supporting files are on the shared volumes before pods restart.
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 bash my-shell/save-run.sh stop
 bash my-shell/sync-code.sh
 ```
@@ -148,7 +148,7 @@ Run these on the Mac or other machine with the Nautilus kubectl context, from th
 One complete experiment using the current shared configuration:
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 bash my-shell/save-run.sh
 ```
 

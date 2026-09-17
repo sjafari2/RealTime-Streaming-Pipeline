@@ -8,7 +8,7 @@ There are **24 performance trials**: 12 comparisons, each comprising an independ
 
 Scaling helped under sustained balanced pressure and in both later 80/20 comparisons. The matched single-partition comparisons were mixed: one improved and one worsened. These preliminary results do not establish that adding consumers resolves every bottleneck or that a complete adaptive policy is effective. See the [experiment register](../EXPERIMENT_REGISTER.md) and [per-run table data](../experiment-records/paired-table-20260914/paired-results-data.json).
 
-## Current operational state
+## Last recorded deployment check — 15 September 2026
 
 Configuration and producer storage were replaced with tested UCSD shared volumes after central-storage mount failures. Original volumes were retained; historical contents were not migrated. Both application pods started, source synchronization verified 11 files, and 214 local tests passed under Python 3.12. Prometheus readiness passed; complete live metric coverage is still pending. Applications were scaled to zero after checks. See the [recovery record](../experiment-records/producer-storage-recovery-20260915/README.md).
 
@@ -18,4 +18,4 @@ Six balanced stability trials are planned: lower target rate with three consumer
 
 The [reviewed configurations](../experiments/stability-20260914/README.md) are prepared. The exact six-trial execution wrapper, sustained-window/aggregate reports, resource/rate calibration, complete monitoring checks and matching-start preparations remain pending. Passing local tests and recovering storage do not mean these trials have started.
 
-Targeted reassignment has experimental code paths but no completed performance evaluation. Hot-key splitting, combined interventions and the full adaptive decision policy remain future work. Preserve whole-run completion statistics separately from rolling monitoring, and always report unfinished work alongside latency.
+Targeted reassignment has experimental code paths but no completed performance evaluation. Hot-key splitting, combined interventions and the full adaptive decision policy remain future work. The analysis reports whole-run completion statistics separately from rolling monitoring and includes unfinished work alongside latency.

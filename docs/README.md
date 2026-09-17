@@ -1,22 +1,23 @@
-# Project documentation
+# Research software documentation
 
-This documentation connects the Kafka pipeline implementation to its research questions and experimental evidence. Start with the conceptual guides, then use the operational references for exact commands and metric definitions.
+I maintain these guides for researchers who want to understand the experimental design, deploy the pipeline, reproduce the analysis, or extend the implementation. They describe the software in this repository and identify which results are supported by completed experiments.
 
 [Current status](current-status.md): 24 completed performance trials, storage recovery and the six pending stability trials.
 
-## Understand the research
+## Research design
 
 - [Research questions](research-questions.md): the five proposal topics and their current implementation status.
 - [Architecture](architecture.md): message processing, run coordination, monitoring and analysis.
 - [Experiment methodology](experiment-methodology.md): a fair comparison, initial pilots and evidence requirements.
 - [Limitations and roadmap](limitations-and-roadmap.md): what is established, what remains provisional and the next research stages.
 
-## Operate and analyze the pipeline
+## Deployment, execution, and analysis
 
 - [Nautilus measurement update](nautilus-measurement-update.md): initial deployment and synchronization prerequisites.
 - [Runtime and data flow](runtime-and-data-flow.md): supported commands, timing, file relationships and troubleshooting.
 - [Metric definitions](metric-definitions.md): cohorts, completion, lag, percentiles, coverage, resource accounting and recovery.
 - [Next stability experiments](../experiments/stability-20260914/README.md): six prepared configurations; execution and calibration remain pending.
+- [Data and reproducibility](data-and-reproducibility.md): published evidence, raw-data availability, file formats, and analysis entry points.
 - [Experiment records](../experiment-records/README.md): small records of completed runs, with explicit limitations.
 - [12 September preliminary campaign](../experiment-records/campaign-20260912/campaign-report.md): all 16 controlled trials, paired plots, technical exclusions and the connection to the proposal experiment table.
 - [Git history and backups](git-history-and-backups.md): source history, commits and separate raw-data preservation.
@@ -27,4 +28,4 @@ The active runtime remains in `src/`; the coordinator is in `my-shell/`; offline
 
 Infrastructure resources are retained in `k8s/`, `helm/` and `charts/`. They are configuration material to inspect for the intended deployment, not a promise that every historical manifest is a current one-command installation. Superseded code is explained in [the managed-run archive](../archive/legacy-before-managed-runs/README.md) and [the earlier repository archive](../archive/repository-before-managed-runs/ARCHIVE.md).
 
-The [GitHub wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) is a reading-oriented entry point. Versioned source documentation is authoritative for the branch being used. Metric changes belong in the implementation and metric reference before they are summarized elsewhere.
+The [GitHub wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) is a reading-oriented entry point. Versioned source documentation is authoritative for the branch being used. Metric definitions document the implementation used to interpret the results.

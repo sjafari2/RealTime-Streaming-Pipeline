@@ -2,17 +2,19 @@
 
 **Current status:** [Completed evidence and pending work](docs/current-status.md).
 
-**Experiment progress:** [Open the experiment register](EXPERIMENT_REGISTER.md) for all completed runs, plots, rejected preparations and the next approved step.
+**Experiment progress:** [Open the experiment register](EXPERIMENT_REGISTER.md) for completed trials, plots, preparation outcomes, and planned experiments.
 
 A research platform for studying how workload imbalance affects a Kafka stream-processing pipeline, when additional consumers help, and how the cost of changing the configuration should influence mitigation decisions.
 
-This repository supports the PhD research project **Skew-Resilient Kafka: A Lag-Driven Autoscaling Approach**, by **Soheila Jafari Khouzani**, Department of Computer Science, University of New Mexico. It combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and reproducible analysis of message completion and partition-level behavior.
+I developed this experimental platform as part of my PhD research, **Skew-Resilient Kafka: A Lag-Driven Autoscaling Approach**, in the Department of Computer Science at the University of New Mexico. I maintain the code, experiment configurations, measurement definitions, and result summaries here so that other researchers can inspect the methods and run comparable experiments.
+
+The platform combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and offline analysis of message completion and partition-level behavior. Earlier collaborative implementations and their contributor credits remain in Git history and the archive.
 
 **Current implementation:** managed measurements, evidence collection, repeated-run analysis, and scheduled no-action or consumer scale-up experiments. Targeted partition reassignment has experimental code paths but has not been evaluated in completed performance trials. The adaptive action selector and optional hot-key splitting remain future implementation stages. The existing smoke test validates parts of the measurement pipeline; it does not establish the effectiveness or novelty of a mitigation policy.
 
 The active development branch is [`main`](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/main). Earlier implementations remain available in Git history and the documented archive.
 
-## Start here
+## Documentation for researchers
 
 | Purpose | Guide |
 |---|---|
@@ -22,7 +24,7 @@ The active development branch is [`main`](https://github.com/sjafari2/RealTime-S
 | Prepare and operate the deployed environment | [Nautilus setup](docs/nautilus-measurement-update.md) and [runtime guide](docs/runtime-and-data-flow.md) |
 | Interpret measurements correctly | [Metric definitions](docs/metric-definitions.md) |
 | Design a comparison and assess its evidence | [Experiment methodology](docs/experiment-methodology.md) |
-| Review the next proposed configuration | [Next experiment plan](experiments/stability-20260914/README.md) |
+| Examine planned stability experiments | [Next experiment plan](experiments/stability-20260914/README.md) |
 | Inspect completed runs and their limitations | [Experiment records](experiment-records/README.md) |
 | Read the project overview on GitHub | [Project wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) |
 
@@ -70,9 +72,9 @@ The coordinator checks readiness, freezes the configuration, schedules productio
 
 The shared `/config/pipeline-configmap.yaml` is edited while applications are stopped. `src/pipeline-configmap.yaml` is a local template. Code synchronization does not automatically apply that template to the live configuration. See [runtime commands](docs/runtime-and-data-flow.md) for rate sweeps, interruption, export and scheduled scale-up.
 
-## Reading results
+## Data and result interpretation
 
-Report completion latency together with unfinished records, actual admission and completed throughput. Pair backlog and resource-time estimates with their measurement coverage. Keep rolling Grafana attempt metrics separate from whole-run, distinct-message cohort results.
+The published summaries report completion latency alongside unfinished records, actual admission, and completed throughput. Backlog and resource-time estimates include measurement coverage. Rolling Grafana attempt metrics and whole-run, distinct-message cohort results answer different questions. The [data and reproducibility guide](docs/data-and-reproducibility.md) explains the available files, access limits, and analysis workflow.
 
 The current synthetic completion endpoint precedes commit acknowledgement and does not represent a durable external business result. A 99 ms deadline is provisional. Clock uncertainty, missing measurements and the scope of resource accounting must accompany conclusions. See [limitations and roadmap](docs/limitations-and-roadmap.md).
 
@@ -85,4 +87,4 @@ python3 -m pip install -r dockerfiles_confluent/runtime-requirements.txt pytest
 python3 -m pytest -q tests
 ```
 
-Local checks do not replace live deployment validation or repeated performance experiments. Contributions should follow [the contribution guide](CONTRIBUTING.md) and preserve the distinction between implemented behavior, proposed experiments and observed results.
+Local checks do not replace live deployment validation or repeated performance experiments. Research reuse should preserve the distinction between implemented behavior, proposed experiments, and observed results.

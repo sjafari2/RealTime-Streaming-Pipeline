@@ -1,6 +1,6 @@
 # Static-member startup and the proposed controlled pair
 
-Status: the user approved this block, and all four empty preparations plus both performance trials completed on 12 September 2026. See the [execution report](../../experiment-records/static-startup-executed-20260912/README.md). Original settings were restored. The six earlier rejected preparations remain a separate record. Any future invocation needs its own authorization; this success does not guarantee every future start.
+Status: all four empty preparations plus both performance trials completed on 12 September 2026. See the [execution report](../../experiment-records/static-startup-executed-20260912/README.md). Original settings were restored. The six earlier rejected preparations remain a separate record. Every future invocation requires the same starting-condition checks; the completed block does not establish reproducibility for every future start.
 
 The consumer has an optional `CONSUMER_STATIC_MEMBERSHIP` setting. Its default is false. When true, each pod supplies its own hostname as Kafka `group.instance.id`; the shared ConfigMap must not give every replica the same identity. The client continues using classic cooperative-sticky subscription and automatic partition assignment. Adding stable identities does not guarantee any particular assignment.
 
@@ -12,24 +12,24 @@ A new controlled block uses one unique consumer group for all its stages. Before
 2. Restart three consumers with new empty topics. Require the same complete map and original pod placement, then stop and verify empty evidence again.
 3. Prepare six consumers with new empty topics. Preserve original P0-P2/C0-C2 identities, validate all six distinct member identities and capture the temporary six-consumer ownership. This is a stopped preparation; it does not measure a running-workload scaling transition.
 4. Return to three consumers after the removed members clear. A new empty-topic start must reproduce the original three-consumer reference. The six-consumer preparation never replaces that reference.
-5. Only when the comparison is explicitly requested and all four preparations pass, run the scale trial: three consumers initially, six requested 120 seconds after production starts.
+5. When comparison mode is enabled and all four preparations pass, run the scale trial: three consumers initially, six requested 120 seconds after production starts.
 6. Run the keep-three trial with the same starting reference and workload seed. Both live trials independently recheck before production and before the scheduled decision.
 
 Any failed check stops the whole sequence. There are no automatic retries and no reference changes based on outcomes. The maximum is four empty preparations plus two performance trials, with a 1,200-second cumulative preparation budget. Empty preparations include cleanup/collection; admitted production, drain, evidence transfer and analysis are outside that counter. Original YAML, HPA settings and replica counts are restored and verified on completion or failure. Shared-machine contention remains a limitation even when starting pods match.
 
 The workload remains 3 producers, 60 partitions, 1,500 target messages/s total, 80% aimed at partition 0, 100-byte payloads, 2,000 SHA-256 iterations per message and no artificial sleep. Each performance trial has 300 seconds production including 60 seconds warm-up, then 120 seconds drain. Completion is measured before commit acknowledgment; whole-run latency remains conditional on completion and is reported with unfinished outcomes. Static membership is enabled in both treatments, so this is a separate comparison from the older dynamic-membership trials.
 
-## Commands after user confirmation
+## Execution commands
 
-The commands below describe the procedure executed for the completed block. Before a future authorized block, first synchronize the changed consumer code while applications are stopped, using `my-shell/sync-code.sh --role consumer`. The run preflight must verify the final source hashes in every relevant pod. In this execution environment, use the project workspace as the working directory and address the final script by absolute path; earlier cluster inspection timed out from the Desktop code directory.
+The commands below describe the procedure executed for the completed block. Before a future block, first synchronize the changed consumer code while applications are stopped, using `my-shell/sync-code.sh --role consumer`. The run preflight must verify the final source hashes in every relevant pod. The historical execution used a different working directory after a local access timeout; that environment-specific observation is retained in the execution record. The examples below use repository-relative paths.
 
 Preparation only is the default for the new protocol:
 
 ```bash
-cd '/Users/soheila/Documents/ChatGPT/Stream Processing Project'
-python3 '/Users/soheila/Desktop/Thesis-26-27/code/experiments/controlled-followup-20260912/execute_block.py' \
+# Run from the repository root.
+python3 'experiments/controlled-followup-20260912/execute_block.py' \
   --static-startup \
-  --audit-dir '/Users/soheila/Desktop/Thesis-26-27/code/results/static-startup-NEW_UNIQUE_NAME'
+  --audit-dir 'results/static-startup-NEW_UNIQUE_NAME'
 ```
 
 To perform all four preparations and then the two conditional performance trials in one block, add `--include-comparison`. Choose a new audit directory. A separate invocation captures a new reference; do not claim it continues an earlier reference or starts directly at the live pair. Without `--static-startup`, the script retains the older fixed-reference procedure for reproducibility; that is not the revised plan.

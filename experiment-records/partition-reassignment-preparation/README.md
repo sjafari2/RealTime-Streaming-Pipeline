@@ -1,6 +1,6 @@
 # Partition redistribution preparation
 
-The user authorized starting the first whole-partition redistribution experiments. The review plan, offline planner and handoff evidence contract are in [the pilot folder](../../experiments/partition-reassignment-pilot/README.md). This is preparation only, not a live Kafka implementation or a performance result.
+This record documents preparation for the first whole-partition redistribution experiments. The review plan, offline planner and handoff evidence contract are in [the pilot folder](../../experiments/partition-reassignment-pilot/README.md). This is preparation only, not a live Kafka implementation or a performance result.
 
 188 local tests passed, including 30 new tests. They cover balanced no-action, uneven capacities, an indivisible hot partition, group overload, moves and swaps, stale/incomplete observations, resume offsets, release/acquire barriers, restarts and timeouts. The single warning concerns inability to write pytest cache under the filesystem sandbox; all tests completed. Tracked existing tests were selected explicitly so unrelated untracked duplicate files were not collected.
 

@@ -76,4 +76,4 @@ For the immediate priority, implement and test the placement/ownership gate, the
 
 ## Implementation following the review
 
-The user subsequently authorized this bounded repeat. The placement gate and preparation-only mode are now implemented; see [EXECUTION.md](EXECUTION.md) for the runnable block and its safeguards. This does not retroactively change the dated feasibility record in `review-plan.json`. Live validation and outcomes must be reported from execution evidence, not inferred from local tests.
+The subsequent bounded-repeat protocol uses the following implementation. The placement gate and preparation-only mode are now implemented; see [EXECUTION.md](EXECUTION.md) for the runnable block and its safeguards. This does not retroactively change the dated feasibility record in `review-plan.json`. Live validation and outcomes must be reported from execution evidence, not inferred from local tests.

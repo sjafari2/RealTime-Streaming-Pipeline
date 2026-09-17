@@ -1,13 +1,13 @@
 # Runtime commands, file relationships and data flow
 
-This guide describes the code in this folder. Commands that use `kubectl` run on the machine with your Nautilus context; the Python producer and consumer run inside Nautilus pods. Local cleanup does not move files already on Nautilus. Complete the [first deployment steps](nautilus-measurement-update.md) before using this workflow there.
+This guide documents the runtime entry points and output formats for a configured Kubernetes deployment. The coordinator runs on a machine with the required Kubernetes context; producers and consumers run inside cluster pods. The [deployment guide](nautilus-measurement-update.md) describes dependencies, shared volumes, and monitoring setup.
 
-## 1. Daily run help
+## 1. Experiment execution
 
 For routine work after the one-time setup, choose one of these commands:
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 bash my-shell/save-run.sh
 ```
 
@@ -23,7 +23,7 @@ Both wait through production, drain and final process snapshots, collect and exp
 Open a terminal in the code folder:
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 bash my-shell/save-run.sh --help
 kubectl config current-context
 ```
@@ -74,7 +74,7 @@ With no action, `bash my-shell/save-run.sh` completes and analyzes one run autom
 Complete-run commands automatically connect to the existing Prometheus service for export. A second terminal is optional for viewing Grafana or for manual export. For that case, keep this running:
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 bash my-shell/port-forward-prometheus-grafana.sh
 ```
 
@@ -257,7 +257,7 @@ The evidence roots can be overridden in YAML. INCARNATION distinguishes separate
 ### Local files after collection/export
 
 ```text
-/Users/soheila/Desktop/Thesis-26-27/code/results/RUN_ID/
+results/RUN_ID/
     manifest.json
     pipeline-configmap.yaml
     producer/POD/INCARNATION/{events.jsonl,final.json,final.prom}
@@ -328,7 +328,7 @@ See [metric-definitions.md](metric-definitions.md) for exact populations, units,
 First synchronize the changed consumer source **between experiments**. These are setup commands, not the commands to repeat for every run:
 
 ```bash
-cd /Users/soheila/Desktop/Thesis-26-27/code
+# Run from the root of the repository checkout.
 bash my-shell/save-run.sh stop
 bash my-shell/sync-code.sh
 ```

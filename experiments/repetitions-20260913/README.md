@@ -1,6 +1,6 @@
-# Second matched-start pairs — authorized 13 September 2026
+# Second matched-start comparisons — 13 September 2026
 
-Run the 80/20 pair first, followed by the single-partition concentrated-input pair. The user authorized both repetitions. Each block uses **keep-three first, then scale-to-six**, reversing its preceding pair. Complete four empty preparations before each pair; stop that block on its first failure, with no retries and a cumulative 1,200-second preparation budget. Preserve every attempt. Check restoration and evidence before starting the next block.
+Run the 80/20 pair first, followed by the single-partition concentrated-input pair. Each block uses **keep-three first, then scale-to-six**, reversing its preceding pair. Complete four empty preparations before each pair; stop that block on its first failure, with no retries and a cumulative 1,200-second preparation budget. Preserve every attempt. Check restoration and evidence before starting the next block.
 
 Both workloads retain seed 71, three producers at 500 messages/s each, 60 partitions, 100-byte payload setting, 2,000 SHA-256 iterations, no added sleep, 300 seconds production including 60 seconds warm-up, and 120 seconds drain. Decision scheduled at evaluation +60 seconds. Static membership and full starting-ownership checks stay enabled. Capture a fresh reference for each block; compare it with its preceding reference and disclose any change. Add no machine-placement constraint.
 
@@ -12,8 +12,8 @@ The added order option changes local orchestration, not producer/consumer proces
 Launch each block separately, only after the preceding block is stopped/restored:
 
 ```bash
-/tmp/pipeline-review-venv/bin/python experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload 80-20 --audit-dir '/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/repetitions-20260913/8020-restart/block'
-/tmp/pipeline-review-venv/bin/python experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload single-partition --audit-dir '/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/repetitions-20260913/single-partition/block'
+python3 experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload 80-20 --audit-dir 'results/repetitions-NEW_UNIQUE_NAME/8020-restart/block'
+python3 experiments/controlled-followup-20260912/execute_block.py --static-startup --include-comparison --trial-order keep-first --workload single-partition --audit-dir 'results/repetitions-NEW_UNIQUE_NAME/single-partition/block'
 ```
 
 Save per-run outcomes and plots, commit-transition checks, original/restored configuration and placement, PVC/local hashes, and a verified raw-evidence archive. Compare repetitions at the run-pair level, with unfinished outcomes beside conditional latency. Exclude aggregate backlog claims for coverage below 90%; do not repair gaps retrospectively. These are scheduled scaling comparisons, not an adaptive-policy or reassignment evaluation.

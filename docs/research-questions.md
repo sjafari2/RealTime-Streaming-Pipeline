@@ -14,9 +14,9 @@ Current work can evaluate the monitoring pipeline. Reliable diagnosis and automa
 
 **How does increasing the number of consumers affect the performance of a Kafka-based stream-processing pipeline under balanced and skewed workloads?**
 
-With a fixed partition count, compare completed throughput, completion latency, unfinished records, backlog and resource-time. When scaling occurs during a run, include startup and ownership-change costs. Compare actual admitted workloads and initial assignments rather than assuming that identical producer targets produce identical conditions.
+The scaling comparisons use a fixed partition count and measure completed throughput, completion latency, unfinished records, backlog, and resource-time. Startup and ownership-change costs are part of the intervention. Actual admitted workloads and initial assignments are recorded because identical producer targets do not guarantee identical starting conditions.
 
-Scheduled scale-up is implemented. A calibrated workload and matched no-action treatment are needed before drawing a scaling conclusion.
+Scheduled scale-up is implemented and has been evaluated in the preliminary comparisons documented in the experiment register. The later comparisons verify matching starting conditions; the earlier comparisons retain placement as a limitation.
 
 ## 3. Targeted partition reassignment
 
@@ -40,15 +40,15 @@ Splitting a key across partitions does not preserve its original sequential proc
 
 The planned controller will use partition-level evidence, the current assignment, capacity estimates and observed intervention costs to decide whether to wait, reassign or scale. The detailed evaluation considers action usefulness, timing, comparative effectiveness and robustness to imperfect observations.
 
-A useful additional claim requires an advantage over competent assignment/scaling methods under comparable information, actions, resources and processing semantics. Combining existing mechanisms, using another language or adding machine learning does not alone establish novelty.
+The planned evaluation compares the decision policy with relevant assignment and scaling methods under comparable information, available actions, resource budgets, and processing semantics. The research contribution will be assessed through these comparisons.
 
-## Immediate direction
+## Evaluation sequence
 
-Start with Questions 1 and 2: validate balanced and statically skewed monitoring, then compare no action with scheduled scaling under a workload that produces persistent backlog and can use additional partition parallelism. This establishes evidence about measurements and action costs before attempting a complete selector. The [review-only experiment plan](../experiments/next-run-review/README.md) distinguishes a quick screening run from the longer proposal schedule.
+The completed work addresses Questions 1 and 2 through monitoring validation and scheduled-scaling comparisons under balanced and statically skewed input. The next [stability experiments](../experiments/stability-20260914/README.md) examine whether backlog settles during sustained production. Targeted reassignment, permitted key splitting, and controller comparisons follow as separate evaluation stages.
 
 ## Closest research context
 
-Landau et al. already coordinate consumer counts and whole-partition assignments with movement-cost considerations. Daedalus already relates workload forecasts and skew-adjusted capacity to scaling and recovery. Dhalion already links diagnosis, corrective actions and post-action evaluation. These are substantive precedents, not merely background references.
+Landau et al. already coordinate consumer counts and whole-partition assignments with movement-cost considerations. Daedalus already relates workload forecasts and skew-adjusted capacity to scaling and recovery. Dhalion already links diagnosis, corrective actions and post-action evaluation. These studies inform the baseline selection and the scope of the proposed contribution.
 
 - Landau et al., *Latency and cost-aware consumer group autoscaling in message broker systems*, JPDC, 2025. [DOI](https://doi.org/10.1016/j.jpdc.2025.105071).
 - Pfister et al., *Daedalus: Self-Adaptive Horizontal Autoscaling for Resource Efficiency of Distributed Stream Processing Systems*, ICPE, 2024. [DOI](https://doi.org/10.1145/3629526.3645042).

@@ -1,7 +1,7 @@
 # Next experiment configuration - for review
 
 > Status update, 12 September 2026: the quick balanced configuration below was
-> executed as `run-20260911-234758`. See its [saved record](../../experiment-records/run-20260911-234758/README.md).
+> executed as `run-20260911-234758`. See its [saved record](../../experiment-records/run-20260911-234758/validation-report.md).
 > The original planning text below is retained as history. Current preparation is
 > [pressure calibration](../capacity-calibration/README.md), which has not been run.
 
@@ -38,7 +38,7 @@ only after the workload, clock measurement, coverage and storage plan are settle
 | Warm-up / evaluated production | 0 / 300 seconds | 0 / 300 seconds | 300 / 1,200 seconds |
 | Pre/post reference periods | Not defined | Not defined | 300 / 900 evaluation seconds |
 | Drain / final scrape hold | 60 / 15 seconds | 60 / 15 seconds | 300 / 15 seconds |
-| Repetitions now | One observed | One screening run proposed | Proposal prescribes five; not approved or scheduled |
+| Repetitions now | One observed | One screening run proposed | Proposal prescribes five; not scheduled in this review |
 
 Balanced routing is probabilistic, so per-partition counts will be approximately
 equal, not identical. The retained skew keys in the YAML are ignored when
@@ -101,7 +101,7 @@ production starts when warm-up is 300 seconds. Do not use this action time for t
 Adding consumers requires the already documented supervisor setup and verified source
 on new replicas. Ordinary scaling/rebalancing is not targeted reassignment.
 
-When repetitions and storage are approved, the same flags are supported by
+When repetition count and storage capacity are established, the same flags are supported by
 `bash my-shell/run_pipeline.sh --repetitions 5`. Paired configurations need separate
 batches with the same reviewed workload, timing and starting count. Do not combine
 the old short run with the longer runs as identical repetitions. The final scale-up

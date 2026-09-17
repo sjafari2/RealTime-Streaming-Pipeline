@@ -2,7 +2,7 @@
 
 Four empty preparations and both performance trials completed. Original shared configuration, HPA identity/settings and replica counts were restored and verified. A separate check found all nine experiment applications stopped. Consumer source was synchronized for this block; restoration of configuration does not revert that source deployment.
 
-This is one new comparison, separate from the earlier 16 trials. Both treatments used the same static-membership setup and workload seed 71. Three producers targeted 1,500 messages/s total, 80% to partition 0, 60 partitions, 100-byte payload setting, 2,000 SHA-256 iterations and no artificial sleep. Production lasted 300 seconds including 60 seconds warm-up, followed by 120 seconds drain. The order was scale then keep-three, as approved before execution.
+This is one new comparison, separate from the earlier 16 trials. Both treatments used the same static-membership setup and workload seed 71. Three producers targeted 1,500 messages/s total, 80% to partition 0, 60 partitions, 100-byte payload setting, 2,000 SHA-256 iterations and no artificial sleep. Production lasted 300 seconds including 60 seconds warm-up, followed by 120 seconds drain. The order was scale then keep-three, as specified in the pre-execution protocol.
 
 | Treatment | Evaluation messages | Unfinished | Completion p99 (s) | Requested CPU (core-min) | Lag coverage |
 |---|---:|---:|---:|---:|---:|

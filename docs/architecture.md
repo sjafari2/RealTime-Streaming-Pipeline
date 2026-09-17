@@ -36,7 +36,7 @@ Completion currently means the end of the configured application work, before co
 
 The coordinator supports scheduled no-action and scale-up pilots. For scale-up, it changes the consumer replica count through Kubernetes; the consumer group then changes ownership through its configured assignment mechanism. The consumer supervisor allows newly created replicas to enter the managed workflow. The plan and observed events are recorded separately.
 
-A scheduled intervention is an experimental treatment. It is not the planned adaptive controller: the runner does not diagnose skew and autonomously choose between waiting, targeted reassignment and scaling. Targeted consumer ownership transfer remains a separate implementation task. Moving broker replicas or changing pod placement is not a substitute for it.
+A scheduled intervention is an experimental treatment. It is not the planned adaptive controller: the runner does not diagnose skew and autonomously choose between waiting, targeted reassignment and scaling. Targeted consumer ownership transfer has experimental code paths and remains a separate live-validation and performance-evaluation task. Moving broker replicas or changing pod placement is not a substitute for it.
 
 ## Evidence and monitoring
 

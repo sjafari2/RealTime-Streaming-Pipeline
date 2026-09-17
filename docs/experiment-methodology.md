@@ -2,13 +2,13 @@
 
 The first experiments establish reliable measurements and the conditions in which consumer scaling is useful. They precede comparisons of a complete adaptive controller. A run that finishes successfully is useful operational evidence, but its scientific interpretation depends on the workload, comparison and measurement coverage.
 
-## Define the question before the run
+## Experimental design
 
-Write down the workload, the intervention, the no-action or competing treatment, the completion endpoint and the outcomes to compare. Record what would count as no benefit. For example, a scale-up comparison should establish whether improved completion or backlog recovery justifies additional consumer resource-time and startup/rebalance disruption.
+Each comparison specifies the workload, intervention, baseline treatment, completion endpoint, and outcomes before execution. The evaluation includes conditions in which an action provides no benefit. Scaling comparisons assess completion and backlog recovery alongside additional consumer resource-time and startup/rebalance disruption.
 
-Use a fixed topic partition count and consistent processing semantics. Keep workload parameters, seeds, per-consumer resources and observation windows comparable. Retain actual initial assignments because the group assignor is not forced to reproduce the same map in every run.
+The protocol uses a fixed topic partition count and consistent processing semantics. Workload parameters, seeds, per-consumer resource declarations, and observation windows are recorded for comparability. Actual initial assignments are retained because the group assignor can produce different maps across runs.
 
-## Initial sequence
+## Calibration and comparison procedure
 
 1. **Measurement screening:** inspect one balanced and one statically skewed input with no intervention. Check actual admission, completed work, partition demand, lag coverage and unfinished records.
 2. **Capacity calibration:** choose a modest workload adjustment that produces sustained measurable backlog while leaving enough partition parallelism for additional consumers to help. A zero-work smoke test does not establish that condition.
@@ -25,7 +25,7 @@ The next [six stability trials](../experiments/stability-20260914/README.md) are
 
 Intervention timing is relative to evaluation start, excluding warm-up. Bounded drain is part of observing outstanding work; records unfinished at its end remain explicitly unfinished. Select rate, work per record, duration and repetition count through bounded calibration before freezing a comparison. Record achieved admission separately from the requested rate.
 
-## Minimum evidence to inspect
+## Evidence retained for interpretation
 
 | Evidence | Interpretation |
 |---|---|
@@ -41,7 +41,7 @@ Exact definitions are in [Metric definitions](metric-definitions.md). Returned-r
 
 ## Comparisons and reporting
 
-Retain per-run results, then group only compatible configurations and initial conditions. Report run-level quantiles and pooled message quantiles separately; averaging p99 values does not produce a pooled p99. A poor-performing but valid trial belongs in the results. An interrupted or invalid run needs an explicit status and reason.
+Per-run results are retained and compatible configurations are grouped for repetition analysis. Run-level quantiles and pooled message quantiles are reported separately; averaging p99 values does not produce a pooled p99. Valid unfavorable outcomes remain in the results. Interrupted or invalid attempts have a separate status and reason.
 
 If recovery is not observed within the follow-up window, report it as censored. If measurement coverage is inadequate, report unavailable evidence rather than inferring successful recovery. The current clock observations do not establish sufficiently tight accuracy for a definitive 99 ms deadline claim.
 
@@ -49,4 +49,4 @@ For the eventual controller comparison, use relevant scaling and workload-aware 
 
 ## Preserve provenance
 
-Commit the completed code and reviewed configuration before a run, record the revision and any remaining edits, and retain the frozen configuration and runtime hashes. Keep small summaries and evidence hashes under `experiment-records/`; preserve raw evidence separately. Do not assign a later commit to an earlier experiment as though that revision was executed.
+The experiment records identify the execution revision, any remaining source differences, the frozen configuration, and runtime hashes. Small summaries and evidence hashes are versioned under `experiment-records/`; raw evidence is preserved separately. Later source or documentation changes retain the original execution provenance.

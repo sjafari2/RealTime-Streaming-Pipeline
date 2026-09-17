@@ -109,7 +109,7 @@ longer than production. Preserve the old raw data and topics.
   and read-only checks on 12 September 2026.
 - `../../python-scripts/check_cluster_clocks.py`: read-only checks in existing pods.
 
-From `/Users/soheila/Desktop/Thesis-26-27/code`, this command only reads clock status:
+From the repository root, this command only reads clock status:
 
 ```bash
 python3 python-scripts/check_cluster_clocks.py --context nautilus \
