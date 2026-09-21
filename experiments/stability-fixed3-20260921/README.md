@@ -1,0 +1,11 @@
+# Balanced stability trials with fixed consumer count
+
+This campaign measures whether backlog remains bounded during a sustained balanced workload with three consumers. It runs 600 messages/s twice, then 1,500 messages/s twice. Three producers each target one third of the aggregate rate. There is no scaling or reassignment intervention.
+
+Each trial has 60 seconds of warm-up, 1,200 seconds of evaluation production, and 120 seconds of drain (23 minutes total). Warm-up messages are excluded from the evaluation cohort; any remaining warm-up backlog stays in the system. The configuration uses 60 partitions, 2,000 SHA-256 iterations per message, zero added application delay, and workload seed 71, inherited from the reviewed stability configuration. Repetitions use fresh topics and consumer groups.
+
+Run `python3 experiments/stability-fixed3-20260921/run.py` to inspect the design, then add `--execute` to run the four trials. The normal runner checks readiness, source versions, monitoring and evidence quality. The campaign stops on failure and restores the previous shared configuration. Campaign status and configuration copies are written under `results/stability-fixed3-*`; full trial evidence is retained in each recorded run directory.
+
+Stability analysis reports backlog growth over fixed windows, throughput and completion outcomes. Finite observations can support stability at the tested load and duration; they do not prove stability at arbitrary load or indefinitely. CPU and memory monitoring are retained with coverage information. Completed-message latency must be interpreted together with unfinished work.
+
+On 21 September, the existing `pip-kafka` bootstrap service was switched to the validated replacement Kafka deployment and its brokers added to Prometheus. Original Kafka disks were preserved. Prometheus now uses the Recreate deployment strategy because its existing single-writer volume cannot attach to two nodes during a rolling restart. Consumer scheduling excludes `patternlab.calit2.optiputer.net`, where initialization stalled; actual placements are recorded per trial. All three replacement brokers were on one host at preparation time, so these trials do not establish broker fault tolerance. This recovered infrastructure differs from the earlier campaign and must be identified when comparing results across campaigns.
