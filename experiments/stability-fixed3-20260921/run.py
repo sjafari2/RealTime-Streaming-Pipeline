@@ -50,6 +50,10 @@ def main():
                 cfg['data'].pop(key, None)
             return cfg
         try:
+            # Validate HPA control against this campaign, not the previous run's timing.
+            r.stop()
+            expected = yaml.safe_dump(template, sort_keys=False).encode()
+            r.shared_write(r.CONFIG, expected)
             with r.paused_for_experiment(r, intervention), r.prometheus_connection():
                 for total_rate in design['aggregate_rates']:
                     for number in (1, 2):
