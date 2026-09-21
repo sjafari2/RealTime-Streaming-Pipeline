@@ -8,7 +8,7 @@ A research platform for studying how workload imbalance affects a Kafka stream-p
 
 I developed this experimental platform as part of my PhD research, **Skew-Resilient Kafka: A Lag-Driven Autoscaling Approach**, in the Department of Computer Science at the University of New Mexico. I maintain the code, experiment configurations, measurement definitions, and result summaries here so that other researchers can inspect the methods and run comparable experiments.
 
-The platform combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and offline analysis of message completion and partition-level behavior. Earlier collaborative implementations and their contributor credits remain in Git history and the archive.
+The platform combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and offline analysis of message completion and partition-level behavior. 
 
 **Current implementation:** managed measurements, evidence collection, repeated-run analysis, and scheduled no-action or consumer scale-up experiments. Targeted partition reassignment has experimental code paths but has not been evaluated in completed performance trials. The adaptive action selector and optional hot-key splitting remain future implementation stages. The existing smoke test validates parts of the measurement pipeline; it does not establish the effectiveness or novelty of a mitigation policy.
 
