@@ -1,4 +1,4 @@
-# Kafka Skew and Consumer Elasticity
+# Kafka Partition Skew and Consumer Elasticity
 
 **Current status:** [Completed evidence and pending work](docs/current-status.md).
 
