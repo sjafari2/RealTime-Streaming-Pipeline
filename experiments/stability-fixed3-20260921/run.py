@@ -17,8 +17,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--resume-first-run', type=Path, help='Validated first 600 messages/s run to retain')
+    parser.add_argument('--rates', type=int, nargs='+', choices=(600, 1500), default=[600, 1500],
+                        help='Aggregate rates to run, each twice')
     args = parser.parse_args()
-    design = dict(aggregate_rates=[600, 1500], repetitions=2, consumers=3,
+    if len(set(args.rates)) != len(args.rates):
+        parser.error('Do not repeat rates; each selected rate already runs twice')
+    design = dict(aggregate_rates=args.rates, repetitions=2, consumers=3,
                   warmup_seconds=60, evaluation_seconds=1200, drain_seconds=120,
                   mitigation='none', workload='balanced', workload_seed=71)
     retained = None
