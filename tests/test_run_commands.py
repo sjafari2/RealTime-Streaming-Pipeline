@@ -41,6 +41,9 @@ def evidence(root, run_id):
 
 
 def test_collect_preserves_previous_evidence_when_transfer_fails(monkeypatch, tmp_path):
+    def failed_compressed(*args, **kwargs):
+        raise subprocess.CalledProcessError(1, ['kubectl', 'exec'], stderr=b'interrupted stream')
+    monkeypatch.setattr(runner, 'copy_compressed_evidence', failed_compressed)
     directory, control = evidence(tmp_path, 'run-copy-fails')
     control.update(state='stopped', config_path='/config/frozen.yaml')
     previous = (directory / 'producer/events.jsonl').read_bytes()
@@ -119,6 +122,9 @@ def test_collect_retries_error_stream_eof_without_kept_partial_files(monkeypatch
 
 
 def test_collect_preserves_role_when_a_later_pod_copy_fails(monkeypatch, tmp_path):
+    def failed_compressed(*args, **kwargs):
+        raise subprocess.CalledProcessError(1, ['kubectl', 'exec'], stderr=b'interrupted stream')
+    monkeypatch.setattr(runner, 'copy_compressed_evidence', failed_compressed)
     directory, control = evidence(tmp_path, 'run-later-copy-fails')
     control.update(state='stopped', config_path='/config/frozen.yaml')
     previous = (directory / 'producer/events.jsonl').read_bytes()
@@ -313,3 +319,23 @@ def test_script_help_and_invalid_counts_never_call_kubectl(tmp_path):
         assert result.returncode == 0 and 'Complete runs' in result.stdout
     result = subprocess.run(['bash', str(ROOT / 'my-shell/run_pipeline.sh'), '--repetitions', '0'], capture_output=True, text=True)
     assert result.returncode == 2 and 'positive repetition' in result.stderr
+
+
+def test_compressed_transfer_preserves_bytes_and_rejects_escape(monkeypatch, tmp_path):
+    import io
+    import tarfile
+    def archive(name):
+        buffer = io.BytesIO()
+        with tarfile.open(fileobj=buffer, mode='w:gz') as out:
+            item = tarfile.TarInfo(name)
+            item.size = 8
+            out.addfile(item, io.BytesIO(b'evidence'))
+        return buffer.getvalue()
+    monkeypatch.setattr(runner, 'remote', lambda *a, **k: archive('pod/events.jsonl'))
+    runner.copy_compressed_evidence('consumer', 'pod', '/evidence/pod', tmp_path/'pod')
+    assert (tmp_path/'pod/events.jsonl').read_bytes() == b'evidence'
+    monkeypatch.setattr(runner, 'remote', lambda *a, **k: archive('pod/../escape'))
+    with pytest.raises(RuntimeError, match='Unexpected'):
+        runner.copy_compressed_evidence('consumer', 'pod', '/evidence/pod', tmp_path/'pod')
+    assert not (tmp_path/'escape').exists()
+    assert (tmp_path/'pod/events.jsonl').read_bytes() == b'evidence'
