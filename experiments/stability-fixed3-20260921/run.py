@@ -17,7 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--resume-first-run', type=Path, help='Validated first 600 messages/s run to retain')
-    parser.add_argument('--rates', type=int, nargs='+', choices=(600, 900, 1200, 1500), default=[600, 1500],
+    parser.add_argument('--rates', type=int, nargs='+', choices=(600, 700, 800, 900, 1200, 1500), default=[600, 1500],
                         help='Aggregate rates to run')
     parser.add_argument('--repetitions', type=int, choices=(1, 2), default=2)
     args = parser.parse_args()
@@ -85,7 +85,7 @@ def main():
                             continue
                         r.stop()
                         name = f'stability-fixed3-rate{total_rate}-run{number}'
-                        template['data'].update(TARGET_RATE=str(total_rate // 3), EXP_ID=name,
+                        template['data'].update(TARGET_RATE=format(total_rate / 3, '.17g'), EXP_ID=name,
                                                CONSUMER_GROUP_ID=name + '-' + str(time.time_ns()))
                         expected = yaml.safe_dump(template, sort_keys=False).encode()
                         (audit / (name + '.yaml')).write_bytes(expected)
