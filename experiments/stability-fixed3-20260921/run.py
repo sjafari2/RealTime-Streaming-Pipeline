@@ -16,10 +16,29 @@ import run_experiment as r
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--resume-first-run', type=Path, help='Validated first 600 messages/s run to retain')
     args = parser.parse_args()
     design = dict(aggregate_rates=[600, 1500], repetitions=2, consumers=3,
                   warmup_seconds=60, evaluation_seconds=1200, drain_seconds=120,
                   mitigation='none', workload='balanced', workload_seed=71)
+    retained = None
+    if args.resume_first_run:
+        directory = args.resume_first_run.resolve()
+        status = json.loads((directory / 'runner-status.json').read_text())
+        manifest = json.loads((directory / 'manifest.json').read_text())
+        cfg = manifest['config']
+        expected_config = dict(TARGET_RATE='200', EXP_DURATION_SEC='1260', WARMUP_SECONDS='60',
+                               DRAIN_SECONDS='120', PRODUCER_POD_COUNT='3', CONSUMER_POD_COUNT='3',
+                               TRAFFIC_MODE='balanced', APP_CPU_ITERATIONS='2000', WORKLOAD_SEED='71',
+                               NUM_PARTITIONS='60', APP_DELAY_MS='0', MITIGATION_POLICY='none',
+                               EXP_ID='stability-fixed3-rate600-run1')
+        if status.get('status') != 'complete' or any(cfg.get(k) != v for k, v in expected_config.items()):
+            raise RuntimeError('Resume requires a validated first trial with matching settings')
+        if manifest.get('intervention', {}).get('action') != 'none':
+            raise RuntimeError('Retained trial must have no intervention')
+        if not (directory / 'stability-summary.json').exists():
+            raise RuntimeError('Retained trial needs stability analysis')
+        retained = dict(aggregate_rate=600, run_number=1, directory=str(directory))
     if not args.execute:
         print(json.dumps(design, indent=2))
         return
@@ -27,7 +46,7 @@ def main():
         raise RuntimeError('Commit reviewed changes before execution')
     audit = ROOT / 'results' / ('stability-fixed3-' + time.strftime('%Y%m%d-%H%M%S'))
     audit.mkdir(parents=True, exist_ok=False)
-    state = dict(status='preparing', design=design, runs=[], started_epoch=time.time(),
+    state = dict(status='preparing', design=design, runs=[retained] if retained else [], started_epoch=time.time(),
                  code_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip())
     def save():
         temporary = audit / 'campaign-status.tmp'
@@ -57,6 +76,8 @@ def main():
             with r.paused_for_experiment(r, intervention), r.prometheus_connection():
                 for total_rate in design['aggregate_rates']:
                     for number in (1, 2):
+                        if retained and total_rate == 600 and number == 1:
+                            continue
                         r.stop()
                         name = f'stability-fixed3-rate{total_rate}-run{number}'
                         template['data'].update(TARGET_RATE=str(total_rate // 3), EXP_ID=name,

@@ -67,7 +67,7 @@ def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persisten
 
 
 def analyze(directory, **options):
-    options = dict(window_samples=15, hot_k=1.0, minimum_lag=10.0, persistence=.8, max_gap=3.0) | options
+    options = {**dict(window_samples=15, hot_k=1.0, minimum_lag=10.0, persistence=.8, max_gap=3.0), **options}
     directory = Path(directory)
     manifest = json.loads((directory/'manifest.json').read_text())
     data = json.loads((directory/'prometheus.json').read_text())
