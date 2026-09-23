@@ -160,8 +160,8 @@ for v in TOPIC_COUNT NUM_PARTITIONS REPLICATION_FACTOR; do
     exit 2
   fi
 done
-if ! [[ "${TARGET_RATE}" =~ ^[0-9]+$ ]]; then
-  echo "[ERROR] TARGET_RATE must be integer string; got '${TARGET_RATE}'" >&2
+if ! [[ "${TARGET_RATE}" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  echo "[ERROR] TARGET_RATE must be a nonnegative decimal; got '${TARGET_RATE}'" >&2
   exit 2
 fi
 
