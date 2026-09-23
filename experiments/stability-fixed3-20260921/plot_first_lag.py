@@ -14,6 +14,11 @@ args=parser.parse_args()
 p=args.run_directory
 lag=json.loads((p/'lag-summary.json').read_text())
 m=json.loads((p/'manifest.json').read_text())
+cfg=m['config']
+rate=float(cfg['TARGET_RATE'])*int(cfg['PRODUCER_POD_COUNT'])
+number=cfg['EXP_ID'].rsplit('run',1)[-1]
+duration=lag['evaluation_seconds']/60
+partitions=int(cfg['NUM_PARTITIONS'])*int(cfg['TOPIC_COUNT'])
 x=[];y=[];previous=None
 for row in lag['snapshots']:
     t=(row['timestamp']-m['evaluation_start_epoch'])/60
@@ -26,15 +31,15 @@ for row in lag['snapshots']:
     previous=row if good else None
 plt.rcParams.update({'font.family':'DejaVu Sans','font.size':11,'axes.spines.top':False,'axes.spines.right':False})
 fig,ax=plt.subplots(figsize=(11,5.4))
-ax.plot(x,y,color='#176b93',linewidth=1.15,label='Total lag across 60 partitions')
+ax.plot(x,y,color='#176b93',linewidth=1.15,label=f'Total lag across {partitions} partitions')
 mean=lag['time_weighted_mean_lag']
-ax.axhline(mean,color='#c16c18',linestyle='--',linewidth=1.7,label=f'Time-weighted mean: {mean:.1f} offsets')
-ax.set(xlim=(0,20),ylim=(0,150),xlabel='Time since evaluation started (minutes)',ylabel='Total lag (offsets)')
-ax.set_xticks(range(0,21,2));ax.grid(axis='y',alpha=.2);ax.legend(loc='upper right',frameon=False)
-fig.suptitle('Balanced input — 600 messages/s — Run 1',x=.09,ha='left',fontsize=17,fontweight='bold',y=.97)
-ax.set_title('3 consumers • 60 partitions • no scaling',loc='left',fontsize=11,pad=16,color='#555555')
-fig.text(.09,.075,f"Peak observed lag: {lag['peak_sampled_lag']:.0f} offsets    |    Evaluation coverage: {100*lag['covered_fraction']:.1f}%",fontsize=11)
-fig.text(.09,.025,'Evaluation only: 20 minutes, following 1 minute warm-up; the 2-minute drain is not shown.\nLag = broker high offset − consumer returned-record position; this is not committed-offset lag.',fontsize=9,color='#555555')
+ax.axhline(mean,color='#c16c18',linestyle='--',linewidth=1.7,label=f'Time-weighted mean: {mean:,.1f} offsets')
+ax.set(xlim=(0,duration),ylim=(0,max(150,lag['peak_sampled_lag']*1.18)),xlabel='Time since evaluation started (minutes)',ylabel='Total lag (offsets)')
+ax.set_xticks(np.linspace(0,duration,11));ax.grid(axis='y',alpha=.2);ax.legend(loc='upper left',frameon=False)
+fig.suptitle(f'Balanced input — {rate:,.0f} messages/s — Run {number}',x=.09,ha='left',fontsize=17,fontweight='bold',y=.97)
+ax.set_title(f"{cfg['CONSUMER_POD_COUNT']} consumers • {partitions} partitions • no scaling",loc='left',fontsize=11,pad=16,color='#555555')
+fig.text(.09,.075,f"Peak observed lag: {lag['peak_sampled_lag']:,.0f} offsets    |    Evaluation coverage: {100*lag['covered_fraction']:.1f}%",fontsize=11)
+fig.text(.09,.025,f"Evaluation only: {duration:g} minutes, following {float(cfg['WARMUP_SECONDS'])/60:g} minute warm-up; the {float(cfg['DRAIN_SECONDS'])/60:g}-minute drain is not shown.\nLag = broker high offset − consumer returned-record position; this is not committed-offset lag.",fontsize=9,color='#555555')
 fig.subplots_adjust(left=.09,right=.98,top=.82,bottom=.22)
 args.output.parent.mkdir(parents=True,exist_ok=True)
 fig.savefig(args.output.with_suffix('.png'),dpi=180,facecolor='white')
