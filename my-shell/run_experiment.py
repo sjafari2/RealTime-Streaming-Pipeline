@@ -595,6 +595,36 @@ def wait_for_end(control):
     raise RuntimeError('Applications did not finish cleanup; inspect status before collecting the run')
 
 
+
+def copy_compressed_evidence(role, pod, source, destination):
+    """Transfer a closed evidence directory in a smaller gzip stream after cp fails."""
+    import io
+    import shutil
+    import tarfile
+    name = destination.name
+    code = ("import sys,tarfile; "
+            "a=tarfile.open(fileobj=sys.stdout.buffer,mode='w|gz'); "
+            f"a.add({source!r},arcname={name!r}); a.close()")
+    payload = remote(role, pod, code, timeout=900)
+    with tarfile.open(fileobj=io.BytesIO(payload), mode='r:gz') as archive:
+        members = archive.getmembers()
+        for item in members:
+            parts = Path(item.name).parts
+            if (not parts or parts[0] != name or '..' in parts or
+                    Path(item.name).is_absolute() or not (item.isfile() or item.isdir())):
+                raise RuntimeError('Unexpected compressed evidence entry')
+        if destination.exists():
+            shutil.rmtree(destination)
+        for item in members:
+            target = destination.parent / item.name
+            if item.isdir():
+                target.mkdir(parents=True, exist_ok=True)
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with archive.extractfile(item) as source_file, target.open('wb') as output:
+                    shutil.copyfileobj(source_file, output)
+
+
 def collect():
     control = read_control()
     if not control:
@@ -637,7 +667,9 @@ def collect():
                         # kubectl's own resume option does not handle every
                         # unexpected-EOF error from the API error stream.
                         if attempt == 3:
-                            raise
+                            print('[COLLECT] Retrying with compressed transfer:', name, flush=True)
+                            copy_compressed_evidence(role, pod, source + '/' + name, destination)
+                            break
                         if destination.is_dir():
                             shutil.rmtree(destination)
                         elif destination.exists():
