@@ -1,5 +1,7 @@
 # Balanced stability trials: completed results
 
+Later follow-up: the [800 messages/s recovery report](RATE800_RECOVERY.md) adds a validated original trial, its lag plot, CPU/RSS audit and evidence hashes; no replacement trial was required.
+
 Six validated trials used three consumers, three producers, 60 partitions, balanced input, 2,000 SHA-256 iterations per message and no scaling. Each trial had 60 seconds of warm-up, 1,200 seconds of evaluation production and 120 seconds of drain. The recovered 600 messages/s trials and the later campaigns are included together; their original failure records remain available.
 
 | Aggregate input (messages/s) | Run | Mean lag (offsets) | Peak sampled lag | Final 10-minute backlog growth (offsets/s) | Unfinished after drain | Completion p99 (s) | Plot |
