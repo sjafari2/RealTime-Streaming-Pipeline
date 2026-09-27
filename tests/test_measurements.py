@@ -14,6 +14,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src/common'))
 sys.path.insert(0, str(ROOT / 'my-shell'))
+sys.path.insert(0, str(ROOT / 'python-scripts'))
 from pipeline_runtime import EvidenceWriter, Runtime, latency_seconds, valid_lag
 from run_experiment import validate_readiness
 

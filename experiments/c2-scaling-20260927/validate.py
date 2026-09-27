@@ -25,6 +25,12 @@ def validate(directory, require_all=False):
             failures.append('Handoff barriers are incomplete or repeated')
         if manifest.get('explicit_scale_result',{}).get('status')!='resumed':
             failures.append('Scale handoff did not resume')
+        if require_all and transitions:
+            lag=json.loads((directory/'lag-summary.json').read_text())
+            queued=[x['processing_backlog'] for x in lag['snapshots']
+                    if x.get('valid') and x['timestamp'] < transitions[0]['timestamp']]
+            if not queued or max(queued) <= 100:
+                failures.append('Technical gate did not demonstrate queued work before handoff')
     with tempfile.TemporaryDirectory() as tmp:
         db=sqlite3.connect(str(Path(tmp)/'handoff.sqlite'))
         db.executescript('''CREATE TABLE ack(id TEXT PRIMARY KEY, p INTEGER, o INTEGER);

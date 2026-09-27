@@ -13,6 +13,7 @@ def evidence(tmp_path, fault=None):
         p=tmp_path/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(obj))
     write('manifest.json',dict(run_id='r',intervention={'action':'scale_redistribute'},explicit_scale_result={'status':'resumed'}))
     write('outcome-summary.json',dict(validity_failures=[],failed_or_cancelled_sends_whole_run=0,unresolved_sends_whole_run=0))
+    write('lag-summary.json',dict(snapshots=[dict(valid=True,timestamp=97,processing_backlog=400)]))
     events=[];c0=[];c1=[]
     for p in range(2):
         for o in range(2):
