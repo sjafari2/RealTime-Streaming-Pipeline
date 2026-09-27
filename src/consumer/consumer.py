@@ -384,6 +384,13 @@ class MetricConsumer:
     def run(self):
         try:
             while not self.runtime.should_stop() and not self.runtime.consumer_finished():
+                # Keep process measurements live while the handoff pauses fetching.
+                if time.monotonic() - self.last_system > 2:
+                    cpu.labels(**self.labels).set(self.process.cpu_percent())
+                    memory.labels(**self.labels).set(self.process.memory_info().rss)
+                    uptime.labels(**self.labels).set(time.time() - self.runtime.started)
+                    losses.labels(**self.labels).set(self.runtime.writer.dropped)
+                    self.last_system = time.monotonic()
                 if self.explicit and not self.explicit.check():
                     time.sleep(.05)
                     continue
@@ -411,12 +418,6 @@ class MetricConsumer:
                 if time.monotonic() - self.last_commit >= self.commit_interval:
                     self.commit(asynchronous=not self.explicit_mode)
                     self.last_commit = time.monotonic()
-                if time.monotonic() - self.last_system > 2:
-                    cpu.labels(**self.labels).set(self.process.cpu_percent())
-                    memory.labels(**self.labels).set(self.process.memory_info().rss)
-                    uptime.labels(**self.labels).set(time.time() - self.runtime.started)
-                    losses.labels(**self.labels).set(self.runtime.writer.dropped)
-                    self.last_system = time.monotonic()
         except Exception as exc:
             self.runtime.failure = str(exc)
             raise

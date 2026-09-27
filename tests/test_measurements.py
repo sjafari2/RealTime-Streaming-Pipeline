@@ -320,3 +320,18 @@ def test_scrape_cannot_mix_fields_from_two_lag_updates(app, monkeypatch):
         if scrape.ident is not None:
             scrape.join(2)
     assert exposed.is_set() and not update.is_alive() and not scrape.is_alive()
+
+
+def test_resource_sampling_continues_during_handoff_pause(app, monkeypatch):
+    stops=iter([False,True])
+    app.runtime.should_stop=lambda: next(stops)
+    app.runtime.consumer_finished=lambda: False
+    app.explicit=SimpleNamespace(check=lambda: False)
+    app.last_system=0
+    app.process=SimpleNamespace(cpu_percent=lambda: 3.0, memory_info=lambda: SimpleNamespace(rss=4242))
+    monkeypatch.setattr(consumer, 'time', SimpleNamespace(time=lambda: 110,monotonic=lambda: 10,sleep=lambda _:None))
+    consumer.cpu.labels(**app.labels).set(99)
+    app.run()
+    assert consumer.cpu.labels(**app.labels)._value.get()==3.0
+    assert consumer.memory.labels(**app.labels)._value.get()==4242
+    assert app.runtime.finished
