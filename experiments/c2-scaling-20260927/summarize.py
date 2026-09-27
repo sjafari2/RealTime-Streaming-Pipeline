@@ -108,7 +108,7 @@ def main():
         ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
     axes[0].legend(frameon=False,fontsize=9)
     fig.suptitle('Scaling from concentrated Consumer 2 ownership — 700 messages/s',fontweight='bold')
-    fig.text(.07,.02,'1 min warm-up + 5 min evaluation + 2 min drain. Dotted line: scheduled scale request. Shading: handoff barrier.\nEvaluation only; gaps remain unavailable. Both runs start with all twelve hot partitions on Consumer 2.',fontsize=9,color='#555555')
+    fig.text(.07,.02,'1 min warm-up + 5 min evaluation + 2 min drain. Dotted line: scheduled scale request. Shading: handoff coordination.\nEvaluation only; gaps remain unavailable. Both runs start with all twelve hot partitions on Consumer 2.',fontsize=9,color='#555555')
     fig.tight_layout(rect=(0,.11,1,.94));figures.append((fig,'c2-scaling-lag'))
     names={'cpu':('Consumer CPU usage','Process CPU (cores)'), 'memory':('Consumer memory usage','Process RSS (MiB)'),
            'throughput':('Input and completion throughput','Messages/s (10-second bins)'),
@@ -135,7 +135,7 @@ def main():
             ax.set_ylim(*bounds)
         fig.suptitle(title+' — 700 messages/s',fontweight='bold',fontsize=15)
         fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,.95),ncol=min(len(handles),6),frameon=False,fontsize=9)
-        note='Common scales. Dotted line: scheduled scale request; shading: verified handoff barrier. Gaps remain unavailable.'
+        note='Common scales. Dotted line: scheduled scale request; shading: handoff coordination. Gaps remain unavailable.'
         if metric=='throughput':note+='\nCompletions include warm-up records finishing during evaluation.'
         if metric in ('cpu','memory'):note+='\nProcess measurements only. New-consumer traces begin when those processes are observed.'
         if metric=='skew':note+='\nInterpret relative skew together with absolute lag and growth; a high ratio alone does not imply a large backlog.'

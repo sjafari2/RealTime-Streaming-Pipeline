@@ -2,6 +2,12 @@
 
 Updated: 27 September 2026. **The original scaling comparison block contains 24 trials. The latest fixed-three-consumer balanced stability series contains 12 completed trials. Four new ownership calibration trials are also complete.**
 
+**In progress: scaling from Consumer 2 concentration — 700 messages/s**
+
+Two nonempty handoff checks have passed. The new comparison will run twice with three consumers and twice with scaling to six, starting from the same concentration on Consumer 2. Each performance trial lasts eight minutes. The checks and one failed empty preparation are separate from performance counts.
+
+[Preparation and protocol](experiment-records/c2-scaling-20260927/PREPARATION.md)
+
 **Latest: hot-partition ownership at 700 messages/s — 8 minutes each**
 
 All **210,000 evaluation messages** finished in the distributed layout and when all twelve hot partitions were placed on Consumer 0 or Consumer 1. Their p99 values were **0.193, 0.249 and 0.248 seconds**, respectively; peak lag remained between **58 and 141 offsets**.
