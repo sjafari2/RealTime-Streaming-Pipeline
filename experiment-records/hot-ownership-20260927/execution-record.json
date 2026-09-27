@@ -1,0 +1,46 @@
+{
+  "status": "complete",
+  "execution_revision": "1e10fa3fff315a750a47bf108cdc6feaa7c193a7",
+  "started_epoch": 1790496085.453812,
+  "finished_epoch": 1790497448.489831,
+  "restoration": "verified",
+  "runs": [
+    {
+      "layout": "distributed",
+      "run_id": "run-20260927-020225",
+      "raw_evidence": "results/run-20260927-020225"
+    },
+    {
+      "layout": "concentrated",
+      "run_id": "run-20260927-021335",
+      "raw_evidence": "results/run-20260927-021335"
+    }
+  ],
+  "checks": {
+    "targeted_local_tests_passed": 87,
+    "configuration_design_checks": "passed",
+    "runtime_source_hash_preflight": "passed in all six application pods",
+    "exact_initial_ownership_verified": true,
+    "observed_consumer_pod_uids_and_nodes_matched": true,
+    "original_shared_configuration_restored": true,
+    "all_six_processing_applications_stopped": true
+  },
+  "observed_consumer_placement": [
+    {
+      "pod": "consumer-sts-0",
+      "uid": "405cdaab-a0d2-4a88-a8da-5e3d319d29ad",
+      "node": "edex.calit2.optiputer.net"
+    },
+    {
+      "pod": "consumer-sts-1",
+      "uid": "5cae3fdc-dc23-470d-8756-851b2f73fbdf",
+      "node": "k8s-usra-01.calit2.optiputer.net"
+    },
+    {
+      "pod": "consumer-sts-2",
+      "uid": "085e138e-84bd-43a5-b2ff-7f9ec13b47f4",
+      "node": "unseenu.crbs.ucsd.edu"
+    }
+  ],
+  "execution_log_sha256": "3ca27c33f094fd36a139e784f472ed238c4a80132f4ec03b61758a399f211ccd"
+}

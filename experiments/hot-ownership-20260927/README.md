@@ -26,3 +26,17 @@ python3 -u experiments/hot-ownership-20260927/run.py --execute
 ```
 
 The runner requires committed tracked changes, refuses an active managed experiment, pauses competing HPA decisions for this invocation, checks source hashes and monitoring, and stops the campaign if collection or measurement checks fail. It saves campaign status and original settings under `results/hot-ownership-<timestamp>/`, and run evidence under `results/run-<timestamp>/`. Applications stop after the block; the saved shared configuration is restored only if it was not changed externally. Existing topics and earlier evidence are preserved.
+
+## Completed calibration
+
+Both trials completed on 27 September 2026. See the [results, interpretation and plots](../../experiment-records/hot-ownership-20260927/README.md). The execution revision and evidence hashes are retained in the comparison record.
+
+With the separately retained raw evidence available, regenerate the tables and figures using Python with NumPy and Matplotlib:
+
+```bash
+python3 experiments/hot-ownership-20260927/summarize.py \
+  results/hot-ownership-20260927-020125 \
+  experiment-records/hot-ownership-20260927
+```
+
+The summary tool validates both frozen configurations, exact starting layouts, completed-run checks and observed ownership before producing the plots. It retains missing samples as gaps and reports whole-cohort p99 separately from the rolling backlog-growth trace.

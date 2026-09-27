@@ -1,6 +1,20 @@
 # Experiment progress
 
-Updated: 15 September 2026. **24 comparison runs completed. Both controlled skew comparisons now have two runs per treatment.**
+Updated: 27 September 2026. **The original scaling comparison block contains 24 trials. The latest fixed-three-consumer balanced stability series contains 12 completed trials. Two new ownership calibration trials are also complete.**
+
+**Latest: hot-partition ownership at 700 messages/s — 8 minutes each**
+
+With four hot partitions per consumer, all **210,000 evaluation messages** finished; p99 was **0.193 seconds**, with peak lag **59 offsets**. With all twelve hot partitions on Consumer 0, all **210,000** also finished; p99 was **0.249 seconds**, with peak lag **141 offsets**. Both layouts kept lag small over the five-minute evaluation. Concentration increased Consumer 0’s CPU use to approximately one core but did not create sustained overload in this trial. These are one-off starting-layout calibrations, with no scaling or live redistribution.
+
+[Ownership results and plots](experiment-records/hot-ownership-20260927/README.md)
+
+**Balanced stability — 23 minutes each, three consumers throughout**
+
+Two trials each at **600, 700 and 800 messages/s** showed low lag. At **900**, backlog grew during production although every evaluation message finished during the drain. At **1,200 and 1,500**, backlog grew and some evaluation messages remained unfinished. These results describe the observed intervals and shared machines; they do not guarantee permanent stability.
+
+[All 12 stability results and plots](experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md)
+
+**Original scaling comparisons**
 
 The first four conditions each had four runs: twice with three consumers and twice with scaling from three to six. Later controlled comparisons added eight runs.
 
@@ -35,16 +49,12 @@ Both pairs started with matching partition ownership and original pods/machines.
 With **80% of traffic spread across 12 of 60 partitions**, scaling lowered recorded completion p99 in both pairs: **121.15 to 49.37 seconds**, then **115.68 to 50.95 seconds**. Scaling finished every evaluation message in both runs; keep-three left **0.53%** unfinished in the first and **0%** in the second. Scaling used more requested CPU; monitoring coverage and delayed capacity remain limitations.
 
 
-**Planned stability evaluation**
+**Historical preparation records**
 
-Six balanced stability trials are planned: lower target rate with three consumers, pressure with three consumers, and pressure with scaling to six, each twice. Each lasts 23 minutes total (1 warm-up + 20 evaluation + 2 drain). They test whether backlog settles while production continues. **None has started:** configuration and producer storage have been replaced successfully; both application pods started, source hashes matched, and 214 local tests passed. The execution wrapper, resource/rate calibration and live metric checks remain pending.
+The September 15–17 storage and Kafka I/O failures occurred before the completed stability series above. Those failed preparations are documented separately and are not performance trials.
 
-[Latest recovery status](experiment-records/producer-storage-recovery-20260915/README.md)
+[Storage recovery](experiment-records/producer-storage-recovery-20260915/README.md) · [September 17 preparation](experiment-records/stability-preflight-20260917/README.md)
 
 [Repeated results and plots](experiment-records/repetitions-20260913/README.md) · [Why the second single-partition result differed](experiment-records/repetitions-20260913/single-partition/ownership-review.md) · [Earlier detailed results](experiment-records/README.md)
 
 [Proposal update and one-page summary](experiment-records/proposal-progress-20260913/README.md)
-
-## Stability check — 17 September 2026
-
-**Not run yet.** Preparation found a Kafka storage/I/O failure before traffic started. The stability runner is implemented and locally tested; the six trials remain pending infrastructure recovery and calibration. [Preparation record](experiment-records/stability-preflight-20260917/README.md).
