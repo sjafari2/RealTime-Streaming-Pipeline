@@ -1,12 +1,16 @@
 # Experiment progress
 
-Updated: 27 September 2026. **The original scaling comparison block contains 24 trials. The latest fixed-three-consumer balanced stability series contains 12 completed trials. Four new ownership calibration trials are also complete.**
+Updated: 27 September 2026. **44 performance trials are complete: 24 original scaling trials, 12 balanced stability trials, four fixed-ownership calibrations and four new Consumer 2 scaling-and-redistribution trials.**
 
-**In progress: scaling from Consumer 2 concentration — 700 messages/s**
+**Scaling from Consumer 2 concentration — 700 messages/s, 8 minutes each**
 
-Two of four performance trials are complete. In the first comparison, scaling plus redistribution reduced completion p99 from **231.58 to 110.70 seconds** and unfinished evaluation messages from **31.76% to 0%**. The second comparison is underway. Each trial starts with all twelve hot partitions on Consumer 2 and lasts eight minutes. Two technical handoff checks and one failed empty preparation are separate from performance counts.
+Run 1: completion p99 **231.58 → 110.70 seconds**; unfinished evaluation messages **31.76% → 0.00%**.
 
-[Preparation and protocol](experiment-records/c2-scaling-20260927/PREPARATION.md)
+Run 2: completion p99 **229.28 → 109.47 seconds**; unfinished evaluation messages **31.04% → 0.00%**.
+
+Each arrow compares a separate keep-three trial with a scale-to-six trial that also redistributes the hot partitions. Both start with all twelve hot partitions on Consumer 2. These results support the combined intervention; they do not show that extra consumers were necessary. Two technical handoff checks and one failed empty preparation are excluded from the performance count.
+
+[Results and all plots](experiment-records/c2-scaling-20260927/README.md) · [Preparation checks](experiment-records/c2-scaling-20260927/PREPARATION.md)
 
 **Latest: hot-partition ownership at 700 messages/s — 8 minutes each**
 

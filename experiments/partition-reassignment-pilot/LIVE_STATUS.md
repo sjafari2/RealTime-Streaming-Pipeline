@@ -1,57 +1,22 @@
 # Redistribution pilot: execution status
 
-No new trial has run. Nautilus OIDC browser authentication timed out before the
-pod inventory could be read. No cluster source or configuration was changed.
-The eight performance trials remain authorized, subject to the validation and
-calibration gates in README.md.
+Updated 27 September 2026. The explicit consumer adapter and scheduled handoff coordinator have been deployed and exercised on Nautilus. Two nonempty-topic technical checks completed all acknowledged messages, and the separate Consumer 2 comparison completed four performance trials. See [results](../../experiment-records/c2-scaling-20260927/README.md) and [preparation evidence](../../experiment-records/c2-scaling-20260927/PREPARATION.md).
 
-## Locally implemented
+The original eight-trial redistribution-only design in this directory has not run. Its candidate 900 msg/s rate and illustrative capacities are not validated settings. The later 700 msg/s ownership calibrations and scale-and-redistribute trials are distinct experiments.
 
-- `src/common/explicit_assignment.py`: fixed-membership startup map, completed-prefix
-  commit/readback, durable evidence flush, release, acquire and resume checks.
-- `src/consumer/consumer.py`: opt-in explicit assignment at processing batch boundaries.
-  The default cooperative group mode remains available.
-- `my-shell/explicit_control.py`: require all consumers to release before any acquire,
-  verify offsets and process identities, then resume. Failure aborts the managed run.
-- `my-shell/run_experiment.py`: scheduled `redistribute` action with a complete JSON
-  target list passed through `--target-assignment`. Frozen configuration must set
-  `CONSUMER_ASSIGNMENT_MODE=explicit`, `CONSUMER_STATIC_MEMBERSHIP=false`, and
-  `EXPLICIT_ASSIGNMENT_JSON` to the complete initial ownership list.
-- `src/common/pipeline_runtime.py`: durable evidence barrier for handoffs.
-- `my-shell/sync_code.py`: include the new consumer dependency in shared-source sync.
+## Implemented and checked
 
-Both arms must use explicit assignment and synchronous periodic commits. The
-transfer pauses **all consumers**, including consumers whose ownership is unchanged.
-Any measured intervention cost therefore includes this global pause. This is a
-synthetic-workload pilot, not a fault-tolerant group assignor. The scheduled target
-is predeclared; do not describe it as a live adaptive decision. A target equal to
-current ownership records a no-op without pausing consumers.
+- Explicit starting maps and opt-in application-side assignment, with the default Kafka group mode still available.
+- Synchronous completed-prefix commit/readback, evidence flush, and release/acquire/resume verification before ownership moves.
+- Authorized new replicas that initially have no partitions, followed by a predefined full target map.
+- Run identity, process incarnation, retained offset bounds, source hashes and original-pod placement checks; ambiguous ownership aborts the run.
+- Reconciliation of acknowledged identities and completion offsets, including warm-up messages, with duplicate and missing-prefix checks.
+- Continuous process CPU/RSS sampling through handoff and an independent observer for requested resources.
 
-## Still required before performance trials
+All consumers pause for the coordinated handoff, including unchanged owners. The measured action therefore includes global coordination, replica startup and assignment changes. It is a scheduled synthetic-workload experiment, not a Kafka custom group assignor or a claim of production fault tolerance or exactly-once external effects.
 
-1. Restore Nautilus authentication and confirm the cluster is idle.
-2. Back up shared sources and settings, sync the committed source, and verify hashes.
-3. Run a small nonempty-topic handoff test. Reconcile acknowledged message IDs,
-   completion evidence, offset continuity and ownership; inspect prefetched work,
-   swaps and interruption behavior. Local mocks do not establish broker correctness.
-4. Calibrate actual capacities and verify imbalanced backlog growth and destination
-   headroom. The 400 messages/s capacities in review-plan.json remain illustrative.
-5. Freeze the calibrated settings and validated run block; execute the eight
-   comparisons, collect evidence/plots, then restore original shared settings.
+## Remaining evaluation
 
-Implementation checks follow the Confluent Python client API for synchronous
-commit results, committed offsets and explicit assignment:
-https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html
+The planner remains offline. It is not connected to live measurements and does not implement the complete adaptive decision policy. Redistribution without scaling still needs its own comparison to separate ownership changes from additional capacity. Capacity calibration, application-state transfer, failure recovery, ordering requirements and intervention costs require further evaluation before extending the mechanism to application workloads.
 
-## Local validation
-
-207 tests passed in the final code folder with:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 /tmp/pipeline-review-venv/bin/python -m pytest -q -p no:cacheprovider --ignore-glob='* 2.py'
-```
-
-The initial unrestricted collection also discovered existing untracked ` 2.py`
-copies and failed on duplicate Prometheus registrations. Those unrelated copies
-were preserved and excluded from the intended-suite run. `git diff --check` passed.
-No live Kafka correctness or performance claim follows from these local checks.
+The local intended suite passed 258 tests after the runtime changes. Nonempty live checks support the successful handoffs actually observed; local fault-path tests do not establish all failure behavior on Kafka. The four performance trials preserved valid unfinished outcomes, and monitoring gaps remain explicitly unavailable.

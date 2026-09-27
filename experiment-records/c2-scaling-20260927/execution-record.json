@@ -1,9 +1,11 @@
 {
-  "status": "running",
+  "status": "complete",
   "planned_performance_trials": 4,
-  "completed_performance_trials": 2,
+  "completed_performance_trials": 4,
   "execution_revision": "728aee361fa769754807545b0c2f9a2665a542d1",
   "campaign": "results/c2-scaling-20260927-043506",
+  "restoration": "verified",
+  "finished_epoch": 1790509713.382965,
   "runs": [
     {
       "run_id": "run-20260927-044428",
@@ -14,11 +16,15 @@
       "p99_seconds": 231.58036398887634,
       "unfinished_percent": 31.75952380952381,
       "admitted": 210000,
-      "evidence_sha256": {
+      "evidence_hashes": {
         "manifest.json": "dac6d81b88ab3f940595bb573a78c84d7a89952b3467d1408d00243aacd99b82",
+        "pipeline-configmap.yaml": "f6293234ce86b8fd0ecfc20cb4629bdcc255a3cbc2d9479a0b0ea02b422de5fd",
         "outcome-summary.json": "53054fed768eda87a0af8ca2a7cf145c8fd2cee1160afcbc71ca477c3ae40369",
         "lag-summary.json": "afa6a074a995b68f45f6adbb88fffb6e11748b4a34f86a8b58ab878f02b0ce0b",
-        "handoff-validation.json": "157a4307ee36e9617e02a01c17596c64428e55af058a5b8ea133ea3b37a19ac4"
+        "measurement-audit.json": "4f36faf39c4b9bff68b629f12b94a81c2a52e2be170809a2828076ba5cf46af7",
+        "execution-summary.json": "cb18aabba1710bcbb337c7b353c468166de8415c050ce7fa163320c4c58c9c41",
+        "handoff-validation.json": "157a4307ee36e9617e02a01c17596c64428e55af058a5b8ea133ea3b37a19ac4",
+        "prometheus.json": "47ce887e282c62e424f6a870afe2d59e090c31e950da7822092534d1fc14b436"
       }
     },
     {
@@ -30,12 +36,65 @@
       "p99_seconds": 110.6954927444458,
       "unfinished_percent": 0.0,
       "admitted": 210000,
-      "evidence_sha256": {
+      "evidence_hashes": {
         "manifest.json": "4448e49cfc4ea8dfa9bdd3b1634fe62b3217c83a90649b91baffd202fec8dd9e",
+        "pipeline-configmap.yaml": "b030a7d5fbf4b78ebbc788ece3632d5502db045ae7acf662cfcff41dae06dd7c",
         "outcome-summary.json": "2f8ef849d9ba2a8f6508976400070892dd80588d0fc7235dc615e0dd13abb629",
         "lag-summary.json": "5c3e380ea6363d735e2425607b988bed0ad0e73a33dcb79202454cb21b695119",
-        "handoff-validation.json": "4817ed15951cac00830957250b8efbc1ef2c31f0d2492f420365681f0f378a1f"
+        "measurement-audit.json": "b32ee6eeeb1a4376ef2847bece20d65d9617b3b32eaf1b05086d642e97a59168",
+        "execution-summary.json": "a3888f2c2857019cc7de90a815d8fb8181d47002775c996ab378d6d511c1f775",
+        "handoff-validation.json": "4817ed15951cac00830957250b8efbc1ef2c31f0d2492f420365681f0f378a1f",
+        "prometheus.json": "5311f4632ac1d7221d89b1966abb316b70d1aab9b1a5eeed03c47ef39ffb3747"
+      }
+    },
+    {
+      "run_id": "run-20260927-051903",
+      "arm": "keep3",
+      "run_number": 2,
+      "seed": 72,
+      "raw_evidence": "results/run-20260927-051903",
+      "p99_seconds": 229.28049898147583,
+      "unfinished_percent": 31.037142857142857,
+      "admitted": 210000,
+      "evidence_hashes": {
+        "manifest.json": "1ce967994d8f1ef87b6cfe313f551b142fce650e76a95b0470b4395eaf7c0ef6",
+        "pipeline-configmap.yaml": "985452a4c3982c772e0200e7a47a6735a90fcbf65e716db960027ddff0364de0",
+        "outcome-summary.json": "4a5ee79090c8ba9dcf2af5c4b141e6216df05f87e6891374df7fde0f19087b32",
+        "lag-summary.json": "fad2c372f2f72bfec23815cd4a596c174abc6c919d2b3c2c3a21f0decce619e6",
+        "measurement-audit.json": "39d09bc2da114fadd288e5ecc6c7b9279c5fb4cae31771c10f9d52dba40a7cb9",
+        "execution-summary.json": "38d33720b856f86aad039de8954e43ae5d8b68c25c492e0b6e0be17311c27d16",
+        "handoff-validation.json": "3a236b54c597cda7105b0f4fc395da561db080c6d8ca6eefdaeae25a961970e1",
+        "prometheus.json": "aa55e519555b3503cbe6d9f27694df8bd8145aaef624d45db23a7f86a3395368"
+      }
+    },
+    {
+      "run_id": "run-20260927-050722",
+      "arm": "scale6",
+      "run_number": 2,
+      "seed": 72,
+      "raw_evidence": "results/run-20260927-050722",
+      "p99_seconds": 109.46961975097656,
+      "unfinished_percent": 0.0,
+      "admitted": 210000,
+      "evidence_hashes": {
+        "manifest.json": "ea2073bcf37bc002ed03b5b8f07bd70692296e6b97d1d9de510be59889ae3d33",
+        "pipeline-configmap.yaml": "69ec7c78e89747be7deede2c5abca3a849e884857dd99219a3c9b6ccf156b917",
+        "outcome-summary.json": "96c06fb569bb2cb5e63ab543ac7723dd4b77d7a05f5d1eb70ac86bb064c927a7",
+        "lag-summary.json": "b6f4dc2d937a16a161d037c4b6345be5e2affe31b69b41d2e7eea0908e25e37c",
+        "measurement-audit.json": "c5c800783aa102e152a0a1e1ce1f1599b99b441008424a0b2dbb6ef30d069362",
+        "execution-summary.json": "5d632cf80550e13a9fda5e5fd9c1df3e891f38d8ed9f81dbb45c2c3897420732",
+        "handoff-validation.json": "ae7214457b353fea179208cf808ebe549d8f6af83d8b02b24f96ab4c953296b1",
+        "prometheus.json": "d28698289f7d6ea882eaaa08ee94293707b872978e02c07f80c71ce8e7e29ee7"
       }
     }
-  ]
+  ],
+  "collection_recovery": {
+    "original_status": "failed",
+    "original_error": "Run files were saved in /Users/soheila/Desktop/Thesis-26-27/code/results/run-20260927-051903, but checks failed: Prometheus export: <urlopen error [Errno 61] Connection refused>; Measurement audit: [Errno 2] No such file or directory: '/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260927-051903/prometheus.json'",
+    "completed_epoch": 1790509807.64132,
+    "workload_rerun": false,
+    "method": "New temporary Prometheus connection; re-exported the original historical interval and reran analysis and identity/offset validation.",
+    "unchanged_outcome_sha256": "4a5ee79090c8ba9dcf2af5c4b141e6216df05f87e6891374df7fde0f19087b32",
+    "original_attempt": "collection-recovery/original-campaign-status.json"
+  }
 }

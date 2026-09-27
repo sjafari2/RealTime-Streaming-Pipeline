@@ -10,10 +10,13 @@ I publish the experiment configurations, analysis code, compact result summaries
 | `experiment-records/paired-table-20260914/paired-results-data.json` | Run identifiers and per-trial results for the 24 performance trials |
 | `experiment-records/campaign-20260912/` | Earlier campaign summaries, comparisons, and calibration records |
 | `experiment-records/repetitions-20260913/` | Later repeated comparisons, plots, and ownership reviews |
+| `experiment-records/stability-fixed3-20260921/` | Twelve balanced fixed-three-consumer stability trials and rate-comparison plots |
+| `experiment-records/hot-ownership-consumers-20260927/` | Four fixed-ownership calibrations at 700 aggregate messages/s |
+| `experiment-records/c2-scaling-20260927/` | Four controlled keep-three versus scale-and-redistribute trials, metric plots and handoff validation |
 | `experiments/` | Dated workload configurations and execution protocols; some remain unexecuted |
 | `python-scripts/` | Outcome reconciliation, lag, resource, comparison, and repetition analysis |
 
-Each comparison contains two separate trials: keep three consumers and scheduled scaling from three to six. A Run 1 or Run 2 label identifies a comparison, not two phases of a single trial. The later eight trials checked matching starting ownership and original-consumer placement; the earlier sixteen did not require matching starts.
+In the original 24-trial scaling block, each comparison contains two separate trials: keep three consumers and scheduled scaling from three to six. A Run 1 or Run 2 label identifies a comparison, not two phases of a single trial. The later eight trials checked matching starting ownership and original-consumer placement; the earlier sixteen did not require matching starts.
 
 ## Raw evidence availability
 

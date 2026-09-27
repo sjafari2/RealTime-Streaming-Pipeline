@@ -1,6 +1,6 @@
 # Whole partition redistribution pilot
 
-Status: local implementation only. The planner, handoff contract, opt-in consumer adapter and coordinator have local tests. Nautilus authentication timed out before deployment or live validation; no new performance result exists. See `LIVE_STATUS.md` for the remaining gates. `review-plan.json` is not accepted by `save-run.sh` and must not be applied as a ConfigMap.
+Status: the explicit consumer adapter and scheduled coordinator have now passed nonempty-topic handoff checks on Nautilus. A separate four-trial [Consumer 2 scale-and-redistribute comparison](../../experiment-records/c2-scaling-20260927/README.md) is complete. The redistribution-only eight-trial design below has **not** run, and the offline planner is not connected to the live controller. See `LIVE_STATUS.md`. `review-plan.json` contains an illustrative candidate design; it is not accepted by `save-run.sh` and must not be applied as a ConfigMap.
 
 ## First experiments
 
@@ -34,7 +34,7 @@ Two feasible implementation directions require different claims:
 - An explicit-assignment Python pilot can set the starting maps and coordinate whole-partition handoffs. It bypasses normal group assignment. The coordinator must enforce ownership exclusivity and stop on unverified failure; group membership must not be presented as fencing. This tests the redistribution idea under a controlled coordinator, not a custom Kafka group assignor or production fault tolerance.
 - A group-managed custom assignment implementation retains broker-coordinated assignment but needs a compatible client/assignor integration. Switching client language or protocol requires fresh calibration and matching it across both arms. It is a larger implementation step.
 
-Do not mix subscribe() and manual assignment to force a destination in the existing cooperative callback. Do not use Kafka broker partition-reassignment commands: they move broker replicas, not consumer ownership. The mechanism choice is pending user input.
+Do not mix subscribe() and manual assignment to force a destination in the existing cooperative callback. Do not use Kafka broker partition-reassignment commands: they move broker replicas, not consumer ownership. The current controlled pilot uses explicit assignment; a group-managed implementation remains future work.
 
 Official API reference: https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html
 
@@ -51,7 +51,7 @@ The planner does not yet implement persistence windows, state-transfer costs, ar
 3. Verify complete resulting ownership and unchanged process incarnations, then resume. Record release, acquire, resume and first-completion events.
 4. A timeout or ambiguous old-owner failure never authorizes takeover. Abort and preserve evidence. Never advance to consumer position merely because a batch was fetched.
 
-The validator trusts evidence supplied by its future adapter. Unit tests do not prove these facts occurred on Kafka or establish exactly-once application effects. New owners must also check retained low/high offsets and refuse expired or out-of-range progress.
+The offline validator checks supplied evidence; the live adapter and post-run audit additionally verify the recorded handoff against broker offsets and message identities. Unit tests do not prove these facts occurred on Kafka or establish exactly-once application effects. New owners must also check retained low/high offsets and refuse expired or out-of-range progress.
 
 ## Measurements and validity
 

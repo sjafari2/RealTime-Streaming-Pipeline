@@ -146,7 +146,7 @@ def main():
             pdf.savefig(fig,facecolor='white')
     summaries=[r[3] for r in runs]
     technical=dict(campaign['validation']);technical.pop('directory',None);technical['raw_evidence']='results/'+technical['run_id']
-    result=dict(execution_revision=campaign['code_commit'],resource_observer_sha256=hashlib.sha256(observer.read_bytes()).hexdigest() if observer.exists() else None,technical_validation=technical,runs=summaries,
+    result=dict(execution_revision=campaign['code_commit'],resource_observer_sha256=hashlib.sha256(observer.read_bytes()).hexdigest() if observer.exists() else None,technical_validation=technical,collection_recovery=campaign.get('collection_recovery'),runs=summaries,
         limitations=['Two trials per condition on shared machines; finite observation.',
         'Scaling and predefined redistribution are combined; this does not isolate the benefit of extra replicas.',
         'The global handoff barrier, replica startup and observed placement affect outcomes.',
@@ -156,6 +156,22 @@ def main():
     lines=['# Scaling from concentrated Consumer 2 ownership','','Four performance trials used the same 700 msg/s aggregate 80/20 input and verified starting ownership. Each lasted eight minutes (one warm-up, five evaluation, two drain). Every run started with twelve hot partitions on Consumer 2. Scaling requested six replicas at evaluation +60 seconds and redistributed two hot and eight cold partitions to each. The short technical validation is separate from the performance count.','',
     '| Run | Condition | Completion p99 (s) | Unfinished | Mean lag | Peak lag | Useful throughput (msg/s) |','|---|---|---:|---:|---:|---:|---:|']
     for s in summaries:lines.append(f"| {s['run_number']} | {'Keep 3' if s['arm']=='keep3' else 'Scale 3 to 6 + redistribution'} | {s['p99_seconds']:.3f} | {s['unfinished_percent']:.3f}% | {s['mean_lag']:.1f} | {s['peak_lag']:,.0f} | {s['useful_throughput']:.2f} |")
+    lines+=['','Both conditions admitted 210,000 evaluation messages per trial. The results below compare separate trials; each arrow runs from keep-three to scale-and-redistribute.','']
+    for number in (1,2):
+        keep,scale=[s for s in summaries if s['run_number']==number]
+        lines.append(f"- Run {number}: completion p99 **{keep['p99_seconds']:.2f} → {scale['p99_seconds']:.2f} s**; unfinished **{keep['unfinished_percent']:.2f}% → {scale['unfinished_percent']:.2f}%**.")
+    lines+=['','| Run | Condition | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Resource coverage | Lag coverage |',
+            '|---|---|---:|---:|---:|---:|']
+    for s in summaries:
+        resource=s['requested_resources_evaluation_and_drain']
+        cpu=resource['consumer_container_requested_cpu_seconds_observed']/60
+        memory=resource['consumer_container_requested_gib_seconds_observed']/60
+        lines.append(f"| {s['run_number']} | {'Keep 3' if s['arm']=='keep3' else 'Scale 3 to 6 + redistribution'} | {cpu:.2f} | {memory:.2f} | {100*resource['covered_fraction']:.1f}% | {100*s['lag_coverage']:.1f}% |")
+    lines+=['','Requested resources are integrated over observed intervals within five evaluation minutes plus two drain minutes. Partial coverage produces a partial integral, not the full cost. They describe reserved consumer resources, not measured consumption or whole-cluster cost. CPU and RSS plots show process measurements separately. Useful throughput counts distinct completions during evaluation, including warm-up messages completing then; it may therefore exceed the 700 msg/s input target while queued work is cleared.','',
+            'The identity and offset checks passed for all four trials, with no duplicate completion identifiers, duplicate completed offsets or unmatched completion identities. Both intervention trials passed release, acquire and resume verification. This validates the recorded synthetic-workload handoffs; it does not establish exactly-once external application effects.','',
+            'All original producer and consumer pods, machines, resource settings and starting ownership matched the saved reference. New consumers were placed by Kubernetes. The earlier fixed-three distributed layout also completed its workload, so these findings do not establish that six consumers were necessary: moving hot partitions away from the overloaded owner without scaling remains a separate next comparison.','']
+    if campaign.get('collection_recovery'):
+        lines += ['The final keep-three trial finished on schedule, but its first monitoring export failed after the local Prometheus connection closed. The retained historical measurements were recovered through a new connection, and all analyses and identity checks then passed. No workload was rerun and the outcome-summary hash stayed unchanged. The independent local resource observer has only 80.4% coverage for that trial, so its reported request integrals are partial and must not be compared as full-run resource costs. Its evaluation lag coverage is 99.3%. The failed collection attempt is preserved in collection-recovery.json and the raw campaign records.','']
     lines+=['','P99 is the nearest-rank percentile of completed evaluation messages through application completion, before commit acknowledgment. It is not an average of rolling p99 values. Mean lag is time-weighted over valid intervals. Missing observations and ownership transitions break plotted lines. Unfinished messages are counted at the fixed drain cutoff; warm-up messages remain queued but are excluded from that cohort.','',
     'The comparison tests added replicas and a predeclared assignment change together. A redistribution-only arm would be needed to isolate the value of extra capacity. Original pods, resources and initial owners were checked against one fixed reference; added pods were not pinned. Two runs per condition do not establish long-term stability or remove shared-machine variability.','',
     'Full metric definitions, configuration, process CPU/RSS, deadline outcomes, growth windows, request integrals, coverage, transition timing, identity checks and source-evidence hashes are retained in comparison.json. Large raw evidence remains in the separate results storage.','',
