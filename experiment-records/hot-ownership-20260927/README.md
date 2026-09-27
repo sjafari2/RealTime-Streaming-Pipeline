@@ -1,5 +1,7 @@
 # Hot-partition ownership calibration — 27 September 2026
 
+The original two-trial record is preserved below. See the [combined four-layout report](../hot-ownership-consumers-20260927/README.md) for the completed Consumer 2 and Consumer 1 follow-ups and all comparison plots.
+
 Two trials at **700 aggregate messages/s**, with three consumers and 60 partitions, are complete. Each lasted **8 minutes: 1 minute warm-up, 5 minutes evaluation, 2 minutes drain**. The same twelve hot partitions received 80% of input in both trials; only their initial consumer ownership changed. Every consumer owned 20 total partitions.
 
 | Layout | Hot partitions on consumers 0 / 1 / 2 | Completion p99 | Unfinished at cutoff | Peak total lag |

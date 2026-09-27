@@ -1,12 +1,14 @@
 # Experiment progress
 
-Updated: 27 September 2026. **The original scaling comparison block contains 24 trials. The latest fixed-three-consumer balanced stability series contains 12 completed trials. Two new ownership calibration trials are also complete.**
+Updated: 27 September 2026. **The original scaling comparison block contains 24 trials. The latest fixed-three-consumer balanced stability series contains 12 completed trials. Four new ownership calibration trials are also complete.**
 
 **Latest: hot-partition ownership at 700 messages/s — 8 minutes each**
 
-With four hot partitions per consumer, all **210,000 evaluation messages** finished; p99 was **0.193 seconds**, with peak lag **59 offsets**. With all twelve hot partitions on Consumer 0, all **210,000** also finished; p99 was **0.249 seconds**, with peak lag **141 offsets**. Both layouts kept lag small over the five-minute evaluation. Concentration increased Consumer 0’s CPU use to approximately one core but did not create sustained overload in this trial. These are one-off starting-layout calibrations, with no scaling or live redistribution.
+All **210,000 evaluation messages** finished in the distributed layout and when all twelve hot partitions were placed on Consumer 0 or Consumer 1. Their p99 values were **0.193, 0.249 and 0.248 seconds**, respectively; peak lag remained between **58 and 141 offsets**.
 
-[Ownership results and plots](experiment-records/hot-ownership-20260927/README.md)
+With all twelve hot partitions on **Consumer 2**, backlog grew by approximately **288 offsets/s**, peak lag reached **102,475**, and **32.29%** of evaluation messages remained unfinished after the drain. Completed-message p99 was **233.86 seconds**. The same aggregate input and skew produced different outcomes depending on the observed processing capacity of the selected owner. These are one-off starting-layout calibrations, with no scaling or live redistribution.
+
+[Combined ownership results and plots](experiment-records/hot-ownership-consumers-20260927/README.md)
 
 **Balanced stability — 23 minutes each, three consumers throughout**
 
