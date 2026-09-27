@@ -336,3 +336,24 @@ def test_resource_sampling_continues_during_handoff_pause(app, monkeypatch):
     assert consumer.cpu.labels(**app.labels)._value.get()==3.0
     assert consumer.memory.labels(**app.labels)._value.get()==4242
     assert app.runtime.finished
+
+
+def test_assignment_refreshes_transient_leader_metadata(app, monkeypatch):
+    from unittest.mock import Mock
+    broker=Mock()
+    broker.get_watermark_offsets.side_effect=[consumer.KafkaException(consumer.KafkaError(consumer.KafkaError.NOT_LEADER_FOR_PARTITION)),(0,10)]
+    monkeypatch.setattr(consumer.time,'sleep',lambda _:None)
+    bounds=app.assignment_bounds(broker,consumer.TopicPartition('topic_0',0),consumer.time.monotonic()+30)
+    assert bounds==(0,10)
+    assert broker.list_topics.call_count==1
+    assert any(e['event']=='assignment_metadata_retry' for e in app.runtime.rows)
+
+
+def test_assignment_does_not_retry_authorization_or_expired_metadata(app):
+    from unittest.mock import Mock
+    broker=Mock();broker.get_watermark_offsets.side_effect=consumer.KafkaException(consumer.KafkaError(consumer.KafkaError.TOPIC_AUTHORIZATION_FAILED))
+    with pytest.raises(consumer.KafkaException):
+        app.assignment_bounds(broker,consumer.TopicPartition('topic_0',0),consumer.time.monotonic()+30)
+    broker.list_topics.assert_not_called()
+    with pytest.raises(RuntimeError,match='deadline'):
+        app.assignment_bounds(broker,consumer.TopicPartition('topic_0',0),consumer.time.monotonic()-1)

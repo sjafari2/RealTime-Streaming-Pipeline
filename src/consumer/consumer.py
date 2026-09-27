@@ -158,6 +158,28 @@ class MetricConsumer:
     def partition_labels(self, key):
         return dict(self.labels, topic=key[0], partition=str(key[1]))
 
+    def assignment_bounds(self, consumer, partition, deadline):
+        """Refresh stale leader metadata during assignment, with a fixed time bound."""
+        retryable = {KafkaError.NOT_LEADER_FOR_PARTITION, KafkaError.LEADER_NOT_AVAILABLE,
+                     KafkaError.UNKNOWN_TOPIC_OR_PART}
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise RuntimeError('Assignment metadata did not settle before its deadline')
+            try:
+                return consumer.get_watermark_offsets(partition, timeout=min(5, remaining))
+            except KafkaException as exc:
+                error = exc.args[0]
+                if error.code() not in retryable:
+                    raise
+                self.runtime.event('assignment_metadata_retry', topic=partition.topic,
+                                   partition=partition.partition, error=str(error))
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise
+                consumer.list_topics(topic=partition.topic, timeout=min(2, remaining))
+                time.sleep(min(.2, max(0, deadline-time.monotonic())))
+
     @synchronized_lag
     def on_assign(self, consumer, partitions):
         self.runtime.event('assign_started', partitions=[[p.topic, p.partition] for p in partitions])
@@ -167,8 +189,9 @@ class MetricConsumer:
                 any(tp.error for tp in offsets) or
                 [(tp.topic, tp.partition) for tp in offsets] != [(tp.topic, tp.partition) for tp in partitions]):
             raise RuntimeError('Explicit assignment offset lookup failed')
+        assignment_deadline = time.monotonic() + 30
         for tp, committed in zip(partitions, offsets):
-            low, high = consumer.get_watermark_offsets(tp, timeout=5)
+            low, high = self.assignment_bounds(consumer, tp, assignment_deadline)
             if committed.offset >= 0:
                 if not low <= committed.offset <= high:
                     raise RuntimeError('Committed progress is outside retained offsets')
