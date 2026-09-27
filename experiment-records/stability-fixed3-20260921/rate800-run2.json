@@ -1,0 +1,858 @@
+{
+  "summary": {
+    "run_id": "run-20260926-224657",
+    "rate": 800,
+    "run_number": 2,
+    "mean_lag": 60.71953255425709,
+    "peak_lag": 177.0,
+    "coverage": 0.9983333333333333,
+    "final_ten_min_backlog_growth": -0.021739130434782608,
+    "unfinished": 0,
+    "cohort": 960000,
+    "unfinished_percent": 0.0,
+    "p99_seconds": 0.33164405822753906,
+    "throughput": 800.0125,
+    "figure": "rate800-run2-lag",
+    "evidence_hashes": {
+      "manifest.json": "fd09edc5f84a721165fdbb60e313c7af908ce0595734de83a5019962c5c7721b",
+      "runner-status.json": "ecf4ae93697c04a0f7113d96b4cc62aba59c01e9ffa4a06d28b3e3da03832a22",
+      "lag-summary.json": "22df623450406605a26c8cfeba51acce5636e775efebeee5ec0d39cf4193fa00",
+      "outcome-summary.json": "31808b196e5c0414a9cf4d36b86d525eb21162e47ba8adb14ccdd2b658479bcf",
+      "stability-summary.json": "f47dd90bf2b8ba7be4029aa821e0454dff801769c75e4a9d4ba4e9f48af61ca5",
+      "measurement-audit.json": "8b5b459b09efc501162b381213343191e6708e3d352c9fe994404aa196fea2f5"
+    },
+    "initial_partition_ownership_matches_series": true
+  },
+  "execution_revision": "e880e36f02ffdc04c272cb60590ef63d0c386871",
+  "config": {
+    "ACKS": "all",
+    "APP_CPU_ITERATIONS": "2000",
+    "APP_DELAY_MAX_MS": "0",
+    "APP_DELAY_MODE": "fixed",
+    "APP_DELAY_MS": "0",
+    "AUTO_COMMIT_INTERVAL_MS": "0",
+    "AUTO_OFFSET_RESET": "earliest",
+    "BATCH_SIZE": "65536",
+    "BOOTSTRAP_SERVERS": "pip-kafka:9092",
+    "BROKER_COUNT": "3",
+    "CLEANUP_POLICY": "delete",
+    "COMPRESSION_TYPE": "lz4",
+    "CONNECTION_MAX_IDLE_MS": "30000",
+    "CONSUMER_CLIENT_ID": "pipeline-consumer",
+    "CONSUMER_DEBUG": "false",
+    "CONSUMER_DEBUG_EVERY_N": "20000",
+    "CONSUMER_EVIDENCE_DIR": "/app/consumer-merge-data/evidence",
+    "CONSUMER_GROUP_ID": "stability-fixed3-rate800-run2-1790484374081436000",
+    "CONSUMER_HEARTBEAT_SEC": "10",
+    "CONSUMER_HTTP_PORT": "8002",
+    "CONSUMER_OUTPUT_DIR": "/tmp/metrics",
+    "CONSUMER_POD_COUNT": "3",
+    "CSV_LATENCY_WINDOW_SEC": "30",
+    "CSV_LOG_INTERVAL_SEC": "30",
+    "DELAY_BETWEEN_MESSAGES": "0",
+    "DELIVERY_TIMEOUT_MS": "30000",
+    "DRAIN_SECONDS": "120",
+    "DROP_CATCHUP": "false",
+    "ENABLE_AUTO_COMMIT": "false",
+    "ENABLE_IDEMPOTENCE": "true",
+    "EVIDENCE_MAX_BUFFER": "100000",
+    "EXP_DURATION_SEC": "1260",
+    "EXP_ID": "stability-fixed3-rate800-run2",
+    "FETCH_MAX_BYTES": "5242880",
+    "FETCH_MAX_WAIT_MS": "5",
+    "FETCH_MIN_BYTES": "1",
+    "FINAL_SCRAPE_SECONDS": "15",
+    "HEARTBEAT_INTERVAL_MS": "1000",
+    "LAG_FRESHNESS_SECONDS": "10",
+    "LAG_QUERY_BUDGET_SEC": "0.2",
+    "LAG_QUERY_INTERVAL": "2",
+    "LAG_QUERY_TIMEOUT": "3",
+    "LINGER_MS": "5",
+    "MAX_BURST": "2",
+    "MAX_IN_FLIGHT_REQUEST_PER_CONNECTION": "5",
+    "MAX_PARTITION_FETCH_BYTES": "1048576",
+    "MAX_POLL_INTERVAL_MS": "120000",
+    "MAX_POLL_RECORDS": "100",
+    "MAX_REQUEST_SIZE": "1048576",
+    "METADATA_MAX_AGE_MS": "120000",
+    "MIN_BURST": "1",
+    "MIN_INSYNC_REPLICAS": "1",
+    "MITIGATION_POLICY": "none",
+    "MSG_MAX_BYTES": "1048576",
+    "NAMESPACE": "kafkastreamingdata",
+    "NUM_PARTITIONS": "60",
+    "OUTCOME_LOG_ENABLED": "true",
+    "PACING_MODE": "per_message",
+    "PACING_TICK_SEC": "0.005",
+    "PARTITION_ASSIGNMENT_STRATEGY": "cooperative-sticky",
+    "PARTITION_LAG_CSV_ENABLED": "false",
+    "PAYLOAD_SIZE_BYTES": "100",
+    "PER_MSG_LAT_ENABLED": "false",
+    "PER_MSG_LAT_FLUSH_SEC": "10",
+    "PER_MSG_LAT_MAX_BUFFER": "20000",
+    "PER_MSG_LAT_SAMPLE_RATE": "0.05",
+    "POLL_MAX_MSG": "25",
+    "POLL_TIMEOUT": "0.1",
+    "PROCESSED_DIR": "/tmp/metrics/processed",
+    "PRODUCER_CLIENT_ID": "pipeline-producer",
+    "PRODUCER_DEBUG": "false",
+    "PRODUCER_DEBUG_EVERY_N": "20000",
+    "PRODUCER_EVIDENCE_DIR": "/app/producer-data/evidence",
+    "PRODUCER_FLUSH_SECONDS": "30",
+    "PRODUCER_HEARTBEAT_SEC": "10",
+    "PRODUCER_HTTP_PORT": "8001",
+    "PRODUCER_INPUT_PATH": "producer-data",
+    "PRODUCER_MAX_MESSAGES": "0",
+    "PRODUCER_POD_COUNT": "3",
+    "QUEUE_BUFFERING_MAX_KBYTES": "65536",
+    "QUEUE_BUFFERING_MAX_MESSAGES": "50000",
+    "RANDOM_RANGE": "1000",
+    "READINESS_TIMEOUT_SECONDS": "180",
+    "REBALANCE_CSV_ENABLED": "false",
+    "RECONNECT_BACKOFF_MAX_MS": "1000",
+    "RECONNECT_BACKOFF_MS": "100",
+    "RELEASE_NAME": "pip",
+    "REPLICATION_FACTOR": "1",
+    "REQUEST_TIMEOUT_MS": "10000",
+    "RETENTION_MS": "86400000",
+    "RETRIES": "2",
+    "RETRY_BACKOFF_MS": "20",
+    "RUN_ID": "run-20260926-224657",
+    "SEGMENT_MS": "30000",
+    "SESSION_TIMEOUT_MS": "20000",
+    "SKEW_FRACTION": "0.8",
+    "SKEW_PARTITION": "0",
+    "SLO_THRESHOLD_MS": "99",
+    "SLO_WINDOW_SECONDS": "30",
+    "SOCKET_RECEIVE_BUFFER_BYTES": "524288",
+    "SOCKET_SEND_BUFFER_BYTES": "524288",
+    "SOCKET_TIMEOUT_MS": "30000",
+    "TARGET_RATE": "266.66666666666669",
+    "TOPIC_COUNT": "1",
+    "TOPIC_METADATA_REFRESH_INTERVAL_MS": "120000",
+    "TOPIC_TITLE": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657",
+    "TRAFFIC_MODE": "balanced",
+    "WARMUP_SECONDS": "60",
+    "WORKLOAD_SEED": "71",
+    "CONSUMER_ASSIGNMENT_MODE": "cooperative",
+    "CONSUMER_STATIC_MEMBERSHIP": "true"
+  },
+  "initial_assignment": [
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 0
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 1
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 2
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 3
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 4
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 5
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 6
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 7
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 8
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 9
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 10
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 11
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 12
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 13
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 14
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 15
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 16
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 17
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 18
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 19
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 20
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 21
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 22
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 23
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 24
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 25
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 26
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 27
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 28
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 29
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 30
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 31
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 32
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 33
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 34
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 35
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 36
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 37
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 38
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 39
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 40
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 41
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 42
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 43
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 44
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 45
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 46
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 47
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 48
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 49
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 50
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 51
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 52
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 53
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 54
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 55
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 56
+    },
+    {
+      "pod": "consumer-sts-0",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 57
+    },
+    {
+      "pod": "consumer-sts-1",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 58
+    },
+    {
+      "pod": "consumer-sts-2",
+      "topic": "stability-fixed3-rate800-run2-balanced-R266.66666666666669-20260926-224657_0",
+      "partition": 59
+    }
+  ],
+  "measurement_audit": {
+    "run_id": "run-20260926-224657",
+    "issues": [],
+    "process_resources": [
+      {
+        "pod": "producer-sts-1",
+        "incarnation": "168ae1f3dd7b4f3a811105ae86402a0f",
+        "metric": "producer_cpu_percent",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 6.01126878130217,
+            "observed_integral": 7201.5,
+            "peak_sampled": 9.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1212.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9181818181818182,
+            "time_weighted_mean": 6.016089108910891,
+            "observed_integral": 7291.5,
+            "peak_sampled": 9.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "producer-sts-1",
+        "incarnation": "168ae1f3dd7b4f3a811105ae86402a0f",
+        "metric": "producer_memory_bytes",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 32877614.156928215,
+            "observed_integral": 39387381760.0,
+            "peak_sampled": 32927744.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1212.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9181818181818182,
+            "time_weighted_mean": 32878193.214521453,
+            "observed_integral": 39848370176.0,
+            "peak_sampled": 32927744.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "producer-sts-0",
+        "incarnation": "e5f047a5faa44c03abf782db96bd7090",
+        "metric": "producer_cpu_percent",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 9.38939899833055,
+            "observed_integral": 11248.5,
+            "peak_sampled": 20.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1214.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9196969696969697,
+            "time_weighted_mean": 9.390032948929159,
+            "observed_integral": 11399.5,
+            "peak_sampled": 20.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "producer-sts-0",
+        "incarnation": "e5f047a5faa44c03abf782db96bd7090",
+        "metric": "producer_memory_bytes",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 32964416.534223706,
+            "observed_integral": 39491371008.0,
+            "peak_sampled": 33009664.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1214.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9196969696969697,
+            "time_weighted_mean": 32965012.876441516,
+            "observed_integral": 40019525632.0,
+            "peak_sampled": 33009664.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "producer-sts-2",
+        "incarnation": "638ec592a0284a90b994d03deea680b3",
+        "metric": "producer_cpu_percent",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 9.354340567612688,
+            "observed_integral": 11206.5,
+            "peak_sampled": 11.5
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1216.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9212121212121213,
+            "time_weighted_mean": 9.36266447368421,
+            "observed_integral": 11385.0,
+            "peak_sampled": 11.5
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "producer-sts-2",
+        "incarnation": "638ec592a0284a90b994d03deea680b3",
+        "metric": "producer_memory_bytes",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 32595646.611018363,
+            "observed_integral": 39049584640.0,
+            "peak_sampled": 32649216.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1216.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9212121212121213,
+            "time_weighted_mean": 32596439.57894737,
+            "observed_integral": 39637270528.0,
+            "peak_sampled": 32649216.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "consumer-sts-1",
+        "incarnation": "5cbee8b8278a44d4afb7fe529a9c596f",
+        "metric": "consumer_cpu_percent",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 40.6943238731219,
+            "observed_integral": 48751.80000000004,
+            "peak_sampled": 45.7
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1318.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9984848484848485,
+            "time_weighted_mean": 37.3965857359637,
+            "observed_integral": 49288.70000000016,
+            "peak_sampled": 45.7
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "consumer-sts-1",
+        "incarnation": "5cbee8b8278a44d4afb7fe529a9c596f",
+        "metric": "consumer_memory_bytes",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 33836614.94490818,
+            "observed_integral": 40536264704.0,
+            "peak_sampled": 33947648.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1318.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9984848484848485,
+            "time_weighted_mean": 33846724.17602428,
+            "observed_integral": 44609982464.0,
+            "peak_sampled": 33947648.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "consumer-sts-0",
+        "incarnation": "83911264e64245e1a0642078c1f7409c",
+        "metric": "consumer_cpu_percent",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 49.033138564273784,
+            "observed_integral": 58741.7,
+            "peak_sampled": 69.9
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1318.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9984848484848485,
+            "time_weighted_mean": 45.19446130500752,
+            "observed_integral": 59566.299999999916,
+            "peak_sampled": 69.9
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "consumer-sts-0",
+        "incarnation": "83911264e64245e1a0642078c1f7409c",
+        "metric": "consumer_memory_bytes",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 33986566.83806344,
+            "observed_integral": 40715907072.0,
+            "peak_sampled": 34070528.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1318.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9984848484848485,
+            "time_weighted_mean": 33994211.253414266,
+            "observed_integral": 44804370432.0,
+            "peak_sampled": 34070528.0
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "consumer-sts-2",
+        "incarnation": "4052e91b10654d439cd21da4cd5f1232",
+        "metric": "consumer_cpu_percent",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 90.5984974958266,
+            "observed_integral": 108537.00000000028,
+            "peak_sampled": 101.9
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1318.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9984848484848485,
+            "time_weighted_mean": 82.8902883156301,
+            "observed_integral": 109249.40000000047,
+            "peak_sampled": 101.9
+          }
+        },
+        "status": "observed_intervals_only"
+      },
+      {
+        "pod": "consumer-sts-2",
+        "incarnation": "4052e91b10654d439cd21da4cd5f1232",
+        "metric": "consumer_memory_bytes",
+        "windows": {
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 32737416.76126878,
+            "observed_integral": 39219425280.0,
+            "peak_sampled": 32763904.0
+          },
+          "evaluation_and_drain": {
+            "covered_seconds": 1318.0,
+            "requested_window_seconds": 1320.0,
+            "covered_fraction": 0.9984848484848485,
+            "time_weighted_mean": 32739828.345978756,
+            "observed_integral": 43151093760.0,
+            "peak_sampled": 32763904.0
+          }
+        },
+        "status": "observed_intervals_only"
+      }
+    ],
+    "scope": "Process CPU percent and RSS only; not container, broker or node utilization.",
+    "interpretation": "CPU mean /100 gives cores; CPU integral /100 gives observed CPU-seconds. Memory units are bytes.",
+    "coverage_note": "Fractions use the entire declared window, including time before scaled processes start. Not a live-process completeness verdict.",
+    "freshness_note": "Scrape timestamps detect absent scrapes, not a stalled exporter sampling loop. Gaps remain unavailable; no extrapolation.",
+    "limitations": [
+      "This audit does not establish that all proposal metrics or all samples are present.",
+      "Original events, manifests, final records and raw monitoring exports must be retained."
+    ]
+  },
+  "stability": {
+    "run_id": "run-20260926-224657",
+    "windows": {
+      "evaluation_minutes_0_5": {
+        "start": 1790484531.1152031,
+        "end": 1790484831.1152031,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": -0.03355704697986577,
+        "time_weighted_mean_backlog": 63.59731543624161,
+        "peak_observed_backlog": 123.0,
+        "segments": [
+          {
+            "start": 1790484533.115,
+            "end": 1790484831.115,
+            "growth_offsets_per_second": -0.03355704697986577,
+            "first": 67.0,
+            "last": 57.0
+          }
+        ]
+      },
+      "evaluation_minutes_5_10": {
+        "start": 1790484831.1152031,
+        "end": 1790485131.1152031,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": 0.026845637583892617,
+        "time_weighted_mean_backlog": 63.42953020134228,
+        "peak_observed_backlog": 116.0,
+        "segments": [
+          {
+            "start": 1790484833.115,
+            "end": 1790485131.115,
+            "growth_offsets_per_second": 0.026845637583892617,
+            "first": 59.0,
+            "last": 67.0
+          }
+        ]
+      },
+      "evaluation_minutes_10_15": {
+        "start": 1790485131.1152031,
+        "end": 1790485431.1152031,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": -0.053691275167785234,
+        "time_weighted_mean_backlog": 57.95973154362416,
+        "peak_observed_backlog": 91.0,
+        "segments": [
+          {
+            "start": 1790485133.115,
+            "end": 1790485431.115,
+            "growth_offsets_per_second": -0.053691275167785234,
+            "first": 70.0,
+            "last": 54.0
+          }
+        ]
+      },
+      "evaluation_minutes_15_20": {
+        "start": 1790485431.1152031,
+        "end": 1790485731.1152031,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": 0.030201342281879196,
+        "time_weighted_mean_backlog": 57.922818791946305,
+        "peak_observed_backlog": 177.0,
+        "segments": [
+          {
+            "start": 1790485433.115,
+            "end": 1790485731.115,
+            "growth_offsets_per_second": 0.030201342281879196,
+            "first": 48.0,
+            "last": 57.0
+          }
+        ]
+      },
+      "final_ten_minutes": {
+        "start": 1790485131.1152031,
+        "end": 1790485731.1152031,
+        "covered_seconds": 598.0,
+        "coverage_fraction": 0.9966666666666667,
+        "covered_interval_growth_offsets_per_second": -0.021739130434782608,
+        "time_weighted_mean_backlog": 57.9180602006689,
+        "peak_observed_backlog": 177.0,
+        "segments": [
+          {
+            "start": 1790485133.115,
+            "end": 1790485731.115,
+            "growth_offsets_per_second": -0.021739130434782608,
+            "first": 70.0,
+            "last": 57.0
+          }
+        ]
+      }
+    },
+    "interpretation": "Continuous-production interval only. Growth summarizes covered, same-owner segments; it is not extrapolated over missing data. Inspect segment direction and coverage, input/completion throughput and resource traces. No automatic stable/unstable threshold or infinite-horizon guarantee."
+  },
+  "campaign_restoration": "verified",
+  "evidence_hashes": {
+    "manifest.json": "fd09edc5f84a721165fdbb60e313c7af908ce0595734de83a5019962c5c7721b",
+    "runner-status.json": "ecf4ae93697c04a0f7113d96b4cc62aba59c01e9ffa4a06d28b3e3da03832a22",
+    "lag-summary.json": "22df623450406605a26c8cfeba51acce5636e775efebeee5ec0d39cf4193fa00",
+    "outcome-summary.json": "31808b196e5c0414a9cf4d36b86d525eb21162e47ba8adb14ccdd2b658479bcf",
+    "stability-summary.json": "f47dd90bf2b8ba7be4029aa821e0454dff801769c75e4a9d4ba4e9f48af61ca5",
+    "measurement-audit.json": "8b5b459b09efc501162b381213343191e6708e3d352c9fe994404aa196fea2f5",
+    "pipeline-configmap.yaml": "8fa78ad3689aa0c9d60e26f607132323316e9c54428707cf1ff262cb74a43864",
+    "prometheus.json": "f79cb1f7b15ac2da0e246399b4676a55e0bda8faf63854302bc53ca8f50c074f",
+    "export-status.json": "ded89e857d282c5f111589a4bf01c253af6ece3c7a47ea0c661aec1b41be853a",
+    "producer/producer-sts-1/168ae1f3dd7b4f3a811105ae86402a0f/events.jsonl": "0b0a4863b2936ce3b7cffef3892c9b1b9ca701abc93f6d01e7ba942fbf522b2e",
+    "producer/producer-sts-0/e5f047a5faa44c03abf782db96bd7090/events.jsonl": "a153a5f20c5eaea4ec2e364ca60c71d4d778f882ff882b97016e99538fefbbae",
+    "producer/producer-sts-2/638ec592a0284a90b994d03deea680b3/events.jsonl": "e63ccf6049288462a0f2043137b2bd497562a60959589cba68f2d27db924fad4",
+    "consumer/consumer-sts-1/5cbee8b8278a44d4afb7fe529a9c596f/events.jsonl": "eb18bbc065ef6720fb893f0c8f8d4e139a5ede233a90f2d29b8b5cd610538c06",
+    "consumer/consumer-sts-0/83911264e64245e1a0642078c1f7409c/events.jsonl": "85001e6dd02c29786c44f59479b1c902c026fe92e2cbfe6e152faa377d9459a7",
+    "consumer/consumer-sts-2/4052e91b10654d439cd21da4cd5f1232/events.jsonl": "572a4217e7c156d1e4404581c8d0b1580406d96e1c1cc3b7d77b398c3ff8c7b1"
+  }
+}
