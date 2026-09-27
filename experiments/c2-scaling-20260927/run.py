@@ -64,7 +64,11 @@ def main():
         reference=dict(schema_version=1,pods=[pod_identity(p) for p in items],assignment=[dict(topic_index=0,partition=x['partition'],pod=x['owner']) for x in json.loads(prepared('keep3',1,71)[0]['data']['EXPLICIT_ASSIGNMENT_JSON'])])
         (audit/'starting-reference.json').write_text(json.dumps(reference,indent=2)+'\n')
         expected=None
+        observer=None
+        observer_log=None
         try:
+            observer_log=(audit/'resource-observer.log').open('w')
+            observer=subprocess.Popen([sys.executable,str(ROOT/'my-shell/observe_resources.py'),str(audit)],stdout=observer_log,stderr=subprocess.STDOUT)
             r.stop()
             config,plan=prepared('scale6',0,71,True)
             expected=yaml.safe_dump(config,sort_keys=False).encode();r.shared_write(r.CONFIG,expected)
@@ -98,7 +102,13 @@ def main():
                 state['restoration']='verified'
             except BaseException as exc:
                 state.update(status='failed',restoration_error=str(exc));raise
-            finally:state['finished_epoch']=time.time();save()
+            finally:
+                state['finished_epoch']=time.time();save()
+                if observer is not None:
+                    try:observer.wait(timeout=15)
+                    except subprocess.TimeoutExpired:
+                        observer.terminate();observer.wait(timeout=5)
+                if observer_log is not None:observer_log.close()
 
 
 if __name__=='__main__':main()

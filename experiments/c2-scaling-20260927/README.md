@@ -23,3 +23,5 @@ python3 experiments/c2-scaling-20260927/run.py --execute
 ```
 
 The runner pauses competing HPAs, saves configuration/reference records, uses fresh topics, and restores the original configuration and three replicas. It does not delete old topics or evidence. A failed validation blocks the performance trials. Raw data are saved under `results/c2-scaling-<timestamp>` and the individual `results/run-<timestamp>` directories; reviewed summaries belong in `experiment-records/`.
+
+The campaign also starts an independent two-second observer for requested consumer resources. Its samples continue while the main coordinator waits for pods or verifies handoff barriers. The analysis preserves observed coverage and integrates requested CPU/memory over evaluation plus drain; process CPU and RSS remain separate monitoring measurements.

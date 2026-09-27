@@ -26,7 +26,7 @@ COLORS=('#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b')
 def read(path,name):return json.loads((path/name).read_text())
 
 
-def load(row):
+def load(row, resource_observations):
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json')
     audit=read(p,'measurement-audit.json');validation=read(p,'handoff-validation.json')
     assert read(p,'runner-status.json')['status']=='complete' and validation['status']=='passed'
@@ -44,7 +44,7 @@ def load(row):
     else:assert m['intervention']['action']=='none'
     start,end=m['evaluation_start_epoch'],m['producer_end_epoch']
     markers={e['event']:(e['timestamp']-start)/60 for e in transitions}
-    resource=[json.loads(line) for line in (p/'resource-history.jsonl').read_text().splitlines()]
+    resource=resource_observations or [json.loads(line) for line in (p/'resource-history.jsonl').read_text().splitlines()]
     s=dict(arm=row['arm'],run_number=row['run_number'],seed=row['seed'],run_id=m['run_id'],
         raw_evidence='results/'+m['run_id'],admitted=o['admitted_evaluation_cohort'],completed=o['completed_by_drain'],
         unfinished=o['incomplete_by_drain'],unfinished_percent=100*o['incomplete_fraction'],
@@ -58,6 +58,8 @@ def load(row):
         process_resources=audit['process_resources'],initial_resources=m['initial_consumer_resources'],
         requested_resources_evaluation_and_drain=resource_integral(resource,start,m['drain_end_epoch'],15),
         transition_times_evaluation_minutes=markers,validation=validation,config=cfg,
+        observed_consumer_pods=read(p,'execution-summary.json')['observed_consumer_pods'],
+        resource_accounting_source='independent_two_second_observer' if resource_observations else 'coordinator_samples',
         evidence_hashes={name:hashlib.sha256((p/name).read_bytes()).hexdigest() for name in
            ('manifest.json','pipeline-configmap.yaml','outcome-summary.json','lag-summary.json','measurement-audit.json',
             'execution-summary.json','handoff-validation.json','prometheus.json')})
@@ -88,7 +90,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('campaign',type=Path);parser.add_argument('output',type=Path)
     a=parser.parse_args();campaign=read(a.campaign,'campaign-status.json')
     assert campaign['status']=='complete' and campaign.get('restoration')=='verified' and len(campaign['runs'])==4
-    runs=sorted([load(x) for x in campaign['runs']],key=lambda r:(r[3]['run_number'],r[3]['arm']))
+    observer=a.campaign/'resource-observations.jsonl'
+    resources=[json.loads(line) for line in observer.read_text().splitlines()] if observer.exists() else []
+    runs=sorted([load(x,resources) for x in campaign['runs']],key=lambda r:(r[3]['run_number'],r[3]['arm']))
     assert [(s['run_number'],s['arm']) for _,_,_,s in runs]==[(1,'keep3'),(1,'scale6'),(2,'keep3'),(2,'scale6')]
     assert len({m['config']['TOPIC_TITLE'] for _,m,_,_ in runs})==4
     assert all(m['placement_reference']==runs[0][1]['placement_reference'] for _,m,_,_ in runs)
@@ -141,7 +145,7 @@ def main():
             for suffix in ('png','pdf'):fig.savefig(a.output/(name+'.'+suffix),dpi=180,facecolor='white')
             pdf.savefig(fig,facecolor='white')
     summaries=[r[3] for r in runs]
-    result=dict(execution_revision=campaign['code_commit'],technical_validation=campaign['validation'],runs=summaries,
+    result=dict(execution_revision=campaign['code_commit'],resource_observer_sha256=hashlib.sha256(observer.read_bytes()).hexdigest() if observer.exists() else None,technical_validation=campaign['validation'],runs=summaries,
         limitations=['Two trials per condition on shared machines; finite observation.',
         'Scaling and predefined redistribution are combined; this does not isolate the benefit of extra replicas.',
         'The global handoff barrier, replica startup and observed placement affect outcomes.',
