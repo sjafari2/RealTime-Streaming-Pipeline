@@ -145,7 +145,8 @@ def main():
             for suffix in ('png','pdf'):fig.savefig(a.output/(name+'.'+suffix),dpi=180,facecolor='white')
             pdf.savefig(fig,facecolor='white')
     summaries=[r[3] for r in runs]
-    result=dict(execution_revision=campaign['code_commit'],resource_observer_sha256=hashlib.sha256(observer.read_bytes()).hexdigest() if observer.exists() else None,technical_validation=campaign['validation'],runs=summaries,
+    technical=dict(campaign['validation']);technical.pop('directory',None);technical['raw_evidence']='results/'+technical['run_id']
+    result=dict(execution_revision=campaign['code_commit'],resource_observer_sha256=hashlib.sha256(observer.read_bytes()).hexdigest() if observer.exists() else None,technical_validation=technical,runs=summaries,
         limitations=['Two trials per condition on shared machines; finite observation.',
         'Scaling and predefined redistribution are combined; this does not isolate the benefit of extra replicas.',
         'The global handoff barrier, replica startup and observed placement affect outcomes.',

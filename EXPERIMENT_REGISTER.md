@@ -4,7 +4,7 @@ Updated: 27 September 2026. **The original scaling comparison block contains 24 
 
 **In progress: scaling from Consumer 2 concentration — 700 messages/s**
 
-Two nonempty handoff checks have passed. The new comparison will run twice with three consumers and twice with scaling to six, starting from the same concentration on Consumer 2. Each performance trial lasts eight minutes. The checks and one failed empty preparation are separate from performance counts.
+Two of four performance trials are complete. In the first comparison, scaling plus redistribution reduced completion p99 from **231.58 to 110.70 seconds** and unfinished evaluation messages from **31.76% to 0%**. The second comparison is underway. Each trial starts with all twelve hot partitions on Consumer 2 and lasts eight minutes. Two technical handoff checks and one failed empty preparation are separate from performance counts.
 
 [Preparation and protocol](experiment-records/c2-scaling-20260927/PREPARATION.md)
 
