@@ -39,12 +39,20 @@ These are initial-layout calibrations, once each, with no live redistribution or
 
 The JSON retains configuration, exact outcomes, deadlines, skew, growth windows, resource data, per-run execution revisions and evidence hashes. Raw message evidence and full monitoring exports are stored separately; this summary is not a raw-data backup.
 
+Figures use the same display order: distributed, Consumer 0, Consumer 1, Consumer 2. Tables and evidence retain actual execution order. Each metric grid uses shared main-panel scales; labeled insets expand small lag and growth fluctuations. The total-lag overview retains its explicitly labeled separate scales.
+
+[All comparison figures in one PDF](ownership-metrics.pdf)
+
+![ownership-cpu](ownership-cpu.png)
+
+![ownership-memory](ownership-memory.png)
+
+![ownership-throughput](ownership-throughput.png)
+
+![ownership-growth](ownership-growth.png)
+
+![ownership-owners](ownership-owners.png)
+
 ![ownership-lag](ownership-lag.png)
 
 ![ownership-skew](ownership-skew.png)
-
-![ownership-diagnostics](ownership-diagnostics.png)
-
-![ownership-diagnostics-2](ownership-diagnostics-2.png)
-
-![concentrated-c2-lag](concentrated-c2-lag.png)

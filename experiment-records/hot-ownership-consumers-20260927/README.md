@@ -19,20 +19,33 @@ The mean partition lag-skew ratios were **9.24, 9.25, 4.93 and 10.00**, respecti
 
 ## Plots and evidence
 
-The overview uses a larger vertical scale for Consumer 2 to preserve the low-lag detail in the other panels. The diagnostic figures use shared scales within each metric row. All plots show the five-minute evaluation interval.
+The primary comparison uses **one 2×2 figure per metric**. Every figure displays distributed ownership at top left, Consumer 0 at top right, Consumer 1 at bottom left, and Consumer 2 at bottom right. Consumer colors remain blue, orange and green throughout. This display order differs from the actual execution order retained in the table and evidence above.
 
-![Lag across all four layouts](ownership-lag.png)
+Main panels within each metric grid share a vertical scale. Lag-by-consumer and growth figures include labeled insets showing the small fluctuations on a shared expanded scale. The separate total-lag overview keeps its explicitly labeled larger vertical scale for Consumer 2. All plots show the five-minute evaluation interval; observations and metric definitions are unchanged.
 
-![Partition lag-skew ratios](ownership-skew.png)
+**[Download all seven comparison figures in one PDF](ownership-metrics.pdf)**
+
+| Metric | Figure | PDF |
+|---|---|---|
+| Consumer CPU use | [Four-run comparison](ownership-cpu.png) | [PDF](ownership-cpu.pdf) |
+| Consumer memory (RSS) | [Four-run comparison](ownership-memory.png) | [PDF](ownership-memory.pdf) |
+| Input and completion throughput | [Four-run comparison](ownership-throughput.png) | [PDF](ownership-throughput.pdf) |
+| Processing-backlog growth | [Four-run comparison](ownership-growth.png) | [PDF](ownership-growth.pdf) |
+| Lag by consumer | [Four-run comparison](ownership-owners.png) | [PDF](ownership-owners.pdf) |
+| Total lag | [Four-run comparison](ownership-lag.png) | [PDF](ownership-lag.pdf) |
+| Partition lag-skew ratio | [Four-run comparison](ownership-skew.png) | [PDF](ownership-skew.pdf) |
+
+![Consumer CPU comparison](ownership-cpu.png)
+
+![Processing-backlog growth comparison](ownership-growth.png)
 
 - [Detailed metric tables and all figures](RESULTS.md)
-- [Distributed and Consumer 0: lag by consumer, backlog growth, CPU, memory and throughput](ownership-diagnostics.png)
-- [Consumer 2 and Consumer 1: the same five diagnostics](ownership-diagnostics-2.png)
 - [Consumer 2 lag, full size](concentrated-c2-lag.png)
-- [Lag PDF](ownership-lag.pdf), [skew PDF](ownership-skew.pdf), [diagnostics PDF, first two layouts](ownership-diagnostics.pdf), [diagnostics PDF, last two layouts](ownership-diagnostics-2.pdf)
 - [Exact outcomes, configurations, resource measurements and evidence hashes](comparison.json)
 - [Execution, placement and restoration checks](execution-record.json)
 - [Reviewed configurations and reproduction commands](../../experiments/hot-ownership-20260927/README.md)
+
+The earlier paired figures remain available for existing references: [distributed and Consumer 0](ownership-diagnostics.png), and [Consumer 2 and Consumer 1](ownership-diagnostics-2.png).
 
 ## Interpretation and validation
 

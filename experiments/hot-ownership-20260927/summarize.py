@@ -12,6 +12,7 @@ os.environ.setdefault('MPLCONFIGDIR', '/private/tmp/hot-ownership-matplotlib')
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 
 ROOT = Path(os.environ.get('PIPELINE_REPOSITORY', Path(__file__).resolve().parents[2]))
@@ -200,24 +201,134 @@ def throughput_bins(directory, start, end, width=10):
                for values in (admitted, completed)]
 
 
-def plot_diagnostics(runs):
+DISPLAY_ORDER = ('distributed', 'concentrated', 'concentrated-c1', 'concentrated-c2')
+CONSUMER_COLORS = ('#1f77b4', '#ff7f0e', '#2ca02c')
+
+
+def diagnostic_data(runs):
+    """Read each monitoring export and message-event stream once for all figures."""
+    result = {}
+    for p,m,lag,s in runs:
+        x,_,owners,growth = lag_lines(m,lag)
+        series = read(p,'prometheus.json')['data']['result']
+        data = {'owners': [(x,y) for y in owners], 'growth': [(x,growth)]}
+        for key,name,divisor in [('cpu','consumer_cpu_percent',100),
+                                 ('memory','consumer_memory_bytes',1024**2)]:
+            data[key] = [resource_line(series,name,f'consumer-sts-{i}',
+                          m['evaluation_start_epoch'],m['producer_end_epoch'],divisor) for i in range(3)]
+        tx,ty = throughput_bins(p,m['evaluation_start_epoch'],m['producer_end_epoch'])
+        data['throughput'] = [(tx,y) for y in ty]
+        result[s['layout']] = data
+    return result
+
+
+def metric_lines(ax, curves, metric, linewidth=1.3):
+    if metric == 'throughput':
+        labels,colors,styles = ('Acknowledged input','Unique completions'),('#64748b','#176b93'),('--','-')
+    elif metric == 'growth':
+        labels,colors,styles = ('Processing-backlog growth',),('#176b93',),('-',)
+    else:
+        labels,colors,styles = tuple(f'Consumer {i}' for i in range(3)),CONSUMER_COLORS,('-',)*3
+    handles = []
+    for (x,y),label,color,style in zip(curves,labels,colors,styles):
+        handles.extend(ax.plot(x,y,label=label,color=color,linestyle=style,linewidth=linewidth))
+    return handles
+
+
+def finite_values(curves):
+    return [v for _,ys in curves for v in ys if math.isfinite(v)]
+
+
+def plot_metric_grid(runs, data, metric):
+    """Compare one metric across layouts using a common scale and consumer colors."""
+    titles = {'owners': 'Lag by consumer', 'growth': 'Processing-backlog growth',
+              'cpu': 'Consumer CPU usage', 'memory': 'Consumer memory usage',
+              'throughput': 'Input and completion throughput'}
+    labels = {'owners': 'Lag by owner (offsets)', 'growth': 'Backlog growth (offsets/s)',
+              'cpu': 'Process CPU (cores)', 'memory': 'Process RSS (MiB)',
+              'throughput': 'Messages/s (10-second bins)'}
+    values = {s['layout']: finite_values(data[s['layout']][metric]) for _,_,_,s in runs}
+    all_values = [v for rows in values.values() for v in rows]
+    minimum,maximum = min(all_values),max(all_values)
+    units = {'owners': 20000, 'growth': 25, 'cpu': .1, 'memory': 25, 'throughput': 100}
+    unit = units[metric]
+    upper = max(unit,math.ceil(maximum*1.10/unit)*unit)
+    lower = min(0,math.floor(minimum*1.10/10)*10) if metric == 'growth' else 0
+    # A small-scale inset preserves fluctuations without changing the main comparison scale.
+    small = []
+    if metric in ('owners','growth') and maximum > (1000 if metric == 'owners' else 100):
+        small = [layout for layout,ys in values.items() if max(abs(v) for v in ys) < maximum/10]
+    small_values = [v for layout in small for v in values[layout]]
+    detail_limits = None
+    if small_values:
+        if metric == 'owners':
+            detail_limits = (0,max(20,math.ceil(max(small_values)*1.15/20)*20))
+        else:
+            extent = max(1,math.ceil(max(abs(v) for v in small_values)*1.15))
+            detail_limits = (-extent,extent)
+    columns = min(2,len(runs)); rows = math.ceil(len(runs)/columns)
+    figure,axes = plt.subplots(rows,columns,figsize=(6*columns,4.2*rows),
+                               sharex=True,sharey=True,squeeze=False)
+    legend_handles = None
+    for ax,(_,_,_,s) in zip(axes.flat,runs):
+        curves = data[s['layout']][metric]
+        handles = metric_lines(ax,curves,metric)
+        if legend_handles is None: legend_handles = handles
+        if metric == 'growth': ax.axhline(0,color='#888888',linewidth=.65,zorder=0)
+        ax.set(title=s['label'],xlabel='Evaluation time (minutes)',ylabel=labels[metric],
+               xlim=(0,5),ylim=(lower,upper))
+        ax.set_title(s['label'],fontsize=11,pad=9)
+        ax.tick_params(labelleft=True,labelbottom=True)
+        if metric == 'owners': ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+        ax.grid(axis='y',alpha=.2)
+        if s['layout'] in small:
+            inset = ax.inset_axes([.52,.36,.43,.40])
+            metric_lines(inset,curves,metric,linewidth=.85)
+            if metric == 'growth': inset.axhline(0,color='#888888',linewidth=.5,zorder=0)
+            inset.set(xlim=(0,5),ylim=detail_limits,xticks=(0,2.5,5))
+            inset.set_title('Expanded vertical scale',fontsize=8,pad=3)
+            inset.tick_params(labelsize=7,pad=1)
+            inset.set_facecolor('#fafafa')
+            inset.grid(axis='y',alpha=.15)
+            for spine in inset.spines.values():
+                spine.set_visible(True);spine.set_color('#aaaaaa');spine.set_linewidth(.6)
+    for ax in list(axes.flat)[len(runs):]: ax.set_visible(False)
+    figure.suptitle(titles[metric],fontsize=16,fontweight='bold',y=.985)
+    subtitle = '700 messages/s total · Three consumers · 80% of input across 12 of 60 partitions'
+    figure.text(.5,.947,subtitle,ha='center',fontsize=10,color='#555555')
+    if metric != 'growth':
+        figure.legend(handles=legend_handles,loc='upper center',bbox_to_anchor=(.5,.929),
+                      ncol=len(legend_handles),frameon=False,fontsize=10)
+    note = 'Five-minute evaluation. Main panels share the same vertical scale.'
+    if detail_limits is not None: note += ' Insets show the same data with a shared expanded scale.'
+    if metric == 'growth': note += '\nGrowth uses a rolling 30-second window; gaps remain unavailable.'
+    elif metric == 'cpu': note += '\nProcess measurements; 1 CPU core corresponds to 100% CPU use.'
+    elif metric == 'memory': note += '\nMemory is process resident set size (RSS).'
+    elif metric == 'throughput': note += '\nUnique completions can include warm-up records finishing during evaluation.'
+    figure.text(.06,.025,note,fontsize=9,color='#555555')
+    figure.tight_layout(rect=(0,.09,1,.895))
+    return figure
+
+
+
+def plot_diagnostics(runs, data):
     """Keep at most two layouts in each diagnostic figure so labels stay legible."""
     figure, panels = plt.subplots(5,len(runs),figsize=(6*len(runs),15),
                                  sharex='col',sharey='row',squeeze=False)
     for col, (p,m,lag,s) in enumerate(runs):
         x,_,owners,growth = lag_lines(m,lag)
-        series = read(p,'prometheus.json')['data']['result']
         for i in range(3):
             label = f'Consumer {i}'
             panels[0,col].plot(x,owners[i],label=label,linewidth=1)
             for row,name,divisor in [(2,'consumer_cpu_percent',100),(3,'consumer_memory_bytes',1024**2)]:
-                rx,ry = resource_line(series,name,f'consumer-sts-{i}',m['evaluation_start_epoch'],m['producer_end_epoch'],divisor)
+                rx,ry = data[s['layout']]['cpu' if row == 2 else 'memory'][i]
                 panels[row,col].plot(rx,ry,label=label,linewidth=1)
         panels[1,col].plot(x,growth,color='#176b93',linewidth=1)
         panels[1,col].axhline(0,color='#777777',linewidth=.6)
-        tx,ty = throughput_bins(p,m['evaluation_start_epoch'],m['producer_end_epoch'])
-        panels[4,col].plot(tx,ty[0],label='Acknowledged input',color='#6b7280')
-        panels[4,col].plot(tx,ty[1],label='Unique completions',color='#176b93')
+        tx,ty0 = data[s['layout']]['throughput'][0]
+        _,ty1 = data[s['layout']]['throughput'][1]
+        panels[4,col].plot(tx,ty0,label='Acknowledged input',color='#6b7280')
+        panels[4,col].plot(tx,ty1,label='Unique completions',color='#176b93')
         panels[4,col].legend(frameon=False,fontsize=8)
         panels[0,col].set_title(s['label'],fontsize=11)
         for row,label in enumerate(['Lag by owner (offsets)','Backlog growth (offsets/s)\n30-second window',
@@ -261,6 +372,8 @@ def main():
     args = parser.parse_args()
     campaigns,rows = load_campaigns(args.campaign)
     runs = [load_run(row) for row in rows]
+    display_runs = sorted(runs,key=lambda run: DISPLAY_ORDER.index(run[3]['layout']))
+    data = diagnostic_data(runs)
     if len({r[1]['config']['TOPIC_TITLE'] for r in runs}) != len(runs):
         raise ValueError('Separate ownership trials must use distinct run-specific topics')
     if not set(args.individual_lag) <= {r[3]['layout'] for r in runs}:
@@ -274,9 +387,8 @@ def main():
     common_top = max(160,math.ceil(max(run[3]['peak_lag'] for run in runs)*1.12/20)*20)
     separate_scales = common_top > 1000 and min(run[3]['peak_lag'] for run in runs)*10 < common_top
     skew_top = max(12,math.ceil(max(run[3]['lag_skew']['peak_snapshot_ratio'] for run in runs)*1.1))
-    summaries = []
-    for index,(p,m,lag,s) in enumerate(runs):
-        summaries.append(s)
+    summaries = [run[3] for run in runs]  # Preserve execution order in the evidence record.
+    for index,(p,m,lag,s) in enumerate(display_runs):
         x,y,_,_ = lag_lines(m,lag)
         ax = axes.flat[index]
         top = max(160,math.ceil(s['peak_lag']*1.12/20)*20) if separate_scales else common_top
@@ -303,7 +415,10 @@ def main():
     figures = [(figure,'ownership-lag'),(skew_figure,'ownership-skew')]
     for first in range(0,len(runs),2):
         name = 'ownership-diagnostics' + (f'-{first//2+1}' if first else '')
-        figures.append((plot_diagnostics(runs[first:first+2]),name))
+        figures.append((plot_diagnostics(runs[first:first+2],data),name))
+    grid_figures = [(plot_metric_grid(display_runs,data,key),'ownership-'+key)
+                    for key in ('cpu','memory','throughput','growth','owners')]
+    figures.extend(grid_figures)
     for _,m,lag,s in runs:
         if s['layout'] not in args.individual_lag:
             continue
@@ -321,6 +436,9 @@ def main():
         figures.append((single,s['layout']+'-lag'))
     for fig,name in figures:
         for suffix in ('png','pdf'):fig.savefig(args.output/(name+'.'+suffix),dpi=180,facecolor='white')
+    with PdfPages(args.output/'ownership-metrics.pdf') as bundle:
+        for fig,_ in grid_figures+[figures[0],figures[1]]:
+            bundle.savefig(fig,facecolor='white')
     result = dict(campaigns=campaigns,runs=summaries,
                   limitations=['One trial per layout, fixed order, five-minute evaluation and shared machines.',
                                'Later layouts were selected during exploratory calibration, not a prespecified confirmatory comparison.',
@@ -350,7 +468,9 @@ def main():
              'Useful throughput counts distinct completions during evaluation, including any warm-up records finishing then. CPU and RSS means cover observed fresh intervals; resource coverage is retained separately in JSON. Cohort latency excludes unfinished records, retains the effect of queued warm-up work, and ends before commit acknowledgment.', '',
              'These are initial-layout calibrations, once each, with no live redistribution or scaling. No additional node-pinning constraint was introduced. Later concentration targets were selected after the earlier observations; these are exploratory calibration outcomes. Retain unfavorable valid results and do not infer a general mitigation benefit or permanent stability.', '',
              'The JSON retains configuration, exact outcomes, deadlines, skew, growth windows, resource data, per-run execution revisions and evidence hashes. Raw message evidence and full monitoring exports are stored separately; this summary is not a raw-data backup.', '']
-    for _,name in figures:text += [f'![{name}]({name}.png)','']
+    text += ['Figures use the same display order: distributed, Consumer 0, Consumer 1, Consumer 2. Tables and evidence retain actual execution order. Each metric grid uses shared main-panel scales; labeled insets expand small lag and growth fluctuations. The total-lag overview retains its explicitly labeled separate scales.', '', '[All comparison figures in one PDF](ownership-metrics.pdf)', '']
+    for _,name in grid_figures+[figures[0],figures[1]]:
+        text += [f'![{name}]({name}.png)','']
     (args.output/'RESULTS.md').write_text('\n'.join(text))
     print(json.dumps([{k:s[k] for k in ('layout','run_id','admitted','unfinished','p99_seconds','mean_lag','peak_lag','lag_coverage','lag_skew')} for s in summaries],indent=2))
 
