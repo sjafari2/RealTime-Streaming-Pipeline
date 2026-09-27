@@ -1,5 +1,7 @@
 # Balanced stability trials: completed results
 
+[All nine validated runs in one lag figure](all-balanced-rates-lag.png) · [PDF](all-balanced-rates-lag.pdf) · [Run identities and input hashes](all-balanced-rates-lag.json). The figure includes 600, 700, 800, 900, 1,200 and 1,500 messages/s, with repeated runs overlaid. The original six-trial summary below is retained as its historical reporting block.
+
 The [second 900 messages/s trial](RATE900_REPEAT.md) is now recovered and validated; its comparison and plot are reported separately below the original six-trial summary.
 
 Later follow-up: the [800 messages/s recovery report](RATE800_RECOVERY.md) adds a validated original trial, its lag plot, CPU/RSS audit and evidence hashes; no replacement trial was required.
