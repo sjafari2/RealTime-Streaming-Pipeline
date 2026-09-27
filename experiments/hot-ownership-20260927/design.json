@@ -1,0 +1,69 @@
+{
+  "aggregate_rate": 700,
+  "producers": 3,
+  "consumers": 3,
+  "partitions": 60,
+  "hot_partitions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "hot_traffic_fraction": 0.8,
+  "workload_seed": 71,
+  "warmup_seconds": 60,
+  "evaluation_seconds": 300,
+  "drain_seconds": 120,
+  "total_seconds": 480,
+  "application_cpu_iterations": 2000,
+  "application_sleep_ms": 0,
+  "assignment_mode": "explicit",
+  "mitigation": "none",
+  "runs": [
+    {
+      "layout": "distributed",
+      "hot_partition_counts": [
+        4,
+        4,
+        4
+      ],
+      "total_partition_counts": [
+        20,
+        20,
+        20
+      ],
+      "expected_consumer_input_rates": [
+        233.33333333333334,
+        233.33333333333334,
+        233.33333333333334
+      ]
+    },
+    {
+      "layout": "concentrated",
+      "hot_partition_counts": [
+        12,
+        0,
+        0
+      ],
+      "total_partition_counts": [
+        20,
+        20,
+        20
+      ],
+      "expected_consumer_input_rates": [
+        583.3333333333334,
+        58.333333333333336,
+        58.333333333333336
+      ]
+    }
+  ],
+  "interpretation": "Initial-ownership calibration only; no live transfer, no scaling, one trial per layout. Expected rates are workload targets, not measurements."
+}

@@ -163,6 +163,31 @@ def validate_readiness(rows, expected, config_hash):
     return len(seen) == len(set(seen)) and set(seen) == set(expected)
 
 
+def verify_explicit_start(rows, consumer_pods, config, run_id):
+    """Require the requested owners, not merely complete partition coverage."""
+    if config.get('CONSUMER_ASSIGNMENT_MODE', 'cooperative') != 'explicit':
+        return None
+    from explicit_assignment import ownership_map
+    owners = ownership_map(json.loads(config['EXPLICIT_ASSIGNMENT_JSON']),
+                           int(config['NUM_PARTITIONS']), consumer_pods)
+    topic = config['TOPIC_TITLE'] + '_0'
+    if len(rows) != len(consumer_pods):
+        raise RuntimeError('Explicit startup is missing consumer status; no workload released')
+    identities = {}
+    for pod, row in zip(consumer_pods, rows):
+        expected = sorted((topic, p) for p, owner in owners.items() if owner == pod)
+        observed = sorted(tuple(p) for p in row.get('assignments', []))
+        state = row.get('explicit_assignment', {})
+        if (row.get('run_id') != run_id or row.get('pod') != pod or not row.get('incarnation') or
+                row.get('assignment_mode') != 'explicit' or row.get('phase') != 'ready' or
+                state.get('epoch') != 0 or state.get('stage') != 'active' or observed != expected):
+            raise RuntimeError('Explicit startup ownership or process identity differs for ' +
+                               pod + '; no workload released')
+        identities[pod] = row['incarnation']
+    return dict(verified=True, incarnations=identities,
+                ownership=[dict(partition=p, owner=owner) for p, owner in sorted(owners.items())])
+
+
 def start_app(role, pod):
     if role == 'consumer':
         supervised = remote(role, pod, "from pathlib import Path; print(b'supervise.py' in Path('/proc/1/cmdline').read_bytes())").decode().strip()
@@ -513,6 +538,9 @@ def start(plan=None):
         control['initial_assignment'] = sorted([dict(pod=pod, topic=topic, partition=partition)
             for pod, row in zip(consumer_pods, consumers) for topic, partition in row.get('assignments', [])],
             key=lambda row: (row['topic'], row['partition']))
+        explicit_start = verify_explicit_start(consumers, consumer_pods, config, run_id)
+        if explicit_start is not None:
+            control['explicit_start_verification'] = explicit_start
         control['monitoring_readiness'] = monitoring_readiness(control)
         verify_placement(control, 'before_production')
         control['preparation_elapsed_seconds'] = time.monotonic() - preparation_started
