@@ -40,3 +40,30 @@ python3 experiments/hot-ownership-20260927/summarize.py \
 ```
 
 The summary tool validates both frozen configurations, exact starting layouts, completed-run checks and observed ownership before producing the plots. It retains missing samples as gaps and reports whole-cohort p99 separately from the rolling backlog-growth trace.
+
+## Additional calibration: concentration on Consumer 2
+
+The follow-up keeps the same workload and eight-minute schedule, but assigns all twelve hot partitions to Consumer 2. Each consumer still owns 20 total partitions. Expected input, including cold traffic, is 58.33 / 58.33 / 583.33 messages/s on Consumers 0 / 1 / 2. This checks the effect of the selected consumer's processing capacity. It remains a fixed initial-layout calibration, with no mid-run handoff or scaling.
+
+Preview this trial only:
+
+```bash
+python3 experiments/hot-ownership-20260927/run.py --layouts concentrated-c2
+```
+
+Execute this trial only:
+
+```bash
+python3 -u experiments/hot-ownership-20260927/run.py --layouts concentrated-c2 --execute
+```
+
+The default selection remains the original distributed and Consumer 0 layouts. Explicit selection prevents accidentally rerunning them when only the Consumer 2 calibration is requested. The Consumer 2 layout is exploratory calibration selected after observing the earlier two layouts; it is not a prespecified repeated mitigation comparison.
+
+To test Consumer 1 under the same concentration, select `--layouts concentrated-c1`. The follow-up block runs Consumer 2 and then Consumer 1, once each:
+
+```bash
+python3 -u experiments/hot-ownership-20260927/run.py \
+  --layouts concentrated-c2 concentrated-c1 --execute
+```
+
+The trials run sequentially because they share the runtime configuration and Kafka application pods. This block does not repeat the completed distributed or Consumer 0 trials.

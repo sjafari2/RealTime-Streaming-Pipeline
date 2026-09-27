@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare two fixed ownership maps at 700 aggregate messages/s, once each."""
+"""Run selected fixed ownership layouts at 700 aggregate messages/s, once each."""
 import argparse
 import copy
 import json
@@ -26,9 +26,9 @@ def normalized(raw):
     return config
 
 
-def configs():
+def configs(layouts=('distributed', 'concentrated')):
     result = []
-    for layout in ('distributed', 'concentrated'):
+    for layout in layouts:
         config = yaml.safe_load((HERE / (layout + '.yaml')).read_text())
         r.validate_config(config['data'])
         r.validate_intervention(PLAN, config['data'])
@@ -39,9 +39,16 @@ def configs():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--layouts', nargs='+', choices=('distributed', 'concentrated', 'concentrated-c2', 'concentrated-c1'),
+                        default=['distributed', 'concentrated'],
+                        help='Run only these reviewed layouts, once each, in this order')
     args = parser.parse_args()
-    reviewed = configs()
+    if len(set(args.layouts)) != len(args.layouts):
+        parser.error('List each layout once; this runner does not repeat trials')
+    reviewed = configs(args.layouts)
     design = json.loads((HERE / 'design.json').read_text())
+    design['runs'] = [next(row for row in design['runs'] if row['layout'] == layout)
+                      for layout in args.layouts]
     if not args.execute:
         print(json.dumps(design, indent=2))
         return

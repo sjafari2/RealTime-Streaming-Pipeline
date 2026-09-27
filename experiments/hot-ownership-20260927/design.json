@@ -63,6 +63,42 @@
         58.333333333333336,
         58.333333333333336
       ]
+    },
+    {
+      "layout": "concentrated-c2",
+      "hot_partition_counts": [
+        0,
+        0,
+        12
+      ],
+      "total_partition_counts": [
+        20,
+        20,
+        20
+      ],
+      "expected_consumer_input_rates": [
+        58.333333333333336,
+        58.333333333333336,
+        583.3333333333334
+      ]
+    },
+    {
+      "layout": "concentrated-c1",
+      "hot_partition_counts": [
+        0,
+        12,
+        0
+      ],
+      "total_partition_counts": [
+        20,
+        20,
+        20
+      ],
+      "expected_consumer_input_rates": [
+        58.333333333333336,
+        583.3333333333334,
+        58.333333333333336
+      ]
     }
   ],
   "interpretation": "Initial-ownership calibration only; no live transfer, no scaling, one trial per layout. Expected rates are workload targets, not measurements."
