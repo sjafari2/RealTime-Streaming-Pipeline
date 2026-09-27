@@ -1,4 +1,4 @@
-"""Opt-in, fail-closed assignment adapter for a fixed-membership synthetic pilot.
+"""Opt-in, fail-closed assignment adapter for a coordinated synthetic pilot.
 
 The coordinator releases ALL consumers before acquiring a new map. This is an
 application barrier, not Kafka group fencing or a fault-tolerant assignor.
@@ -28,15 +28,29 @@ class ExplicitAssignment:
         self.worker = worker
         self.runtime = worker.runtime
         control = self.runtime.control()
-        if not self.runtime.control_path or control['state'] != 'preparing':
-            raise ValueError('Explicit consumers must start in a managed preparation')
+        initial_members = control['consumer_pods']
+        allowed = control.get('explicit_scale_consumers', initial_members)
+        if (not isinstance(allowed, list) or len(set(allowed)) != len(allowed) or
+                allowed[:len(initial_members)] != initial_members):
+            raise ValueError('Invalid predeclared explicit membership')
+        newcomer = self.runtime.pod not in initial_members
+        enrollment = control.get('explicit_enrollment', {})
+        can_join = (newcomer and self.runtime.pod in allowed and control['state'] == 'running' and
+                    enrollment.get('run_id') == self.runtime.run_id and
+                    enrollment.get('members') == allowed and
+                    time.time() < enrollment.get('deadline_epoch', 0) and
+                    not control.get('explicit_handoff'))
+        if (not self.runtime.control_path or self.runtime.pod not in allowed or
+                (newcomer and not can_join) or
+                (not newcomer and control['state'] != 'preparing')):
+            raise ValueError('Explicit consumers require preparation or authorized empty enrollment')
         if len(worker.topics) != 1:
             raise ValueError('The explicit pilot supports exactly one topic')
         if str(os.getenv('CONSUMER_STATIC_MEMBERSHIP', 'false')).lower() != 'false':
             raise ValueError('Explicit assignment must not claim static group membership')
-        self.consumers = tuple(control['consumer_pods'])
+        self.consumers = tuple(allowed)
         self.count = int(os.environ['NUM_PARTITIONS'])
-        self.initial = ownership_map(json.loads(os.environ['EXPLICIT_ASSIGNMENT_JSON']), self.count, self.consumers)
+        self.initial = ownership_map(json.loads(os.environ['EXPLICIT_ASSIGNMENT_JSON']), self.count, initial_members)
         self.epoch = 0
         self.stage = 'active'
         self.offsets = {}
@@ -53,7 +67,12 @@ class ExplicitAssignment:
         w = self.worker
         parts = [w.topic_partition(w.topics[0], p) for p, owner in sorted(self.initial.items())
                  if owner == self.runtime.pod]
-        w.on_assign(w.consumer, parts)
+        if parts:
+            w.on_assign(w.consumer, parts)
+        else:
+            # Newly added replicas expose readiness without fetching or claiming
+            # partitions. They enter the same release/acquire barrier as old owners.
+            w.ownership_event('explicit_waiting', [])
 
     def check(self):
         """Called at batch boundaries on the processing thread, never from HTTP."""

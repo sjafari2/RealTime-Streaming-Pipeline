@@ -162,7 +162,7 @@ class MetricConsumer:
     def on_assign(self, consumer, partitions):
         self.runtime.event('assign_started', partitions=[[p.topic, p.partition] for p in partitions])
         # Resolve the exact starting offsets before a batch can advance position().
-        offsets = consumer.committed(partitions, timeout=5)
+        offsets = consumer.committed(partitions, timeout=5) if partitions else []
         if self.explicit_mode and (len(offsets) != len(partitions) or
                 any(tp.error for tp in offsets) or
                 [(tp.topic, tp.partition) for tp in offsets] != [(tp.topic, tp.partition) for tp in partitions]):
@@ -387,7 +387,11 @@ class MetricConsumer:
                 if self.explicit and not self.explicit.check():
                     time.sleep(.05)
                     continue
-                messages = self.consumer.consume(num_messages=self.poll_count, timeout=self.poll_timeout)
+                if self.explicit and not self.assignments:
+                    time.sleep(self.poll_timeout)
+                    messages = []
+                else:
+                    messages = self.consumer.consume(num_messages=self.poll_count, timeout=self.poll_timeout)
                 for msg in messages:
                     if self.runtime.stop_event.is_set() or self.runtime.consumer_finished():
                         break  # Fetched but unfinished records remain eligible for replay.

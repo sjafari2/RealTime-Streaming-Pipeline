@@ -1,11 +1,11 @@
-"""Fixed-membership, full-consumer barrier for the explicit-assignment pilot."""
+"""Full-consumer release/acquire barrier for the explicit-assignment pilot."""
 import copy
 import time
 from explicit_assignment import ownership_map
 
 
 def transfer(api, control, target_rows, timeout=60):
-    names = control['consumer_pods']
+    names = control.get('explicit_scale_consumers', control['consumer_pods'])
     count = int(control['config']['NUM_PARTITIONS'])
     target = ownership_map(target_rows, count, names)
     topic = control['config']['TOPIC_TITLE'] + '_0'
@@ -15,10 +15,12 @@ def transfer(api, control, target_rows, timeout=60):
 
     def current():
         value = api.read_control()
-        if not value or any(value.get(k) != control.get(k) for k in ('run_id', 'config_sha256')) or value.get('state') != 'running':
+        if not value or any(value.get(k) != control.get(k) for k in ('run_id', 'config_sha256', 'explicit_scale_consumers')) or value.get('state') != 'running':
             raise RuntimeError('Managed run changed during handoff')
         if api.pods('consumer') != names:
             raise RuntimeError('Consumer membership changed during handoff')
+        if hasattr(api, 'resource_snapshot'):
+            api.resource_snapshot(control)
         return value
 
     def statuses():

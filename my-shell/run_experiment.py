@@ -259,7 +259,7 @@ def validate_intervention(plan, config):
     if plan is None:
         return
     duration, _, warmup, _ = validate_config(config)
-    if plan['action'] not in ('none', 'scale', 'redistribute'):
+    if plan['action'] not in ('none', 'scale', 'redistribute', 'scale_redistribute'):
         raise ValueError('Unknown scheduled pilot action')
     explicit = config.get('CONSUMER_ASSIGNMENT_MODE', 'cooperative') == 'explicit'
     if explicit:
@@ -274,6 +274,17 @@ def validate_intervention(plan, config):
         if not explicit or plan.get('target_consumers') is not None:
             raise ValueError('Redistribution requires fixed explicit membership')
         ownership_map(plan['target_assignment'], int(config['NUM_PARTITIONS']), names)
+    if plan['action'] == 'scale_redistribute':
+        initial, target = plan.get('initial_consumers'), plan.get('target_consumers')
+        if (not explicit or type(initial) is not int or type(target) is not int or
+                initial != int(config['CONSUMER_POD_COUNT']) or target <= initial):
+            raise ValueError('Explicit scale-up requires matching initial and larger target membership')
+        target_names = ['consumer-sts-' + str(i) for i in range(target)]
+        ownership_map(plan['target_assignment'], int(config['NUM_PARTITIONS']), target_names)
+        if set(row['owner'] for row in plan['target_assignment']) != set(target_names):
+            raise ValueError('Every scaled consumer must receive a partition')
+        if duration-warmup-plan['after_evaluation_start_seconds'] <= 150:
+            raise ValueError('Explicit scaling needs more than 150 seconds before production ends')
     capture_pods = plan.get('capture_placement_pods')
     if capture_pods is not None:
         if not plan.get('prepare_only') or plan.get('placement_reference') is not None:
@@ -411,6 +422,9 @@ def apply_intervention(control):
     if plan['action'] == 'scale':
         kubectl('scale', 'statefulset', 'consumer-sts', '--current-replicas=' + str(plan['initial_consumers']),
                 '--replicas=' + str(plan['target_consumers']))
+    if plan['action'] == 'scale_redistribute':
+        from explicit_scale import scale_and_transfer
+        scale_and_transfer(sys.modules[__name__], control)
     if plan['action'] == 'redistribute':
         from explicit_control import transfer
         transfer(sys.modules[__name__], control, plan['target_assignment'])
@@ -466,7 +480,7 @@ def start(plan=None):
     if not consumer_pods or not producer_pods:
         raise RuntimeError('Need at least one consumer and producer pod')
     validate_config(read_config()[1])
-    if plan and plan['action'] == 'scale':
+    if plan and plan['action'] in ('scale', 'scale_redistribute'):
         for pod in consumer_pods:
             supervised = remote('consumer', pod, "from pathlib import Path; print(b'supervise.py' in Path('/proc/1/cmdline').read_bytes())").decode().strip()
             if supervised != 'True':
@@ -487,6 +501,8 @@ def start(plan=None):
                    producer_pods=producer_pods, consumer_pods=consumer_pods,
                    expected_partitions=int(config['NUM_PARTITIONS']) * int(config['TOPIC_COUNT']),
                    expires_epoch=time.time() + readiness_timeout + 30, config=config)
+    if (plan or {}).get('action') == 'scale_redistribute':
+        control['explicit_scale_consumers'] = ['consumer-sts-' + str(i) for i in range(plan['target_consumers'])]
     if (plan or {}).get('placement_reference') is not None:
         control['placement_reference'] = plan['placement_reference']
         control['placement_reference_sha256'] = reference_hash(plan['placement_reference'])
@@ -1119,7 +1135,7 @@ One-time code/configuration/monitoring setup must already be complete.
     parser.add_argument('action', choices=['run', 'repeat', 'interactive', 'start', 'stop', 'collect', 'export', 'status', 'backup', 'sweep'], nargs='?', default='run')
     parser.add_argument('--rates', type=int, nargs='+')
     parser.add_argument('--repetitions', type=int, default=1)
-    parser.add_argument('--intervention', choices=['none', 'scale', 'redistribute'], help='Optional scheduled pilot action; not an automatic selector')
+    parser.add_argument('--intervention', choices=['none', 'scale', 'redistribute', 'scale_redistribute'], help='Optional scheduled pilot action; not an automatic selector')
     parser.add_argument('--target-assignment', type=Path, help='Complete JSON ownership list for the experimental explicit pilot')
     parser.add_argument('--intervention-after', type=float, help='Seconds after evaluation starts; also use for the no-action baseline')
     parser.add_argument('--initial-consumers', type=int, help='Explicitly restore this replica baseline before EACH pilot run')
@@ -1133,7 +1149,7 @@ One-time code/configuration/monitoring setup must already be complete.
     parser.add_argument('--preparation-budget', type=float,
                         help='Maximum seconds to prepare a controlled run before releasing production')
     args = parser.parse_args()
-    if (args.intervention == 'redistribute') != (args.target_assignment is not None):
+    if (args.intervention in ('redistribute', 'scale_redistribute')) != (args.target_assignment is not None):
         parser.error('Redistribute requires --target-assignment; other actions must omit it')
     plan_values = (args.intervention_after, args.initial_consumers, args.target_consumers, args.recovery_threshold, args.recovery_hold)
     plan = None
