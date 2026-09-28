@@ -8,8 +8,9 @@ The nonempty handoff validation passed: all 167,986 acknowledged messages comple
 
 ## Completed performance trials
 
-1 of four performance trials are complete. In-progress trials are not included below.
+2 of four performance trials are complete. In-progress trials are not included below.
 
 | Run | Condition | Completion p99 (s) | Unfinished (%) |
 |---|---|---:|---:|
 | 1 | Keep 3 | 226.34 | 30.18 |
+| 1 | Redistribute within 3 | 103.76 | 0.00 |
