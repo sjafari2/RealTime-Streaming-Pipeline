@@ -1,0 +1,305 @@
+{
+  "analysis_type": "post_hoc_descriptive",
+  "definitions": {
+    "processing_interruption": "Gap between the last pre-resume completion and first post-resume processing start across all consumers; verified that no logged application processing interval intersects the gap. It is not pod downtime.",
+    "transition_backlog": "Distinct messages with producer acknowledgment callback timestamp <= t and completion timestamp > t, including warm-up. Net change between release_requested and active_verified. This reconstructs acknowledged-but-unfinished work, not exact broker offset lag; callback delay and inter-host clock uncertainty affect boundary counts.",
+    "recovery": "First valid total processing-backlog observation <= 100 offsets that remains <= 100 for at least 30 seconds of consecutive observations, no gaps >3 seconds or owner/offset resets. Measured from resume_requested, during continuing production only. 50/200 thresholds supplied as post-hoc sensitivity, not pre-registered criteria.",
+    "interpretation": "Observed Scale to 6 + redistribution overhead, not a causal estimate of excess backlog. Cross-host timestamps have the saved clock-probe uncertainty; report durations approximately."
+  },
+  "runs": [
+    {
+      "run_id": "run-20260927-045540",
+      "observed_no_processing_seconds": 20.202586889266968,
+      "observed_no_completion_seconds": 20.20467185974121,
+      "coordination_seconds": 27.027315139770508,
+      "scheduled_to_active_seconds": 88.27679705619812,
+      "points": {
+        "scheduled_action": {
+          "epoch": 1790506712.120044,
+          "acknowledged_unfinished": 34432
+        },
+        "release_requested": {
+          "epoch": 1790506773.369526,
+          "acknowledged_unfinished": 52109
+        },
+        "last_pre_handoff_completion": {
+          "epoch": 1790506773.7099514,
+          "acknowledged_unfinished": 52225
+        },
+        "first_post_handoff_processing": {
+          "epoch": 1790506793.9125383,
+          "acknowledged_unfinished": 66368
+        },
+        "active_verified": {
+          "epoch": 1790506800.396841,
+          "acknowledged_unfinished": 59236
+        }
+      },
+      "acknowledged_unfinished_increase_during_coordination": 7127,
+      "acknowledged_unfinished_increase_during_processing_gap": 14143,
+      "per_consumer_released_to_resumed_seconds": {
+        "consumer-sts-0": 20.40125799179077,
+        "consumer-sts-1": 20.139116287231445,
+        "consumer-sts-2": 20.080304384231567,
+        "consumer-sts-3": 20.488118886947632,
+        "consumer-sts-4": 20.31985831260681,
+        "consumer-sts-5": 20.28907346725464
+      },
+      "recovery_anchor": "resume_requested",
+      "recovery_anchor_epoch": 1790506793.7350101,
+      "recovery_threshold_sensitivity": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": 1790506884.12,
+          "confirmed_epoch": 1790506914.12,
+          "onset_after_anchor_seconds": 90.38498973846436,
+          "confirmation_after_anchor_seconds": 120.38498973846436
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1790506884.12,
+          "confirmed_epoch": 1790506914.12,
+          "onset_after_anchor_seconds": 90.38498973846436,
+          "confirmation_after_anchor_seconds": 120.38498973846436
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1790506880.12,
+          "confirmed_epoch": 1790506910.12,
+          "onset_after_anchor_seconds": 86.38498973846436,
+          "confirmation_after_anchor_seconds": 116.38498973846436
+        }
+      ],
+      "raw_evidence": "results/run-20260927-045540",
+      "event_file_sha256": {
+        "consumer/consumer-sts-0/ff08c509fa1c4a73b09d3457116885ce/events.jsonl": "f05974cc23092c79a208e93fcc4ff1419c7d593b81dbd02c8f79c67ed109b1b7",
+        "consumer/consumer-sts-1/73d77c0ceac04134802b39e912486500/events.jsonl": "1fc4c50ecc917c5da402094df0f06ffd880220ea3eea6c7145b2aedc2af9304f",
+        "consumer/consumer-sts-2/25ff091c02cf492787f258177e5aee1d/events.jsonl": "58e59182b249fe940edccdecd5c5f346042120e91d577ed53c7c2fc2bfff18ed",
+        "consumer/consumer-sts-3/126118bba1e3411393d9d4231e10a4eb/events.jsonl": "5cf18bb150b83b036c62f5c6190fb9a10c56361c3fc416065b16427231c04ba6",
+        "consumer/consumer-sts-4/7c8c7d8f11cb49b58a201c78e9e8c5c9/events.jsonl": "b9f4f22e8e39b3d789674cd91dd40fe230dd061d6b0320f8df89aca3fad126f6",
+        "consumer/consumer-sts-5/6f9db2b2eaa44f04bc98d535e452ca62/events.jsonl": "1b74bc2f0996b941c66226b975896cdd70131fde9393fd24fdbf2a64e94e99d1",
+        "producer/producer-sts-0/5513c9ca21a44644a82ba316df6c3c1b/events.jsonl": "5058ef35c46928fae5a5d5b08c98c2d84d947b50698c52e5be8bdac69e622e66",
+        "producer/producer-sts-1/c27cc85a18614c4780074083ecd0e52d/events.jsonl": "a9c1115fe4595be67c0446c5e773ed8cd79a296f8a9711c0430aa07644f550e4",
+        "producer/producer-sts-2/16e7fa27ba174c98af44684e0c9f64f1/events.jsonl": "c27ef8b38e1ba2f27d18b1c116b319ced17edc194f835a81bd3c8c00f0bb702e"
+      },
+      "clock_probes": [
+        {
+          "pod": "producer-sts-0",
+          "role": "producer",
+          "roundtrip_seconds": 0.624748945236206,
+          "offset_low_seconds": 0.08135461807250977,
+          "offset_high_seconds": 0.7061035633087158
+        },
+        {
+          "pod": "producer-sts-1",
+          "role": "producer",
+          "roundtrip_seconds": 0.6397418975830078,
+          "offset_low_seconds": 0.08478188514709473,
+          "offset_high_seconds": 0.7245237827301025
+        },
+        {
+          "pod": "producer-sts-2",
+          "role": "producer",
+          "roundtrip_seconds": 0.617919921875,
+          "offset_low_seconds": 0.0841529369354248,
+          "offset_high_seconds": 0.7020728588104248
+        },
+        {
+          "pod": "consumer-sts-0",
+          "role": "consumer",
+          "roundtrip_seconds": 0.5995237827301025,
+          "offset_low_seconds": 0.08439016342163086,
+          "offset_high_seconds": 0.6839139461517334
+        },
+        {
+          "pod": "consumer-sts-1",
+          "role": "consumer",
+          "roundtrip_seconds": 0.5932819843292236,
+          "offset_low_seconds": 0.08617997169494629,
+          "offset_high_seconds": 0.6794619560241699
+        },
+        {
+          "pod": "consumer-sts-2",
+          "role": "consumer",
+          "roundtrip_seconds": 0.5944972038269043,
+          "offset_low_seconds": 0.08274555206298828,
+          "offset_high_seconds": 0.6772427558898926
+        }
+      ],
+      "scale_clock_probes": [
+        {
+          "pod": "consumer-sts-3",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6252448558807373,
+          "offset_low_seconds": 0.08704137802124023,
+          "offset_high_seconds": 0.7122862339019775
+        },
+        {
+          "pod": "consumer-sts-4",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6337590217590332,
+          "offset_low_seconds": 0.0840907096862793,
+          "offset_high_seconds": 0.7178497314453125
+        },
+        {
+          "pod": "consumer-sts-5",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6292438507080078,
+          "offset_low_seconds": 0.0875396728515625,
+          "offset_high_seconds": 0.7167835235595703
+        }
+      ],
+      "run_number": 1
+    },
+    {
+      "run_id": "run-20260927-050722",
+      "observed_no_processing_seconds": 19.988280296325684,
+      "observed_no_completion_seconds": 19.98967432975769,
+      "coordination_seconds": 26.54533815383911,
+      "scheduled_to_active_seconds": 92.78634595870972,
+      "points": {
+        "scheduled_action": {
+          "epoch": 1790507414.4338272,
+          "acknowledged_unfinished": 33696
+        },
+        "release_requested": {
+          "epoch": 1790507480.674835,
+          "acknowledged_unfinished": 52065
+        },
+        "last_pre_handoff_completion": {
+          "epoch": 1790507480.9138913,
+          "acknowledged_unfinished": 52153
+        },
+        "first_post_handoff_processing": {
+          "epoch": 1790507500.9021716,
+          "acknowledged_unfinished": 66145
+        },
+        "active_verified": {
+          "epoch": 1790507507.2201731,
+          "acknowledged_unfinished": 59421
+        }
+      },
+      "acknowledged_unfinished_increase_during_coordination": 7356,
+      "acknowledged_unfinished_increase_during_processing_gap": 13992,
+      "per_consumer_released_to_resumed_seconds": {
+        "consumer-sts-0": 19.962289333343506,
+        "consumer-sts-1": 19.91546869277954,
+        "consumer-sts-2": 20.00390338897705,
+        "consumer-sts-3": 20.035791158676147,
+        "consumer-sts-4": 20.209777116775513,
+        "consumer-sts-5": 20.215233325958252
+      },
+      "recovery_anchor": "resume_requested",
+      "recovery_anchor_epoch": 1790507500.719989,
+      "recovery_threshold_sensitivity": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": 1790507594.434,
+          "confirmed_epoch": 1790507624.434,
+          "onset_after_anchor_seconds": 93.7140109539032,
+          "confirmation_after_anchor_seconds": 123.7140109539032
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1790507588.434,
+          "confirmed_epoch": 1790507618.434,
+          "onset_after_anchor_seconds": 87.7140109539032,
+          "confirmation_after_anchor_seconds": 117.7140109539032
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1790507588.434,
+          "confirmed_epoch": 1790507618.434,
+          "onset_after_anchor_seconds": 87.7140109539032,
+          "confirmation_after_anchor_seconds": 117.7140109539032
+        }
+      ],
+      "raw_evidence": "results/run-20260927-050722",
+      "event_file_sha256": {
+        "consumer/consumer-sts-0/447f8a4c27a747c0afced4f30d792830/events.jsonl": "7975f898cab869cb16042fd26bb724383beeb9ec2b4db685a86cd5c9e86db933",
+        "consumer/consumer-sts-1/e6c0914dc4cd4f3abc0f577026978077/events.jsonl": "086d2ed7148e768aa720de05b9c8a7f9f90f391292deb81aa345d470f187a76c",
+        "consumer/consumer-sts-2/d76ae31f94dd4db685bc59652a367c29/events.jsonl": "24148ce322ecb821d61c468c968eedc0d2cf0c39b411bc49bb2319bca5198e77",
+        "consumer/consumer-sts-3/887842146bbd4562a1555a3fd4497875/events.jsonl": "b7ef0b512133c33878b8ab94dfedcbab6dc67b8c42e9e00df5b8b9a0f7b3ad03",
+        "consumer/consumer-sts-4/366321d8d7904120aac89d9ad1561bbc/events.jsonl": "9147d64534a1b987e04e32ba00c5b84dbf3603c95b7df48a9620c45d2c22daab",
+        "consumer/consumer-sts-5/10c4b8d0606e4f449ddee137e7bd5cfc/events.jsonl": "8da4b19ec570f28692ad8359733a5f60f5b82b14ee12de3a4dc53b7da5198609",
+        "producer/producer-sts-0/b14d6b61bb1249d0bfdc8781eabbcc8b/events.jsonl": "8862cd02d2538af1aa5322f2009097c008be8450a31ad8543c7cd36dd9dc55d6",
+        "producer/producer-sts-1/1ed9ac2caeaa4079ae849e3c7dcf3ad7/events.jsonl": "df62e8b6228f874bba641c7b914442fbab823990ef2058f485e5b18581373799",
+        "producer/producer-sts-2/44aacd9f96fd4b9f8d8b3dd2639ce07c/events.jsonl": "49d736b87fcd271eda49f0159417037880e11ba9e216385b3d970c69637952b6"
+      },
+      "clock_probes": [
+        {
+          "pod": "producer-sts-0",
+          "role": "producer",
+          "roundtrip_seconds": 0.5911939144134521,
+          "offset_low_seconds": 0.0421905517578125,
+          "offset_high_seconds": 0.6333844661712646
+        },
+        {
+          "pod": "producer-sts-1",
+          "role": "producer",
+          "roundtrip_seconds": 0.6228940486907959,
+          "offset_low_seconds": 0.041063785552978516,
+          "offset_high_seconds": 0.6639578342437744
+        },
+        {
+          "pod": "producer-sts-2",
+          "role": "producer",
+          "roundtrip_seconds": 0.6644549369812012,
+          "offset_low_seconds": 0.03961491584777832,
+          "offset_high_seconds": 0.7040698528289795
+        },
+        {
+          "pod": "consumer-sts-0",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6040959358215332,
+          "offset_low_seconds": 0.043437957763671875,
+          "offset_high_seconds": 0.6475338935852051
+        },
+        {
+          "pod": "consumer-sts-1",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6241300106048584,
+          "offset_low_seconds": 0.03939032554626465,
+          "offset_high_seconds": 0.663520336151123
+        },
+        {
+          "pod": "consumer-sts-2",
+          "role": "consumer",
+          "roundtrip_seconds": 0.5999259948730469,
+          "offset_low_seconds": 0.04008960723876953,
+          "offset_high_seconds": 0.6400156021118164
+        }
+      ],
+      "scale_clock_probes": [
+        {
+          "pod": "consumer-sts-3",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6184961795806885,
+          "offset_low_seconds": 0.038420915603637695,
+          "offset_high_seconds": 0.6569170951843262
+        },
+        {
+          "pod": "consumer-sts-4",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6092529296875,
+          "offset_low_seconds": 0.040666818618774414,
+          "offset_high_seconds": 0.6499197483062744
+        },
+        {
+          "pod": "consumer-sts-5",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6071159839630127,
+          "offset_low_seconds": 0.042645931243896484,
+          "offset_high_seconds": 0.6497619152069092
+        }
+      ],
+      "run_number": 2
+    }
+  ]
+}

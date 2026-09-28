@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "status": "specified_before_new_redistribution_trials",
+  "performance_trial_count": 4,
+  "initial_consumers": 3,
+  "final_consumers": 3,
+  "aggregate_input_messages_per_second": 700,
+  "phases_seconds": {"warmup": 60, "evaluation": 300, "drain": 120},
+  "scheduled_action_after_evaluation_seconds": 60,
+  "initial_hot_owner": "consumer-sts-2",
+  "hot_partitions": [0,1,2,3,4,5,6,7,8,9,10,11],
+  "final_owner_rule": "consumer-sts-(partition modulo 3), four hot and sixteen cold partitions per consumer",
+  "processing_interruption": "Last completion before resume_requested to first processing_start after resume_requested, with no recorded processing interval intersecting that gap; also report the no-completion gap and each process released-to-resumed duration.",
+  "transition_interval": "release_requested through active_verified; report scheduled request, actual decision and resume timestamps separately",
+  "outstanding_work": "Count distinct successfully acknowledged messages whose acknowledgment callback timestamp is at or before t and whose completion timestamp is after t. Include warm-up. This is event-derived acknowledged-but-unfinished work, not exact broker lag.",
+  "accumulation": "Report outstanding work at release request and active verification and their net difference, plus growth during the observed processing interruption. Do not call the net change a causal counterfactual cost.",
+  "recovery": {
+    "anchor": "resume_requested",
+    "metric": "valid total processing backlog",
+    "primary_threshold_offsets": 100,
+    "sensitivity_thresholds_offsets": [50,200],
+    "minimum_hold_seconds": 30,
+    "maximum_observation_gap_seconds": 3,
+    "end": "producer_end_epoch",
+    "report": "First low-backlog observation and later confirmation; require consecutive valid same-owner monotonic-offset observations. Mark not observed if the criterion is not met before production stops. Do not extend production or change thresholds after seeing results."
+  },
+  "other_measurements": ["whole-run completion p99 and mean", "unfinished count and fraction", "deadline outcomes", "unique completion throughput", "per-partition position lag", "processing backlog and growth", "partition lag skew", "consumer process CPU and RSS", "requested consumer CPU and memory integrated over evaluation plus drain", "resource and lag coverage", "identity/offset correctness", "per-consumer transition events"],
+  "evidence": ["producer acknowledgments and timestamps", "consumer processing start and completion timestamps", "source hashes and execution revision", "configuration and phase boundaries", "original pod identities and nodes", "initial and final ownership", "handoff journals", "resource observer every two seconds", "run-scoped Prometheus export", "clock probes", "final per-process evidence status"],
+  "failure_rules": "Stop on preparation, ownership, identity or handoff failure. Retain unfavorable valid performance outcomes. No extra performance trials automatically. Technical validation is separate from the four-trial count. Restore original configuration and three stopped consumers."
+}

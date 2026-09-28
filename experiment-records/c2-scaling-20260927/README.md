@@ -36,7 +36,7 @@ The comparison tests added replicas and a predeclared assignment change together
 
 Full metric definitions, configuration, process CPU/RSS, deadline outcomes, growth windows, request integrals, coverage, transition timing, identity checks and source-evidence hashes are retained in comparison.json. Large raw evidence remains in the separate results storage.
 
-[All comparison plots](c2-scaling-metrics.pdf)
+[Six time-series plots](c2-scaling-metrics.pdf) · [P99 and unfinished-work plot](c2-scaling-p99-unfinished.pdf) · [Intervention cost analysis](INTERVENTION_COST.md)
 
 ![c2-scaling-lag](c2-scaling-lag.png)
 

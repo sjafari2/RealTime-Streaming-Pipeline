@@ -47,3 +47,16 @@ def test_valid_live_barrier_reconciles_all_messages(tmp_path):
 def test_failed_identity_or_offset_evidence_blocks_gate(tmp_path,fault):
     with pytest.raises(RuntimeError):v.validate(evidence(tmp_path,fault),require_all=True)
     assert json.loads((tmp_path/'handoff-validation.json').read_text())['status']=='failed'
+
+
+@pytest.mark.parametrize('fault',[None,'offset'])
+def test_redistribution_without_scaling_still_checks_handoff(tmp_path,fault):
+    directory=evidence(tmp_path,fault)
+    p=directory/'manifest.json';manifest=json.loads(p.read_text())
+    manifest['intervention']['action']='redistribute'
+    manifest.pop('explicit_scale_result')
+    p.write_text(json.dumps(manifest))
+    if fault:
+        with pytest.raises(RuntimeError):v.validate(directory,require_all=True)
+    else:
+        assert v.validate(directory,require_all=True)['handoff_checked']

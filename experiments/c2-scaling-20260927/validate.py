@@ -16,14 +16,14 @@ def validate(directory, require_all=False):
     failures=list(outcome['validity_failures'])
     if outcome['failed_or_cancelled_sends_whole_run'] or outcome['unresolved_sends_whole_run']:
         failures.append('Producer admission was incomplete')
-    handoff=manifest['intervention']['action']=='scale_redistribute'
+    handoff=manifest['intervention']['action'] in ('redistribute','scale_redistribute')
     transitions=[]
     if handoff:
         transitions=[json.loads(line) for line in (directory/'explicit-handoff-events.jsonl').read_text().splitlines()]
         expected=['release_requested','released_verified','acquire_requested','acquired_verified','resume_requested','active_verified']
         if [e['event'] for e in transitions]!=expected:
             failures.append('Handoff barriers are incomplete or repeated')
-        if manifest.get('explicit_scale_result',{}).get('status')!='resumed':
+        if manifest['intervention']['action']=='scale_redistribute' and manifest.get('explicit_scale_result',{}).get('status')!='resumed':
             failures.append('Scale handoff did not resume')
         if require_all and transitions:
             lag=json.loads((directory/'lag-summary.json').read_text())
