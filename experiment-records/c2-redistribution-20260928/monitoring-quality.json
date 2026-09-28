@@ -1,0 +1,52 @@
+[
+  {
+    "run_id": "run-20260928-034534",
+    "arm": "keep3",
+    "run_number": 1,
+    "lag_coverage": 0.9933333333333333,
+    "invalid_sample_spans": [],
+    "note": "Intervals describe invalid sampled observations, not exact outage boundaries. Reasons identify validation failures, not necessarily the underlying cause."
+  },
+  {
+    "run_id": "run-20260928-035646",
+    "arm": "redistribute3",
+    "run_number": 1,
+    "lag_coverage": 0.6733333333333333,
+    "invalid_sample_spans": [
+      {
+        "first_invalid_evaluation_seconds": 80.00041913986206,
+        "reasons": [
+          "Invalid/stale observation",
+          "Missing or unexpected partition ownership"
+        ],
+        "last_invalid_evaluation_seconds": 172.00041913986206
+      }
+    ],
+    "note": "Intervals describe invalid sampled observations, not exact outage boundaries. Reasons identify validation failures, not necessarily the underlying cause."
+  },
+  {
+    "run_id": "run-20260928-041920",
+    "arm": "keep3",
+    "run_number": 2,
+    "lag_coverage": 0.9933333333333333,
+    "invalid_sample_spans": [],
+    "note": "Intervals describe invalid sampled observations, not exact outage boundaries. Reasons identify validation failures, not necessarily the underlying cause."
+  },
+  {
+    "run_id": "run-20260928-040804",
+    "arm": "redistribute3",
+    "run_number": 2,
+    "lag_coverage": 0.6866666666666666,
+    "invalid_sample_spans": [
+      {
+        "first_invalid_evaluation_seconds": 76.00020909309387,
+        "reasons": [
+          "Invalid/stale observation",
+          "Missing or unexpected partition ownership"
+        ],
+        "last_invalid_evaluation_seconds": 164.00020909309387
+      }
+    ],
+    "note": "Intervals describe invalid sampled observations, not exact outage boundaries. Reasons identify validation failures, not necessarily the underlying cause."
+  }
+]

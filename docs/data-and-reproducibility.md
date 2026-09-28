@@ -13,6 +13,7 @@ I publish the experiment configurations, analysis code, compact result summaries
 | `experiment-records/stability-fixed3-20260921/` | Twelve balanced fixed-three-consumer stability trials and rate-comparison plots |
 | `experiment-records/hot-ownership-consumers-20260927/` | Four fixed-ownership calibrations at 700 aggregate messages/s |
 | `experiment-records/c2-scaling-20260927/` | Four controlled keep-three versus scale-and-redistribute trials, metric plots and handoff validation |
+| `experiment-records/c2-redistribution-20260928/` | Four fixed-three redistribution trials with prospectively specified interruption, accumulation and recovery metrics |
 | `experiments/` | Dated workload configurations and execution protocols; some remain unexecuted |
 | `python-scripts/` | Outcome reconciliation, lag, resource, comparison, and repetition analysis |
 

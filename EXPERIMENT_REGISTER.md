@@ -1,12 +1,16 @@
 # Experiment progress
 
-Updated: 27 September 2026. **44 performance trials are complete: 24 original scaling trials, 12 balanced stability trials, four fixed-ownership calibrations and four new Consumer 2 scaling-and-redistribution trials.**
+Updated: 28 September 2026. **48 performance trials are complete: 24 original scaling trials, 12 balanced stability trials, four fixed-ownership calibrations, four Consumer 2 combined-action trials and four redistribution-only trials.**
 
-**In progress: redistribution without scaling — 700 messages/s**
+**Redistribution without scaling — 700 messages/s, 8 minutes each**
 
-Four performance trials are planned, two per condition, after a separate technical handoff check. Three consumers remain throughout. The intervention moves from all twelve hot partitions on Consumer 2 to four hot partitions per consumer. Interruption, backlog accumulation and recovery costs will be reported with latency, unfinished work and resource measurements.
+Run 1: completion p99 **226.34 → 103.76 seconds**; unfinished **30.18% → 0.00%**.
 
-[Protocol and progress](experiment-records/c2-redistribution-20260928/README.md)
+Run 2: completion p99 **227.13 → 91.38 seconds**; unfinished **30.48% → 0.00%**.
+
+Each arrow compares a separate keep-three trial with a redistribution trial. Both start with all twelve hot partitions on Consumer 2. The intervention gives each of the same three consumers four hot partitions; no replicas are added. A separate nonempty handoff check completed all 167,986 acknowledged messages before the four performance trials. Interruption, outstanding-work accumulation and recovery were recorded using definitions fixed before this block.
+
+[Results and plots](experiment-records/c2-redistribution-20260928/README.md) · [Intervention costs](experiment-records/c2-redistribution-20260928/INTERVENTION_COST.md)
 
 **Scaling from Consumer 2 concentration — 700 messages/s, 8 minutes each**
 

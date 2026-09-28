@@ -1,0 +1,273 @@
+{
+  "analysis_type": "prospectively_specified_descriptive",
+  "definitions": {
+    "processing_interruption": "Gap between the last pre-resume completion and first post-resume processing start across all consumers; verified that no logged application processing interval intersects the gap. It is not pod downtime.",
+    "transition_backlog": "Distinct messages with producer acknowledgment callback timestamp <= t and completion timestamp > t, including warm-up. Net change between release_requested and active_verified. This reconstructs acknowledged-but-unfinished work, not exact broker offset lag; callback delay and inter-host clock uncertainty affect boundary counts.",
+    "recovery": "First valid total processing-backlog observation <= 100 offsets that remains <= 100 for at least 30 seconds of consecutive observations, no gaps >3 seconds or owner/offset resets. Measured from resume_requested, during continuing production only. 50/200 thresholds supplied as sensitivity specified before this block.",
+    "interpretation": "Observed Redistribute within 3 overhead, not a causal estimate of excess backlog. Cross-host timestamps have the saved clock-probe uncertainty; report durations approximately."
+  },
+  "runs": [
+    {
+      "run_id": "run-20260928-035646",
+      "observed_no_processing_seconds": 15.288818120956421,
+      "observed_no_completion_seconds": 15.290094137191772,
+      "coordination_seconds": 19.293601989746094,
+      "scheduled_to_active_seconds": 34.26486611366272,
+      "points": {
+        "scheduled_action": {
+          "epoch": 1790589576.8545809,
+          "acknowledged_unfinished": 33709
+        },
+        "release_requested": {
+          "epoch": 1790589591.825845,
+          "acknowledged_unfinished": 37904
+        },
+        "last_pre_handoff_completion": {
+          "epoch": 1790589592.0446494,
+          "acknowledged_unfinished": 37992
+        },
+        "first_post_handoff_processing": {
+          "epoch": 1790589607.3334675,
+          "acknowledged_unfinished": 48692
+        },
+        "active_verified": {
+          "epoch": 1790589611.119447,
+          "acknowledged_unfinished": 48770
+        }
+      },
+      "acknowledged_unfinished_increase_during_coordination": 10866,
+      "acknowledged_unfinished_increase_during_processing_gap": 10700,
+      "per_consumer_released_to_resumed_seconds": {
+        "consumer-sts-0": 15.12654447555542,
+        "consumer-sts-1": 15.021588802337646,
+        "consumer-sts-2": 15.176329612731934
+      },
+      "recovery_anchor": "resume_requested",
+      "recovery_anchor_epoch": 1790589607.031041,
+      "recovery_threshold_sensitivity": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        }
+      ],
+      "raw_evidence": "results/run-20260928-035646",
+      "event_file_sha256": {
+        "consumer/consumer-sts-0/340463335439402ea26dad41001aa039/events.jsonl": "1650555c524447181e30645527a37c9d00e4b90dceb7d8b76362a51f7e362356",
+        "consumer/consumer-sts-1/e1c0ad4d965f4abb95109f8bf93ac60e/events.jsonl": "321e75a7a7f550c9e3813dff7a98365113537a24adb5e18225990b3c63eb5a5b",
+        "consumer/consumer-sts-2/1d76a10f2d2c44d3afbd98fa89064b3c/events.jsonl": "0b9d17d5990fd8a732e5b830a1f82ab4bee01c9e81950736e6e09905d66a1726",
+        "producer/producer-sts-0/fc1c039532484bc484eca3d32fbac981/events.jsonl": "98e5ca0a8d9b0fb959d09c0904453011529c1e0ef89f7efa8c36489e94d441af",
+        "producer/producer-sts-1/da7f8f9f05a54982aba5c699bf81f92b/events.jsonl": "b373ee1d0084d51f56412035318afcca85beb600582737a698081d431e9d0198",
+        "producer/producer-sts-2/01a2be62880247e682ee54ae4ed05d84/events.jsonl": "e3a3b520d077da99b76f86b6eb2399dc682b6ad98c4c9b78d46e661a63604317"
+      },
+      "summary_file_sha256": {
+        "manifest.json": "02d16a854e31d57396ab373542b2f80a50eacce89df3d5b2207e00b3f72343c1",
+        "explicit-handoff-events.jsonl": "f1c9022da79e87a1d84c5532404d1c6a653eabd9c8df0e76ae6e0a6f9ee9a616",
+        "lag-summary.json": "143ac8f304be26e9f795e660f8123456d0f855537676911012a9c1218d33ead6",
+        "handoff-validation.json": "30f519306f7951e6f688887f939ead12038f4d57b6a84746090668483ea2056f"
+      },
+      "clock_probes": [
+        {
+          "pod": "producer-sts-0",
+          "role": "producer",
+          "roundtrip_seconds": 0.6011240482330322,
+          "offset_low_seconds": 0.05545496940612793,
+          "offset_high_seconds": 0.6565790176391602
+        },
+        {
+          "pod": "producer-sts-1",
+          "role": "producer",
+          "roundtrip_seconds": 0.5985689163208008,
+          "offset_low_seconds": 0.05630826950073242,
+          "offset_high_seconds": 0.6548771858215332
+        },
+        {
+          "pod": "producer-sts-2",
+          "role": "producer",
+          "roundtrip_seconds": 0.6319186687469482,
+          "offset_low_seconds": 0.05488109588623047,
+          "offset_high_seconds": 0.6867997646331787
+        },
+        {
+          "pod": "consumer-sts-0",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6232271194458008,
+          "offset_low_seconds": 0.054901123046875,
+          "offset_high_seconds": 0.6781282424926758
+        },
+        {
+          "pod": "consumer-sts-1",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6193640232086182,
+          "offset_low_seconds": 0.05529165267944336,
+          "offset_high_seconds": 0.6746556758880615
+        },
+        {
+          "pod": "consumer-sts-2",
+          "role": "consumer",
+          "roundtrip_seconds": 0.5994608402252197,
+          "offset_low_seconds": 0.05515623092651367,
+          "offset_high_seconds": 0.6546170711517334
+        }
+      ],
+      "scale_clock_probes": null,
+      "run_number": 1
+    },
+    {
+      "run_id": "run-20260928-040804",
+      "observed_no_processing_seconds": 15.260589361190796,
+      "observed_no_completion_seconds": 15.261866331100464,
+      "coordination_seconds": 19.384209156036377,
+      "scheduled_to_active_seconds": 33.78120017051697,
+      "points": {
+        "scheduled_action": {
+          "epoch": 1790590254.389791,
+          "acknowledged_unfinished": 33093
+        },
+        "release_requested": {
+          "epoch": 1790590268.786782,
+          "acknowledged_unfinished": 37060
+        },
+        "last_pre_handoff_completion": {
+          "epoch": 1790590269.0875435,
+          "acknowledged_unfinished": 37152
+        },
+        "first_post_handoff_processing": {
+          "epoch": 1790590284.3481328,
+          "acknowledged_unfinished": 47834
+        },
+        "active_verified": {
+          "epoch": 1790590288.1709912,
+          "acknowledged_unfinished": 48021
+        }
+      },
+      "acknowledged_unfinished_increase_during_coordination": 10961,
+      "acknowledged_unfinished_increase_during_processing_gap": 10682,
+      "per_consumer_released_to_resumed_seconds": {
+        "consumer-sts-0": 15.27108907699585,
+        "consumer-sts-1": 15.200736999511719,
+        "consumer-sts-2": 15.133126258850098
+      },
+      "recovery_anchor": "resume_requested",
+      "recovery_anchor_epoch": 1790590284.004065,
+      "recovery_threshold_sensitivity": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        }
+      ],
+      "raw_evidence": "results/run-20260928-040804",
+      "event_file_sha256": {
+        "consumer/consumer-sts-0/6dddff733e6448a6b6288ef135f7ed8a/events.jsonl": "d99b8af9de89acc82451a83de44b8ee479502a6100125fd9b65eaa882a81c1f8",
+        "consumer/consumer-sts-1/f06d3ea432114848bbcec6aa26ee098d/events.jsonl": "bc903364c56c81cbdf695733df638e65912ccdb55c8f903e9226829a87e24d22",
+        "consumer/consumer-sts-2/83fc0981e9bc4569a6486cb819469ecb/events.jsonl": "56865fb1ab1d2e320de9b3b0705f683846d1c36b3b465bc3d8328f39719f659e",
+        "producer/producer-sts-0/d7cc3e388fa4486986bf424b53b26d55/events.jsonl": "5de279a767e11c1959c07152671e9dee1bd79cfce03fd157a198c71e60c6eeee",
+        "producer/producer-sts-1/8a91c039decb42d9a5248f63c61d39ea/events.jsonl": "73af3d9164b6e73106a30e5f32180711cc95a9f92ef1fd10e37b9357c38b1411",
+        "producer/producer-sts-2/4ff38e8c9b2441778371a5b73469d027/events.jsonl": "d3463c627cf2e2fd0cb4450b5ca3613ad128a0742413377dedcaa1be1213012f"
+      },
+      "summary_file_sha256": {
+        "manifest.json": "6b0284ecda80376df0f4cff5c2da126391db06525103daba5b93c71ce1715c22",
+        "explicit-handoff-events.jsonl": "a8f8bfbfa7d53d8dbc9443bb8c866693b3d2369c0645ef560c95a26f0c2920de",
+        "lag-summary.json": "5975decb181f251c0bd64fbc8c1f8fe56c9d1246634e34138104e0b63b40f9ad",
+        "handoff-validation.json": "1fccfa88ae38edcf508e25c5ea295236f02a14b9f66d7d50a67c311e0be76b1e"
+      },
+      "clock_probes": [
+        {
+          "pod": "producer-sts-0",
+          "role": "producer",
+          "roundtrip_seconds": 0.6126017570495605,
+          "offset_low_seconds": 0.04904055595397949,
+          "offset_high_seconds": 0.66164231300354
+        },
+        {
+          "pod": "producer-sts-1",
+          "role": "producer",
+          "roundtrip_seconds": 0.612738847732544,
+          "offset_low_seconds": 0.05183577537536621,
+          "offset_high_seconds": 0.6645746231079102
+        },
+        {
+          "pod": "producer-sts-2",
+          "role": "producer",
+          "roundtrip_seconds": 0.6037130355834961,
+          "offset_low_seconds": 0.049997568130493164,
+          "offset_high_seconds": 0.6537106037139893
+        },
+        {
+          "pod": "consumer-sts-0",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6276061534881592,
+          "offset_low_seconds": 0.05000901222229004,
+          "offset_high_seconds": 0.6776151657104492
+        },
+        {
+          "pod": "consumer-sts-1",
+          "role": "consumer",
+          "roundtrip_seconds": 0.6049540042877197,
+          "offset_low_seconds": 0.04918503761291504,
+          "offset_high_seconds": 0.6541390419006348
+        },
+        {
+          "pod": "consumer-sts-2",
+          "role": "consumer",
+          "roundtrip_seconds": 0.5999891757965088,
+          "offset_low_seconds": 0.049343109130859375,
+          "offset_high_seconds": 0.6493322849273682
+        }
+      ],
+      "scale_clock_probes": null,
+      "run_number": 2
+    }
+  ]
+}

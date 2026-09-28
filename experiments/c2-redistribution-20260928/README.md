@@ -2,7 +2,7 @@
 
 This comparison isolates a scheduled ownership change while keeping three consumer replicas throughout. Three producers generate 700 messages/s in total, with 80% across twelve of sixty partitions. All twelve hot partitions initially belong to Consumer 2; each consumer initially owns twenty partitions. The intervention changes ownership to partition modulo three, giving every consumer four hot and sixteen cold partitions. Producer routing and processing work stay unchanged.
 
-Four performance trials are planned: keep-three Run 1, redistribute Run 1 (seed 71), redistribute Run 2, keep-three Run 2 (seed 72). Each lasts eight minutes: one warm-up, five evaluation and two drain. Redistribution is requested one minute into evaluation. Original pod identities, nodes, resources and starting ownership are verified against a common reference; machines are not pinned. Both conditions use explicit assignment and synchronous commits.
+Four performance trials completed: keep-three Run 1, redistribute Run 1 (seed 71), redistribute Run 2, keep-three Run 2 (seed 72). Each lasts eight minutes: one warm-up, five evaluation and two drain. Redistribution is requested one minute into evaluation. Original pod identities, nodes, resources and starting ownership are verified against a common reference; machines are not pinned. Both conditions use explicit assignment and synchronous commits.
 
 A separate nonempty handoff validation precedes these trials. It uses twenty seconds warm-up, 220 seconds evaluation and sixty seconds drain, with redistribution requested twenty seconds into evaluation. It must reconcile all acknowledged records and pass the release/acquire/resume and offset checks. It is not a performance trial. Failed preparations and valid unfavorable outcomes are preserved separately.
 
@@ -13,3 +13,5 @@ The run records preserve acknowledgments, processing starts/completions, ownersh
 The intervention pauses all three consumers, verifies completed-prefix offsets and evidence, then acquires and resumes the complete target map. This is a scheduled synthetic-workload pilot, not an adaptive policy or a production fault-tolerance guarantee. Comparison with the earlier scaling block also involves different intervention startup time and execution dates; it is not a simultaneous three-arm randomized experiment.
 
 Inspect the design with `python3 experiments/c2-redistribution-20260928/run.py`. Execute the authorized validation and four trials with `python3 experiments/c2-redistribution-20260928/run.py --execute`. The runner restores the original shared configuration and three stopped consumer applications; it does not remove old topics or evidence.
+
+Completed measurements and plots are in [the experiment record](../../experiment-records/c2-redistribution-20260928/README.md).
