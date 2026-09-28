@@ -33,7 +33,10 @@ class InterventionCostTests(unittest.TestCase):
         self.assertEqual(result['confirmed_epoch'],50)
 
     def test_no_recovery_is_reported_when_horizon_is_too_short(self):
-        self.assertIsNone(cost.recovery(self.snapshots(),0,20,100)['confirmed_epoch'])
+        result=cost.recovery(self.snapshots(),0,20,100)
+        self.assertIsNone(result['confirmed_epoch'])
+        self.assertEqual(result['unconfirmed_low_start_epoch'],0)
+        self.assertEqual(result['observed_low_duration_seconds'],20)
 
 
 if __name__=='__main__':unittest.main()

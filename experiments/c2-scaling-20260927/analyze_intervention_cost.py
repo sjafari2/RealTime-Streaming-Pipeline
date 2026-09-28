@@ -42,7 +42,9 @@ def recovery(snapshots, anchor, end, threshold, hold=30):
                         confirmation_after_anchor_seconds=t-anchor)
     return dict(threshold_offsets=threshold, hold_seconds=hold, first_low_epoch=None,
                 confirmed_epoch=None, onset_after_anchor_seconds=None,
-                confirmation_after_anchor_seconds=None)
+                confirmation_after_anchor_seconds=None,
+                unconfirmed_low_start_epoch=candidate,
+                observed_low_duration_seconds=previous['timestamp']-candidate if previous is not None and candidate is not None else 0)
 
 
 def analyze(directory):
@@ -171,7 +173,7 @@ def main():
     for i,r in enumerate(results):
         rec=r['recovery_threshold_sensitivity'][1]
         if rec['first_low_epoch'] is None:
-            lines+=['',f'Run {i+1}: the primary recovery criterion was not observed before production ended.']
+            lines+=['',f'Run {i+1}: the primary recovery criterion was not confirmed before production ended. A short low-backlog interval alone is insufficient; see the unconfirmed-candidate fields in the JSON.']
             continue
         lines+=['',f"Run {i+1}: recovery to at most 100 processing-backlog offsets starts {rec['onset_after_anchor_seconds']:.1f} seconds after the resume request and is confirmed after {rec['confirmation_after_anchor_seconds']:.1f} seconds, requiring 30 seconds of continuous valid low-backlog observations."]
     lines+=['']+[f'**{key.replace("_"," ").capitalize()}:** {value}\n' for key,value in definitions.items()]
