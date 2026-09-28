@@ -170,6 +170,19 @@ def main():
     lines+=['','Requested resources are integrated over observed intervals within five evaluation minutes plus two drain minutes. Partial coverage produces a partial integral, not the full cost. They describe reserved consumer resources, not measured consumption or whole-cluster cost. CPU and RSS plots show process measurements separately. Useful throughput counts distinct completions during evaluation, including warm-up messages completing then; it may therefore exceed the 700 msg/s input target while queued work is cleared.','',
             'The identity and offset checks passed for all four trials, with no duplicate completion identifiers, duplicate completed offsets or unmatched completion identities. Both intervention trials passed release, acquire and resume verification. This validates the recorded synthetic-workload handoffs; it does not establish exactly-once external application effects.','',
             'All producer and consumer pods, machines, resource settings and starting ownership matched the saved reference. No consumer replicas were added. This block tests moving hot partitions away from the initially overloaded owner while keeping the replica count fixed.','']
+    lines += ['', '| Run | Condition | Observed process CPU (core-s) | Observed RSS integral (GiB-s) | Consumer CPU/RSS coverage range |',
+              '|---|---|---:|---:|---:|']
+    for s in summaries:
+        observed = [r for r in s['process_resources'] if r['pod'].startswith('consumer-')]
+        cpu_rows = [r['windows']['evaluation_and_drain'] for r in observed if r['metric']=='consumer_cpu_percent']
+        rss_rows = [r['windows']['evaluation_and_drain'] for r in observed if r['metric']=='consumer_memory_bytes']
+        assert len(cpu_rows)==len(rss_rows)==3
+        cpu_seconds = sum(r['observed_integral'] for r in cpu_rows)/100
+        rss_seconds = sum(r['observed_integral'] for r in rss_rows)/1024**3
+        coverage = [r['covered_fraction'] for r in cpu_rows+rss_rows]
+        condition = 'Keep 3' if s['arm']=='keep3' else 'Redistribute within 3'
+        lines.append(f"| {s['run_number']} | {condition} | {cpu_seconds:.2f} | {rss_seconds:.2f} | {100*min(coverage):.1f}–{100*max(coverage):.1f}% |")
+    lines += ['', 'Observed process integrals sum the three consumers over covered intervals in evaluation plus drain. CPU percent-seconds are divided by 100 to obtain core-seconds; byte-seconds are divided by 2^30 for GiB-seconds. The RSS integral measures memory footprint over time, not allocated memory or bytes processed. Missing intervals are omitted, not filled with zero; these sums are not complete costs when coverage is partial. Producer measurements remain available separately in comparison.json.','']
     if campaign.get('collection_recovery'):
         lines += ['A collection recovery is documented in comparison.json. Resource and lag coverage are reported separately; partial request integrals must not be interpreted as complete trial costs.','']
     lines+=['','P99 is the nearest-rank percentile of completed evaluation messages through application completion, before commit acknowledgment. It is not an average of rolling p99 values. Mean lag is time-weighted over valid intervals. Missing observations and ownership transitions break plotted lines. Unfinished messages are counted at the fixed drain cutoff; warm-up messages remain queued but are excluded from that cohort.','',
