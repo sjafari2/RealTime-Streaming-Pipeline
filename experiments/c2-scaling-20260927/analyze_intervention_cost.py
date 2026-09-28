@@ -86,7 +86,7 @@ def analyze(directory):
     # These are secondary descriptive criteria, not thresholds fixed before the trials.
     recoveries = [recovery(lag['snapshots'], resume, manifest['producer_end_epoch'], threshold)
                   for threshold in (50, 100, 200)]
-    schedule = manifest['evaluation_start_epoch']+60
+    schedule = manifest['evaluation_start_epoch']+float(manifest['intervention']['after_evaluation_start_seconds'])
     points = {name: dict(epoch=t, acknowledged_unfinished=outstanding(ack, done, t))
               for name,t in [('scheduled_action', schedule), ('release_requested', release),
                              ('last_pre_handoff_completion', last_done), ('first_post_handoff_processing', first_start),
@@ -103,6 +103,7 @@ def analyze(directory):
         recovery_anchor='resume_requested', recovery_anchor_epoch=resume,
         recovery_threshold_sensitivity=recoveries,
         raw_evidence='results/'+manifest['run_id'], event_file_sha256=sources,
+        summary_file_sha256={name:hashlib.sha256((directory/name).read_bytes()).hexdigest() for name in ('manifest.json','explicit-handoff-events.jsonl','lag-summary.json','handoff-validation.json')},
         clock_probes=manifest.get('clock_probes'), scale_clock_probes=manifest.get('scale_clock_probes'))
     x = np.arange(manifest['evaluation_start_epoch'], manifest['producer_end_epoch']+0.1, 1)
     y = [outstanding(ack,done,t) for t in x]
