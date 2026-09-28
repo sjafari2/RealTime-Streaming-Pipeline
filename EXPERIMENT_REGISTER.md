@@ -2,6 +2,12 @@
 
 Updated: 27 September 2026. **44 performance trials are complete: 24 original scaling trials, 12 balanced stability trials, four fixed-ownership calibrations and four new Consumer 2 scaling-and-redistribution trials.**
 
+**In progress: redistribution without scaling — 700 messages/s**
+
+Four performance trials are planned, two per condition, after a separate technical handoff check. Three consumers remain throughout. The intervention moves from all twelve hot partitions on Consumer 2 to four hot partitions per consumer. Interruption, backlog accumulation and recovery costs will be reported with latency, unfinished work and resource measurements.
+
+[Protocol and progress](experiment-records/c2-redistribution-20260928/README.md)
+
 **Scaling from Consumer 2 concentration — 700 messages/s, 8 minutes each**
 
 Run 1: completion p99 **231.58 → 110.70 seconds**; unfinished evaluation messages **31.76% → 0.00%**.
