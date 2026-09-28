@@ -49,4 +49,3 @@ Full metric definitions, configuration, process CPU/RSS, deadline outcomes, grow
 ![c2-scaling-growth](c2-scaling-growth.png)
 
 ![c2-scaling-skew](c2-scaling-skew.png)
-

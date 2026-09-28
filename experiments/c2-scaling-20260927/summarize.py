@@ -177,7 +177,7 @@ def main():
     'Full metric definitions, configuration, process CPU/RSS, deadline outcomes, growth windows, request integrals, coverage, transition timing, identity checks and source-evidence hashes are retained in comparison.json. Large raw evidence remains in the separate results storage.','',
     '[All comparison plots](c2-scaling-metrics.pdf)','']
     for _,name in figures:lines += [f'![{name}]({name}.png)','']
-    (a.output/'README.md').write_text('\n'.join(lines)+'\n')
+    (a.output/'README.md').write_text('\n'.join(lines).rstrip()+'\n')
     print(json.dumps([{k:s[k] for k in ('arm','run_number','run_id','p99_seconds','unfinished_percent','mean_lag','peak_lag','lag_coverage')} for s in summaries],indent=2))
 
 
