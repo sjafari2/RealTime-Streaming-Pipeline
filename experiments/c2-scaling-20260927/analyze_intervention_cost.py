@@ -1,4 +1,8 @@
-"""Post-hoc intervention costs from preserved event evidence and valid monitoring."""
+"""Intervention costs from preserved events and valid monitoring.
+
+The report records whether the criteria were specified before the experiment
+or applied afterward to an earlier block.
+"""
 import argparse
 import hashlib
 import json
@@ -85,7 +89,7 @@ def analyze(directory):
     assert not np.any((begin < first_start) & (done > last_done))
     assert release-5 < last_done < resume < first_start < active+5
     lag = json.loads((directory/'lag-summary.json').read_text())
-    # These are secondary descriptive criteria, not thresholds fixed before the trials.
+    # The report identifies whether these criteria were set before this block.
     recoveries = [recovery(lag['snapshots'], resume, manifest['producer_end_epoch'], threshold)
                   for threshold in (50, 100, 200)]
     schedule = manifest['evaluation_start_epoch']+float(manifest['intervention']['after_evaluation_start_seconds'])
