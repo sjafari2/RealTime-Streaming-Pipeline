@@ -54,3 +54,8 @@ def test_native_technical_validation_is_not_a_performance_trial():
     assert float(cfg['data']['TARGET_RATE'])*3==300
     assert int(cfg['data']['EXP_DURATION_SEC'])==120
     assert plan['action']=='scale'
+
+
+def test_outer_controller_plan_passes_the_managed_runner_validation():
+    config,_=module.prepared('kafka_scale6',0,81)
+    module.r.validate_intervention(module.HPA_PLAN,config['data'])

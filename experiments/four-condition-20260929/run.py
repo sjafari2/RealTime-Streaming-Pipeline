@@ -17,6 +17,7 @@ from placement_control import PlacementMismatch,pod_identity
 from static_startup import audit_preparation
 sys.path.insert(0,str(ROOT/'experiments/c2-scaling-20260927'))
 from validate import validate
+HPA_PLAN=dict(action='scale',initial_consumers=3,target_consumers=6,after_evaluation_start_seconds=60)
 ORDER=[('keep3',1,81),('redistribute3',1,81),('scale_redistribute6',1,81),('kafka_scale6',1,81),
        ('kafka_scale6',2,82),('scale_redistribute6',2,82),('redistribute3',2,82),('keep3',2,82)]
 
@@ -137,7 +138,7 @@ def main():
             config,plan=prepared('kafka_scale6',0,81)
             plan.update(action='none',target_consumers=None,prepare_only=True,capture_placement_pods=original_pods)
             configure(config,'capture-initial',plan)
-            with r.paused_for_experiment(r,dict(action='scale',initial_consumers=3,target_consumers=6)):
+            with r.paused_for_experiment(r,HPA_PLAN):
                 directory,m,_=run_one(config,plan,'capture-initial',preparation=True)
                 reference=m['placement_reference']
                 hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']=='consumer-sts-2')[:12]
