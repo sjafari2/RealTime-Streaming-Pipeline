@@ -1,10 +1,10 @@
 # Experiment progress
 
-Updated: 29 September 2026. **50 performance trials are complete: the 48 trials summarized below and two trials in the new four-condition block.** Six trials remain in that block.
+Updated: 29 September 2026. **52 performance trials are complete: the 48 trials summarized below and the first four trials in the new four-condition block.** Run 2 of each condition remains.
 
 **Four responses to concentrated ownership — 700 messages/s, 13 minutes each**
 
-Run 1, keep three versus redistribute within three: p99 **366.64 → 80.10 seconds**, unfinished **34.64% → 0%**. Redistribution met the specified low-backlog recovery condition while production continued. Scaling with targeted redistribution, normal Kafka scaling, and the second run of every condition remain in progress. The long offset-initialization monitoring gap was diagnosed and corrected before this block. A separate local-computer sleep interrupted baseline collection; its historical lag/CPU/memory data were recovered without rerunning traffic, while missing resource-request samples remain flagged.
+Run 1 p99: keep three **366.64 s**, redistribution **80.10 s**, scaling plus targeted redistribution **100.81 s**, and normal Kafka scaling **71.41 s**. The baseline left **34.64%** unfinished; all three interventions finished every evaluation message and met the specified recovery criterion while input continued. These are the first trials per condition; Run 2 is still in progress. The long offset-initialization monitoring gap was diagnosed and corrected before this block. A separate local-computer sleep interrupted baseline collection; its historical lag/CPU/memory data were recovered without rerunning traffic, while missing resource-request samples remain flagged.
 
 [Current progress and evidence](experiment-records/four-condition-20260929/README.md)
 
