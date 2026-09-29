@@ -227,7 +227,7 @@ def main():
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
     lines+=['','P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
-        '| Condition | Run | Requested CPU (core-min) | Requested memory (GiB-min) | Request coverage |','|---|---:|---:|---:|---:|']
+        '| Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |','|---|---:|---:|---:|---:|']
     for s,_,_ in runs:
         resource=s['requested_resources_evaluation_and_drain'];lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {resource['consumer_container_requested_cpu_seconds_observed']/60:.2f} | {resource['consumer_container_requested_gib_seconds_observed']/60:.2f} | {resource['covered_fraction']*100:.1f}% |")
     lines+=['','Requested resources are integrated over evaluation plus drain; actual process CPU/RSS are retained separately. Missing intervals are excluded, not treated as zero.','',
@@ -237,7 +237,13 @@ def main():
         if c['action']=='none':continue
         rec=c['recovery_from_decision'][1]['confirmation_after_anchor_seconds'];rec='Not observed during input' if rec is None else f'{rec:.1f}'
         lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {c['transition_seconds']:.2f} | {c['net_additional_unfinished']:,} | {rec} |")
-    lines+=['','Explicit transition time spans release request through active verification. Native scaling spans the scale decision through ten seconds of complete stable six-owner observations. These are different operational boundaries and must not be interpreted as identical coordination costs. Message accumulation is reconstructed from acknowledgment/completion timestamps and includes warm-up. It is an observed net change, not causal excess relative to a counterfactual.','',
+    lines+=['','| Condition | Run | Longest observed interval without application processing during transition (s) |','|---|---:|---:|']
+    for s,_,_ in runs:
+        c=s['intervention_cost']
+        if c['action']=='none':continue
+        lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {c['longest_global_no_processing_interval']['seconds']:.3f} |")
+    lines+=['','This interval is calculated from the union of application-processing intervals across all consumers. A near-zero value means some consumer continued processing; it does not establish uninterrupted service for every partition. Explicit handover pause durations are also retained separately in comparison.json.','',
+        'Explicit transition time spans release request through active verification. Native scaling spans the scale decision through ten seconds of complete stable six-owner observations. These are different operational boundaries and must not be interpreted as identical coordination costs. Message accumulation is reconstructed from acknowledgment/completion timestamps and includes warm-up. It is an observed net change, not causal excess relative to a counterfactual.','',
         'Recovery requires total processing backlog at most 100 offsets for thirty consecutive valid seconds with no ownership or offset reset, while production continues. Sensitivity thresholds of 50 and 200 offsets were specified in advance. Per-partition native handover intervals and verified explicit processing pauses are in comparison.json. A cold partition can be naturally idle between records, so its inter-owner message interval is not pure rebalance downtime.','',
         'The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. This comparison evaluates those implemented responses, including coordination differences. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.','',
         '[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf)','']
