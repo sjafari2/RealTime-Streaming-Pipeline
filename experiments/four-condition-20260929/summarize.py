@@ -146,6 +146,10 @@ def load(row,resources,reference,hot):
         initial_ownership=initial,config=cfg,
         evidence_hashes={n:hashlib.sha256((p/n).read_bytes()).hexdigest() for n in ['manifest.json','pipeline-configmap.yaml','outcome-summary.json','lag-summary.json','measurement-audit.json','handoff-validation.json','prometheus.json']})
     event,outstanding,marks=event_cost(p,m,lag);s['intervention_cost']=event
+    last_valid=max((x for x in lag['snapshots'] if x.get('valid') and start<=x['timestamp']<=finish),key=lambda x:x['timestamp'])
+    final_map={int(key.rsplit('/',1)[1]):owner.split('/')[0] for key,owner in last_valid['owners'].items()}
+    s['final_observed_ownership']=final_map;s['final_ownership_observed_epoch']=last_valid['timestamp']
+    s['final_hot_partitions_per_owner']={pod:sum(final_map[p]==pod for p in hot) for pod in sorted(set(final_map.values()))}
     x,lag_y,_,growth=old.lag_lines(m,lag);skx,sk,skmean=old.skew_lines(m,lag)
     data={'lag':[(x,lag_y)],'growth':[(x,growth)],'skew':[(skx,sk),(skx,skmean)],'outstanding':[outstanding]}
     prom=read(p,'prometheus.json')['data']['result'];consumers=6 if 'scale' in row['arm'] else 3
@@ -189,9 +193,9 @@ def main():
                 left=marks.get('release_requested',marks.get('decision'));right=marks.get('active_verified',marks.get('stable_verified'))
                 if left is not None and right is not None:ax.axvspan(left,right,color='#64748b',alpha=.12)
             if metric=='growth':ax.axhline(0,color='#999',lw=.6)
-            ax.set(title=LABELS[s['arm']]+' — Run '+str(s['run_number']),xlabel='Evaluation time (minutes)',ylabel=ylabel,xlim=(0,10),ylim=(low,high))
+            ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),xlabel='Evaluation time (minutes)',ylabel=ylabel,xlim=(0,10),ylim=(low,high))
             ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2)
-        fig.suptitle(title+' — 700 messages/s',fontweight='bold',fontsize=16)
+        fig.suptitle(title+' - 700 messages/s',fontweight='bold',fontsize=16)
         if len(handles)>1:fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,.968),ncol=min(len(handles),6),frameon=False,fontsize=9)
         note='1 min warm-up + 10 min evaluation + 2 min drain. Common scales; genuine gaps remain unavailable.'
         if metric=='outstanding':note+='\nDistinct acknowledgment/completion events, including warm-up; this is not broker offset lag.'
@@ -206,9 +210,20 @@ def main():
         ax.axvline(1,color='#777',ls=':',lw=.8);ax.grid(axis='y',alpha=.2)
         ax.set(title='Run '+str(number),xlabel='Evaluation time (minutes)',ylabel='Total lag (offsets)',xlim=(0,10),ylim=(0,None))
     h,l=axes[0].get_legend_handles_labels();fig.legend(h,l,loc='upper center',bbox_to_anchor=(.5,.93),ncol=2,frameon=False,fontsize=9)
-    fig.suptitle('Four responses from the same concentrated ownership — 700 messages/s',fontweight='bold')
+    fig.suptitle('Four responses from the same concentrated ownership - 700 messages/s',fontweight='bold')
     fig.text(.07,.025,'Each curve is a separate 13-minute trial; the 10-minute evaluation is shown. Dotted line: scheduled response.\nMissing observations and ownership changes break curves. Warm-up work remains queued.',fontsize=9)
     fig.tight_layout(rect=(0,.12,1,.81));figures.append((fig,'four-condition-lag-comparison'))
+    fig,axes=plt.subplots(4,2,figsize=(12,10),sharex=True,sharey=True)
+    for ax,(s,_,_) in zip(axes.flat,runs):
+        counts=s['final_hot_partitions_per_owner'];pods=['consumer-sts-'+str(i) for i in range(6)]
+        bars=ax.bar(range(6),[counts.get(p,0) for p in pods],color=COLORS,width=.65)
+        for b,pod in zip(bars,pods):
+            ax.annotate(str(counts[pod]) if pod in counts else 'n/a',(b.get_x()+b.get_width()/2,b.get_height()),xytext=(0,3),textcoords='offset points',ha='center',fontsize=9)
+        ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),ylabel='Hot partitions',ylim=(0,14),xticks=range(6),xticklabels=['C'+str(i) for i in range(6)])
+        ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
+    fig.suptitle('Observed hot-partition ownership at the end of evaluation',fontweight='bold')
+    fig.text(.07,.02,'All trials started with twelve hot partitions on Consumer 2. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nEqual partition counts do not necessarily imply equal traffic or processing load.',fontsize=9)
+    fig.tight_layout(rect=(0,.085,1,.96));figures.append((fig,'four-condition-ownership'))
     fig,axes=plt.subplots(1,2,figsize=(12,5));x=np.arange(2);width=.2
     for index,arm in enumerate(ARMS):
         selected=sorted([s for s,_,_ in runs if s['arm']==arm],key=lambda s:s['run_number'])
