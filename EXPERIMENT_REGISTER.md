@@ -1,12 +1,16 @@
 # Experiment progress
 
-Updated: 29 September 2026. **52 performance trials are complete: the 48 trials summarized below and the first four trials in the new four-condition block.** Run 2 of each condition remains.
+Updated: 29 September 2026. **56 performance trials are complete.** Technical checks and failed preparations are separate from this count.
 
-**Four responses to concentrated ownership — 700 messages/s, 13 minutes each**
+**Four responses to concentrated ownership - 700 messages/s, 13 minutes each**
 
-Run 1 p99: keep three **366.64 s**, redistribution **80.10 s**, scaling plus targeted redistribution **100.81 s**, and normal Kafka scaling **71.41 s**. The baseline left **34.64%** unfinished; all three interventions finished every evaluation message and met the specified recovery criterion while input continued. These are the first trials per condition; Run 2 is still in progress. The long offset-initialization monitoring gap was diagnosed and corrected before this block. A separate local-computer sleep interrupted baseline collection; its historical lag/CPU/memory data were recovered without rerunning traffic, while missing resource-request samples remain flagged.
+Two runs per condition are complete. Both unchanged three-consumer baselines left about **35% unfinished**. All redistribution, scaling-plus-redistribution and native Kafka-scaling trials finished every evaluation message.
 
-[Current progress and evidence](experiment-records/four-condition-20260929/README.md)
+Completion p99 was **366.64 and 362.79 seconds** for the baselines; **80.10 and 84.16 seconds** for redistribution within three; **100.81 and 107.24 seconds** for scaling with targeted redistribution; and **71.41 and 72.46 seconds** for native Kafka scaling. All three interventions met the specified low-backlog recovery criterion while input continued. Redistribution used **72 requested core-minutes**, while six-consumer interventions used about **137**. These results describe two runs of each implemented response, not a validated adaptive policy.
+
+The long offset-initialization monitoring gap was corrected before this block. One baseline has incomplete resource-request observations after a local-computer sleep; its completion, lag, CPU and memory evidence was recovered without repeating traffic. This limitation remains visible in the report. Original configuration restoration and stopped applications were verified at completion.
+
+[All results, costs and plots](experiment-records/four-condition-20260929/README.md)
 
 **Redistribution without scaling — 700 messages/s, 8 minutes each**
 

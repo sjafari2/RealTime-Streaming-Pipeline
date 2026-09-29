@@ -34,9 +34,9 @@ Completion currently means the end of the configured application work, before co
 
 `my-shell/run_experiment.py`, exposed through `save-run.sh` and `run_pipeline.sh`, coordinates readiness, frozen configuration, production, evaluation, bounded drain and evidence collection. A run identifier separates measurements from earlier runs. Repetition analysis uses the exact run paths created by a batch.
 
-The coordinator supports scheduled no-action and scale-up pilots. For scale-up, it changes the consumer replica count through Kubernetes; the consumer group then changes ownership through its configured assignment mechanism. The consumer supervisor allows newly created replicas to enter the managed workflow. The plan and observed events are recorded separately.
+The coordinator supports scheduled no-action, native scale-up, explicit partition redistribution, and scaling combined with redistribution. Native scaling changes the Kubernetes replica count and lets the Kafka consumer group rebalance. Targeted trials use release, acquire and resume stages with verified offsets and exclusive partition ownership. The consumer supervisor allows new replicas to enter the managed workflow. The requested plan and observed events are recorded separately.
 
-A scheduled intervention is an experimental treatment. It is not the planned adaptive controller: the runner does not diagnose skew and autonomously choose between waiting, targeted reassignment and scaling. Targeted consumer ownership transfer has experimental code paths and remains a separate live-validation and performance-evaluation task. Moving broker replicas or changing pod placement is not a substitute for it.
+A scheduled intervention is an experimental treatment. It is not the planned adaptive controller: the runner does not diagnose skew and autonomously choose between waiting, targeted reassignment and scaling. Targeted consumer ownership transfer has passed nonempty technical checks and scheduled performance comparisons for this stateless synthetic workload. Moving broker replicas or changing pod placement is not a substitute for it.
 
 ## Evidence and monitoring
 

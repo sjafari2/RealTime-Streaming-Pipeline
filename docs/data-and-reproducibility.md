@@ -14,6 +14,8 @@ I publish the experiment configurations, analysis code, compact result summaries
 | `experiment-records/hot-ownership-consumers-20260927/` | Four fixed-ownership calibrations at 700 aggregate messages/s |
 | `experiment-records/c2-scaling-20260927/` | Four controlled keep-three versus scale-and-redistribute trials, metric plots and handoff validation |
 | `experiment-records/c2-redistribution-20260928/` | Four fixed-three redistribution trials with prospectively specified interruption, accumulation and recovery metrics |
+| `experiment-records/four-condition-20260929/` | Eight matched-start thirteen-minute trials, all-metric figures, observed ownership and intervention costs |
+| `experiment-records/monitoring-gap-20260929/` | Offset-initialization diagnosis and live correction verification |
 | `experiments/` | Dated workload configurations and execution protocols; some remain unexecuted |
 | `python-scripts/` | Outcome reconciliation, lag, resource, comparison, and repetition analysis |
 

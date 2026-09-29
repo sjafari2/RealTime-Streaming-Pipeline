@@ -22,9 +22,9 @@ Scheduled scale-up is implemented and has been evaluated in the preliminary comp
 
 **How does targeted partition reassignment affect the performance of a Kafka-based stream-processing pipeline under skewed workloads?**
 
-The proposed intervention moves whole busy partitions to less loaded or dedicated existing consumers. It is most relevant when several busy partitions share one consumer and spare capacity exists elsewhere. It cannot create intra-partition parallelism for a partition that already exceeds an isolated consumer's capacity.
+The implemented scheduled intervention moves whole busy partitions to less loaded or dedicated existing consumers. It is most relevant when several busy partitions share one consumer and spare capacity exists elsewhere. It cannot create intra-partition parallelism for a partition that already exceeds an isolated consumer's capacity.
 
-This stage requires a supported ownership-transfer protocol, progress handover and appropriate ordering checks. Ordinary rebalancing after scale-up is not a controlled reassignment treatment.
+The explicit transfer protocol has been checked with nonempty topics and evaluated in the [redistribution comparisons](../experiment-records/c2-redistribution-20260928/README.md) and the [four-condition block](../experiment-records/four-condition-20260929/README.md). The evidence includes progress handover, identity/offset checks and transfer costs. It does not establish correctness for arbitrary stateful applications. Ordinary rebalancing after scale-up is a separate treatment from a specified targeted reassignment.
 
 ## 4. Producer-side hot-key splitting
 
@@ -44,7 +44,7 @@ The planned evaluation compares the decision policy with relevant assignment and
 
 ## Evaluation sequence
 
-The completed work addresses Questions 1 and 2 through monitoring validation and scheduled-scaling comparisons under balanced and statically skewed input. The next [stability experiments](../experiments/stability-20260914/README.md) examine whether backlog settles during sustained production. Targeted reassignment, permitted key splitting, and controller comparisons follow as separate evaluation stages.
+Completed work addresses Questions 1-3 through monitoring validation, [balanced-rate stability measurements](../experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md), controlled starting ownership, and scheduled scaling/redistribution comparisons. Capacity-aware assignment, changing workloads, permitted key splitting and adaptive-policy comparisons remain separate evaluation stages. The current evidence evaluates scheduled responses, not an autonomous controller.
 
 ## Closest research context
 

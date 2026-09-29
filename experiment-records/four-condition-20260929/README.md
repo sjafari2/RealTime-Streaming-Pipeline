@@ -1,24 +1,79 @@
-# Four-condition comparison — in progress
+# Four responses to concentrated ownership
 
-Eight performance trials are planned at 700 aggregate messages/s: keep three consumers, redistribute within three, scale to six with targeted redistribution, and scale to six with Kafka's normal rebalance. Each condition runs twice with 1 minute warm-up, 10 minutes evaluation, and 2 minutes drain.
+Eight performance trials used a common verified starting map, all twelve hot partitions on Consumer 2, and 700 aggregate messages/s. Every trial lasted thirteen minutes: one warm-up, ten evaluation and two drain. The second run reversed condition order.
 
-The monitoring correction, two empty-topic ownership checks, and a native-scaling technical validation passed. The starting map and twelve hot partitions are frozen for all trials; initially all twelve hot partitions belong to Consumer 2.
+| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |
+|---|---:|---:|---:|---:|---:|---:|
+| Keep 3 | 1 | 366.64 | 34.641 | 423.23 | 98,929.4 | 99.7% |
+| Keep 3 | 2 | 362.79 | 34.828 | 422.62 | 100,032.7 | 99.7% |
+| Redistribute within 3 | 1 | 80.10 | 0.000 | 727.71 | 7,837.4 | 96.3% |
+| Redistribute within 3 | 2 | 84.16 | 0.000 | 729.53 | 8,664.0 | 96.3% |
+| Scale + targeted redistribution | 1 | 100.81 | 0.000 | 727.75 | 8,470.4 | 95.3% |
+| Scale + targeted redistribution | 2 | 107.24 | 0.000 | 729.31 | 9,520.4 | 95.3% |
+| Scale + Kafka rebalance | 1 | 71.41 | 0.000 | 727.65 | 6,687.5 | 98.0% |
+| Scale + Kafka rebalance | 2 | 72.46 | 0.000 | 728.48 | 5,702.1 | 98.0% |
 
-**Run 1 is verified for all four conditions.** Each admitted 420,000 evaluation messages.
+P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.
 
-| Condition | Completion p99 (s) | Unfinished (%) | Recovery confirmed after decision (s) |
-|---|---:|---:|---:|
-| Keep three | 366.64 | 34.64 | No intervention |
-| Redistribute within three | 80.10 | 0 | 305.18 |
-| Scale plus targeted redistribution | 100.81 | 0 | 168.98 |
-| Scale with Kafka rebalance | 71.41 | 0 | 259.01 |
+| Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |
+|---|---:|---:|---:|---:|
+| Keep 3 | 1 | 1.22 | 0.61 | 1.7% |
+| Keep 3 | 2 | 72.00 | 36.00 | 100.0% |
+| Redistribute within 3 | 1 | 72.00 | 36.00 | 100.0% |
+| Redistribute within 3 | 2 | 72.00 | 36.00 | 100.0% |
+| Scale + targeted redistribution | 1 | 136.86 | 68.43 | 100.0% |
+| Scale + targeted redistribution | 2 | 136.80 | 68.40 | 100.0% |
+| Scale + Kafka rebalance | 1 | 137.15 | 68.58 | 100.0% |
+| Scale + Kafka rebalance | 2 | 137.15 | 68.57 | 100.0% |
 
-Recovery uses the predeclared threshold: processing backlog at most 100 offsets for thirty consecutive valid seconds while input continues. Explicit redistribution paused application processing for 14.54 seconds; the combined intervention paused it for 19.50 seconds. Under native scaling, the longest observed pipeline-wide interval without processing during the measured transition was 0.092 seconds; this does not establish uninterrupted processing for each partition. Native scaling left hot-partition counts of 0, 0, 2, 4, 2, 4 across Consumers 0-5. The targeted six-consumer condition assigned two hot partitions to each consumer.
+Requested resources are integrated over evaluation plus drain; actual process CPU/RSS are retained separately. Missing intervals are excluded, not treated as zero.
 
-The fixed-three redistribution trial used 72.00 requested core-minutes over evaluation plus drain, compared with 136.86 for the combined intervention and 137.15 for native scaling. Baseline Run 1 has incomplete request observations, described below. One trial per condition is insufficient to establish a reliable ranking.
+| Condition | Run | Transition (s) | Net additional unfinished messages | Recovery confirmed after decision (s) |
+|---|---:|---:|---:|---:|
+| Redistribute within 3 | 1 | 18.51 | 6,808 | 305.2 |
+| Redistribute within 3 | 2 | 18.56 | 6,581 | 328.9 |
+| Scale + targeted redistribution | 1 | 25.98 | 2,082 | 169.0 |
+| Scale + targeted redistribution | 2 | 26.05 | 548 | 184.9 |
+| Scale + Kafka rebalance | 1 | 31.01 | -6,777 | 259.0 |
+| Scale + Kafka rebalance | 2 | 33.01 | -9,823 | 143.0 |
 
-The Mac coordinating this baseline entered idle sleep for fifteen minutes. Nautilus continued its frozen workload schedule. Historical Prometheus data were recovered without rerunning traffic; the original manifest and cohort-summary hashes are unchanged. Lag coverage is 99.67%, and message/offset validation passed. Local resource-request observations during sleep remain unavailable and are not interpolated. A stronger temporary system-sleep assertion is enabled on AC power for the remaining trials.
+| Condition | Run | Longest observed interval without application processing during transition (s) |
+|---|---:|---:|
+| Redistribute within 3 | 1 | 14.544 |
+| Redistribute within 3 | 2 | 14.400 |
+| Scale + targeted redistribution | 1 | 19.498 |
+| Scale + targeted redistribution | 2 | 19.049 |
+| Scale + Kafka rebalance | 1 | 0.092 |
+| Scale + Kafka rebalance | 2 | 0.202 |
 
-The recovered baseline is retained exactly once; four performance trials are verified and four remain. The results above are preliminary within this ongoing block. Technical checks are excluded from the performance count. The full protocol, analysis code, and raw evidence preserve these distinctions.
+This interval is calculated from the union of application-processing intervals across all consumers. A near-zero value means some consumer continued processing; it does not establish uninterrupted service for every partition. Explicit handover pause durations are also retained separately in comparison.json.
 
-[Protocol](../../experiments/four-condition-20260929/README.md) · [Collection-recovery record](baseline-collection-recovery.json) · [Monitoring correction](../monitoring-gap-20260929/README.md)
+Explicit transition time spans release request through active verification. Native scaling spans the scale decision through ten seconds of complete stable six-owner observations. These are different operational boundaries and must not be interpreted as identical coordination costs. Message accumulation is reconstructed from acknowledgment/completion timestamps and includes warm-up. It is an observed net change, not causal excess relative to a counterfactual.
+
+Recovery requires total processing backlog at most 100 offsets for thirty consecutive valid seconds with no ownership or offset reset, while production continues. Sensitivity thresholds of 50 and 200 offsets were specified in advance. Per-partition native handover intervals and verified explicit processing pauses are in comparison.json. A cold partition can be naturally idle between records, so its inter-owner message interval is not pure rebalance downtime.
+
+The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. This comparison evaluates those implemented responses, including coordination differences. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.
+
+[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf) · [Interpretation](ASSESSMENT.md) · [Validation](validation.json)
+
+The Mac coordinating baseline Run 1 slept for fifteen minutes. Nautilus continued the configured workload and cutoff. Historical Prometheus data were recovered without rerunning traffic or changing cohort results; local resource-request observations during sleep remain unavailable. The baseline is retained once, with its partial request integral and coverage reported. Subsequent trials used a stronger temporary system-sleep assertion on AC power.
+
+![four-condition-lag](four-condition-lag.png)
+
+![four-condition-growth](four-condition-growth.png)
+
+![four-condition-skew](four-condition-skew.png)
+
+![four-condition-outstanding](four-condition-outstanding.png)
+
+![four-condition-cpu](four-condition-cpu.png)
+
+![four-condition-memory](four-condition-memory.png)
+
+![four-condition-throughput](four-condition-throughput.png)
+
+![four-condition-lag-comparison](four-condition-lag-comparison.png)
+
+![four-condition-ownership](four-condition-ownership.png)
+
+![four-condition-p99-unfinished](four-condition-p99-unfinished.png)

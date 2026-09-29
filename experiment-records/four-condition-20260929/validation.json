@@ -1,0 +1,216 @@
+{
+  "checked_utc": "2026-09-29T10:56:45.487801+00:00",
+  "campaign_status": "complete",
+  "configuration_restoration": "verified",
+  "completion_cleanup": "Runner stopped producer/consumer applications and restored the original consumer replica count before successful completion.",
+  "performance_trials": 8,
+  "research_inventory_performance_trials": 56,
+  "acknowledged_evaluation_messages_per_trial": 420000,
+  "common_initial_ownership": true,
+  "identical_runtime_software_within_each_role": true,
+  "monitoring_gate_passed": true,
+  "preparations": 2,
+  "additional_native_scaling_technical_trials": 1,
+  "local_tests": {
+    "passed": 286,
+    "selection": "Tracked tests/test_*.py only; unrelated untracked duplicate files excluded.",
+    "python": "/private/tmp/hot-ownership-checks-20260927/bin/python"
+  },
+  "visual_check": {
+    "pdf_pages": 10,
+    "rendered_with": "pdftoppm",
+    "all_pages_inspected": true,
+    "result": "Titles, axis labels, legends, annotations and captions readable; no clipping or overlaps found."
+  },
+  "caveat": "Keep-3 Run 1 has only 1.69% local request-observation coverage. Its partial resource integral is not a full-run cost.",
+  "campaign_status_sha256": "434c8f4ee3a6d5d58dfb7102193f6e5b4be3c978cd60874bea0d1008d4e4b312",
+  "runs": [
+    {
+      "arm": "keep3",
+      "run_number": 1,
+      "run_id": "run-20260929-020644",
+      "validation": {
+        "run_id": "run-20260929-020644",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461987,
+        "completion_attempts_whole_run": 316497,
+        "unfinished_whole_run": 145490,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      }
+    },
+    {
+      "arm": "redistribute3",
+      "run_number": 1,
+      "run_id": "run-20260929-023622",
+      "validation": {
+        "run_id": "run-20260929-023622",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461975,
+        "completion_attempts_whole_run": 461975,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "monitoring_after_handoff": {
+        "first_valid_seconds_after_active": 1.4484519958496094,
+        "invalid_samples_after_active_plus_10": 0
+      }
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "run_id": "run-20260929-025321",
+      "validation": {
+        "run_id": "run-20260929-025321",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461996,
+        "completion_attempts_whole_run": 461996,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "monitoring_after_handoff": {
+        "first_valid_seconds_after_active": 0.17128992080688477,
+        "invalid_samples_after_active_plus_10": 0
+      }
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "run_id": "run-20260929-031044",
+      "validation": {
+        "run_id": "run-20260929-031044",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461986,
+        "completion_attempts_whole_run": 461986,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      }
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "run_id": "run-20260929-032802",
+      "validation": {
+        "run_id": "run-20260929-032802",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461976,
+        "completion_attempts_whole_run": 461976,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      }
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "run_id": "run-20260929-034520",
+      "validation": {
+        "run_id": "run-20260929-034520",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461978,
+        "completion_attempts_whole_run": 461978,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "monitoring_after_handoff": {
+        "first_valid_seconds_after_active": 1.772852897644043,
+        "invalid_samples_after_active_plus_10": 0
+      }
+    },
+    {
+      "arm": "redistribute3",
+      "run_number": 2,
+      "run_id": "run-20260929-040237",
+      "validation": {
+        "run_id": "run-20260929-040237",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461990,
+        "completion_attempts_whole_run": 461990,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "monitoring_after_handoff": {
+        "first_valid_seconds_after_active": 0.8774302005767822,
+        "invalid_samples_after_active_plus_10": 0
+      }
+    },
+    {
+      "arm": "keep3",
+      "run_number": 2,
+      "run_id": "run-20260929-041940",
+      "validation": {
+        "run_id": "run-20260929-041940",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 461984,
+        "completion_attempts_whole_run": 315709,
+        "unfinished_whole_run": 146275,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      }
+    }
+  ],
+  "artifact_sha256": {
+    "four-condition-cpu.pdf": "d93dbeb887b1638eeda4025cd17d0d6bc7ebf02362aa3738a5e85c91d68d0111",
+    "four-condition-growth.pdf": "5367304e0e843e2a407a1efcfe4edda7733a2eb5908a4c883f7a1d4fd6bd3b71",
+    "four-condition-lag-comparison.pdf": "1e197ea1456fafc6288b6cd56ba6245cef25104e06319dc9cd177f2c13a14fcc",
+    "four-condition-lag.pdf": "2a02f4d417b1f366fd365b49af448bf6c040855bc3f49d2819c74be5c734f956",
+    "four-condition-memory.pdf": "b732e3a3467540a3b1253ee5b0e95436f4e5fe79c4d8cdb13acf1a3f8b78620d",
+    "four-condition-metrics.pdf": "5ec9da116b76b7ba12da066829f51274697dedf3848265155841276f9f973ed6",
+    "four-condition-outstanding.pdf": "528a0a8a16d4892721275670e4e2101f2ee74ace85983311d72dae2981a0d59b",
+    "four-condition-ownership.pdf": "0579b92fc553f6cbdd540a041fc6b487d7c1d3c91b9fce61d6d00e20e1f5241e",
+    "four-condition-p99-unfinished.pdf": "1b6f9053b7cb9e3a409169871bdce8461783c0be372a1230befa13e8dac990e5",
+    "four-condition-skew.pdf": "4d38a73f27a430e336c5a161b11c3adaca94c5d97a027250ba99348b62d8f6c9",
+    "four-condition-throughput.pdf": "d80e5602a06e2e7dce4093a5ee98a477063d6c987532da46bfba3f3fd6400997",
+    "four-condition-cpu.png": "82799eb9d15a2d89b60126b31723f5ae2f6e29ec6cdef6b00a6b7253e38021c2",
+    "four-condition-growth.png": "ea9057f07b0bfd44e854ee894dbfd5c38f454df328e5655a98082f43ef0118da",
+    "four-condition-lag-comparison.png": "2d43b29d88ea7ca5f0a1d19b24bc43d4d3a179ffed8ad1f149f369555af56e9a",
+    "four-condition-lag.png": "aea7a499b54a7d156f75b2eccd1471dce74a286e21d18555bbb473debcada807",
+    "four-condition-memory.png": "7f013aee7499f2fdad40ff0b8e5139830cda8ca95a5a9923634190caff157919",
+    "four-condition-outstanding.png": "9765de259b6f205f053034901ffea97971dd7a82669aa2513748f23aa008c8a7",
+    "four-condition-ownership.png": "d81fe29f14880cbb412b2760fd8eba02b9f047a4757bf94a2e64912f7d544a8e",
+    "four-condition-p99-unfinished.png": "18b503cb4c8d6b63bd59d137680102b5dcd69616abbfd0b48c6e4a0074364c73",
+    "four-condition-skew.png": "e1031b8c5d8fc882387ba789396aa795d5e8a0cf1326e666b42b0111a808c73a",
+    "four-condition-throughput.png": "0f8a991d78944cb1bf005e36daa1904f00df651a4643f4f1532d3ab3c3eb8f2f",
+    "comparison.json": "043a7c10ca8b1efb5509c159565eee49e0c6934db28c98ffb53d816f8df51a4a",
+    "ASSESSMENT.md": "8bfd2919d4a516c08d2c3c55179eae2129c0935402256d494da49b5565644b38",
+    "README.md": "a36691ab444ab1cafb7336d5c0529853fc8d4ab07421866158b8d40dfb37c01e",
+    "local-evidence-recovery.json": "1b33876ac14a9f364e78aee9875a1d47c4f3c5f410378c92820566f65a265731"
+  }
+}

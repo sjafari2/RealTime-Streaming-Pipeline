@@ -10,7 +10,7 @@ I developed this experimental platform as part of my PhD research, **Skew-Resili
 
 The platform combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and offline analysis of message completion and partition-level behavior. 
 
-**Current implementation:** managed measurements, evidence collection, repeated-run analysis, and scheduled no-action or consumer scale-up experiments. Targeted partition reassignment has experimental code paths but has not been evaluated in completed performance trials. The adaptive action selector and optional hot-key splitting remain future implementation stages. The existing smoke test validates parts of the measurement pipeline; it does not establish the effectiveness or novelty of a mitigation policy.
+**Current implementation:** managed measurements, evidence collection, repeated-run analysis, native consumer scaling, coordinated whole-partition redistribution, and scaling combined with targeted redistribution. The completed inventory contains 56 performance trials, including the [eight-trial comparison of four scheduled responses](experiment-records/four-condition-20260929/README.md). The adaptive decision policy and optional hot-key splitting remain future implementation stages. These scheduled trials evaluate individual responses; they do not establish the effectiveness or novelty of an adaptive policy.
 
 The active development branch is [`main`](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/main). Earlier implementations remain available in Git history and the documented archive.
 
@@ -24,15 +24,15 @@ The active development branch is [`main`](https://github.com/sjafari2/RealTime-S
 | Prepare and operate the deployed environment | [Nautilus setup](docs/nautilus-measurement-update.md) and [runtime guide](docs/runtime-and-data-flow.md) |
 | Interpret measurements correctly | [Metric definitions](docs/metric-definitions.md) |
 | Design a comparison and assess its evidence | [Experiment methodology](docs/experiment-methodology.md) |
-| Examine planned stability experiments | [Next experiment plan](experiments/stability-20260914/README.md) |
+| Inspect balanced-rate calibration and stability | [Completed stability measurements](experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md) |
 | Inspect completed runs and their limitations | [Experiment records](experiment-records/README.md) |
 | Read the project overview on GitHub | [Project wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) |
 
 ## Research scope
 
-The core study retains conventional Kafka consumer-group ownership: a partition has at most one active consumer in a group during normal operation, and the application processes that partition sequentially. Additional consumers can process different partitions in parallel. They cannot divide one overloaded partition's sequential work among multiple consumers.
+The core study retains exclusive whole-partition ownership: at most one consumer actively processes a partition at a time, and processing within that partition is sequential. Native scaling uses Kafka consumer-group rebalancing; targeted trials use a coordinated explicit handoff. Additional consumers can process different partitions in parallel. They cannot divide one overloaded partition's sequential work among multiple consumers.
 
-The research evaluates partition-level monitoring, consumer scaling, and planned targeted ownership changes. A later decision rule will use the results to choose an appropriate action, including waiting when intervention is unlikely to help. Producer-side key splitting remains an optional study for compatible processing semantics. Its results would require separate ordering and partial-result correctness evidence.
+The research evaluates partition-level monitoring, consumer scaling, and targeted ownership changes. A later decision rule will use the results to choose an appropriate action, including waiting when intervention is unlikely to help. Producer-side key splitting remains an optional study for compatible processing semantics. Its results would require separate ordering and partial-result correctness evidence.
 
 ## Repository layout
 

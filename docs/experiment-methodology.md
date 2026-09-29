@@ -1,6 +1,6 @@
 # Experiment methodology
 
-The first experiments establish reliable measurements and the conditions in which consumer scaling is useful. They precede comparisons of a complete adaptive controller. A run that finishes successfully is useful operational evidence, but its scientific interpretation depends on the workload, comparison and measurement coverage.
+The experiments establish reliable measurements and compare the conditions in which scaling and partition redistribution are useful. They precede comparisons of a complete adaptive controller. A run that finishes successfully is useful operational evidence, but its scientific interpretation depends on the workload, comparison and measurement coverage.
 
 ## Experimental design
 
@@ -11,17 +11,17 @@ The protocol uses a fixed topic partition count and consistent processing semant
 ## Calibration and comparison procedure
 
 1. **Measurement screening:** inspect one balanced and one statically skewed input with no intervention. Check actual admission, completed work, partition demand, lag coverage and unfinished records.
-2. **Capacity calibration:** choose a modest workload adjustment that produces sustained measurable backlog while leaving enough partition parallelism for additional consumers to help. A zero-work smoke test does not establish that condition.
-3. **Scheduled comparison:** compare no action with a declared scale-up at the same evaluation-relative time. Include the delay until new capacity performs useful work.
+2. **Capacity calibration:** identify an input rate that has low bounded backlog under balanced input over the observed interval, then verify whether concentrated ownership creates a bottleneck at that rate. Separate pressure tests identify overload conditions. A zero-work smoke test does not establish processing capacity.
+3. **Scheduled comparison:** compare no action with declared scaling and redistribution treatments at the same evaluation-relative time. Include startup, transfer, processing interruption and recovery while production continues.
 4. **Repeat informative conditions:** repeat matched configurations and report variability. One run per condition is screening evidence, not a general performance conclusion.
 
-A later boundary case isolates one overloaded partition. A later reassignment case deliberately places several busy partitions on one consumer while another has spare capacity. These must be verified from actual assignments; static skew alone does not prove that either condition occurred.
+Completed boundary cases include input concentrated on one partition and several hot partitions concentrated on one consumer. Actual ownership and observed processing capacity are essential: static input skew alone does not establish overload. The latest four-condition block verifies a common starting map and original-consumer placement, uses the same hot set for every condition, and reverses condition order in Run 2. Native Kafka scaling and explicit redistribution use different coordination mechanisms, which remain part of the interpretation.
 
 ## Timing and workload
 
-Completed comparisons used one minute of warm-up and two minutes of drain. Their total durations were 5, 7 or 12 minutes, leaving 2, 4 or 9 minutes of evaluation production. Warm-up messages are excluded from the evaluation cohort, but their outstanding backlog remains in the pipeline. Each category has Run 1 and Run 2, each containing separate keep-three and scale-to-six trials.
+Completed trials use one minute of warm-up and two minutes of drain. Original scaling comparisons lasted 5, 7 or 12 minutes total; balanced stability trials lasted 23 minutes; the first ownership and redistribution blocks lasted 8 minutes; the latest four-condition block lasted 13 minutes. Their evaluation durations are therefore 2, 4, 9, 20, 5 and 10 minutes, respectively. Use each saved manifest for exact boundaries.
 
-The next [six stability trials](../experiments/stability-20260914/README.md) are planned for 23 minutes total: 1 warm-up, 20 evaluation and 2 drain. They have not started. Use each saved run manifest for actual boundaries; older review-only schedules are not descriptions of completed experiments.
+Warm-up messages are excluded from the evaluation cohort, but their outstanding work remains queued. A Run 1 or Run 2 label identifies the corresponding separate trial for each condition, not before-and-after phases of one trial. The [completed stability inventory](../experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md) supersedes the earlier six-trial plan as the record of what actually ran.
 
 Intervention timing is relative to evaluation start, excluding warm-up. Bounded drain is part of observing outstanding work; records unfinished at its end remain explicitly unfinished. Select rate, work per record, duration and repetition count through bounded calibration before freezing a comparison. Record achieved admission separately from the requested rate.
 

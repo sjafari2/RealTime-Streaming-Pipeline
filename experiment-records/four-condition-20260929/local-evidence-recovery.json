@@ -1,0 +1,23 @@
+{
+  "reason": "Two local event logs had become cloud-offloaded placeholders. Exact bytes were restored from the retained Nautilus PVC and matched previously recorded SHA-256 hashes before replacement.",
+  "outcomes_changed": false,
+  "traffic_rerun": false,
+  "files": [
+    {
+      "run_id": "run-20260929-025321",
+      "relative_path": "consumer/consumer-sts-1/6d8fb7b6b086440b9ceb69b3136bf0dc/events.jsonl",
+      "sha256": "7d8ea2508e3ff61fa3b2a6d296ea4d84e16bdd419a3e736bcf1c95bebac1c26a",
+      "status": "restored_verified",
+      "bytes": 40781199,
+      "recovered_epoch": 1790678641.397364
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "relative_path": "consumer/consumer-sts-2/9c9a08fb2dec4d9aa273a815e21003b8/events.jsonl",
+      "sha256": "e785df54f9caf4bbdf003bd6f9619c4c104323a1db275ab433dba6b9d139f09d",
+      "status": "restored_verified",
+      "bytes": 94895446,
+      "recovered_epoch": 1790678643.705554
+    }
+  ]
+}
