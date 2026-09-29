@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "status": "specified_before_performance_trials",
+  "performance_trials": 8,
+  "conditions": {
+    "keep3": "Three consumers; starting map retained",
+    "redistribute3": "Three consumers; target four hot and sixteen cold partitions each",
+    "scale_redistribute6": "Scale to six; target two hot and eight cold partitions each",
+    "kafka_scale6": "Scale to six with classic cooperative-sticky Kafka assignment and stable per-pod group.instance.id; no targeted hot-partition map"
+  },
+  "aggregate_input_rate": 700,
+  "partitions": 60,
+  "hot_partition_count": 12,
+  "hot_input_fraction": 0.8,
+  "phases_seconds": {
+    "warmup": 60,
+    "evaluation": 600,
+    "drain": 120
+  },
+  "action_after_evaluation_seconds": 60,
+  "starting_conditions": "Capture the native three-consumer empty-topic map. Select the twelve lowest-numbered partitions owned by Consumer 2 before any performance outcome is observed. Freeze this hot set and initial ownership for every condition, and verify original pod UIDs, nodes, and resource declarations before traffic.",
+  "interpretation": "Native scaling uses consumer-group assignment; the other conditions use explicit exclusive ownership. Differences include the coordination mechanism as well as resulting assignments. Targets are scheduled, not chosen by an adaptive controller.",
+  "order": [
+    [
+      "keep3",
+      1,
+      81
+    ],
+    [
+      "redistribute3",
+      1,
+      81
+    ],
+    [
+      "scale_redistribute6",
+      1,
+      81
+    ],
+    [
+      "kafka_scale6",
+      1,
+      81
+    ],
+    [
+      "kafka_scale6",
+      2,
+      82
+    ],
+    [
+      "scale_redistribute6",
+      2,
+      82
+    ],
+    [
+      "redistribute3",
+      2,
+      82
+    ],
+    [
+      "keep3",
+      2,
+      82
+    ]
+  ],
+  "technical_checks": [
+    "Previously passed nonempty redistribution monitoring gate",
+    "Empty-topic native assignment capture and matching restart",
+    "Low-load native 3-to-6 technical trial: 300 aggregate msg/s, 20 warm-up + 100 evaluation + 60 drain; all acknowledgments completed; valid offsets and six active partition owners"
+  ],
+  "processing_interruption": "For explicit actions, retain the verified global last-completion to first-post-resume-processing gap and per-process released-to-resumed intervals. For native scaling, record each moved partition's last old-owner completion to first new-owner processing start, and owner callbacks; a group need not have a global processing pause. Record any observed global no-processing interval separately without treating unaffected consumers as paused.",
+  "transition_and_accumulation": "Explicit release_requested to active_verified; also retain scheduled and actual decision times. Native: actual scale decision to first complete fresh six-owner snapshot followed by 10 seconds of valid unchanged ownership. Count distinct acknowledged-but-unfinished records at each endpoint (including warm-up), and report the net change. This is observed accumulation, not causal excess over a no-action counterfactual or exact Kafka offset lag.",
+  "recovery": {
+    "common_anchor": "actual action decision",
+    "additional_explicit_anchor": "resume_requested",
+    "metric": "total processing backlog",
+    "threshold": 100,
+    "sensitivity": [
+      50,
+      200
+    ],
+    "hold_seconds": 30,
+    "max_gap_seconds": 3,
+    "end": "producer_end_epoch",
+    "rule": "Consecutive valid samples with unchanged owners and nondecreasing offsets. If not observed under continued input, report unconfirmed; drain completion is a separate outcome."
+  },
+  "outcomes": [
+    "Completed evaluation-cohort mean and nearest-rank p99 latency before commit acknowledgment",
+    "Unfinished and deadline outcomes",
+    "Distinct successful completion throughput and 10-second bins",
+    "Total/per-partition lag and processing backlog, 30-second growth, skew and persistence",
+    "Observed process CPU/RSS with coverage",
+    "Requested consumer CPU/memory integrated over evaluation plus drain",
+    "Ownership, offset continuity, unique message identities and monitoring validity"
+  ],
+  "failure_rule": "No performance trial until the monitoring correction is verified. Up to three attempts only for pre-traffic ownership mismatches, preserving rejected preparations. Stop on runtime/identity/offset failure. Retain valid unfavorable outcomes. Restore original shared configuration and three stopped consumer applications."
+}

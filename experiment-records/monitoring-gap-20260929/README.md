@@ -23,3 +23,13 @@ Run regression tests covering unresolved startup/handoff positions, complete-bat
 The requested subsequent block has four conditions, two runs each: keep three, redistribute within three, scale to six with targeted redistribution, and scale to six with Kafka's normal rebalance. Each has 60 seconds warm-up, 600 seconds evaluation, and 120 seconds drain. Its implementation and comparability checks are pending this monitoring gate.
 
 Reference: [Confluent Python consumer API](https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#confluent_kafka.Consumer.position).
+
+## Live validation result
+
+The live technical trial `run-20260929-014448` ran revision `d7db497` and confirmed the mechanism: all sixty newly assigned partitions initially returned raw client position `-1001`, while their verified assignment starts lay within freshly queried broker bounds. For example, partition 1 had starting offset 1,353 and broker high offset 3,244, so its measurable backlog span was 1,891 offsets despite the unresolved client position.
+
+The first complete valid lag sample was 4.803 seconds after the resume request and 0.602 seconds after active ownership was verified. There were no invalid total-lag samples after active verification plus ten seconds. Overall evaluation coverage was 90%, retaining the genuine handover gap and excluding intervals across ownership changes. The raw client position took as long as 28.715 seconds to become available for a partition, but this no longer hid its known backlog. This technical trial has a shorter workload than the historical performance trials; its timing is evidence of the corrected measurement mechanism, not a performance comparison.
+
+All 167,986 acknowledged messages completed. No duplicate message IDs, duplicate offsets, unmatched completion identities, or missing completed-prefix offsets were found. The original configuration was restored and applications stopped. The 274-test local suite passed before deployment; the new four-condition configuration tests add four passing cases. Technical validation remains separate from the 48 completed performance trials.
+
+[Live verification and evidence hashes](live-verification.json) and [saved-run timing diagnosis](saved-run-diagnosis.json) preserve the audit. The next block is documented in the [four-condition protocol](../../experiments/four-condition-20260929/README.md).
