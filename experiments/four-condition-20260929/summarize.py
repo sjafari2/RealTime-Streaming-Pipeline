@@ -55,14 +55,16 @@ def longest_processing_gap(starts,ends,left,right):
     return dict(start_epoch=best[0],end_epoch=best[1],seconds=best[1]-best[0])
 
 def event_cost(path,m,lag):
-    arrivals={};done={};by_partition={};callbacks=[];sources={};counts=Counter();duplicate=0
+    arrivals={};done={};by_partition={};callbacks=[];sources={};software=[];counts=Counter();duplicate=0
     for p in event_paths(path):
         sources[str(p.relative_to(path))]=hashlib.sha256(p.read_bytes()).hexdigest()
-        pod=read(p.parent,'final.json')['pod']
+        final=read(p.parent,'final.json');pod=final['pod']
         with open_events(p) as stream:
             for line in stream:
                 e=json.loads(line)
-                if e['event']=='acknowledged':
+                if e['event']=='started':
+                    software.append(dict(pod=pod,role=final['role'],**{k:e[k] for k in ['python_version','packages','source_sha256']}))
+                elif e['event']=='acknowledged':
                     if e['message_id'] in arrivals:raise ValueError('Duplicate acknowledgment identity')
                     arrivals[e['message_id']]=e['timestamp'];counts[e['partition']]+=1
                 elif e['event']=='completed':
@@ -74,7 +76,7 @@ def event_cost(path,m,lag):
     if duplicate or not set(done)<=set(arrivals):raise ValueError('Completion identity audit failed')
     ids=list(arrivals);ack=np.array([arrivals[k] for k in ids]);start=np.array([done.get(k,(math.inf,math.inf))[0] for k in ids]);end=np.array([done.get(k,(math.inf,math.inf))[1] for k in ids])
     action=m['intervention']['action'];evaluation=m['evaluation_start_epoch'];finish=m['producer_end_epoch']
-    report=dict(event_file_sha256=sources,acknowledged_per_partition=dict(sorted(counts.items())),callbacks=callbacks,action=action)
+    report=dict(runtime_software=software,event_file_sha256=sources,acknowledged_per_partition=dict(sorted(counts.items())),callbacks=callbacks,action=action)
     marks={}
     if action!='none':
         journal=[json.loads(x) for x in (path/'intervention-events.jsonl').read_text().splitlines()]
@@ -159,6 +161,10 @@ def main():
     resources=sorted([json.loads(x) for p in resource_files for x in p.read_text().splitlines()],key=lambda x:x['timestamp'])
     rows=sorted(campaign['runs'],key=lambda r:(ARMS.index(r['arm']),r['run_number']))
     runs=[load(r,resources,campaign['reference'],campaign['hot_partitions']) for r in rows]
+    for role in ['producer','consumer']:
+        signatures={json.dumps({k:v for k,v in e.items() if k not in ('pod','role')},sort_keys=True)
+                    for summary,_,_ in runs for e in summary['intervention_cost']['runtime_software'] if e['role']==role}
+        if len(signatures)!=1:raise ValueError('Runtime software differs within this comparison: '+role)
     a.output.mkdir(parents=True,exist_ok=True)
     payload=dict(campaign_revision=campaign['code_commit'],resume_events=campaign.get('resume_events',[]),collection_recovery=campaign.get('collection_recovery'),resource_observer_sha256={str(p.relative_to(a.campaign)):hashlib.sha256(p.read_bytes()).hexdigest() for p in resource_files},cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=campaign['technical'],preparations=campaign['preparations'],runs=[s for s,_,_ in runs])
     (a.output/'comparison.json').write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
@@ -190,6 +196,17 @@ def main():
         elif metric=='throughput':note+='\nCompletions include warm-up records finishing during evaluation.'
         else:note+='\nDotted line: scheduled intervention. Shading: recorded transition interval; definitions differ by coordination mechanism.'
         fig.text(.07,.015,note,fontsize=9,color='#555');fig.tight_layout(rect=(0,.06,1,.942));figures.append((fig,'four-condition-'+metric))
+    fig,axes=plt.subplots(1,2,figsize=(12,4.7),sharex=True,sharey=True)
+    for number,ax in enumerate(axes,1):
+        for i,arm in enumerate(ARMS):
+            _,data,_=next(r for r in runs if r[0]['arm']==arm and r[0]['run_number']==number)
+            x,y=data['lag'][0];ax.plot(x,y,lw=1.5,label=LABELS[arm],color=COLORS[i])
+        ax.axvline(1,color='#777',ls=':',lw=.8);ax.grid(axis='y',alpha=.2)
+        ax.set(title='Run '+str(number),xlabel='Evaluation time (minutes)',ylabel='Total lag (offsets)',xlim=(0,10),ylim=(0,None))
+    h,l=axes[0].get_legend_handles_labels();fig.legend(h,l,loc='upper center',bbox_to_anchor=(.5,.93),ncol=2,frameon=False,fontsize=9)
+    fig.suptitle('Four responses from the same concentrated ownership — 700 messages/s',fontweight='bold')
+    fig.text(.07,.025,'Each curve is a separate 13-minute trial; the 10-minute evaluation is shown. Dotted line: scheduled response.\nMissing observations and ownership changes break curves. Warm-up work remains queued.',fontsize=9)
+    fig.tight_layout(rect=(0,.12,1,.81));figures.append((fig,'four-condition-lag-comparison'))
     fig,axes=plt.subplots(1,2,figsize=(12,5));x=np.arange(2);width=.2
     for index,arm in enumerate(ARMS):
         selected=sorted([s for s,_,_ in runs if s['arm']==arm],key=lambda s:s['run_number'])
