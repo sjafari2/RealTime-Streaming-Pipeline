@@ -37,6 +37,8 @@ Acknowledgment rate is measured at delivery callbacks, so it is a delivery-confi
 
 ## Lag and proposal equations 1–17
 
+Since 29 September, the consumer initializes returned-record position from the verified absolute assignment offset while the client still reports `OFFSET_INVALID` and no record has been returned from that partition. The entire returned batch clears this fallback before processing. Fresh broker bounds must still validate the offset. `consumer_client_position_offset` retains the raw value, and `consumer_position_from_assignment` identifies this initialization. This prevents unresolved client initialization from hiding known backlog after handoff; it does not fill missing historical samples or bypass ownership and freshness checks. See the [diagnosis and validation record](../experiment-records/monitoring-gap-20260929/README.md).
+
 analyze_lag.py reads the exported run-scoped Prometheus series. A partition snapshot needs exactly one current owner, fresh valid lag and finite offsets. Every expected partition must be represented. Missing/stale data is not zero. Lag is high offset minus returned-record position. Processing backlog uses the completion frontier and is a separate metric. These are offset spans, not exact record counts when offsets have gaps.
 
 | Equations | Calculation and interpretation |

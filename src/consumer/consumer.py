@@ -8,7 +8,7 @@ from functools import wraps
 from collections import deque
 
 import psutil
-from confluent_kafka import Consumer, TopicPartition, KafkaError, KafkaException
+from confluent_kafka import Consumer, TopicPartition, KafkaError, KafkaException, OFFSET_INVALID
 from prometheus_client import Counter, Gauge, Histogram, generate_latest
 from pipeline_runtime import Runtime, latency_seconds, valid_lag
 from explicit_assignment import ExplicitAssignment
@@ -41,7 +41,9 @@ observed_metric = Gauge('consumer_lag_observed_timestamp_seconds', 'Time of the 
 age_metric = Gauge('consumer_lag_observation_age_seconds', 'Monotonic observation age at exporter snapshot', PARTITION_LABELS)
 valid_metric = Gauge('consumer_lag_valid', 'One when the partition observation is valid and fresh', PARTITION_LABELS)
 high_metric = Gauge('consumer_high_offset', 'Queried high offset', PARTITION_LABELS)
-position_metric = Gauge('consumer_position_offset', 'Next offset after returned records', PARTITION_LABELS)
+position_metric = Gauge('consumer_position_offset', 'Next returned-record offset, initialized from verified assignment until first return', PARTITION_LABELS)
+raw_position_metric = Gauge('consumer_client_position_offset', 'Raw client position, including its unresolved sentinel', PARTITION_LABELS)
+initial_position_metric = Gauge('consumer_position_from_assignment', 'One when position uses the verified assignment start before any record return', PARTITION_LABELS)
 frontier_metric = Gauge('consumer_completion_offset', 'Next offset after completed sequential work', PARTITION_LABELS)
 owner_metric = Gauge('consumer_partition_owned', 'Current partition ownership', PARTITION_LABELS)
 total_lag = Gauge('consumer_total_lag', 'Sum over complete fresh local partition observations', LABELS)
@@ -50,7 +52,7 @@ cpu = Gauge('consumer_cpu_percent', 'Process CPU percent; 100 percent is one CPU
 memory = Gauge('consumer_memory_bytes', 'Process resident memory in bytes', LABELS)
 uptime = Gauge('consumer_uptime_seconds', 'Process uptime', LABELS)
 losses = Gauge('consumer_evidence_dropped_total', 'Outcome records dropped by the bounded writer', LABELS)
-PARTITION_GAUGES = [lag_metric, backlog_metric, observed_metric, age_metric, valid_metric, high_metric, position_metric, frontier_metric, owner_metric]
+PARTITION_GAUGES = [lag_metric, backlog_metric, observed_metric, age_metric, valid_metric, high_metric, position_metric, frontier_metric, owner_metric, raw_position_metric, initial_position_metric]
 
 
 def synchronized_lag(method):
@@ -92,6 +94,8 @@ class MetricConsumer:
         self.topics = [f'{prefix}_{i}' for i in range(int(os.getenv('TOPIC_COUNT', '1')))]
         self.assignments = {}
         self.frontiers = {}
+        self.initial_positions = {}
+        self.position_sources = {}
         self.completed_offsets = {}
         self.observations = {}
         self.query_errors = {}
@@ -200,6 +204,7 @@ class MetricConsumer:
                 tp.offset = low if self.config['auto.offset.reset'] == 'earliest' else high
             key = (tp.topic, tp.partition)
             self.frontiers[key] = tp.offset
+            self.initial_positions[key] = tp.offset
             self.assignments[key] = tp
             self.query_queue.append(key)
             owner_metric.labels(**self.partition_labels(key)).set(1)
@@ -223,6 +228,8 @@ class MetricConsumer:
             key = (tp.topic, tp.partition)
             self.assignments.pop(key, None)
             self.frontiers.pop(key, None)
+            self.initial_positions.pop(key, None)
+            self.position_sources.pop(key, None)
             self.completed_offsets.pop(key, None)
             self.observations.pop(key, None)
             self.query_errors.pop(key, None)
@@ -300,6 +307,13 @@ class MetricConsumer:
         consumer.incremental_unassign(partitions)
         self.ownership_event('lost', partitions)
 
+    def record_returned(self, messages):
+        # consume() advances position for the whole returned batch, including its
+        # unprocessed suffix. Assignment offsets are no longer a valid fallback.
+        for message in messages:
+            if not message.error():
+                self.initial_positions.pop((message.topic(), message.partition()), None)
+
     @synchronized_lag
     def update_lag(self):
         # Rotate bounded queries through the assignment instead of blocking on every partition.
@@ -314,15 +328,37 @@ class MetricConsumer:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break
+            raw_position = low = high = position = None
             try:
                 tp = self.assignments[key]
-                position = self.consumer.position([tp])[0].offset
+                result = self.consumer.position([tp])[0]
+                if result.error:
+                    raise RuntimeError(str(result.error))
+                raw_position = position = result.offset
+                labels = self.partition_labels(key)
+                raw_position_metric.labels(**labels).set(raw_position)
+                if raw_position >= 0:
+                    self.initial_positions.pop(key, None)
+                source = 'client'
+                if raw_position == OFFSET_INVALID and key in self.initial_positions:
+                    # The client can leave position unresolved until this partition
+                    # returns its first record. Its verified absolute assignment
+                    # offset is exact before that first return; it is not zero lag.
+                    position = self.initial_positions[key]
+                    source = 'assignment_start'
                 low, high = self.consumer.get_watermark_offsets(tp, timeout=min(self.lag_timeout, remaining))
                 lag = valid_lag(low, high, position)
                 unfinished = valid_lag(low, high, self.frontiers[key])
                 if lag is None or unfinished is None:
                     raise ValueError('Invalid offset observation')
-                labels = self.partition_labels(key)
+                prior_error = self.query_errors.get(key)
+                if self.position_sources.get(key) != source or prior_error:
+                    self.runtime.event('lag_position_resolved', topic=key[0], partition=key[1],
+                                       source=source, raw_position=raw_position, position=position,
+                                       low=low, high=high, completion_frontier=self.frontiers[key],
+                                       assignment_epoch=self.epoch, previous_error=prior_error)
+                self.position_sources[key] = source
+                initial_position_metric.labels(**labels).set(int(source == 'assignment_start'))
                 self.observations[key] = dict(timestamp=time.time(), monotonic=time.monotonic(), lag=lag, backlog=unfinished)
                 self.query_errors.pop(key, None)
                 for metric, value in [(lag_metric, lag), (backlog_metric, unfinished), (high_metric, high),
@@ -334,7 +370,9 @@ class MetricConsumer:
                 reason = 'invalid_offset' if isinstance(exc, ValueError) else 'query_failed'
                 lag_errors.labels(**self.labels, reason=reason).inc()
                 if self.query_errors.get(key) != reason:
-                    self.runtime.event('lag_invalid', topic=key[0], partition=key[1], reason=reason, error=str(exc))
+                    self.runtime.event('lag_invalid', topic=key[0], partition=key[1], reason=reason, error=str(exc),
+                                       raw_position=raw_position, position=position, low=low, high=high,
+                                       completion_frontier=self.frontiers.get(key), assignment_epoch=self.epoch)
                 self.query_errors[key] = reason
         lag_duration.labels(**self.labels).observe(time.monotonic() - started)
         self.refresh_lag_validity()
@@ -422,6 +460,7 @@ class MetricConsumer:
                     messages = []
                 else:
                     messages = self.consumer.consume(num_messages=self.poll_count, timeout=self.poll_timeout)
+                self.record_returned(messages)
                 for msg in messages:
                     if self.runtime.stop_event.is_set() or self.runtime.consumer_finished():
                         break  # Fetched but unfinished records remain eligible for replay.
