@@ -59,9 +59,27 @@ def normalized(raw):
     return cfg
 
 
+def validate_resume_state(state, protocol):
+    if state.get('status')!='failed' or state.get('restoration')!='verified':
+        raise ValueError('Resume requires a stopped, restored failed campaign')
+    if state.get('cost_protocol')!=protocol or state.get('monitoring_gate',{}).get('status')!='passed':
+        raise ValueError('Resume cannot change the protocol or bypass the monitoring gate')
+    completed=[(x['arm'],x['run_number'],x['seed']) for x in state['runs']]
+    if completed!=ORDER[:len(completed)] or len(completed)>=len(ORDER):
+        raise ValueError('Completed trials must form an unrepeated prefix of the planned order')
+    if any(x.get('validation',{}).get('status')!='passed' for x in state['runs']):
+        raise ValueError('A completed trial lacks validation')
+    if not state.get('technical') or any(x['validation']['status']!='passed' for x in state['technical']):
+        raise ValueError('Native scaling validation is missing')
+    if not state.get('reference') or len(state.get('hot_partitions',[]))!=12:
+        raise ValueError('Frozen starting conditions are missing')
+    return len(completed)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute',action='store_true')
+    parser.add_argument('--resume',type=Path,help='Continue only unexecuted trials in a restored campaign')
     parser.add_argument('--monitoring-gate',type=Path)
     parser.add_argument('--preparations-only',action='store_true')
     args=parser.parse_args()
@@ -77,17 +95,29 @@ def main():
         raise RuntimeError('Commit reviewed source before execution')
     if subprocess.check_output(['kubectl','config','current-context']).decode().strip()!='nautilus' or r.NS!='kafkastreamingdata':
         raise RuntimeError('Unexpected cluster or namespace')
-    audit=ROOT/'results'/('four-condition-'+time.strftime('%Y%m%d-%H%M%S'));audit.mkdir()
-    state=dict(status='preparing',runs=[],preparations=[],technical=[],cost_protocol=json.loads((Path(__file__).parent/'protocol.json').read_text()),code_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),monitoring_gate=json.loads(args.monitoring_gate.read_text()))
+    protocol=json.loads((Path(__file__).parent/'protocol.json').read_text())
+    revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()
+    if args.resume:
+        if args.preparations_only:raise ValueError('Resume cannot repeat preparation-only stages')
+        audit=args.resume.resolve();state=json.loads((audit/'campaign-status.json').read_text())
+        validate_resume_state(state,protocol)
+        state.setdefault('resume_events',[]).append(dict(timestamp=time.time(),revision=revision,prior_error=state.get('error'),completed_trials=len(state['runs'])))
+        state.update(status='preparing');state.pop('error',None);state.pop('finished_epoch',None)
+    else:
+        audit=ROOT/'results'/('four-condition-'+time.strftime('%Y%m%d-%H%M%S'));audit.mkdir()
+        state=dict(status='preparing',runs=[],preparations=[],technical=[],cost_protocol=protocol,code_commit=revision,monitoring_gate=json.loads(args.monitoring_gate.read_text()))
     def save():
         p=audit/'campaign-status.tmp';p.write_text(json.dumps(state,indent=2)+'\n');p.replace(audit/'campaign-status.json')
     (audit/'protocol.json').write_text(json.dumps(state['cost_protocol'],indent=2)+'\n')
     save();print('[CAMPAIGN]',audit,flush=True)
-    if shutil.which('caffeinate'):subprocess.Popen(['caffeinate','-i','-w',str(os.getpid())])
+    if shutil.which('caffeinate'):subprocess.Popen(['caffeinate','-is','-w',str(os.getpid())])
     with r.command_lock():
         control=r.read_control()
         if control and control.get('state') in ('preparing','running'):raise RuntimeError('Another run is active')
-        original=r.shared_read(r.CONFIG);(audit/'original-config.yaml').write_bytes(original)
+        original=r.shared_read(r.CONFIG)
+        if args.resume:
+            if original!=(audit/'original-config.yaml').read_bytes():raise RuntimeError('Shared configuration changed since restoration')
+        else:(audit/'original-config.yaml').write_bytes(original)
         count=json.loads(r.kubectl('get','statefulset','consumer-sts','-o','json'))['spec']['replicas']
         if count!=3:raise RuntimeError('Three starting consumers are required')
         items=json.loads(r.kubectl('get','pods','-l','app in (producer-sts,consumer-sts)','-o','json'))['items']
@@ -132,29 +162,38 @@ def main():
                 return directory,m,checked
             raise RuntimeError('No admitted preparation')
         try:
-            observer_log=(audit/'resource-observer.log').open('w')
-            observer=subprocess.Popen([sys.executable,str(ROOT/'my-shell/observe_resources.py'),str(audit)],stdout=observer_log,stderr=subprocess.STDOUT)
+            observer_dir=audit
+            if args.resume:
+                observer_dir=audit/('observer-resume-'+time.strftime('%Y%m%d-%H%M%S'));observer_dir.mkdir()
+                (observer_dir/'campaign-status.json').symlink_to(audit/'campaign-status.json')
+                state.setdefault('observer_segments',['.']).append(observer_dir.name);save()
+            observer_log=(observer_dir/'resource-observer.log').open('w')
+            observer=subprocess.Popen([sys.executable,str(ROOT/'my-shell/observe_resources.py'),str(observer_dir)],stdout=observer_log,stderr=subprocess.STDOUT)
             r.stop()
             config,plan=prepared('kafka_scale6',0,81)
             plan.update(action='none',target_consumers=None,prepare_only=True,capture_placement_pods=original_pods)
-            configure(config,'capture-initial',plan)
+            configure(config,'resume-setup-'+time.strftime('%Y%m%d-%H%M%S') if args.resume else 'capture-initial',plan)
             with r.paused_for_experiment(r,HPA_PLAN):
-                directory,m,_=run_one(config,plan,'capture-initial',preparation=True)
-                reference=m['placement_reference']
-                hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']=='consumer-sts-2')[:12]
-                counts={n:sum(x['pod']==n for x in reference['assignment']) for n in ['consumer-sts-0','consumer-sts-1','consumer-sts-2']}
-                if len(hot)!=12 or set(counts.values())!={20}:raise RuntimeError('Initial Kafka map is not 20 partitions per consumer')
-                state.update(reference=reference,hot_partitions=hot);save()
-                (audit/'starting-reference.json').write_text(json.dumps(reference,indent=2)+'\n')
-                config,plan=prepared('kafka_scale6',0,81,reference,hot)
-                plan.update(action='none',target_consumers=None,prepare_only=True)
-                run_one(config,plan,'verify-native-restart',preparation=True)
+                if args.resume:
+                    reference=state['reference'];hot=state['hot_partitions']
+                else:
+                    directory,m,_=run_one(config,plan,'capture-initial',preparation=True)
+                    reference=m['placement_reference']
+                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']=='consumer-sts-2')[:12]
+                    counts={n:sum(x['pod']==n for x in reference['assignment']) for n in ['consumer-sts-0','consumer-sts-1','consumer-sts-2']}
+                    if len(hot)!=12 or set(counts.values())!={20}:raise RuntimeError('Initial Kafka map is not 20 partitions per consumer')
+                    state.update(reference=reference,hot_partitions=hot);save()
+                    (audit/'starting-reference.json').write_text(json.dumps(reference,indent=2)+'\n')
+                    config,plan=prepared('kafka_scale6',0,81,reference,hot)
+                    plan.update(action='none',target_consumers=None,prepare_only=True)
+                    run_one(config,plan,'verify-native-restart',preparation=True)
+                    if not args.preparations_only:
+                        # Native rebalance correctness is checked before counting any performance trial.
+                        config,plan=prepared('kafka_scale6',0,81,reference,hot,gate=True)
+                        directory,m,checked=run_one(config,plan,'native-scale-technical',technical=True)
+                        state['technical'].append(dict(directory=str(directory),validation=checked));save()
                 if not args.preparations_only:
-                    # Native rebalance correctness is checked before counting any performance trial.
-                    config,plan=prepared('kafka_scale6',0,81,reference,hot,gate=True)
-                    directory,m,checked=run_one(config,plan,'native-scale-technical',technical=True)
-                    state['technical'].append(dict(directory=str(directory),validation=checked));save()
-                    for arm,number,seed in ORDER:
+                    for arm,number,seed in ORDER[len(state['runs']):]:
                         if shutil.disk_usage(ROOT).free<4*1024**3:raise RuntimeError('Less than 4 GiB free; preserve evidence before continuing')
                         config,plan=prepared(arm,number,seed,reference,hot)
                         directory,m,checked=run_one(config,plan,arm+'-run'+str(number))

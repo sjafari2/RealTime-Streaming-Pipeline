@@ -43,3 +43,13 @@ python3 experiments/four-condition-20260929/run.py --execute \
 ```
 
 The runner restores the original shared configuration and returns to three stopped consumer applications. Local source must be committed and deployed before execution. Large raw evidence stays under the ignored `results/` directory and on the shared evidence volumes; small reviewed results are versioned separately.
+
+## Resuming a restored campaign
+
+A collection failure can be repaired from existing evidence without rerunning traffic. Resume accepts only an unchanged protocol, passed monitoring/native-scaling checks, a verified configuration restoration, and an unrepeated prefix of validated trials. It skips those trials and preserves the frozen starting reference. Resource observers use separate files for resumed segments; missing intervals are never interpolated. The temporary `caffeinate -is` assertion also prevents system sleep while on AC power and ends with the runner.
+
+```bash
+python3 experiments/four-condition-20260929/run.py --execute \
+  --monitoring-gate experiment-records/monitoring-gap-20260929/live-verification.json \
+  --resume results/<campaign-directory>
+```

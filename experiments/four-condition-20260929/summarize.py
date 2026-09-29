@@ -155,11 +155,12 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('campaign',type=Path);parser.add_argument('output',type=Path);a=parser.parse_args()
     campaign=read(a.campaign,'campaign-status.json')
     if campaign['status']!='complete' or campaign.get('restoration')!='verified' or len(campaign['runs'])!=8:raise ValueError('All eight verified trials and restoration are required')
-    resources=[json.loads(x) for x in (a.campaign/'resource-observations.jsonl').read_text().splitlines()]
+    resource_files=sorted(a.campaign.rglob('resource-observations.jsonl'))
+    resources=sorted([json.loads(x) for p in resource_files for x in p.read_text().splitlines()],key=lambda x:x['timestamp'])
     rows=sorted(campaign['runs'],key=lambda r:(ARMS.index(r['arm']),r['run_number']))
     runs=[load(r,resources,campaign['reference'],campaign['hot_partitions']) for r in rows]
     a.output.mkdir(parents=True,exist_ok=True)
-    payload=dict(campaign_revision=campaign['code_commit'],cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=campaign['technical'],preparations=campaign['preparations'],runs=[s for s,_,_ in runs])
+    payload=dict(campaign_revision=campaign['code_commit'],resume_events=campaign.get('resume_events',[]),collection_recovery=campaign.get('collection_recovery'),resource_observer_sha256={str(p.relative_to(a.campaign)):hashlib.sha256(p.read_bytes()).hexdigest() for p in resource_files},cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=campaign['technical'],preparations=campaign['preparations'],runs=[s for s,_,_ in runs])
     (a.output/'comparison.json').write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     figures=[]
@@ -223,6 +224,8 @@ def main():
         'Recovery requires total processing backlog at most 100 offsets for thirty consecutive valid seconds with no ownership or offset reset, while production continues. Sensitivity thresholds of 50 and 200 offsets were specified in advance. Per-partition native handover intervals and verified explicit processing pauses are in comparison.json. A cold partition can be naturally idle between records, so its inter-owner message interval is not pure rebalance downtime.','',
         'The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. This comparison evaluates those implemented responses, including coordination differences. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.','',
         '[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf)','']
+    if campaign.get('collection_recovery'):
+        lines+=['The Mac coordinating baseline Run 1 slept for fifteen minutes. Nautilus continued the configured workload and cutoff. Historical Prometheus data were recovered without rerunning traffic or changing cohort results; local resource-request observations during sleep remain unavailable. The baseline is retained once, with its partial request integral and coverage reported. Subsequent trials used a stronger temporary system-sleep assertion on AC power.','']
     for _,name in figures:lines+=[f'![{name}]({name}.png)','']
     (a.output/'README.md').write_text('\n'.join(lines)+'\n')
     print(json.dumps([{k:s[k] for k in ['arm','run_number','run_id','p99_seconds','unfinished_percent']} for s,_,_ in runs],indent=2))

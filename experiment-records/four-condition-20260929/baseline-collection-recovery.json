@@ -1,0 +1,40 @@
+{
+  "before": {
+    "manifest.json": "669bf57219df5fa56c5d40f359a2a2f1d77e56f1ef345f2e0575b49e2723c5e7",
+    "outcome-summary.json": "bc7673597c6b5c8a1122a0ad1789d955d2ec0e86d1ffde8babfb261939630b44"
+  },
+  "original_runner_status": {
+    "run_id": "run-20260929-020644",
+    "status": "failed",
+    "issues": [
+      "Prometheus export: <urlopen error [Errno 61] Connection refused>",
+      "Measurement audit: [Errno 2] No such file or directory: '/Users/soheila/Desktop/Thesis-26-27/code/results/run-20260929-020644/prometheus.json'"
+    ]
+  },
+  "after": {
+    "manifest.json": "669bf57219df5fa56c5d40f359a2a2f1d77e56f1ef345f2e0575b49e2723c5e7",
+    "outcome-summary.json": "bc7673597c6b5c8a1122a0ad1789d955d2ec0e86d1ffde8babfb261939630b44"
+  },
+  "validation": {
+    "run_id": "run-20260929-020644",
+    "status": "passed",
+    "failures": [],
+    "acknowledged_whole_run": 461987,
+    "completion_attempts_whole_run": 316497,
+    "unfinished_whole_run": 145490,
+    "duplicate_message_ids": 0,
+    "duplicate_offsets": 0,
+    "unmatched_completion_identities": 0,
+    "handoff_checked": false,
+    "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+  },
+  "lag_coverage": 0.9966666666666667,
+  "recovery": "Historical Prometheus re-export only; no traffic rerun",
+  "coordinator_sleep": {
+    "start_local": "2026-09-29 02:08:48 -0600",
+    "duration_seconds": 900,
+    "reason": "Idle Sleep",
+    "power": "AC"
+  },
+  "resource_request_coverage": "Local resource observers were suspended; do not interpolate the gap"
+}

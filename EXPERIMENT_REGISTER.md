@@ -1,6 +1,12 @@
 # Experiment progress
 
-Updated: 28 September 2026. **48 performance trials are complete: 24 original scaling trials, 12 balanced stability trials, four fixed-ownership calibrations, four Consumer 2 combined-action trials and four redistribution-only trials.**
+Updated: 29 September 2026. **49 performance trials are complete: the 48 trials summarized below and the first baseline in the new four-condition block.** Seven trials remain in that block.
+
+**Four responses to concentrated ownership — 700 messages/s, 13 minutes each**
+
+The first keep-three baseline finished its full schedule: p99 **366.64 seconds**, unfinished **34.64%**. The remaining trials compare redistribution, scaling with targeted redistribution, and normal Kafka scaling. The long offset-initialization monitoring gap was diagnosed and corrected before this block. A separate local-computer sleep interrupted baseline collection; its historical lag/CPU/memory data were recovered without rerunning traffic, while missing resource-request samples remain flagged.
+
+[Current progress and evidence](experiment-records/four-condition-20260929/README.md)
 
 **Redistribution without scaling — 700 messages/s, 8 minutes each**
 

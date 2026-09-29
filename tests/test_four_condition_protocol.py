@@ -59,3 +59,33 @@ def test_native_technical_validation_is_not_a_performance_trial():
 def test_outer_controller_plan_passes_the_managed_runner_validation():
     config,_=module.prepared('kafka_scale6',0,81)
     module.r.validate_intervention(module.HPA_PLAN,config['data'])
+
+
+def resume_state():
+    protocol=json.loads((ROOT/'experiments/four-condition-20260929/protocol.json').read_text())
+    state=dict(status='failed',restoration='verified',cost_protocol=protocol,monitoring_gate={'status':'passed'},
+        runs=[dict(arm='keep3',run_number=1,seed=81,validation={'status':'passed'})],
+        technical=[{'validation':{'status':'passed'}}],reference={'assignment':'frozen'},hot_partitions=list(range(12)))
+    return state,protocol
+
+
+def test_resume_starts_after_the_already_verified_baseline():
+    state,protocol=resume_state()
+    assert module.validate_resume_state(state,protocol)==1
+    assert module.ORDER[len(state['runs'])][0]=='redistribute3'
+
+
+def test_resume_rejects_duplicates_or_changed_protocol():
+    import copy,pytest
+    state,protocol=resume_state();state['runs'].append(copy.deepcopy(state['runs'][0]))
+    with pytest.raises(ValueError,match='unrepeated prefix'):module.validate_resume_state(state,protocol)
+    state,protocol=resume_state();changed=copy.deepcopy(protocol);changed['aggregate_input_rate']=800
+    with pytest.raises(ValueError,match='protocol'):module.validate_resume_state(state,changed)
+
+
+def test_resume_requires_restoration_and_passed_evidence():
+    import pytest
+    state,protocol=resume_state();state['restoration']='pending'
+    with pytest.raises(ValueError,match='restored'):module.validate_resume_state(state,protocol)
+    state,protocol=resume_state();state['runs'][0]['validation']['status']='failed'
+    with pytest.raises(ValueError,match='validation'):module.validate_resume_state(state,protocol)
