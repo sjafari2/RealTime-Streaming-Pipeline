@@ -8,6 +8,7 @@ import math
 import os
 from pathlib import Path
 import sys
+import subprocess
 os.environ.setdefault('MPLCONFIGDIR','/private/tmp/four-condition-mpl')
 import matplotlib
 matplotlib.use('Agg')
@@ -166,7 +167,8 @@ def main():
                     for summary,_,_ in runs for e in summary['intervention_cost']['runtime_software'] if e['role']==role}
         if len(signatures)!=1:raise ValueError('Runtime software differs within this comparison: '+role)
     a.output.mkdir(parents=True,exist_ok=True)
-    payload=dict(campaign_revision=campaign['code_commit'],resume_events=campaign.get('resume_events',[]),collection_recovery=campaign.get('collection_recovery'),resource_observer_sha256={str(p.relative_to(a.campaign)):hashlib.sha256(p.read_bytes()).hexdigest() for p in resource_files},cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=campaign['technical'],preparations=campaign['preparations'],runs=[s for s,_,_ in runs])
+    analysis_environment=dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),python=sys.version,numpy=np.__version__,matplotlib=matplotlib.__version__)
+    payload=dict(analysis_environment=analysis_environment,campaign_revision=campaign['code_commit'],resume_events=campaign.get('resume_events',[]),collection_recovery=campaign.get('collection_recovery'),resource_observer_sha256={str(p.relative_to(a.campaign)):hashlib.sha256(p.read_bytes()).hexdigest() for p in resource_files},cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=campaign['technical'],preparations=campaign['preparations'],runs=[s for s,_,_ in runs])
     (a.output/'comparison.json').write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     figures=[]
