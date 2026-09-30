@@ -8,6 +8,12 @@ For `run-20260928-035646`, the last affected partition first completed a record 
 
 The previous consumer discarded a lag observation when `Consumer.position()` returned its unresolved sentinel, even though assignment had already resolved the exact absolute starting offset from the committed completion frontier and retained broker bounds. The saved invalid events did not include the raw offsets, so live diagnostic verification is required to confirm the sentinel mechanism. Record scheduling can delay the first return from a cold partition while hot partitions continue processing; the saved completion timing establishes that delay but does not isolate its lower-level scheduling cause.
 
+## Related operational documentation
+
+Amazon MSK emits consumer-lag metrics only when a consumer group is in the `STABLE` or `EMPTY` state; AWS documents their absence while a group is unstable and identifies the stable state as following successful rebalancing. This provides an operational example of unavailable lag measurements during group transitions, not evidence that records were lost. It does not establish the cause of this pipeline's longer post-assignment gaps: the unresolved client-position mechanism was independently confirmed by the live validation below. These MSK-specific conditions should not be treated as a universal Kafka monitoring rule.
+
+Reference: [AWS, Monitor consumer lags](https://docs.aws.amazon.com/msk/latest/developerguide/consumer-lag.html) (accessed 29 September 2026).
+
 ## Measurement correction
 
 The consumer retains the verified assignment offset until a record from that partition is returned, or until the client provides a nonnegative position. Only the unresolved `OFFSET_INVALID` sentinel can use that known starting offset. Returning a batch clears this fallback for every record in the batch before application processing begins, including records in an unprocessed suffix. Revoke/release clears it; a subsequent assignment initializes a new value.
