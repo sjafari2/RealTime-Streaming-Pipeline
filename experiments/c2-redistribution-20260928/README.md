@@ -15,3 +15,11 @@ The intervention pauses all three consumers, verifies completed-prefix offsets a
 Inspect the design with `python3 experiments/c2-redistribution-20260928/run.py`. Execute the authorized validation and four trials with `python3 experiments/c2-redistribution-20260928/run.py --execute`. The runner restores the original shared configuration and three stopped consumer applications; it does not remove old topics or evidence.
 
 Completed measurements and plots are in [the experiment record](../../experiment-records/c2-redistribution-20260928/README.md).
+
+The growth plots now use a 10-second window: five intervals on the recorded
+2-second export grid. The summarizer defaults to `--growth-window-samples 5`;
+use 10 for 20 seconds or 15 for the original 30-second display in a separate
+output directory. This post-trial analysis update uses saved observations and
+does not change the eight-minute schedule (one warm-up, five evaluation, two
+drain), numerical trial outcomes, skew mean or recovery hold. Missing data
+and ownership/offset resets still break the growth curve.

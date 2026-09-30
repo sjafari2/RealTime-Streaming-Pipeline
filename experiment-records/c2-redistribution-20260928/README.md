@@ -2,6 +2,8 @@
 
 Four performance trials used the same 700 msg/s aggregate 80/20 input and verified starting ownership. Each lasted eight minutes (one warm-up, five evaluation, two drain). Every run started with twelve hot partitions on Consumer 2. Redistribution was scheduled for evaluation +60 seconds, giving each of the same three consumers four hot and sixteen cold partitions. The short technical validation is separate from the performance count.
 
+Growth plots now use a **10-second window**, recomputed from the saved observations for every trial in this comparison. This post-trial display update leaves the five-minute evaluation, numerical trial outcomes, skew mean and recovery criterion unchanged. Missing observations remain gaps; after a break, growth needs ten seconds of contiguous valid measurements.
+
 | Run | Condition | Completion p99 (s) | Unfinished | Mean lag | Peak lag | Useful throughput (msg/s) |
 |---|---|---:|---:|---:|---:|---:|
 | 1 | Keep 3 | 226.340 | 30.182% | 58189.3 | 99,805 | 422.08 |

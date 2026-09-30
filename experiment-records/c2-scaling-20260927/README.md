@@ -2,6 +2,8 @@
 
 Four performance trials used the same 700 msg/s aggregate 80/20 input and verified starting ownership. Each lasted eight minutes (one warm-up, five evaluation, two drain). Every run started with twelve hot partitions on Consumer 2. Scaling requested six replicas at evaluation +60 seconds and redistributed two hot and eight cold partitions to each. The short technical validation is separate from the performance count.
 
+Growth plots now use a **10-second window**, recomputed from the saved observations for every trial in this comparison. This post-trial display update leaves the five-minute evaluation, numerical trial outcomes, skew mean and recovery criterion unchanged. Missing observations remain gaps; after a break, growth needs ten seconds of contiguous valid measurements.
+
 | Run | Condition | Completion p99 (s) | Unfinished | Mean lag | Peak lag | Useful throughput (msg/s) |
 |---|---|---:|---:|---:|---:|---:|
 | 1 | Keep 3 | 231.580 | 31.760% | 58516.8 | 101,938 | 415.93 |

@@ -17,6 +17,7 @@ import numpy as np
 ROOT=Path(os.environ.get('PIPELINE_REPOSITORY',Path(__file__).resolve().parents[2]))
 sys.path.insert(0,str(ROOT/'python-scripts'))
 from analyze_stability import window
+from analyze_lag import growth_plot_lag
 from analyze_execution import resource_integral
 spec=importlib.util.spec_from_file_location('ownership_figures',ROOT/'experiments/hot-ownership-20260927/summarize.py')
 old=importlib.util.module_from_spec(spec);spec.loader.exec_module(old)
@@ -26,7 +27,7 @@ COLORS=('#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b')
 def read(path,name):return json.loads((path/name).read_text())
 
 
-def load(row, resource_observations):
+def load(row, resource_observations, growth_window_samples=5):
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json')
     audit=read(p,'measurement-audit.json');validation=read(p,'handoff-validation.json')
     assert read(p,'runner-status.json')['status']=='complete' and validation['status']=='passed'
@@ -63,6 +64,8 @@ def load(row, resource_observations):
         evidence_hashes={name:hashlib.sha256((p/name).read_bytes()).hexdigest() for name in
            ('manifest.json','pipeline-configmap.yaml','outcome-summary.json','lag-summary.json','measurement-audit.json',
             'execution-summary.json','handoff-validation.json','prometheus.json')})
+    lag=growth_plot_lag(lag,growth_window_samples)
+    s['growth_plot_parameters']=lag['growth_plot_parameters']
     return p,m,lag,s
 
 
@@ -88,11 +91,13 @@ def marker(ax,s):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('campaign',type=Path);parser.add_argument('output',type=Path)
-    a=parser.parse_args();campaign=read(a.campaign,'campaign-status.json')
+    parser.add_argument('--growth-window-samples',type=int,choices=[5,10,15],default=5,
+        help='Growth intervals: 5=10 seconds (default), 10=20 seconds, 15=30 seconds')
+    a=parser.parse_args();growth_seconds=2*a.growth_window_samples;campaign=read(a.campaign,'campaign-status.json')
     assert campaign['status']=='complete' and campaign.get('restoration')=='verified' and len(campaign['runs'])==4
     observer=a.campaign/'resource-observations.jsonl'
     resources=[json.loads(line) for line in observer.read_text().splitlines()] if observer.exists() else []
-    runs=sorted([load(x,resources) for x in campaign['runs']],key=lambda r:(r[3]['run_number'],r[3]['arm']))
+    runs=sorted([load(x,resources,a.growth_window_samples) for x in campaign['runs']],key=lambda r:(r[3]['run_number'],r[3]['arm']))
     assert [(s['run_number'],s['arm']) for _,_,_,s in runs]==[(1,'keep3'),(1,'scale6'),(2,'keep3'),(2,'scale6')]
     assert len({m['config']['TOPIC_TITLE'] for _,m,_,_ in runs})==4
     assert all(m['placement_reference']==runs[0][1]['placement_reference'] for _,m,_,_ in runs)
@@ -124,7 +129,7 @@ def main():
             if metric in ('cpu','memory'):labels=['Consumer '+str(j) for j in range(len(d[metric]))];colors=COLORS
             elif metric=='throughput':labels=['Acknowledged input','Unique completions'];colors=('#64748b','#176b93')
             elif metric=='skew':labels=['Snapshot ratio','15-sample rolling mean'];colors=('#94a3b8','#176b93')
-            else:labels=['30-second growth'];colors=('#176b93',)
+            else:labels=[f'{growth_seconds}-second growth'];colors=('#176b93',)
             plotted=[]
             for (x,y),label,color in zip(d[metric],labels,colors):plotted+=ax.plot(x,y,label=label,color=color,lw=.7 if metric=='skew' and label=='Snapshot ratio' else 1.3)
             if len(plotted)>len(handles):handles=plotted
@@ -136,6 +141,7 @@ def main():
         fig.suptitle(title+' — 700 messages/s',fontweight='bold',fontsize=15)
         fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,.95),ncol=min(len(handles),6),frameon=False,fontsize=9)
         note='Common scales. Dotted line: scheduled scale request; shading: handoff coordination. Gaps remain unavailable.'
+        if metric=='growth':note+=f'\nGrowth uses a {growth_seconds}-second window; missing observations are not reconstructed.'
         if metric=='throughput':note+='\nCompletions include warm-up records finishing during evaluation.'
         if metric in ('cpu','memory'):note+='\nProcess measurements only. New-consumer traces begin when those processes are observed.'
         if metric=='skew':note+='\nInterpret relative skew together with absolute lag and growth; a high ratio alone does not imply a large backlog.'
@@ -176,6 +182,7 @@ def main():
     'The comparison tests added replicas and a predeclared assignment change together. A redistribution-only arm would be needed to isolate the value of extra capacity. Original pods, resources and initial owners were checked against one fixed reference; added pods were not pinned. Two runs per condition do not establish long-term stability or remove shared-machine variability.','',
     'Full metric definitions, configuration, process CPU/RSS, deadline outcomes, growth windows, request integrals, coverage, transition timing, identity checks and source-evidence hashes are retained in comparison.json. Large raw evidence remains in the separate results storage.','',
     '[All comparison plots](c2-scaling-metrics.pdf)','']
+    lines += ['',f'Growth plots use a {growth_seconds}-second window, recomputed from the original saved observations. This post-trial display update changes neither the numerical trial outcomes, the 15-snapshot skew mean nor the separate recovery criterion. Missing observations and ownership/offset resets remain gaps.','']
     for _,name in figures:lines += [f'![{name}]({name}.png)','']
     (a.output/'README.md').write_text('\n'.join(lines).rstrip()+'\n')
     print(json.dumps([{k:s[k] for k in ('arm','run_number','run_id','p99_seconds','unfinished_percent','mean_lag','peak_lag','lag_coverage')} for s in summaries],indent=2))

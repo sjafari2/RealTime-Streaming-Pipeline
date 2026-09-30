@@ -63,3 +63,11 @@ python3 experiments/hot-ownership-20260927/summarize.py \
 One completed campaign can also be summarized on its own. The optional individual-lag selection adds a full-size view of a selected layout. The summary tool validates frozen configurations, distinct run-specific topics, exact starting layouts, completed-run checks and observed ownership before producing plots. Missing observations remain gaps. Whole-cohort p99 is separate from the rolling backlog-growth trace; lag skew is the maximum partition lag divided by mean partition lag and must be interpreted alongside backlog magnitude and growth.
 
 The primary diagnostic figures compare all selected layouts in a 2×2 arrangement, with one figure each for CPU, memory, throughput, processing-backlog growth and lag by consumer. Their display order is distributed, Consumer 0, Consumer 1, Consumer 2; evidence and tables retain actual execution order. Each metric uses a shared vertical scale. Labeled insets expand small lag and growth fluctuations. The total-lag and skew figures use the same display order. `ownership-metrics.pdf` collects all seven comparison figures in one file. The original paired diagnostic files are also regenerated to preserve existing references.
+
+The growth plots now use a 10-second window: five intervals on the recorded
+2-second export grid. The summarizer defaults to `--growth-window-samples 5`;
+use 10 for 20 seconds or 15 for the original 30-second display in a separate
+output directory. This post-trial analysis update uses saved observations and
+does not change the eight-minute schedule (one warm-up, five evaluation, two
+drain), numerical trial outcomes, skew mean or recovery hold. Missing data
+and ownership/offset resets still break the growth curve.

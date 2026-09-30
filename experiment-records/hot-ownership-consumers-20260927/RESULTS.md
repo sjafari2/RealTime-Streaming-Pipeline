@@ -31,7 +31,7 @@ These 4 trials used 700 aggregate messages/s, three consumers and the same 80/20
 | All hot partitions on Consumer 1 | 1 | 583.77 | 0.871 | 32.4 |
 | All hot partitions on Consumer 1 | 2 | 57.78 | 0.225 | 30.6 |
 
-Mean lag is time-weighted over valid observations. Mean snapshot skew is the arithmetic mean of valid instantaneous maximum/mean lag ratios. Skew describes relative partition imbalance and must be interpreted with backlog magnitude and growth. A large ratio can occur with little absolute lag. Backlog-growth summaries use covered intervals without bridging gaps. The figures also show the rolling 30-second growth trace.
+Mean lag is time-weighted over valid observations. Mean snapshot skew is the arithmetic mean of valid instantaneous maximum/mean lag ratios. Skew describes relative partition imbalance and must be interpreted with backlog magnitude and growth. A large ratio can occur with little absolute lag. Backlog-growth summaries use covered intervals without bridging gaps. The figures also show the rolling 10-second growth trace, recomputed from saved observations after the trials.
 
 Useful throughput counts distinct completions during evaluation, including any warm-up records finishing then. CPU and RSS means cover observed fresh intervals; resource coverage is retained separately in JSON. Cohort latency excludes unfinished records, retains the effect of queued warm-up work, and ends before commit acknowledgment.
 

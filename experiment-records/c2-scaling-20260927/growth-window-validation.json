@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "growth_window_seconds": 10,
+  "growth_intervals": 5,
+  "export_step_seconds": 2,
+  "runs": [
+    {
+      "run_id": "run-20260927-044428",
+      "raw_lag_summary_sha256": "afa6a074a995b68f45f6adbb88fffb6e11748b4a34f86a8b58ab878f02b0ce0b",
+      "invalid_snapshots": 0,
+      "original_growth_points": 135,
+      "ten_second_growth_points": 145
+    },
+    {
+      "run_id": "run-20260927-045540",
+      "raw_lag_summary_sha256": "5c3e380ea6363d735e2425607b988bed0ad0e73a33dcb79202454cb21b695119",
+      "invalid_snapshots": 15,
+      "original_growth_points": 101,
+      "ten_second_growth_points": 121
+    },
+    {
+      "run_id": "run-20260927-051903",
+      "raw_lag_summary_sha256": "fad2c372f2f72bfec23815cd4a596c174abc6c919d2b3c2c3a21f0decce619e6",
+      "invalid_snapshots": 0,
+      "original_growth_points": 135,
+      "ten_second_growth_points": 145
+    },
+    {
+      "run_id": "run-20260927-050722",
+      "raw_lag_summary_sha256": "b6f4dc2d937a16a161d037c4b6345be5e2affe31b69b41d2e7eea0908e25e37c",
+      "invalid_snapshots": 20,
+      "original_growth_points": 97,
+      "ten_second_growth_points": 117
+    }
+  ],
+  "checks": [
+    "Five-minute evaluation confirmed for all four trials.",
+    "Every non-growth snapshot field is exactly unchanged, including validity and skew.",
+    "Raw lag summaries match the published source hashes.",
+    "39 focused tests passed.",
+    "Every existing trial-summary field is exactly unchanged.",
+    "Only growth-containing figures are replaced; other standalone figures are untouched.",
+    "All non-growth pages in the combined PDF retain their original content streams."
+  ],
+  "source_sha256": {
+    "python-scripts/analyze_lag.py": "c2d94e601b6254f60e63fe38d5f83a56318c9134d5028d74d73d25b67e490b50",
+    "experiments/c2-scaling-20260927/summarize.py": "ac3afdc4e97d9d641b28bf7334bd657d94fa386803f39bd7fd0f2eb3c9510247"
+  },
+  "updated_artifact_sha256": {
+    "c2-scaling-growth.png": "67393381ef37ab1d6877956ed65ec0e8fa0b49a575ef4d465e1b269892444898",
+    "c2-scaling-growth.pdf": "2a99b1b1d0095347db7fc4249d64eba10fcec4cad75350451aae3a5063f56a64",
+    "c2-scaling-metrics.pdf": "2032e7eea7c9fdf8d600445723cf7d62263076125e27304e0fd719220e4d3d35"
+  }
+}

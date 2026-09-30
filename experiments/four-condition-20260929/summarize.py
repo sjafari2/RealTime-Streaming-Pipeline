@@ -19,7 +19,7 @@ ROOT=Path(os.environ.get('PIPELINE_REPOSITORY',Path(__file__).resolve().parents[
 sys.path.insert(0,str(ROOT/'python-scripts'))
 from evidence_io import event_paths,open_events
 from analyze_stability import window
-from analyze_lag import signals
+from analyze_lag import signals, growth_plot_lag
 from analyze_execution import resource_integral
 
 def module(name,path):
@@ -127,15 +127,6 @@ def event_cost(path,m,lag):
     y=[cost.outstanding(ack,end,t) for t in x]
     return report,((x-evaluation)/60,np.array(y)),marks
 
-def growth_plot_lag(lag, growth_window_samples=5):
-    """Recalculate plot growth from saved observations without changing the evidence."""
-    times=[row['timestamp'] for row in lag['snapshots']]
-    if any(not math.isclose((right-left)/2, round((right-left)/2), abs_tol=1e-6) or right<=left
-           for left,right in zip(times,times[1:])):
-        raise ValueError('These plots require the recorded 2-second export grid')
-    parameters=dict(lag['parameters'],growth_window_samples=growth_window_samples)
-    updated=signals(lag['snapshots'],**parameters)
-    return dict(lag,snapshots=updated['snapshots'],parameters=parameters)
 
 def load(row,resources,reference,hot,growth_window_samples=5):
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json');audit=read(p,'measurement-audit.json')
@@ -162,9 +153,7 @@ def load(row,resources,reference,hot,growth_window_samples=5):
     s['final_observed_ownership']=final_map;s['final_ownership_observed_epoch']=last_valid['timestamp']
     s['final_hot_partitions_per_owner']={pod:sum(final_map[p]==pod for p in hot) for pod in sorted(set(final_map.values()))}
     plot_lag=growth_plot_lag(lag,growth_window_samples)
-    s['growth_plot_parameters']=dict(intervals=growth_window_samples,export_step_seconds=2,
-        nominal_window_seconds=2*growth_window_samples,
-        definition='Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window.')
+    s['growth_plot_parameters']=plot_lag['growth_plot_parameters']
     x,lag_y,_,growth=old.lag_lines(m,plot_lag);skx,sk,skmean=old.skew_lines(m,lag)
     data={'lag':[(x,lag_y)],'growth':[(x,growth)],'skew':[(skx,sk),(skx,skmean)],'outstanding':[outstanding]}
     prom=read(p,'prometheus.json')['data']['result'];consumers=6 if 'scale' in row['arm'] else 3

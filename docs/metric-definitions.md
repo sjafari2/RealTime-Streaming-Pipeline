@@ -69,9 +69,11 @@ the endpoints. This setting leaves the window mean and persistence settings
 unchanged. When omitted, the analyzer retains the historical `window_samples`
 intervals for growth.
 
-The four-condition comparison dated 29 September now displays 10-second growth
-for all eight trials, recomputed from saved snapshots. Earlier figures retain
-their original 30-second window. Missing observations, ownership changes, gaps
+The four-condition comparison dated 29 September displays 10-second growth
+for all eight trials, recomputed from saved snapshots. The five-minute-evaluation
+ownership, scale-and-redistribute and redistribute-within-three comparison
+figures dated 27–28 September use the same 10-second window. Older archived
+figures retain their recorded window settings. Missing observations, ownership changes, gaps
 longer than three seconds and offset resets still restart the growth window.
 The shorter window is a descriptive analysis setting, not a change to the
 predefined 30-second low-backlog recovery criterion or rolling Grafana queries.

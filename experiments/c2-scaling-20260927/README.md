@@ -25,3 +25,11 @@ python3 experiments/c2-scaling-20260927/run.py --execute
 The runner pauses competing HPAs, saves configuration/reference records, uses fresh topics, and restores the original configuration and three replicas. It does not delete old topics or evidence. A failed validation blocks the performance trials. Raw data are saved under `results/c2-scaling-<timestamp>` and the individual `results/run-<timestamp>` directories; reviewed summaries belong in `experiment-records/`.
 
 The campaign also starts an independent two-second observer for requested consumer resources. Its samples continue while the main coordinator waits for pods or verifies handoff barriers. The analysis preserves observed coverage and integrates requested CPU/memory over evaluation plus drain; process CPU and RSS remain separate monitoring measurements.
+
+The growth plots now use a 10-second window: five intervals on the recorded
+2-second export grid. The summarizer defaults to `--growth-window-samples 5`;
+use 10 for 20 seconds or 15 for the original 30-second display in a separate
+output directory. This post-trial analysis update uses saved observations and
+does not change the eight-minute schedule (one warm-up, five evaluation, two
+drain), numerical trial outcomes, skew mean or recovery hold. Missing data
+and ownership/offset resets still break the growth curve.

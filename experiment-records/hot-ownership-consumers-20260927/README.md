@@ -2,6 +2,8 @@
 
 At **700 aggregate messages/s**, the distributed layout and concentration on Consumers 0 and 1 kept lag small during the observed evaluation. Concentration on Consumer 2 produced sustained backlog growth and substantial unfinished work. These results show why workload distribution must be considered together with the selected consumer's observed processing capacity.
 
+Growth plots now use a **10-second window**, recomputed from the saved observations for every trial in this comparison. This post-trial display update leaves the five-minute evaluation, numerical trial outcomes, skew mean and recovery criterion unchanged. Missing observations remain gaps; after a break, growth needs ten seconds of contiguous valid measurements.
+
 Every trial used three consumers, 60 partitions, and the same 80/20 input: partition IDs 0–11 received 80% of traffic. Each consumer owned 20 total partitions. The schedule was **8 minutes: 1 minute warm-up, 5 minutes evaluation, 2 minutes drain**. There was one trial per layout, executed in the order below.
 
 | Starting layout | Peak lag (offsets) | Completion p99 (s) | Unfinished after drain | Useful throughput during evaluation (msg/s) |

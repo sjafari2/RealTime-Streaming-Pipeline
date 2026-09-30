@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "growth_window_seconds": 10,
+  "growth_intervals": 5,
+  "export_step_seconds": 2,
+  "runs": [
+    {
+      "run_id": "run-20260928-034534",
+      "raw_lag_summary_sha256": "a6be9d07baf986a968422ccf577e5ed9adc09e1db9ce119f18f2352e96c73bb9",
+      "invalid_snapshots": 0,
+      "original_growth_points": 135,
+      "ten_second_growth_points": 145
+    },
+    {
+      "run_id": "run-20260928-035646",
+      "raw_lag_summary_sha256": "143ac8f304be26e9f795e660f8123456d0f855537676911012a9c1218d33ead6",
+      "invalid_snapshots": 46,
+      "original_growth_points": 73,
+      "ten_second_growth_points": 93
+    },
+    {
+      "run_id": "run-20260928-041920",
+      "raw_lag_summary_sha256": "2c8c39dbb774cb2802b4c0b7a162122349a3f5e120c9d78c1d5927c7c3418ae3",
+      "invalid_snapshots": 0,
+      "original_growth_points": 135,
+      "ten_second_growth_points": 145
+    },
+    {
+      "run_id": "run-20260928-040804",
+      "raw_lag_summary_sha256": "5975decb181f251c0bd64fbc8c1f8fe56c9d1246634e34138104e0b63b40f9ad",
+      "invalid_snapshots": 42,
+      "original_growth_points": 75,
+      "ten_second_growth_points": 95
+    }
+  ],
+  "checks": [
+    "Five-minute evaluation confirmed for all four trials.",
+    "Every non-growth snapshot field is exactly unchanged, including validity and skew.",
+    "Raw lag summaries match the published source hashes.",
+    "39 focused tests passed.",
+    "Every existing trial-summary field is exactly unchanged.",
+    "Only growth-containing figures are replaced; other standalone figures are untouched.",
+    "All non-growth pages in the combined PDF retain their original content streams."
+  ],
+  "source_sha256": {
+    "python-scripts/analyze_lag.py": "c2d94e601b6254f60e63fe38d5f83a56318c9134d5028d74d73d25b67e490b50",
+    "experiments/c2-redistribution-20260928/summarize.py": "55bae9009fa8aefdfff3cb4c055d424d1bdf920013031261be5ab66d64d1d0c5"
+  },
+  "updated_artifact_sha256": {
+    "c2-redistribution-growth.pdf": "b7ada8ee5e23c41a2b9c86891cc0861582194c2c9d22c836db0949b55b69db63",
+    "c2-redistribution-growth.png": "17bc563dc27cb4cc699e0537987bf63ea29b402eee04ec44f61fc0406428369b",
+    "c2-redistribution-metrics.pdf": "7add56c5ba353bbf32cefd69b64a59e36e37e9bdf40858e87398ff4c670f54cf"
+  }
+}

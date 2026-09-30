@@ -42,5 +42,7 @@ def test_growth_plot_uses_ten_seconds_without_changing_saved_evidence():
     assert result['snapshots'][4]['window_processing_backlog_growth_offsets_per_second'] is None
     assert result['parameters']['growth_window_samples']==5
     assert lag==original
+    for saved,updated in zip(lag['snapshots'],result['snapshots']):
+        assert {k:v for k,v in saved.items() if k not in ('window_growth_offsets_per_second','window_processing_backlog_growth_offsets_per_second')}=={k:v for k,v in updated.items() if k not in ('window_growth_offsets_per_second','window_processing_backlog_growth_offsets_per_second')}
     lag['snapshots'][2]['timestamp']=4.5
     with pytest.raises(ValueError,match='2-second export grid'):m.growth_plot_lag(lag)

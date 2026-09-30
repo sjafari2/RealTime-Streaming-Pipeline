@@ -72,6 +72,24 @@ def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persisten
                 peak_sampled_lag=max((x['total_lag'] for x in valid), default=None))
 
 
+def growth_plot_lag(lag, growth_window_samples=5):
+    """Recalculate plot growth from saved observations without changing the evidence."""
+    times=[row['timestamp'] for row in lag['snapshots']]
+    if any(not math.isclose((right-left)/2, round((right-left)/2), abs_tol=1e-6) or right<=left
+           for left,right in zip(times,times[1:])):
+        raise ValueError('These plots require the recorded 2-second export grid')
+    parameters=dict(lag['parameters'],growth_window_samples=growth_window_samples)
+    updated=signals(lag['snapshots'],**parameters)
+    # Preserve every saved field except the two rolling growth values.
+    fields=('window_growth_offsets_per_second','window_processing_backlog_growth_offsets_per_second')
+    snapshots=[dict(saved,**{key:calculated[key] for key in fields})
+               for saved,calculated in zip(lag['snapshots'],updated['snapshots'])]
+    settings=dict(intervals=growth_window_samples,export_step_seconds=2,
+        nominal_window_seconds=2*growth_window_samples,
+        definition='Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window.')
+    return dict(lag,snapshots=snapshots,parameters=parameters,growth_plot_parameters=settings)
+
+
 def analyze(directory, **options):
     options = {**dict(window_samples=15, hot_k=1.0, minimum_lag=10.0, persistence=.8, max_gap=3.0), **options}
     directory = Path(directory)

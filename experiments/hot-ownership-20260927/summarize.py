@@ -18,6 +18,7 @@ import numpy as np
 ROOT = Path(os.environ.get('PIPELINE_REPOSITORY', Path(__file__).resolve().parents[2]))
 sys.path.insert(0, str(ROOT / 'python-scripts'))
 from analyze_stability import window
+from analyze_lag import growth_plot_lag
 from evidence_io import event_paths, open_events
 
 
@@ -33,7 +34,7 @@ def read(directory, name):
     return json.loads((directory / name).read_text())
 
 
-def load_run(row):
+def load_run(row, growth_window_samples=5):
     if row['layout'] not in LAYOUTS:
         raise ValueError('Unknown ownership layout')
     p = Path(row['directory'])
@@ -114,6 +115,8 @@ def load_run(row):
         evidence_hashes={name: hashlib.sha256((p/name).read_bytes()).hexdigest() for name in
             ('manifest.json','runner-status.json','lag-summary.json','outcome-summary.json',
              'execution-summary.json','measurement-audit.json','prometheus.json')})
+    lag=growth_plot_lag(lag,growth_window_samples)
+    summary['growth_plot_parameters']=lag['growth_plot_parameters']
     return p, manifest, lag, summary
 
 
@@ -301,7 +304,9 @@ def plot_metric_grid(runs, data, metric):
                       ncol=len(legend_handles),frameon=False,fontsize=10)
     note = 'Five-minute evaluation. Main panels share the same vertical scale.'
     if detail_limits is not None: note += ' Insets show the same data with a shared expanded scale.'
-    if metric == 'growth': note += '\nGrowth uses a rolling 30-second window; gaps remain unavailable.'
+    if metric == 'growth':
+        seconds=runs[0][2]['growth_plot_parameters']['nominal_window_seconds']
+        note += f'\nGrowth uses a rolling {seconds}-second window; gaps remain unavailable.'
     elif metric == 'cpu': note += '\nProcess measurements; 1 CPU core corresponds to 100% CPU use.'
     elif metric == 'memory': note += '\nMemory is process resident set size (RSS).'
     elif metric == 'throughput': note += '\nUnique completions can include warm-up records finishing during evaluation.'
@@ -331,7 +336,7 @@ def plot_diagnostics(runs, data):
         panels[4,col].plot(tx,ty1,label='Unique completions',color='#176b93')
         panels[4,col].legend(frameon=False,fontsize=8)
         panels[0,col].set_title(s['label'],fontsize=11)
-        for row,label in enumerate(['Lag by owner (offsets)','Backlog growth (offsets/s)\n30-second window',
+        for row,label in enumerate(['Lag by owner (offsets)',f"Backlog growth (offsets/s)\n{lag['growth_plot_parameters']['nominal_window_seconds']}-second window",
                                     'Process CPU (cores)','Process memory (MiB)',
                                     'Throughput (messages/s)\n10-second bins']):
             panels[row,col].set(ylabel=label,xlim=(0,5))
@@ -369,9 +374,11 @@ def main():
     parser.add_argument('output',type=Path)
     parser.add_argument('--individual-lag', choices=tuple(LAYOUTS), nargs='*', default=[],
                         help='Also save a full-size lag figure for selected layouts')
-    args = parser.parse_args()
+    parser.add_argument('--growth-window-samples',type=int,choices=[5,10,15],default=5,
+                        help='Growth intervals: 5=10 seconds (default), 10=20 seconds, 15=30 seconds')
+    args = parser.parse_args();growth_seconds=2*args.growth_window_samples
     campaigns,rows = load_campaigns(args.campaign)
-    runs = [load_run(row) for row in rows]
+    runs = [load_run(row,args.growth_window_samples) for row in rows]
     display_runs = sorted(runs,key=lambda run: DISPLAY_ORDER.index(run[3]['layout']))
     data = diagnostic_data(runs)
     if len({r[1]['config']['TOPIC_TITLE'] for r in runs}) != len(runs):
@@ -464,7 +471,7 @@ def main():
             pod = f'consumer-sts-{i}'
             resources = {r['metric']:r['windows']['evaluation']['time_weighted_mean'] for r in s['process_resources'] if r['pod']==pod}
             text.append(f"| {s['label']} | {i} | {s['measured_input_by_owner'][pod]:.2f} | {resources['consumer_cpu_percent']/100:.3f} | {resources['consumer_memory_bytes']/1024**2:.1f} |")
-    text += ['', 'Mean lag is time-weighted over valid observations. Mean snapshot skew is the arithmetic mean of valid instantaneous maximum/mean lag ratios. Skew describes relative partition imbalance and must be interpreted with backlog magnitude and growth. A large ratio can occur with little absolute lag. Backlog-growth summaries use covered intervals without bridging gaps. The figures also show the rolling 30-second growth trace.', '',
+    text += ['', f'Mean lag is time-weighted over valid observations. Mean snapshot skew is the arithmetic mean of valid instantaneous maximum/mean lag ratios. Skew describes relative partition imbalance and must be interpreted with backlog magnitude and growth. A large ratio can occur with little absolute lag. Backlog-growth summaries use covered intervals without bridging gaps. The figures also show a rolling {growth_seconds}-second growth trace recomputed from saved observations. This post-trial display setting does not alter the trial outcomes or reconstruct missing observations.', '',
              'Useful throughput counts distinct completions during evaluation, including any warm-up records finishing then. CPU and RSS means cover observed fresh intervals; resource coverage is retained separately in JSON. Cohort latency excludes unfinished records, retains the effect of queued warm-up work, and ends before commit acknowledgment.', '',
              'These are initial-layout calibrations, once each, with no live redistribution or scaling. No additional node-pinning constraint was introduced. Later concentration targets were selected after the earlier observations; these are exploratory calibration outcomes. Retain unfavorable valid results and do not infer a general mitigation benefit or permanent stability.', '',
              'The JSON retains configuration, exact outcomes, deadlines, skew, growth windows, resource data, per-run execution revisions and evidence hashes. Raw message evidence and full monitoring exports are stored separately; this summary is not a raw-data backup.', '']
