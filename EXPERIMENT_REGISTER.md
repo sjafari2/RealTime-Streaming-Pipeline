@@ -1,6 +1,16 @@
 # Experiment progress
 
-Updated: 29 September 2026. **56 performance trials are complete.** Technical checks and failed preparations are separate from this count.
+Updated: 30 September 2026. **60 performance trials are complete.** Technical checks and failed preparations are separate from this count.
+
+**Four high-input partitions — 700 messages/s, 13 minutes each**
+
+Two runs compare redistribution within three consumers with scaling to six plus targeted redistribution. Here **80% of input targets four of sixty partitions**, initially all owned by Consumer 2; this differs from the earlier twelve-partition workload.
+
+Run 1: completion p99 **84.50 seconds with three → 110.19 seconds with six**. Run 2: **79.28 → 112.94 seconds**. Every evaluation message completed in all four trials. The one-second completion-deadline miss rate was **26.63% → 35.23%**, then **25.82% → 34.72%**. All trials passed identity and offset checks, and the original stopped configuration was restored.
+
+These observations show no additional latency benefit from the implemented six-consumer response in this block. They do not show that scaling can never help. Persistent-hotspot timing is reported separately for the whole evaluation and its final two minutes; a small relative hotspot is not automatically a growing overload.
+
+[Results and all plots](experiment-records/four-hot-partitions-20260930/README.md) · [Late-period outcomes and hotspot timing](experiment-records/four-hot-partitions-20260930/LATE_COHORT.md)
 
 **Four responses to concentrated ownership - 700 messages/s, 13 minutes each**
 

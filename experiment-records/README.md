@@ -1,8 +1,10 @@
 # Versioned experiment evidence
 
-The [experiment register](../EXPERIMENT_REGISTER.md) summarizes progress in plain language. The completed inventory contains **56 performance trials**; the [current-status table](../docs/current-status.md) separates the experimental blocks and their evidence.
+The [experiment register](../EXPERIMENT_REGISTER.md) summarizes progress in plain language. The completed inventory contains **60 performance trials**; the [current-status table](../docs/current-status.md) separates the experimental blocks and their evidence.
 
-The latest [four-condition comparison](four-condition-20260929/README.md) contains two thirteen-minute trials per condition, whole-run outcomes, lag and resource plots, observed ownership, and measured intervention costs. The [monitoring correction](monitoring-gap-20260929/README.md) records the diagnosis and technical validation that preceded those trials.
+The [four-condition comparison](four-condition-20260929/README.md) contains two thirteen-minute trials per condition, whole-run outcomes, lag and resource plots, observed ownership, and measured intervention costs. The [monitoring correction](monitoring-gap-20260929/README.md) records the diagnosis and technical validation that preceded those trials.
+
+The latest [four-high-input-partition comparison](four-hot-partitions-20260930/README.md) adds four thirteen-minute trials at 700 aggregate messages/s. Both repetitions retained the unfavorable six-consumer latency outcome. Whole-run outcomes, fixed late-period cohorts, hotspot timing and deadline sensitivity remain distinct.
 
 This directory contains compact summaries, reviewed configurations and evidence hashes. Full per-message evidence and monitoring exports remain in the ignored `results/` directory and on separately managed storage. A versioned summary is not a backup of its raw evidence.
 

@@ -2,7 +2,7 @@
 
 I maintain these guides for researchers who want to understand the experimental design, deploy the pipeline, reproduce the analysis, or extend the implementation. They describe the software in this repository and identify which results are supported by completed experiments.
 
-[Current status](current-status.md): 56 completed performance trials spanning balanced-rate calibration, partition ownership and scheduled mitigation, with explicit evidence limitations.
+[Current status](current-status.md): 60 completed performance trials spanning balanced-rate calibration, partition ownership and scheduled mitigation, with explicit evidence limitations.
 
 ## Research design
 
@@ -17,6 +17,7 @@ I maintain these guides for researchers who want to understand the experimental 
 - [Runtime and data flow](runtime-and-data-flow.md): supported commands, timing, file relationships and troubleshooting.
 - [Metric definitions](metric-definitions.md): cohorts, completion, lag, percentiles, coverage, resource accounting and recovery.
 - [Completed stability measurements](../experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md): twelve balanced fixed-three trials used to assess the observed operating range.
+- [Four high-input partitions](../experiment-records/four-hot-partitions-20260930/README.md): two runs each of redistribution within three and scaling to six with targeted redistribution, including prespecified completion deadlines and late-period outcomes.
 - [Four scheduled responses](../experiment-records/four-condition-20260929/README.md): eight matched-start trials comparing no action, redistribution, combined scaling and redistribution, and native Kafka scaling.
 - [Data and reproducibility](data-and-reproducibility.md): published evidence, raw-data availability, file formats, and analysis entry points.
 - [Experiment records](../experiment-records/README.md): small records of completed runs, with explicit limitations.

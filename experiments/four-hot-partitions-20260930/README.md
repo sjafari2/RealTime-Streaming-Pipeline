@@ -36,3 +36,5 @@ python3 experiments/four-condition-20260929/run.py --aggregate-rate 700 --hot-pa
 ```
 
 The runner prints its campaign directory and restores the prior shared configuration and stopped three-consumer baseline. Raw evidence stays under `results/`. Only small reviewed summaries, plots, provenance and evidence hashes belong in Git. The committed protocol describes the intended design; it is not evidence that trials have completed.
+
+Completed evidence is available in the [four-trial report](../../experiment-records/four-hot-partitions-20260930/README.md), with [late-period results and persistent-hotspot timing](../../experiment-records/four-hot-partitions-20260930/LATE_COHORT.md). The prospective protocol above remains the record of settings chosen before those outcomes.
