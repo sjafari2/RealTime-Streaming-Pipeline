@@ -19,6 +19,7 @@ ROOT=Path(os.environ.get('PIPELINE_REPOSITORY',Path(__file__).resolve().parents[
 sys.path.insert(0,str(ROOT/'python-scripts'))
 from evidence_io import event_paths,open_events
 from analyze_stability import window
+from analyze_lag import signals
 from analyze_execution import resource_integral
 
 def module(name,path):
@@ -126,7 +127,17 @@ def event_cost(path,m,lag):
     y=[cost.outstanding(ack,end,t) for t in x]
     return report,((x-evaluation)/60,np.array(y)),marks
 
-def load(row,resources,reference,hot):
+def growth_plot_lag(lag, growth_window_samples=5):
+    """Recalculate plot growth from saved observations without changing the evidence."""
+    times=[row['timestamp'] for row in lag['snapshots']]
+    if any(not math.isclose((right-left)/2, round((right-left)/2), abs_tol=1e-6) or right<=left
+           for left,right in zip(times,times[1:])):
+        raise ValueError('These plots require the recorded 2-second export grid')
+    parameters=dict(lag['parameters'],growth_window_samples=growth_window_samples)
+    updated=signals(lag['snapshots'],**parameters)
+    return dict(lag,snapshots=updated['snapshots'],parameters=parameters)
+
+def load(row,resources,reference,hot,growth_window_samples=5):
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json');audit=read(p,'measurement-audit.json')
     assert read(p,'runner-status.json')['status']=='complete' and read(p,'handoff-validation.json')['status']=='passed'
     assert not o['validity_failures'] and not audit['issues']
@@ -150,7 +161,11 @@ def load(row,resources,reference,hot):
     final_map={int(key.rsplit('/',1)[1]):owner.split('/')[0] for key,owner in last_valid['owners'].items()}
     s['final_observed_ownership']=final_map;s['final_ownership_observed_epoch']=last_valid['timestamp']
     s['final_hot_partitions_per_owner']={pod:sum(final_map[p]==pod for p in hot) for pod in sorted(set(final_map.values()))}
-    x,lag_y,_,growth=old.lag_lines(m,lag);skx,sk,skmean=old.skew_lines(m,lag)
+    plot_lag=growth_plot_lag(lag,growth_window_samples)
+    s['growth_plot_parameters']=dict(intervals=growth_window_samples,export_step_seconds=2,
+        nominal_window_seconds=2*growth_window_samples,
+        definition='Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window.')
+    x,lag_y,_,growth=old.lag_lines(m,plot_lag);skx,sk,skmean=old.skew_lines(m,lag)
     data={'lag':[(x,lag_y)],'growth':[(x,growth)],'skew':[(skx,sk),(skx,skmean)],'outstanding':[outstanding]}
     prom=read(p,'prometheus.json')['data']['result'];consumers=6 if 'scale' in row['arm'] else 3
     for key,name,div in [('cpu','consumer_cpu_percent',100),('memory','consumer_memory_bytes',1024**2)]:
@@ -159,13 +174,16 @@ def load(row,resources,reference,hot):
     return s,data,{k:(v-start)/60 for k,v in marks.items()}
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('campaign',type=Path);parser.add_argument('output',type=Path);a=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('campaign',type=Path);parser.add_argument('output',type=Path)
+    parser.add_argument('--growth-window-samples',type=int,choices=[5,10,15],default=5,
+        help='Growth intervals on the 2-second export grid: 5=10 seconds (default), 10=20 seconds, 15=30 seconds')
+    a=parser.parse_args();growth_seconds=2*a.growth_window_samples
     campaign=read(a.campaign,'campaign-status.json')
     if campaign['status']!='complete' or campaign.get('restoration')!='verified' or len(campaign['runs'])!=8:raise ValueError('All eight verified trials and restoration are required')
     resource_files=sorted(a.campaign.rglob('resource-observations.jsonl'))
     resources=sorted([json.loads(x) for p in resource_files for x in p.read_text().splitlines()],key=lambda x:x['timestamp'])
     rows=sorted(campaign['runs'],key=lambda r:(ARMS.index(r['arm']),r['run_number']))
-    runs=[load(r,resources,campaign['reference'],campaign['hot_partitions']) for r in rows]
+    runs=[load(r,resources,campaign['reference'],campaign['hot_partitions'],a.growth_window_samples) for r in rows]
     for role in ['producer','consumer']:
         signatures={json.dumps({k:v for k,v in e.items() if k not in ('pod','role')},sort_keys=True)
                     for summary,_,_ in runs for e in summary['intervention_cost']['runtime_software'] if e['role']==role}
@@ -176,7 +194,7 @@ def main():
     (a.output/'comparison.json').write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     figures=[]
-    for metric,title,ylabel in [('lag','Total lag','Offsets'),('growth','Processing-backlog growth','Offsets/s (30-second change)'),('skew','Partition lag skew','Maximum / mean partition lag'),('outstanding','Acknowledged but unfinished work','Messages'),('cpu','Consumer CPU usage','Process CPU (cores)'),('memory','Consumer memory usage','Process RSS (MiB)'),('throughput','Input and completion throughput','Messages/s (10-second bins)')]:
+    for metric,title,ylabel in [('lag','Total lag','Offsets'),('growth','Processing-backlog growth',f'Offsets/s ({growth_seconds}-second window)'),('skew','Partition lag skew','Maximum / mean partition lag'),('outstanding','Acknowledged but unfinished work','Messages'),('cpu','Consumer CPU usage','Process CPU (cores)'),('memory','Consumer memory usage','Process RSS (MiB)'),('throughput','Input and completion throughput','Messages/s (10-second bins)')]:
         fig,axes=plt.subplots(4,2,figsize=(12,13),sharex=True,sharey=True)
         values=[v for _,data,_ in runs for _,ys in data[metric] for v in ys if math.isfinite(v)];extent=max(max(values)-min(values),1)
         low=min(0,min(values)-.06*extent) if metric=='growth' else 0;high=max(values)+.1*extent;handles=[]
@@ -200,6 +218,7 @@ def main():
         note='1 min warm-up + 10 min evaluation + 2 min drain. Common scales; genuine gaps remain unavailable.'
         if metric=='outstanding':note+='\nDistinct acknowledgment/completion events, including warm-up; this is not broker offset lag.'
         elif metric=='throughput':note+='\nCompletions include warm-up records finishing during evaluation.'
+        elif metric=='growth':note+=f'\nGrowth needs {growth_seconds} seconds of fresh contiguous observations after a break. Dotted line: scheduled intervention.\nShading: recorded transition interval; this differs from the growth-window waiting time.'
         else:note+='\nDotted line: scheduled intervention. Shading: recorded transition interval; definitions differ by coordination mechanism.'
         fig.text(.07,.015,note,fontsize=9,color='#555');fig.tight_layout(rect=(0,.06,1,.942));figures.append((fig,'four-condition-'+metric))
     fig,axes=plt.subplots(1,2,figsize=(12,4.7),sharex=True,sharey=True)
@@ -244,6 +263,7 @@ def main():
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
     lines+=['','P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
+        f'The growth figure uses a {growth_seconds}-second window ({a.growth_window_samples} intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery hold. Earlier figures retain their original window settings.','',
         '| Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |','|---|---:|---:|---:|---:|']
     for s,_,_ in runs:
         resource=s['requested_resources_evaluation_and_drain'];lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {resource['consumer_container_requested_cpu_seconds_observed']/60:.2f} | {resource['consumer_container_requested_gib_seconds_observed']/60:.2f} | {resource['covered_fraction']*100:.1f}% |")

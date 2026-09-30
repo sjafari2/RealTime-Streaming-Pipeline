@@ -1,7 +1,7 @@
 {
   "analysis_environment": {
-    "revision": "5cbf4ce8eaa452756125ad9419ef9af2520f6639",
-    "script_sha256": "70aa11e4c8bc1f39c0728d683b75a1bd4daeee9fdaedb6b8214c1ee657e83ef1",
+    "revision": "9b85dc197a120ed761f6039b1b338f67f189839e",
+    "script_sha256": "c868f2f13fa1b9784da9eb68ab0e19b5be965b9e69c970783189e03b5ecc4008",
     "python": "3.11.14 (main, Oct  9 2025, 16:16:55) [Clang 17.0.0 (clang-1700.3.19.1)]",
     "numpy": "2.4.6",
     "matplotlib": "3.11.2"
@@ -1533,6 +1533,12 @@
         "consumer-sts-0": 0,
         "consumer-sts-1": 0,
         "consumer-sts-2": 12
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -2858,6 +2864,12 @@
         "consumer-sts-0": 0,
         "consumer-sts-1": 0,
         "consumer-sts-2": 12
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -4894,6 +4906,12 @@
         "consumer-sts-0": 4,
         "consumer-sts-1": 4,
         "consumer-sts-2": 4
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -6926,6 +6944,12 @@
         "consumer-sts-0": 4,
         "consumer-sts-1": 4,
         "consumer-sts-2": 4
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -9255,6 +9279,12 @@
         "consumer-sts-3": 2,
         "consumer-sts-4": 2,
         "consumer-sts-5": 2
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -11584,6 +11614,12 @@
         "consumer-sts-3": 2,
         "consumer-sts-4": 2,
         "consumer-sts-5": 2
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -15318,6 +15354,12 @@
         "consumer-sts-3": 4,
         "consumer-sts-4": 2,
         "consumer-sts-5": 4
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     },
     {
@@ -18830,6 +18872,12 @@
         "consumer-sts-3": 4,
         "consumer-sts-4": 3,
         "consumer-sts-5": 3
+      },
+      "growth_plot_parameters": {
+        "intervals": 5,
+        "export_step_seconds": 2,
+        "nominal_window_seconds": 10,
+        "definition": "Change in processing backlog divided by actual elapsed seconds over contiguous, valid, same-owner observations. Missing data and ownership/offset resets restart the window."
       }
     }
   ]

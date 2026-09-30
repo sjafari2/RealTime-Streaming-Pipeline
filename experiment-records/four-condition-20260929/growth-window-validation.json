@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "growth_window_seconds": 10,
+  "growth_intervals": 5,
+  "export_step_seconds": 2,
+  "checks": [
+    "All eight existing trial summaries are exactly unchanged; only growth-plot parameters were added.",
+    "Raw lag-summary hashes match the previous evidence record.",
+    "Missing-observation flags and all non-growth snapshot fields agree; floating-point computations checked to 1e-12.",
+    "All nine other figure PNGs are pixel-identical.",
+    "33 focused tests passed."
+  ],
+  "unchanged_figure_pngs": [
+    "four-condition-cpu.png",
+    "four-condition-lag.png",
+    "four-condition-lag-comparison.png",
+    "four-condition-skew.png",
+    "four-condition-throughput.png",
+    "four-condition-ownership.png",
+    "four-condition-memory.png",
+    "four-condition-outstanding.png",
+    "four-condition-p99-unfinished.png"
+  ],
+  "runs": [
+    {
+      "run_id": "run-20260929-020644",
+      "raw_lag_summary_sha256": "a240405039594c7fefe08d8125b064265757e5d89533e8fc06f70031179177c4",
+      "invalid_snapshot_count": 0,
+      "original_growth_points": 285,
+      "ten_second_growth_points": 295
+    },
+    {
+      "run_id": "run-20260929-041940",
+      "raw_lag_summary_sha256": "8927618fdbca3b3b2d136150cb8a77f5e20783b36d76cf64f240cf5be689db43",
+      "invalid_snapshot_count": 0,
+      "original_growth_points": 285,
+      "ten_second_growth_points": 295
+    },
+    {
+      "run_id": "run-20260929-023622",
+      "raw_lag_summary_sha256": "d6794306306279de2947f30425316c52d725c190bb94f29a62f449a25eb9d099",
+      "invalid_snapshot_count": 6,
+      "original_growth_points": 261,
+      "ten_second_growth_points": 281,
+      "original_first_growth_after_transition_evaluation_seconds": 124.00006198883057,
+      "ten_second_first_growth_after_transition_evaluation_seconds": 104.00006198883057
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "raw_lag_summary_sha256": "e5c2ab593099221bcaa54ef05d889b890086771ed663750e57636db43838e825",
+      "invalid_snapshot_count": 7,
+      "original_growth_points": 261,
+      "ten_second_growth_points": 281,
+      "original_first_growth_after_transition_evaluation_seconds": 123.99984288215637,
+      "ten_second_first_growth_after_transition_evaluation_seconds": 103.99984288215637
+    },
+    {
+      "run_id": "run-20260929-025321",
+      "raw_lag_summary_sha256": "b31c93a6e6a3c8077e492de98da1da0e2de625b14c713661004602a742ffdd83",
+      "invalid_snapshot_count": 9,
+      "original_growth_points": 258,
+      "ten_second_growth_points": 278,
+      "original_first_growth_after_transition_evaluation_seconds": 169.9999840259552,
+      "ten_second_first_growth_after_transition_evaluation_seconds": 149.9999840259552
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "raw_lag_summary_sha256": "96dd3bb4b74fb7e5dbb279199b09ab333edb52688b6d2969af42c859ac92d99e",
+      "invalid_snapshot_count": 9,
+      "original_growth_points": 258,
+      "ten_second_growth_points": 278,
+      "original_first_growth_after_transition_evaluation_seconds": 174.00030207633972,
+      "ten_second_first_growth_after_transition_evaluation_seconds": 154.00030207633972
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "raw_lag_summary_sha256": "8f87b28b74899ad77279de47d3e9b2f0f3e5a6687d02638332eaff9fbe57eb6a",
+      "invalid_snapshot_count": 3,
+      "original_growth_points": 265,
+      "ten_second_growth_points": 285,
+      "original_first_growth_after_transition_evaluation_seconds": 117.99993181228638,
+      "ten_second_first_growth_after_transition_evaluation_seconds": 97.99993181228638
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "raw_lag_summary_sha256": "378b68a9bf6ad4cac5c397bdabe461fab781404389806c9b291e373efcb6ce2b",
+      "invalid_snapshot_count": 3,
+      "original_growth_points": 264,
+      "ten_second_growth_points": 284,
+      "original_first_growth_after_transition_evaluation_seconds": 120.00010895729065,
+      "ten_second_first_growth_after_transition_evaluation_seconds": 100.00010895729065
+    }
+  ]
+}

@@ -15,6 +15,8 @@ Eight performance trials used a common verified starting map, all twelve hot par
 
 P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.
 
+The growth figure uses a 10-second window (5 intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery hold. Earlier figures retain their original window settings.
+
 | Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |
 |---|---:|---:|---:|---:|
 | Keep 3 | 1 | 1.22 | 0.61 | 1.7% |
@@ -54,7 +56,7 @@ Recovery requires total processing backlog at most 100 offsets for thirty consec
 
 The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. This comparison evaluates those implemented responses, including coordination differences. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.
 
-[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf) · [Interpretation](ASSESSMENT.md) · [Validation](validation.json)
+[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf)
 
 The Mac coordinating baseline Run 1 slept for fifteen minutes. Nautilus continued the configured workload and cutoff. Historical Prometheus data were recovered without rerunning traffic or changing cohort results; local resource-request observations during sleep remain unavailable. The baseline is retained once, with its partial request integral and coverage reported. Subsequent trials used a stronger temporary system-sleep assertion on AC power.
 

@@ -61,6 +61,21 @@ Time-weighted run mean lag uses trapezoidal area / covered seconds. Each eligibl
 
 Defaults are exploratory: window_samples=15, hot_k=1, minimum_lag=10, persistence=0.8, max_gap=3 seconds. They are analyzer options, not automatically calibrated thresholds or controller settings. With eight zero-lag partitions and two equal hot partitions, k=2 puts the threshold exactly on the hot value; strict > detects none. Calibrate on pilot runs before comparisons.
 
+The growth window can be set independently with `growth_window_samples` (CLI:
+`--growth-window-samples`). Five intervals on a 2-second export grid give a
+10-second growth window using six observations. The numerator is the change in
+lag or processing backlog; the denominator is the actual elapsed time between
+the endpoints. This setting leaves the window mean and persistence settings
+unchanged. When omitted, the analyzer retains the historical `window_samples`
+intervals for growth.
+
+The four-condition comparison dated 29 September now displays 10-second growth
+for all eight trials, recomputed from saved snapshots. Earlier figures retain
+their original 30-second window. Missing observations, ownership changes, gaps
+longer than three seconds and offset resets still restart the growth window.
+The shorter window is a descriptive analysis setting, not a change to the
+predefined 30-second low-backlog recovery criterion or rolling Grafana queries.
+
 The consumer serializes lag/ownership updates with metrics exposition so a scrape cannot mix a new position with an older high offset. The exported completion offset is refreshed with the lag snapshot. This consistency is local to one consumer; observations across consumers still have different timestamps and must pass freshness/ownership checks. A scrape may wait for a bounded lag query or ownership callback; missing scrapes remain missing. Calibration run `run-20260912-053411` exposed the earlier mixed-field issue and retains its original 85% coverage result. The correction does not retroactively repair those observations.
 
 ## Several runs

@@ -8,9 +8,15 @@ import statistics
 from lag_freshness import observation_validity
 
 
-def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persistence=.8, max_gap=3.0):
+def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persistence=.8, max_gap=3.0,
+            growth_window_samples=None):
+    # A shorter growth window must not change the skew or persistence window.
+    # Omitting it preserves the settings used by earlier analyses.
+    growth_window_samples = window_samples if growth_window_samples is None else growth_window_samples
     if not all(math.isfinite(x) for x in (hot_k, minimum_lag, persistence, max_gap)):
         raise ValueError('Settings must be finite')
+    if not isinstance(growth_window_samples, int) or isinstance(growth_window_samples, bool) or growth_window_samples < 1:
+        raise ValueError('Growth window must contain a positive integer number of intervals')
     if window_samples < 1 or hot_k < 0 or minimum_lag < 0 or not 0 < persistence <= 1 or max_gap <= 0:
         raise ValueError('Invalid window, hotspot or gap settings')
     output = []
@@ -53,12 +59,12 @@ def signals(snapshots, window_samples=15, hot_k=1.0, minimum_lag=10.0, persisten
             row['window_mean_skew'] = statistics.mean(x['skew'] for x in window)
             row['persistence'] = {p:sum(p in x['hot'] for x in window)/window_samples for p in row['lags']}
             row['persistent_hot'] = [p for p in hot if row['persistence'][p] >= persistence]
-        if len(chain) > window_samples:
-            first = chain[-window_samples-1]
+        if len(chain) > growth_window_samples:
+            first = chain[-growth_window_samples-1]
             row['window_growth_offsets_per_second'] = (total-first['total_lag'])/(row['timestamp']-first['timestamp'])
             if 'processing_backlog' in row and 'processing_backlog' in first:
                 row['window_processing_backlog_growth_offsets_per_second'] = (row['processing_backlog']-first['processing_backlog'])/(row['timestamp']-first['timestamp'])
-        chain = chain[-(window_samples+1):]
+        chain = chain[-max(window_samples,growth_window_samples+1):]
         output.append(row)
     valid = [x for x in output if x['valid']]
     return dict(snapshots=output, covered_seconds=covered, backlog_area_offset_seconds=area if covered else None,
@@ -128,7 +134,7 @@ def analyze(directory, **options):
                          'Lag is high offset minus returned-record position. Processing backlog is reported separately.',
                          'Trapezoidal integration covers only adjacent valid, same-owner observations within max_gap.',
                          'Windows reset after invalid samples, owner changes, gaps or decreasing observed offsets.',
-                         'Window growth uses m+1 snapshots; window means and persistence use m snapshots.',
+                         'Growth uses growth_window_samples intervals (window_samples if omitted); window means and persistence use window_samples snapshots.',
                          'Hotspot thresholds are exploratory inputs and require pilot calibration.',
                          'Final lag requires a valid sample at the exact evaluation boundary; no extrapolation.',
                          'Unsampled ownership changes or resets cannot be recovered from these exported gauges.'])
@@ -139,13 +145,15 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('run_directory',type=Path)
     parser.add_argument('--window-samples',type=int,default=15)
+    parser.add_argument('--growth-window-samples',type=int,help='Growth intervals only; 5 gives 10 seconds at a 2-second export step. Defaults to --window-samples.')
     parser.add_argument('--hot-k',type=float,default=1.0)
     parser.add_argument('--minimum-lag',type=float,default=10.0)
     parser.add_argument('--persistence',type=float,default=.8)
     parser.add_argument('--max-gap',type=float,default=3.0)
     args=parser.parse_args()
     result=analyze(args.run_directory,window_samples=args.window_samples,hot_k=args.hot_k,
-                   minimum_lag=args.minimum_lag,persistence=args.persistence,max_gap=args.max_gap)
+                   minimum_lag=args.minimum_lag,persistence=args.persistence,max_gap=args.max_gap,
+                   growth_window_samples=args.growth_window_samples)
     output=args.run_directory/'lag-summary.json'
     output.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print('Lag summary:',output)

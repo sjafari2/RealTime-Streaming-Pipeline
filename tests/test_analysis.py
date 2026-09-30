@@ -107,6 +107,40 @@ def test_missing_and_changed_owner_break_growth():
     assert result['snapshots'][-1]['persistent_hot'] is None
 
 
+@pytest.mark.parametrize('interruption', ['missing', 'owner', 'offset', 'time_gap'])
+def test_short_growth_window_keeps_gaps_and_other_window_metrics(interruption):
+    rows=[dict(snapshot(t,[t*t]),processing_backlog=t*t) for t in range(0,52,2)]
+    for row in rows:
+        row['positions']['0']=row['timestamp']
+        row['highs']['0']+=row['timestamp']
+    if interruption=='missing':
+        rows[9]['valid']=False
+    elif interruption=='owner':
+        for row in rows[10:]:row['owners']['0']='new'
+    elif interruption=='offset':
+        for row in rows[10:]:row['positions']['0']-=20
+    else:
+        rows.pop(9)
+    original=signals(rows,window_samples=15)
+    shorter=signals(rows,window_samples=15,growth_window_samples=5)
+    by_time={row['timestamp']:row for row in shorter['snapshots']}
+    assert by_time[28]['window_processing_backlog_growth_offsets_per_second'] is None
+    assert by_time[30]['window_processing_backlog_growth_offsets_per_second']==50
+    assert by_time[30]['window_growth_offsets_per_second']==50
+    assert by_time[30]['window_mean_skew'] is None
+    for old,new in zip(original['snapshots'],shorter['snapshots']):
+        for key in ['valid','total_lag','window_mean_backlog','window_mean_skew','persistence','persistent_hot']:
+            assert old.get(key)==new.get(key)
+    for key in ['covered_seconds','backlog_area_offset_seconds','time_weighted_mean_lag','peak_sampled_lag']:
+        assert shorter[key]==original[key]
+
+
+@pytest.mark.parametrize('intervals', [0,-1,1.5,True])
+def test_invalid_growth_window_rejected(intervals):
+    with pytest.raises(ValueError,match='Growth window'):
+        signals([],growth_window_samples=intervals)
+
+
 def test_balanced_capacity_uses_actual_replicas():
     row=estimate_capacity({'TARGET_RATE':'3000','APP_DELAY_MS':'0'},3,6)
     assert row['target_messages_per_second']==9000

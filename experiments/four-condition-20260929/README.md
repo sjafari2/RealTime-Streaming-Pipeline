@@ -27,6 +27,26 @@ Completion p99 uses distinct acknowledged evaluation messages completed by the d
 
 For native Kafka rebalancing, some consumers can continue working while others transfer partitions. Per-partition handover delays are therefore reported without assuming a pipeline-wide processing pause. Completion during drain and recovery while input continues are separate outcomes.
 
+## Reproducing the figures
+
+The current growth figure uses a 10-second window for every condition and run.
+It is recomputed from the retained lag snapshots using five 2-second intervals.
+Missing data and ownership/offset changes still interrupt the curve; after a
+break, growth requires ten seconds of fresh contiguous observations. The
+15-snapshot skew mean and the separate 30-second recovery criterion are unchanged.
+This is an analysis update after the trials; the original observations and
+run summaries remain unchanged.
+
+```bash
+python3 experiments/four-condition-20260929/summarize.py \
+  results/four-condition-20260929-015500 \
+  experiment-records/four-condition-20260929 \
+  --growth-window-samples 5
+```
+
+For a sensitivity comparison, 10 intervals give 20 seconds and 15 give the
+original 30 seconds. Use a separate output directory to preserve the main figures.
+
 ## Execution
 
 Dry-run review:
