@@ -27,6 +27,14 @@ An unfinished message has no observed completion latency. It contributes neither
 
 The evaluator detects missing final snapshots, outcome loss/errors, unresolved sends, invalid cohort clocks and inconsistent replay outputs. Review validity_failures before using a result. Absence of a detected failure does not establish synchronized clocks, correct infrastructure or scientific validity. Failed/cancelled sends are counted separately for the whole run. Duplicate attempts count extra completions for admitted IDs through drain; hashes check repeat output consistency, not a durable sink.
 
+
+### Prespecified deadline sensitivity
+
+The planned [four-hot-partition comparison](../experiments/four-hot-partitions-20260930/README.md) uses a **1-second primary completion deadline** and a **0.5-second sensitivity deadline**, specified before performance trials. Balanced calibration provides context, not an application requirement or a future latency guarantee. These are experimental targets; an acceptable violation percentage has not been specified. Historical 99 ms outcomes retain their original definition.
+
+`SLO_THRESHOLD_MS` records the primary threshold in the run configuration. `completion_deadline_reporting_ms` records both thresholds in the campaign protocol. The evaluator's `completion_deadline_outcomes` uses the same distinct acknowledged evaluation messages, earliest completions and fixed cutoff for each threshold. Late means completion latency strictly exceeds the threshold; overdue unfinished records also count as misses. Censored deadlines or invalid completion clocks make the full-cohort fraction unavailable. The comparison report retains both fractions and their late-completion, overdue-unfinished and censored counts. Observed-completion attempt rates remain separate.
+
+
 ## Grafana and retained evidence
 
 Prometheus supplies counters, histogram buckets, lag, process CPU and memory. Its fixed 30-second rate queries describe rolling attempt populations. Mean latency is sum(rate(latency_sum[30s])) / sum(rate(latency_count[30s])) across consumers. Histogram p99 aggregates bucket rates across consumers before histogram_quantile; it is a bucket-interpolated estimate. Do not average per-consumer or rolling p99 values to obtain a run p99.
@@ -123,7 +131,7 @@ The optional pilot runner supports scheduled no-action and adding consumers. Its
 
 Optional recovery uses a declared total processing-backlog threshold and hold duration. It requires valid contiguous same-owner snapshots at or below the threshold throughout the sampled hold interval; a gap, invalid sample or owner change restarts the interval. Recovery time is confirmation time (end of the hold) minus the common intervention anchor. For anchor 0, backlog at or below 5 offsets at times 2, 4, 6 and 8 s and hold 6 s, recovery is confirmed at 8 s. If it is not observed by evaluation end, time is null and the result is censored. Missing coverage is explicitly unavailable. This is backlog recovery only; joint latency/growth recovery is a separate planned definition.
 
-No automatic threshold tuning or policy selection is implemented. The 99 ms deadline, workload durations and pilot command values are provisional and require calibration. Exact targeted whole-partition reassignment still needs a supported assignment design; the runner does not substitute a broker replica move or arbitrary local assignment override.
+No automatic threshold tuning or policy selection is implemented. Each experiment protocol specifies its workload settings and latency targets; the historical 99 ms target remains unchanged. Scheduled targeted redistribution is implemented through coordinated exclusive-ownership handover, as documented in the experiment protocols; it is not a broker replica move.
 
 ## Combining the new metrics across repetitions
 

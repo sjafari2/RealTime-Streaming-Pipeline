@@ -1,10 +1,11 @@
 import importlib.util
+import os
 from pathlib import Path
 import numpy as np
 import pytest
 from copy import deepcopy
-ROOT=Path(__file__).resolve().parents[1]
-spec=importlib.util.spec_from_file_location('four_cost',ROOT/'experiments/four-condition-20260929/summarize.py')
+ROOT=Path(os.environ.get('PIPELINE_REPOSITORY',Path(__file__).resolve().parents[1]))
+spec=importlib.util.spec_from_file_location('four_cost',Path(os.environ.get('CAPACITY_SUMMARY_SCRIPT',ROOT/'experiments/four-condition-20260929/summarize.py')))
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 
@@ -46,3 +47,37 @@ def test_growth_plot_uses_ten_seconds_without_changing_saved_evidence():
         assert {k:v for k,v in saved.items() if k not in ('window_growth_offsets_per_second','window_processing_backlog_growth_offsets_per_second')}=={k:v for k,v in updated.items() if k not in ('window_growth_offsets_per_second','window_processing_backlog_growth_offsets_per_second')}
     lag['snapshots'][2]['timestamp']=4.5
     with pytest.raises(ValueError,match='2-second export grid'):m.growth_plot_lag(lag)
+
+
+def test_two_condition_campaign_requires_all_planned_trials():
+    order=[['redistribute3',1,81],['scale_redistribute6',1,81],
+           ['scale_redistribute6',2,82],['redistribute3',2,82]]
+    campaign=dict(status='complete',restoration='verified',
+        cost_protocol=dict(order=order,performance_trials=4,aggregate_input_rate=700,
+                           conditions={'redistribute3':'three','scale_redistribute6':'six'}),
+        runs=[dict(arm=a,run_number=n,seed=s,validation={'status':'passed'}) for a,n,s in order])
+    assert m.campaign_design(campaign)==(['redistribute3','scale_redistribute6'],700)
+    campaign['runs'].pop()
+    with pytest.raises(ValueError,match='planned verified'):m.campaign_design(campaign)
+
+
+def test_unreviewed_rate_is_rejected_before_analysis():
+    order=[['redistribute3',1,81],['redistribute3',2,82]]
+    campaign=dict(status='complete',restoration='verified',
+        cost_protocol=dict(order=order,performance_trials=2,aggregate_input_rate=900,
+                           conditions={'redistribute3':'three'}),
+        runs=[dict(arm=a,run_number=n,seed=s,validation={'status':'passed'}) for a,n,s in order])
+    with pytest.raises(ValueError,match='Unreviewed aggregate'):m.campaign_design(campaign)
+
+
+def test_metric_availability_does_not_count_undefined_as_zero():
+    lag=dict(snapshots=[dict(timestamp=0,valid=True,mean_partition_lag=5,persistent_hot=None),
+                        dict(timestamp=2,valid=True,mean_partition_lag=3,persistent_hot=[]),
+                        dict(timestamp=4,valid=False),
+                        dict(timestamp=6,valid=True,mean_partition_lag=4,persistent_hot=['p'])])
+    counts=m.lag_metric_coverage(lag)
+    assert counts['mean_partition_lag']['defined_samples']==3
+    assert counts['persistent_hot']['defined_samples']==2
+    lines=m.diagnostic_lines(lag,0,['persistent_hot'])
+    finite=[v for v in lines[0][1] if np.isfinite(v)]
+    assert finite==[0,1]

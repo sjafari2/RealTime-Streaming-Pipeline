@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "status": "specified_before_performance_trials",
+  "performance_trials": 4,
+  "conditions": {
+    "redistribute3": "Keep three; distribute 4 hot partitions as evenly as whole partitions permit",
+    "scale_redistribute6": "Scale to six; distribute 4 hot partitions as evenly as whole partitions permit"
+  },
+  "aggregate_input_rate": 700,
+  "partitions": 60,
+  "hot_partition_count": 4,
+  "hot_input_fraction": 0.8,
+  "phases_seconds": {
+    "warmup": 60,
+    "evaluation": 600,
+    "drain": 120
+  },
+  "action_after_evaluation_seconds": 60,
+  "starting_conditions": "Capture the native three-consumer empty-topic map. Select the 4 lowest-numbered partitions owned by Consumer 2 before any performance outcome is observed. Freeze this hot set and initial ownership for every condition, and verify original pod UIDs, nodes, and resource declarations before traffic.",
+  "interpretation": "Compare the complete scheduled responses, including preparation and handover. A capacity-limited condition is a hypothesis, not a guaranteed favorable scaling result. The late cohort is a fixed-window outcome, not called post-recovery unless recovery actually precedes its start.",
+  "order": [
+    [
+      "redistribute3",
+      1,
+      81
+    ],
+    [
+      "scale_redistribute6",
+      1,
+      81
+    ],
+    [
+      "scale_redistribute6",
+      2,
+      82
+    ],
+    [
+      "redistribute3",
+      2,
+      82
+    ]
+  ],
+  "technical_checks": [
+    "Previously passed nonempty redistribution monitoring gate",
+    "Empty-topic native assignment capture and matching restart",
+    "Low-load native 3-to-6 technical trial: 300 aggregate msg/s, 20 warm-up + 100 evaluation + 60 drain; all acknowledgments completed; valid offsets and six active partition owners"
+  ],
+  "processing_interruption": "For explicit actions, retain the verified global last-completion to first-post-resume-processing gap and per-process released-to-resumed intervals. For native scaling, record each moved partition's last old-owner completion to first new-owner processing start, and owner callbacks; a group need not have a global processing pause. Record any observed global no-processing interval separately without treating unaffected consumers as paused.",
+  "transition_and_accumulation": "Explicit release_requested to active_verified; also retain scheduled and actual decision times. Native: actual scale decision to first complete fresh six-owner snapshot followed by 10 seconds of valid unchanged ownership. Count distinct acknowledged-but-unfinished records at each endpoint (including warm-up), and report the net change. This is observed accumulation, not causal excess over a no-action counterfactual or exact Kafka offset lag.",
+  "recovery": {
+    "common_anchor": "actual action decision",
+    "additional_explicit_anchor": "resume_requested",
+    "metric": "total processing backlog",
+    "threshold": 100,
+    "sensitivity": [
+      50,
+      200
+    ],
+    "hold_seconds": 30,
+    "max_gap_seconds": 3,
+    "end": "producer_end_epoch",
+    "rule": "Consecutive valid samples with unchanged owners and nondecreasing offsets. If not observed under continued input, report unconfirmed; drain completion is a separate outcome."
+  },
+  "outcomes": [
+    "Completed evaluation-cohort mean and nearest-rank p99 latency before commit acknowledgment",
+    "Unfinished and deadline outcomes",
+    "Distinct successful completion throughput and 10-second bins",
+    "Total/per-partition lag and processing backlog, 10-second growth, skew and persistence",
+    "Observed process CPU/RSS with coverage",
+    "Requested consumer CPU/memory integrated over evaluation plus drain",
+    "Ownership, offset continuity, unique message identities and monitoring validity"
+  ],
+  "failure_rule": "No performance trial until the monitoring correction is verified. Up to three attempts only for pre-traffic ownership mismatches, preserving rejected preparations. Stop on runtime/identity/offset failure. Retain valid unfavorable outcomes. Restore original shared configuration and three stopped consumer applications.",
+  "completion_deadline_ms": 1000,
+  "study_purpose": "Test partition granularity at a rate previously observed to sustain balanced input. Keep 700 messages/s for the first block and at most 800 for any follow-up; retain every valid outcome regardless of direction. Four hot partitions create a different skew pattern from 80/20 across twelve of sixty partitions.",
+  "completion_deadline_reporting_ms": [
+    500,
+    1000
+  ],
+  "slo_rationale": "For the new trials, one second is the primary experimental completion deadline and 0.5 seconds is a prespecified stricter sensitivity threshold. Balanced 700 messages/s calibration recorded p99 of 0.248 and 0.395 seconds; these observations provide context but do not establish an application requirement or guarantee. Neither threshold is a validated application SLA. Historical 99 ms outcomes retain their original threshold.",
+  "deadline_outcome_definition": "At each threshold, count late earliest completions plus unfinished admitted evaluation messages whose deadlines have elapsed at the original observation cutoff; divide by distinct admitted evaluation messages. Report not-yet-expired deadlines as censored and suppress the full-cohort miss fraction if any remain censored or completion clocks are invalid. Completion is before commit acknowledgment. Equality with the deadline is on time.",
+  "lag_analysis_parameters": {
+    "window_samples": 15,
+    "growth_window_samples": 5,
+    "export_step_seconds": 2,
+    "hot_k": 1.0,
+    "minimum_lag": 10.0,
+    "persistence": 0.8,
+    "max_gap_seconds": 3.0
+  },
+  "assignment_limit": "The implemented target balances hot and cold partition counts separately. With four hot partitions, three consumers receive hot counts 2,1,1, while six receive 1,1,1,1,0,0. This is not an optimal load- or capacity-weighted three-consumer assignment; a different assignment may reduce any observed disadvantage.",
+  "primary_outcomes": [
+    "Unfinished evaluation messages after fixed drain",
+    "Confirmed recovery while input continues",
+    "Final-two-minute processing backlog growth",
+    "Whole-evaluation-cohort completion p99 reported with unfinished work"
+  ],
+  "secondary_outcomes": [
+    "Final-two-minute production-cohort latency with unfinished work",
+    "Processing interruption and transition accumulation",
+    "CPU and memory usage with coverage",
+    "Requested CPU and memory over time",
+    "Throughput, lag, skew and ownership",
+    "Admitted-cohort completion deadline misses at the primary and prespecified sensitivity thresholds"
+  ]
+}

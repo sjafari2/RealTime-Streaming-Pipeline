@@ -21,6 +21,7 @@ from evidence_io import event_paths,open_events
 from analyze_stability import window
 from analyze_lag import signals, growth_plot_lag
 from analyze_execution import resource_integral
+from evaluate_run import evaluate
 
 def module(name,path):
     spec=importlib.util.spec_from_file_location(name,ROOT/path)
@@ -128,11 +129,50 @@ def event_cost(path,m,lag):
     return report,((x-evaluation)/60,np.array(y)),marks
 
 
-def load(row,resources,reference,hot,growth_window_samples=5):
+def diagnostic_lines(lag,start,keys):
+    """Keep undefined windows and ownership/freshness breaks visible."""
+    x=[];ys=[[] for _ in keys];previous=None
+    for row in lag['snapshots']:
+        t=(row['timestamp']-start)/60
+        broken=(previous is not None and (not row.get('valid') or not previous.get('valid') or
+                row.get('owners')!=previous.get('owners') or row['timestamp']-previous['timestamp']>3))
+        if broken:
+            x.append(t)
+            for y in ys:y.append(math.nan)
+        x.append(t)
+        for key,y in zip(keys,ys):
+            value=row.get(key) if row.get('valid') else None
+            y.append(math.nan if value is None else len(value) if isinstance(value,list) else value)
+        previous=row
+    return [(np.array(x),np.array(y)) for y in ys]
+
+
+def lag_metric_coverage(lag):
+    fields=['total_lag','processing_backlog','mean_partition_lag','max_partition_lag','skew',
+            'population_stddev','growth_offsets_per_second','processing_backlog_growth_offsets_per_second',
+            'window_growth_offsets_per_second','window_processing_backlog_growth_offsets_per_second',
+            'window_mean_backlog','window_mean_skew','hot','persistence','persistent_hot']
+    return {key:dict(defined_samples=sum(bool(row.get('valid')) and row.get(key) is not None
+                                        for row in lag['snapshots']),
+                     total_samples=len(lag['snapshots'])) for key in fields}
+
+
+def deadline_sensitivity(path,saved,thresholds):
+    replay=evaluate(path,deadline_thresholds_ms=thresholds)
+    if replay['validity_failures']:raise ValueError(replay['validity_failures'])
+    for key in ['admitted_evaluation_cohort','completed_by_drain','incomplete_by_drain',
+                'deadline_misses','deadline_censored','deadline_miss_fraction',
+                'admitted_cohort_completion_p99_seconds']:
+        if replay[key]!=saved[key]:raise ValueError('Deadline replay differs from saved outcome: '+key)
+    return replay['completion_deadline_outcomes']
+
+
+def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,deadline_ms=99,deadline_thresholds=None):
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json');audit=read(p,'measurement-audit.json')
     assert read(p,'runner-status.json')['status']=='complete' and read(p,'handoff-validation.json')['status']=='passed'
     assert not o['validity_failures'] and not audit['issues']
-    cfg=m['config'];assert float(cfg['TARGET_RATE'])*3==700
+    cfg=m['config'];assert math.isclose(float(cfg['TARGET_RATE'])*3,aggregate_rate)
+    assert float(cfg['SLO_THRESHOLD_MS'])==deadline_ms
     assert all(cfg[k]==v for k,v in {'NUM_PARTITIONS':'60','WARMUP_SECONDS':'60','EXP_DURATION_SEC':'660','DRAIN_SECONDS':'120','APP_CPU_ITERATIONS':'2000','APP_DELAY_MS':'0'}.items())
     assert m['placement_reference']==reference
     assert set(map(int,cfg['SKEW_PARTITION'].split(',')))==set(hot)
@@ -142,25 +182,49 @@ def load(row,resources,reference,hot,growth_window_samples=5):
         admitted=o['admitted_evaluation_cohort'],completed=o['completed_by_drain'],unfinished=o['incomplete_by_drain'],unfinished_percent=100*o['incomplete_fraction'],
         p99_seconds=o['admitted_cohort_completion_p99_seconds'],mean_completion_seconds=o['admitted_cohort_completion_mean_seconds'],
         useful_throughput=o['useful_throughput_per_second'],admitted_rate=o['admitted_messages_per_second'],deadline_miss_fraction=o['deadline_miss_fraction'],
+        observed_completion_deadline_miss_fraction=o['observed_completion_deadline_miss_fraction'],
+        deadline_threshold_ms=deadline_ms,deadline_censored=o['deadline_censored'],
         mean_lag=lag['time_weighted_mean_lag'],peak_lag=lag['peak_sampled_lag'],lag_coverage=lag['covered_fraction'],
         growth_windows={'whole_evaluation':window(lag['snapshots'],start,finish),'last_two_minutes':window(lag['snapshots'],finish-120,finish)},
         process_resources=audit['process_resources'],requested_resources_evaluation_and_drain=resource_integral(resources,start,m['drain_end_epoch'],15),
         initial_ownership=initial,config=cfg,
         evidence_hashes={n:hashlib.sha256((p/n).read_bytes()).hexdigest() for n in ['manifest.json','pipeline-configmap.yaml','outcome-summary.json','lag-summary.json','measurement-audit.json','handoff-validation.json','prometheus.json']})
     event,outstanding,marks=event_cost(p,m,lag);s['intervention_cost']=event
+    if deadline_thresholds:
+        s['completion_deadline_outcomes']=deadline_sensitivity(p,o,deadline_thresholds)
     last_valid=max((x for x in lag['snapshots'] if x.get('valid') and start<=x['timestamp']<=finish),key=lambda x:x['timestamp'])
     final_map={int(key.rsplit('/',1)[1]):owner.split('/')[0] for key,owner in last_valid['owners'].items()}
     s['final_observed_ownership']=final_map;s['final_ownership_observed_epoch']=last_valid['timestamp']
     s['final_hot_partitions_per_owner']={pod:sum(final_map[p]==pod for p in hot) for pod in sorted(set(final_map.values()))}
     plot_lag=growth_plot_lag(lag,growth_window_samples)
     s['growth_plot_parameters']=plot_lag['growth_plot_parameters']
+    s['lag_metric_coverage']=lag_metric_coverage(plot_lag)
+    s['lag_analysis_parameters']=plot_lag['parameters']
     x,lag_y,_,growth=old.lag_lines(m,plot_lag);skx,sk,skmean=old.skew_lines(m,lag)
     data={'lag':[(x,lag_y)],'growth':[(x,growth)],'skew':[(skx,sk),(skx,skmean)],'outstanding':[outstanding]}
+    data['partition-lag']=diagnostic_lines(plot_lag,start,['mean_partition_lag','max_partition_lag'])
+    data['persistent-hot']=diagnostic_lines(plot_lag,start,['persistent_hot'])
     prom=read(p,'prometheus.json')['data']['result'];consumers=6 if 'scale' in row['arm'] else 3
     for key,name,div in [('cpu','consumer_cpu_percent',100),('memory','consumer_memory_bytes',1024**2)]:
         data[key]=[old.resource_line(prom,name,'consumer-sts-'+str(i),start,finish,div) for i in range(consumers)]
     tx,ys=old.throughput_bins(p,start,finish);data['throughput']=[(tx,y) for y in ys]
     return s,data,{k:(v-start)/60 for k,v in marks.items()}
+
+def campaign_design(campaign):
+    protocol=campaign['cost_protocol']
+    order=[tuple(row) for row in protocol['order']]
+    observed=[(r['arm'],r['run_number'],r['seed']) for r in campaign['runs']]
+    arms=[arm for arm in ARMS if arm in protocol['conditions']]
+    if (campaign['status']!='complete' or campaign.get('restoration')!='verified' or
+            observed!=order or len(order)!=protocol['performance_trials'] or
+            len(order)!=2*len(arms) or
+            {(arm,n) for arm,n,_ in order}!={(arm,n) for arm in arms for n in (1,2)} or
+            any(r.get('validation',{}).get('status')!='passed' for r in campaign['runs'])):
+        raise ValueError('All planned verified trials in order and restoration are required')
+    if protocol['aggregate_input_rate'] not in (700,800):
+        raise ValueError('Unreviewed aggregate rate')
+    return arms,protocol['aggregate_input_rate']
+
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('campaign',type=Path);parser.add_argument('output',type=Path)
@@ -168,11 +232,13 @@ def main():
         help='Growth intervals on the 2-second export grid: 5=10 seconds (default), 10=20 seconds, 15=30 seconds')
     a=parser.parse_args();growth_seconds=2*a.growth_window_samples
     campaign=read(a.campaign,'campaign-status.json')
-    if campaign['status']!='complete' or campaign.get('restoration')!='verified' or len(campaign['runs'])!=8:raise ValueError('All eight verified trials and restoration are required')
+    arms,aggregate_rate=campaign_design(campaign)
     resource_files=sorted(a.campaign.rglob('resource-observations.jsonl'))
     resources=sorted([json.loads(x) for p in resource_files for x in p.read_text().splitlines()],key=lambda x:x['timestamp'])
-    rows=sorted(campaign['runs'],key=lambda r:(ARMS.index(r['arm']),r['run_number']))
-    runs=[load(r,resources,campaign['reference'],campaign['hot_partitions'],a.growth_window_samples) for r in rows]
+    rows=sorted(campaign['runs'],key=lambda r:(arms.index(r['arm']),r['run_number']))
+    deadline_ms=campaign['cost_protocol'].get('completion_deadline_ms',99)
+    deadline_thresholds=campaign['cost_protocol'].get('completion_deadline_reporting_ms')
+    runs=[load(r,resources,campaign['reference'],campaign['hot_partitions'],a.growth_window_samples,aggregate_rate,deadline_ms,deadline_thresholds) for r in rows]
     for role in ['producer','consumer']:
         signatures={json.dumps({k:v for k,v in e.items() if k not in ('pod','role')},sort_keys=True)
                     for summary,_,_ in runs for e in summary['intervention_cost']['runtime_software'] if e['role']==role}
@@ -183,14 +249,15 @@ def main():
     (a.output/'comparison.json').write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     figures=[]
-    for metric,title,ylabel in [('lag','Total lag','Offsets'),('growth','Processing-backlog growth',f'Offsets/s ({growth_seconds}-second window)'),('skew','Partition lag skew','Maximum / mean partition lag'),('outstanding','Acknowledged but unfinished work','Messages'),('cpu','Consumer CPU usage','Process CPU (cores)'),('memory','Consumer memory usage','Process RSS (MiB)'),('throughput','Input and completion throughput','Messages/s (10-second bins)')]:
-        fig,axes=plt.subplots(4,2,figsize=(12,13),sharex=True,sharey=True)
+    for metric,title,ylabel in [('lag','Total lag','Offsets'),('growth','Processing-backlog growth',f'Offsets/s ({growth_seconds}-second window)'),('skew','Partition lag skew','Maximum / mean partition lag'),('partition-lag','Maximum and mean partition lag','Offsets per partition'),('persistent-hot','Persistently hot partitions','Number of partitions'),('outstanding','Acknowledged but unfinished work','Messages'),('cpu','Consumer CPU usage','Process CPU (cores)'),('memory','Consumer memory usage','Process RSS (MiB)'),('throughput','Input and completion throughput','Messages/s (10-second bins)')]:
+        fig,axes=plt.subplots(len(arms),2,figsize=(12,3*len(arms)+1),sharex=True,sharey=True,squeeze=False)
         values=[v for _,data,_ in runs for _,ys in data[metric] for v in ys if math.isfinite(v)];extent=max(max(values)-min(values),1)
         low=min(0,min(values)-.06*extent) if metric=='growth' else 0;high=max(values)+.1*extent;handles=[]
         for ax,(s,data,marks) in zip(axes.flat,runs):
             if metric in ('cpu','memory'):labels=['Consumer '+str(i) for i in range(len(data[metric]))];colors=COLORS
             elif metric=='throughput':labels=['Acknowledged input','Unique completions'];colors=['#7b8794','#2563a6']
             elif metric=='skew':labels=['Snapshot ratio','15-sample mean'];colors=['#a7afb8','#2563a6']
+            elif metric=='partition-lag':labels=['Mean across partitions','Maximum partition'];colors=['#2563a6','#dc862d']
             else:labels=[title];colors=['#2563a6']
             lines=[]
             for (x,y),label,color in zip(data[metric],labels,colors):lines+=ax.plot(x,y,color=color,label=label,lw=1.1)
@@ -202,26 +269,27 @@ def main():
             if metric=='growth':ax.axhline(0,color='#999',lw=.6)
             ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),xlabel='Evaluation time (minutes)',ylabel=ylabel,xlim=(0,10),ylim=(low,high))
             ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2)
-        fig.suptitle(title+' - 700 messages/s',fontweight='bold',fontsize=16)
+        fig.suptitle(title+f' - {aggregate_rate:,} messages/s',fontweight='bold',fontsize=16)
         if len(handles)>1:fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,.968),ncol=min(len(handles),6),frameon=False,fontsize=9)
         note='1 min warm-up + 10 min evaluation + 2 min drain. Common scales; genuine gaps remain unavailable.'
         if metric=='outstanding':note+='\nDistinct acknowledgment/completion events, including warm-up; this is not broker offset lag.'
+        elif metric=='persistent-hot':note+='\nHot now, and hot in at least 80% of the last 15 valid snapshots; lag > 10 and > mean + 1 population SD.'
         elif metric=='throughput':note+='\nCompletions include warm-up records finishing during evaluation.'
         elif metric=='growth':note+=f'\nGrowth needs {growth_seconds} seconds of fresh contiguous observations after a break. Dotted line: scheduled intervention.\nShading: recorded transition interval; this differs from the growth-window waiting time.'
         else:note+='\nDotted line: scheduled intervention. Shading: recorded transition interval; definitions differ by coordination mechanism.'
         fig.text(.07,.015,note,fontsize=9,color='#555');fig.tight_layout(rect=(0,.06,1,.942));figures.append((fig,'four-condition-'+metric))
     fig,axes=plt.subplots(1,2,figsize=(12,4.7),sharex=True,sharey=True)
     for number,ax in enumerate(axes,1):
-        for i,arm in enumerate(ARMS):
+        for i,arm in enumerate(arms):
             _,data,_=next(r for r in runs if r[0]['arm']==arm and r[0]['run_number']==number)
             x,y=data['lag'][0];ax.plot(x,y,lw=1.5,label=LABELS[arm],color=COLORS[i])
         ax.axvline(1,color='#777',ls=':',lw=.8);ax.grid(axis='y',alpha=.2)
         ax.set(title='Run '+str(number),xlabel='Evaluation time (minutes)',ylabel='Total lag (offsets)',xlim=(0,10),ylim=(0,None))
     h,l=axes[0].get_legend_handles_labels();fig.legend(h,l,loc='upper center',bbox_to_anchor=(.5,.93),ncol=2,frameon=False,fontsize=9)
-    fig.suptitle('Four responses from the same concentrated ownership - 700 messages/s',fontweight='bold')
+    fig.suptitle(f'Responses from the same concentrated ownership - {aggregate_rate:,} messages/s',fontweight='bold')
     fig.text(.07,.025,'Each curve is a separate 13-minute trial; the 10-minute evaluation is shown. Dotted line: scheduled response.\nMissing observations and ownership changes break curves. Warm-up work remains queued.',fontsize=9)
     fig.tight_layout(rect=(0,.12,1,.81));figures.append((fig,'four-condition-lag-comparison'))
-    fig,axes=plt.subplots(4,2,figsize=(12,10),sharex=True,sharey=True)
+    fig,axes=plt.subplots(len(arms),2,figsize=(12,2.3*len(arms)+.8),sharex=True,sharey=True,squeeze=False)
     for ax,(s,_,_) in zip(axes.flat,runs):
         counts=s['final_hot_partitions_per_owner'];pods=['consumer-sts-'+str(i) for i in range(6)]
         bars=ax.bar(range(6),[counts.get(p,0) for p in pods],color=COLORS,width=.65)
@@ -230,13 +298,13 @@ def main():
         ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),ylabel='Hot partitions',ylim=(0,14),xticks=range(6),xticklabels=['C'+str(i) for i in range(6)])
         ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
     fig.suptitle('Observed hot-partition ownership at the end of evaluation',fontweight='bold')
-    fig.text(.07,.02,'All trials started with twelve hot partitions on Consumer 2. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nEqual partition counts do not necessarily imply equal traffic or processing load.',fontsize=9)
+    fig.text(.07,.02,f"All trials started with {len(campaign['hot_partitions'])} hot partitions on Consumer 2. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nEqual partition counts do not necessarily imply equal traffic or processing load.",fontsize=9)
     fig.tight_layout(rect=(0,.085,1,.96));figures.append((fig,'four-condition-ownership'))
-    fig,axes=plt.subplots(1,2,figsize=(12,5));x=np.arange(2);width=.2
-    for index,arm in enumerate(ARMS):
+    fig,axes=plt.subplots(1,2,figsize=(12,5));x=np.arange(2);width=.8/len(arms)
+    for index,arm in enumerate(arms):
         selected=sorted([s for s,_,_ in runs if s['arm']==arm],key=lambda s:s['run_number'])
         for ax,key in zip(axes,['p99_seconds','unfinished_percent']):
-            bars=ax.bar(x+(index-1.5)*width,[s[key] for s in selected],width,label=LABELS[arm],color=COLORS[index])
+            bars=ax.bar(x+(index-(len(arms)-1)/2)*width,[s[key] for s in selected],width,label=LABELS[arm],color=COLORS[index])
             for b,s in zip(bars,selected):ax.annotate(f'{s[key]:.1f}',(b.get_x()+b.get_width()/2,b.get_height()),xytext=(0,4),textcoords='offset points',ha='center',fontsize=8)
     for ax,key,label in zip(axes,['p99_seconds','unfinished_percent'],['Completion p99 (seconds)','Unfinished evaluation messages (%)']):
         ax.set_xticks(x);ax.set_xticklabels(['Run 1','Run 2']);ax.set_ylabel(label);ax.set_ylim(0,max(1,max(s[key] for s,_,_ in runs))*1.2);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
@@ -248,7 +316,7 @@ def main():
         for fig,name in figures:
             for ext in ['png','pdf']:fig.savefig(a.output/(name+'.'+ext),dpi=180,facecolor='white')
             pdf.savefig(fig,facecolor='white');plt.close(fig)
-    lines=['# Four responses to concentrated ownership','','Eight performance trials used a common verified starting map, all twelve hot partitions on Consumer 2, and 700 aggregate messages/s. Every trial lasted thirteen minutes: one warm-up, ten evaluation and two drain. The second run reversed condition order.','',
+    lines=['# Responses to concentrated ownership','',f"{len(runs)} performance trials used a common verified starting map, all {len(campaign['hot_partitions'])} hot partitions on Consumer 2, and {aggregate_rate:,} aggregate messages/s. Every trial lasted thirteen minutes: one warm-up, ten evaluation and two drain. The second run reversed condition order.",'',
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
     lines+=['','P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
@@ -271,8 +339,29 @@ def main():
     lines+=['','This interval is calculated from the union of application-processing intervals across all consumers. A near-zero value means some consumer continued processing; it does not establish uninterrupted service for every partition. Explicit handover pause durations are also retained separately in comparison.json.','',
         'Explicit transition time spans release request through active verification. Native scaling spans the scale decision through ten seconds of complete stable six-owner observations. These are different operational boundaries and must not be interpreted as identical coordination costs. Message accumulation is reconstructed from acknowledgment/completion timestamps and includes warm-up. It is an observed net change, not causal excess relative to a counterfactual.','',
         'Recovery requires total processing backlog at most 100 offsets for thirty consecutive valid seconds with no ownership or offset reset, while production continues. Sensitivity thresholds of 50 and 200 offsets were specified in advance. Per-partition native handover intervals and verified explicit processing pauses are in comparison.json. A cold partition can be naturally idle between records, so its inter-owner message interval is not pure rebalance downtime.','',
-        'The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. This comparison evaluates those implemented responses, including coordination differences. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.','',
+        ('The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. ' if 'kafka_scale6' in arms else 'Both performance conditions use coordinated explicit ownership. Native Kafka scaling is not a performance condition in this block. ')+ 'This comparison evaluates those implemented responses, including preparation and coordination. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.','',
         '[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf)','']
+    lines+=['## Completion deadline outcomes','',f'Configured deadline: {deadline_ms:g} ms. The primary admitted-cohort miss rate includes late completions and unfinished messages whose deadlines elapsed. The observed-completion rate uses valid completion attempts occurring during evaluation, including warm-up records and replays; its denominator is different.','',
+            '| Condition | Run | Primary cohort misses (%) | Observed completion violations (%) | Censored cohort deadlines |',
+            '|---|---:|---:|---:|---:|']
+    for s,_,_ in runs:
+        lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {100*s['deadline_miss_fraction']:.2f} | {100*s['observed_completion_deadline_miss_fraction']:.2f} | {s['deadline_censored']} |")
+    if deadline_thresholds:
+        lines+=['','Reporting deadlines were specified in the campaign protocol before the trials. The primary threshold is identified below; additional thresholds assess sensitivity to that choice. Balanced calibration does not establish an application requirement. Each row uses the same distinct admitted cohort and original observation cutoff; the rate includes overdue unfinished records.','',
+                '| Condition | Run | Deadline (ms) | Role | Late completions | Overdue unfinished | Cohort misses (%) | Censored |',
+                '|---|---:|---:|---|---:|---:|---:|---:|']
+        for s,_,_ in runs:
+            for outcome in s['completion_deadline_outcomes']:
+                rate='unavailable' if outcome['deadline_miss_fraction'] is None else f"{100*outcome['deadline_miss_fraction']:.2f}"
+                role='Primary' if outcome['primary'] else 'Sensitivity'
+                lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {outcome['threshold_ms']:g} | {role} | {outcome['late_completions']} | {outcome['unfinished_deadline_misses']} | {rate} | {outcome['deadline_censored']} |")
+    lines+=['','## Defined lag diagnostics','',
+            'The table counts snapshots for which each diagnostic is defined. Window metrics need a full valid history and therefore have fewer observations. Missing values remain unavailable, never zero. Mean/max here refer to partitions at one time; time-weighted total-lag mean and peak total lag are separate run summaries. Per-partition values, hot IDs, persistence scores and persistent hot sets remain in each raw lag-summary.json.','',
+            '| Field | '+ ' | '.join(LABELS[s['arm']]+' / '+str(s['run_number']) for s,_,_ in runs)+' |',
+            '|---|'+ '---:|'*len(runs)]
+    for field in runs[0][0]['lag_metric_coverage']:
+        lines.append('| '+field+' | '+' | '.join(str(s['lag_metric_coverage'][field]['defined_samples'])+'/'+str(s['lag_metric_coverage'][field]['total_samples']) for s,_,_ in runs)+' |')
+    lines.append('')
     if campaign.get('collection_recovery'):
         lines+=['The Mac coordinating baseline Run 1 slept for fifteen minutes. Nautilus continued the configured workload and cutoff. Historical Prometheus data were recovered without rerunning traffic or changing cohort results; local resource-request observations during sleep remain unavailable. The baseline is retained once, with its partial request integral and coverage reported. Subsequent trials used a stronger temporary system-sleep assertion on AC power.','']
     for _,name in figures:lines+=[f'![{name}]({name}.png)','']

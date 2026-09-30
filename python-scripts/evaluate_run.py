@@ -10,11 +10,15 @@ import tempfile
 from partition_outcomes import partition_metrics, quantiles
 
 
-def evaluate(directory, latency_sink=None, partition_latency_sink=None):
+def evaluate(directory, latency_sink=None, partition_latency_sink=None, deadline_thresholds_ms=None):
     directory = Path(directory)
     manifest = json.loads((directory / 'manifest.json').read_text())
     start, end, drain = manifest['evaluation_start_epoch'], manifest['producer_end_epoch'], manifest['drain_end_epoch']
     deadline = float(manifest['config'].get('SLO_THRESHOLD_MS', 99)) / 1000
+    thresholds = sorted({deadline * 1000, *(float(t) for t in (deadline_thresholds_ms or []))})
+    if any(not math.isfinite(t) or t <= 0 for t in thresholds):
+        raise ValueError('Completion deadlines must be positive finite milliseconds')
+    observed_late = {t: 0 for t in thresholds}
     invalid = []
     finals = [json.loads(p.read_text()) for p in directory.rglob('final.json')]
     observed = {role: set() for role in ('producer', 'consumer')}
@@ -62,6 +66,8 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None):
                             if isinstance(produced, (int,float)) and math.isfinite(timestamp-produced) and timestamp >= produced:
                                 valid_attempts_window += 1
                                 late_attempts_window += timestamp-produced > deadline
+                                for threshold in thresholds:
+                                    observed_late[threshold] += timestamp-produced > threshold / 1000
                             db.execute('INSERT OR IGNORE INTO window_completed VALUES (?)', (event['message_id'],))
                         if timestamp > drain:
                             continue
@@ -121,7 +127,25 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None):
             invalid.append('Replayed message produced inconsistent outputs')
         partitions = partition_metrics(directory, manifest, partition_latency_sink)
         invalid.extend(partitions['validity_failures'])
+        # Reuse distinct identities and earliest completions at every threshold.
+        # Changing the reporting deadline never changes admission or the cutoff.
+        deadline_outcomes = []
+        for threshold in thresholds:
+            seconds = threshold / 1000
+            late_completed = db.execute('SELECT count(*) FROM latency WHERE seconds > ?', (seconds,)).fetchone()[0]
+            overdue = db.execute('''SELECT count(*) FROM admitted a LEFT JOIN completed c ON a.id=c.id
+                                    WHERE c.id IS NULL AND a.produced + ? <= ?''', (seconds, drain)).fetchone()[0]
+            pending = missing - overdue
+            deadline_outcomes.append(dict(threshold_ms=threshold,
+                primary=math.isclose(seconds, deadline, rel_tol=0, abs_tol=1e-12),
+                admitted_evaluation_cohort=admitted, completed_by_drain=done,
+                incomplete_by_drain=missing, late_completions=late_completed,
+                unfinished_deadline_misses=overdue, deadline_misses=late_completed+overdue,
+                deadline_censored=pending,
+                deadline_miss_fraction=(late_completed+overdue)/admitted if admitted and not pending and not bad_clock else None,
+                observed_completion_deadline_miss_fraction=observed_late[threshold]/valid_attempts_window if valid_attempts_window else None))
         return dict(run_id=manifest['run_id'], validity_failures=sorted(set(invalid)),
+                    completion_deadline_outcomes=deadline_outcomes,
                     useful_throughput_per_second=db.execute('SELECT count(*) FROM window_completed').fetchone()[0] / (end-start) if end > start else None,
                     evaluation_seconds=end-start,
                     admitted_messages_per_second=admitted/(end-start) if end > start else None,

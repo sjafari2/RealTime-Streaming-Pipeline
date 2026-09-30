@@ -10,7 +10,7 @@ import subprocess
 import sys
 import time
 import yaml
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(os.environ.get('PIPELINE_REPOSITORY',Path(__file__).resolve().parents[2]))
 sys.path.insert(0,str(ROOT/'my-shell'))
 import run_experiment as r
 from placement_control import PlacementMismatch,pod_identity
@@ -28,10 +28,14 @@ def target_map(hot,count):
                    for group in [sorted(hot),cold] for i,p in enumerate(group)],key=lambda x:x['partition'])
 
 
-def prepared(arm,number,seed,reference=None,hot=None,gate=False):
+def prepared(arm,number,seed,reference=None,hot=None,gate=False,aggregate_rate=700,hot_count=12,deadline_ms=99):
+    if aggregate_rate not in (700,800):raise ValueError('Unreviewed aggregate rate')
+    if hot_count not in (4,12):raise ValueError('Unreviewed hot-partition count')
     config=yaml.safe_load((ROOT/'experiments/hot-ownership-20260927/concentrated-c2.yaml').read_text())
     data=config['data'];native=arm=='kafka_scale6'
-    data.update(EXP_ID='four-condition-'+arm+('-technical' if gate else '-run'+str(number)),
+    prefix='four-condition-' if aggregate_rate==700 and hot_count==12 else 'hot'+str(hot_count)+'-rate'+str(aggregate_rate)+'-'
+    data.update(EXP_ID=prefix+arm+('-technical' if gate else '-run'+str(number)),
+                TARGET_RATE=format(aggregate_rate/3,'.17g'),SLO_THRESHOLD_MS=str(deadline_ms),
                 WORKLOAD_SEED=str(seed),EXP_DURATION_SEC='240' if gate else '660',
                 WARMUP_SECONDS='20' if gate else '60',DRAIN_SECONDS='60' if gate else '120',
                 CONSUMER_ASSIGNMENT_MODE='cooperative' if native else 'explicit',
@@ -39,7 +43,9 @@ def prepared(arm,number,seed,reference=None,hot=None,gate=False):
     if gate and native:
         data.update(TARGET_RATE='100',EXP_DURATION_SEC='120')
     data['CONSUMER_GROUP_ID']=data['EXP_ID']+'-'+str(time.time_ns())
-    if hot is not None:data['SKEW_PARTITION']=','.join(map(str,sorted(hot)))
+    if hot is None:hot=list(map(int,data['SKEW_PARTITION'].split(',')))[:hot_count]
+    if len(hot)!=hot_count:raise ValueError('Hot set differs from the protocol')
+    data['SKEW_PARTITION']=','.join(map(str,sorted(hot)))
     if native:data.pop('EXPLICIT_ASSIGNMENT_JSON',None)
     elif reference is not None:
         data['EXPLICIT_ASSIGNMENT_JSON']=json.dumps([dict(partition=x['partition'],owner=x['pod']) for x in reference['assignment']])
@@ -47,7 +53,7 @@ def prepared(arm,number,seed,reference=None,hot=None,gate=False):
     plan=dict(action=action,initial_consumers=3,target_consumers=6 if 'scale' in arm else None,
               after_evaluation_start_seconds=20 if gate else 60,
               recovery_threshold_offsets=100,recovery_hold_seconds=30)
-    if arm in ('redistribute3','scale_redistribute6'):plan['target_assignment']=target_map(hot or list(range(12)),6 if arm=='scale_redistribute6' else 3)
+    if arm in ('redistribute3','scale_redistribute6'):plan['target_assignment']=target_map(hot,6 if arm=='scale_redistribute6' else 3)
     if reference is not None:plan['placement_reference']=reference
     r.validate_config(data);r.validate_intervention(plan,data)
     return config,plan
@@ -59,19 +65,50 @@ def normalized(raw):
     return cfg
 
 
+def campaign_protocol(aggregate_rate=700,targeted_only=False,hot_count=12,deadline_ms=99):
+    if aggregate_rate not in (700,800):raise ValueError('Unreviewed aggregate rate')
+    protocol=json.loads((ROOT/'experiments/four-condition-20260929/protocol.json').read_text())
+    if hot_count not in (4,12):raise ValueError('Unreviewed hot-partition count')
+    if deadline_ms not in (99,1000):raise ValueError('Unreviewed completion deadline')
+    if aggregate_rate==700 and not targeted_only and hot_count==12 and deadline_ms==99:return protocol
+    order=[row for row in ORDER if not targeted_only or row[0] in ('redistribute3','scale_redistribute6')]
+    protocol.update(aggregate_input_rate=aggregate_rate,hot_partition_count=hot_count,completion_deadline_ms=deadline_ms,performance_trials=len(order),
+                    order=[list(row) for row in order],
+                    conditions={k:v for k,v in protocol['conditions'].items() if any(row[0]==k for row in order)})
+    protocol['conditions'].update({k:('Keep three; distribute '+str(hot_count)+' hot partitions as evenly as whole partitions permit' if k=='redistribute3' else 'Scale to six; distribute '+str(hot_count)+' hot partitions as evenly as whole partitions permit') for k in protocol['conditions'] if k in ('redistribute3','scale_redistribute6')})
+    protocol['starting_conditions']=protocol['starting_conditions'].replace('twelve lowest-numbered',str(hot_count)+' lowest-numbered')
+    protocol['study_purpose']='Test partition granularity at a rate previously observed to sustain balanced input. Keep 700 messages/s for the first block and at most 800 for any follow-up; retain every valid outcome regardless of direction. Four hot partitions create a different skew pattern from 80/20 across twelve of sixty partitions.'
+    protocol['completion_deadline_reporting_ms']=[500,1000] if deadline_ms==1000 else [deadline_ms]
+    protocol['slo_rationale']='For the new trials, one second is the primary experimental completion deadline and 0.5 seconds is a prespecified stricter sensitivity threshold. Balanced 700 messages/s calibration recorded p99 of 0.248 and 0.395 seconds; these observations provide context but do not establish an application requirement or guarantee. Neither threshold is a validated application SLA. Historical 99 ms outcomes retain their original threshold.'
+    protocol['deadline_outcome_definition']='At each threshold, count late earliest completions plus unfinished admitted evaluation messages whose deadlines have elapsed at the original observation cutoff; divide by distinct admitted evaluation messages. Report not-yet-expired deadlines as censored and suppress the full-cohort miss fraction if any remain censored or completion clocks are invalid. Completion is before commit acknowledgment. Equality with the deadline is on time.'
+    protocol['lag_analysis_parameters']=dict(window_samples=15,growth_window_samples=5,export_step_seconds=2,hot_k=1.0,minimum_lag=10.0,persistence=0.8,max_gap_seconds=3.0)
+    protocol['outcomes']=[text.replace('30-second growth','10-second growth') for text in protocol['outcomes']]
+    protocol['assignment_limit']='The implemented target balances hot and cold partition counts separately. With four hot partitions, three consumers receive hot counts 2,1,1, while six receive 1,1,1,1,0,0. This is not an optimal load- or capacity-weighted three-consumer assignment; a different assignment may reduce any observed disadvantage.'
+    protocol['primary_outcomes']=['Unfinished evaluation messages after fixed drain',
+        'Confirmed recovery while input continues','Final-two-minute processing backlog growth',
+        'Whole-evaluation-cohort completion p99 reported with unfinished work']
+    protocol['secondary_outcomes']=['Final-two-minute production-cohort latency with unfinished work',
+        'Processing interruption and transition accumulation','CPU and memory usage with coverage',
+        'Requested CPU and memory over time','Throughput, lag, skew and ownership',
+        'Admitted-cohort completion deadline misses at the primary and prespecified sensitivity thresholds']
+    protocol['interpretation']='Compare the complete scheduled responses, including preparation and handover. A capacity-limited condition is a hypothesis, not a guaranteed favorable scaling result. The late cohort is a fixed-window outcome, not called post-recovery unless recovery actually precedes its start.'
+    return protocol
+
+
 def validate_resume_state(state, protocol):
     if state.get('status')!='failed' or state.get('restoration')!='verified':
         raise ValueError('Resume requires a stopped, restored failed campaign')
     if state.get('cost_protocol')!=protocol or state.get('monitoring_gate',{}).get('status')!='passed':
         raise ValueError('Resume cannot change the protocol or bypass the monitoring gate')
     completed=[(x['arm'],x['run_number'],x['seed']) for x in state['runs']]
-    if completed!=ORDER[:len(completed)] or len(completed)>=len(ORDER):
+    order=[tuple(row) for row in protocol['order']]
+    if completed!=order[:len(completed)] or len(completed)>=len(order):
         raise ValueError('Completed trials must form an unrepeated prefix of the planned order')
     if any(x.get('validation',{}).get('status')!='passed' for x in state['runs']):
         raise ValueError('A completed trial lacks validation')
     if not state.get('technical') or any(x['validation']['status']!='passed' for x in state['technical']):
         raise ValueError('Native scaling validation is missing')
-    if not state.get('reference') or len(state.get('hot_partitions',[]))!=12:
+    if not state.get('reference') or len(state.get('hot_partitions',[]))!=protocol['hot_partition_count']:
         raise ValueError('Frozen starting conditions are missing')
     return len(completed)
 
@@ -82,12 +119,22 @@ def main():
     parser.add_argument('--resume',type=Path,help='Continue only unexecuted trials in a restored campaign')
     parser.add_argument('--monitoring-gate',type=Path)
     parser.add_argument('--preparations-only',action='store_true')
+    parser.add_argument('--aggregate-rate',type=int,choices=(700,800),default=700,
+                        help='Total messages/s across all three producers')
+    parser.add_argument('--targeted-only',action='store_true',
+                        help='Compare redistribution within three with scaling plus redistribution, twice each')
+    parser.add_argument('--hot-partitions',type=int,choices=(4,12),default=12)
+    parser.add_argument('--slo-ms',type=int,choices=(99,1000),default=None)
     args=parser.parse_args()
+    deadline_ms=args.slo_ms if args.slo_ms is not None else (1000 if args.hot_partitions==4 else 99)
+    protocol=campaign_protocol(args.aggregate_rate,args.targeted_only,args.hot_partitions,deadline_ms)
+    order=[tuple(row) for row in protocol['order']]
     if not args.execute:
-        print(json.dumps(dict(aggregate_rate=700,partitions=60,hot_fraction=.8,hot_partition_count=12,
-            initial_hot_owner='consumer-sts-2',phases_seconds=[60,600,120],order=ORDER,
-            normal_scaling='classic cooperative-sticky with unique static member identities; no targeted map',
-            starting_map='capture Kafka empty-topic map; freeze twelve partitions owned by consumer 2; verify all trials against it',
+        print(json.dumps(dict(aggregate_rate=args.aggregate_rate,partitions=60,hot_fraction=.8,hot_partition_count=args.hot_partitions,completion_deadline_ms=deadline_ms,
+            completion_deadline_reporting_ms=protocol.get('completion_deadline_reporting_ms',[deadline_ms]),
+            initial_hot_owner='consumer-sts-2',phases_seconds=[60,600,120],order=order,
+            normal_scaling='technical validation only' if args.targeted_only else 'classic cooperative-sticky with unique static member identities; no targeted map',
+            starting_map='capture Kafka empty-topic map; freeze the selected hot partitions owned by consumer 2; verify all trials against it',
             preparation_retry_limit=3),indent=2));return
     if not args.monitoring_gate or json.loads(args.monitoring_gate.read_text())['status']!='passed':
         raise RuntimeError('A passed live monitoring correction gate is required')
@@ -95,7 +142,6 @@ def main():
         raise RuntimeError('Commit reviewed source before execution')
     if subprocess.check_output(['kubectl','config','current-context']).decode().strip()!='nautilus' or r.NS!='kafkastreamingdata':
         raise RuntimeError('Unexpected cluster or namespace')
-    protocol=json.loads((Path(__file__).parent/'protocol.json').read_text())
     revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()
     if args.resume:
         if args.preparations_only:raise ValueError('Resume cannot repeat preparation-only stages')
@@ -170,7 +216,7 @@ def main():
             observer_log=(observer_dir/'resource-observer.log').open('w')
             observer=subprocess.Popen([sys.executable,str(ROOT/'my-shell/observe_resources.py'),str(observer_dir)],stdout=observer_log,stderr=subprocess.STDOUT)
             r.stop()
-            config,plan=prepared('kafka_scale6',0,81)
+            config,plan=prepared('kafka_scale6',0,81,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
             plan.update(action='none',target_consumers=None,prepare_only=True,capture_placement_pods=original_pods)
             configure(config,'resume-setup-'+time.strftime('%Y%m%d-%H%M%S') if args.resume else 'capture-initial',plan)
             with r.paused_for_experiment(r,HPA_PLAN):
@@ -179,23 +225,23 @@ def main():
                 else:
                     directory,m,_=run_one(config,plan,'capture-initial',preparation=True)
                     reference=m['placement_reference']
-                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']=='consumer-sts-2')[:12]
+                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']=='consumer-sts-2')[:args.hot_partitions]
                     counts={n:sum(x['pod']==n for x in reference['assignment']) for n in ['consumer-sts-0','consumer-sts-1','consumer-sts-2']}
-                    if len(hot)!=12 or set(counts.values())!={20}:raise RuntimeError('Initial Kafka map is not 20 partitions per consumer')
+                    if len(hot)!=args.hot_partitions or set(counts.values())!={20}:raise RuntimeError('Initial Kafka map is not 20 partitions per consumer')
                     state.update(reference=reference,hot_partitions=hot);save()
                     (audit/'starting-reference.json').write_text(json.dumps(reference,indent=2)+'\n')
-                    config,plan=prepared('kafka_scale6',0,81,reference,hot)
+                    config,plan=prepared('kafka_scale6',0,81,reference,hot,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
                     plan.update(action='none',target_consumers=None,prepare_only=True)
                     run_one(config,plan,'verify-native-restart',preparation=True)
                     if not args.preparations_only:
                         # Native rebalance correctness is checked before counting any performance trial.
-                        config,plan=prepared('kafka_scale6',0,81,reference,hot,gate=True)
+                        config,plan=prepared('kafka_scale6',0,81,reference,hot,gate=True,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
                         directory,m,checked=run_one(config,plan,'native-scale-technical',technical=True)
                         state['technical'].append(dict(directory=str(directory),validation=checked));save()
                 if not args.preparations_only:
-                    for arm,number,seed in ORDER[len(state['runs']):]:
+                    for arm,number,seed in order[len(state['runs']):]:
                         if shutil.disk_usage(ROOT).free<4*1024**3:raise RuntimeError('Less than 4 GiB free; preserve evidence before continuing')
-                        config,plan=prepared(arm,number,seed,reference,hot)
+                        config,plan=prepared(arm,number,seed,reference,hot,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
                         directory,m,checked=run_one(config,plan,arm+'-run'+str(number))
                         state['runs'].append(dict(arm=arm,run_number=number,seed=seed,directory=str(directory),run_id=m['run_id'],validation=checked));save()
                         print('[VERIFIED]',arm,number,m['run_id'],flush=True)
