@@ -79,3 +79,7 @@ The Mac coordinating baseline Run 1 slept for fifteen minutes. Nautilus continue
 ![four-condition-ownership](four-condition-ownership.png)
 
 ![four-condition-p99-unfinished](four-condition-p99-unfinished.png)
+
+## Common production window after recovery
+
+The [post-recovery analysis](POST_RECOVERY.md) separately follows messages produced during evaluation seconds 480–600 through the original drain cutoff. Redistribution within three had recorded p99 of 172.44 and 179.77 ms; scaling plus targeted redistribution had 211.58 and 267.50 ms. Each cohort contained 84,000 messages and completed fully. These exploratory, cross-machine measurements supplement the whole-run results; small differences remain subject to clock uncertainty and shared-machine variability.
