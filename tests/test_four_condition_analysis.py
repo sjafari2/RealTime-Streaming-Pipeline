@@ -81,3 +81,12 @@ def test_metric_availability_does_not_count_undefined_as_zero():
     lines=m.diagnostic_lines(lag,0,['persistent_hot'])
     finite=[v for v in lines[0][1] if np.isfinite(v)]
     assert finite==[0,1]
+
+
+def test_public_preparation_paths_are_relative(monkeypatch,tmp_path):
+    monkeypatch.setattr(m,'ROOT',tmp_path/'pipeline')
+    rows=[dict(directory=str(m.ROOT/'results/check'),validation={'status':'passed'})]
+    original=deepcopy(rows)
+    assert m.portable_preparations(rows)==[dict(directory='results/check',validation={'status':'passed'})]
+    assert rows==original
+    with pytest.raises(ValueError):m.portable_preparations([dict(directory=str(tmp_path/'outside'))])

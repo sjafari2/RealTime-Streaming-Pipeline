@@ -34,7 +34,7 @@ def sha256(path):
     return digest.hexdigest()
 
 
-def evaluate_cohort(directory, start, end):
+def evaluate_cohort(directory, start, end, deadline_thresholds_ms=None):
     """Reuse the existing identity reconciliation and nearest-rank calculation."""
     directory = Path(directory).resolve()
     manifest = json.loads((directory / 'manifest.json').read_text())
@@ -54,7 +54,7 @@ def evaluate_cohort(directory, start, end):
                         target = view / path.relative_to(directory)
                         target.parent.mkdir(parents=True, exist_ok=True)
                         target.symlink_to(path)
-        return evaluate(view)
+        return evaluate(view, deadline_thresholds_ms=deadline_thresholds_ms)
 
 
 def verified_recovery(row, window_start):

@@ -1,4 +1,4 @@
-"""Summarize all four conditions and retain gaps and intervention cost definitions."""
+"""Summarize completed conditions and retain gaps and intervention cost definitions."""
 import argparse
 from collections import Counter
 import hashlib
@@ -33,6 +33,11 @@ LABELS={'keep3':'Keep 3','redistribute3':'Redistribute within 3','scale_redistri
 COLORS=['#2563a6','#dc862d','#21875e','#9a4eaa','#bc4148','#5d7390']
 
 def read(p,n):return json.loads((p/n).read_text())
+
+def portable_preparations(rows):
+    """Publish evidence locations relative to the checkout, without local user paths."""
+    return [dict(row,directory=str(Path(row['directory']).resolve().relative_to(ROOT.resolve())))
+            for row in rows]
 
 def stable_six(snapshots,anchor,hold=10):
     first=previous=None
@@ -245,7 +250,7 @@ def main():
         if len(signatures)!=1:raise ValueError('Runtime software differs within this comparison: '+role)
     a.output.mkdir(parents=True,exist_ok=True)
     analysis_environment=dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),python=sys.version,numpy=np.__version__,matplotlib=matplotlib.__version__)
-    payload=dict(analysis_environment=analysis_environment,campaign_revision=campaign['code_commit'],resume_events=campaign.get('resume_events',[]),collection_recovery=campaign.get('collection_recovery'),resource_observer_sha256={str(p.relative_to(a.campaign)):hashlib.sha256(p.read_bytes()).hexdigest() for p in resource_files},cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=campaign['technical'],preparations=campaign['preparations'],runs=[s for s,_,_ in runs])
+    payload=dict(analysis_environment=analysis_environment,campaign_revision=campaign['code_commit'],resume_events=campaign.get('resume_events',[]),collection_recovery=campaign.get('collection_recovery'),resource_observer_sha256={str(p.relative_to(a.campaign)):hashlib.sha256(p.read_bytes()).hexdigest() for p in resource_files},cost_protocol=campaign['cost_protocol'],hot_partitions=campaign['hot_partitions'],technical=portable_preparations(campaign['technical']),preparations=portable_preparations(campaign['preparations']),runs=[s for s,_,_ in runs])
     (a.output/'comparison.json').write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     figures=[]
@@ -271,7 +276,7 @@ def main():
             ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2)
         fig.suptitle(title+f' - {aggregate_rate:,} messages/s',fontweight='bold',fontsize=16)
         if len(handles)>1:fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,.968),ncol=min(len(handles),6),frameon=False,fontsize=9)
-        note='1 min warm-up + 10 min evaluation + 2 min drain. Common scales; genuine gaps remain unavailable.'
+        note=f"80% of input targets {len(campaign['hot_partitions'])} of 60 partitions. Phases: 1 min warm-up + 10 min evaluation + 2 min drain. Gaps remain unavailable."
         if metric=='outstanding':note+='\nDistinct acknowledgment/completion events, including warm-up; this is not broker offset lag.'
         elif metric=='persistent-hot':note+='\nHot now, and hot in at least 80% of the last 15 valid snapshots; lag > 10 and > mean + 1 population SD.'
         elif metric=='throughput':note+='\nCompletions include warm-up records finishing during evaluation.'
@@ -295,10 +300,10 @@ def main():
         bars=ax.bar(range(6),[counts.get(p,0) for p in pods],color=COLORS,width=.65)
         for b,pod in zip(bars,pods):
             ax.annotate(str(counts[pod]) if pod in counts else 'n/a',(b.get_x()+b.get_width()/2,b.get_height()),xytext=(0,3),textcoords='offset points',ha='center',fontsize=9)
-        ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),ylabel='Hot partitions',ylim=(0,14),xticks=range(6),xticklabels=['C'+str(i) for i in range(6)])
+        ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),ylabel='High-input partitions',ylim=(0,max(2,len(campaign['hot_partitions'])+1)),xticks=range(6),xticklabels=['C'+str(i) for i in range(6)])
         ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
-    fig.suptitle('Observed hot-partition ownership at the end of evaluation',fontweight='bold')
-    fig.text(.07,.02,f"All trials started with {len(campaign['hot_partitions'])} hot partitions on Consumer 2. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nEqual partition counts do not necessarily imply equal traffic or processing load.",fontsize=9)
+    fig.suptitle('Ownership of the configured high-input partitions at evaluation end',fontweight='bold')
+    fig.text(.07,.02,f"All trials started with {len(campaign['hot_partitions'])} high-input partitions on Consumer 2. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nThese are the configured input targets, not the set classified as persistently hot from lag.",fontsize=9)
     fig.tight_layout(rect=(0,.085,1,.96));figures.append((fig,'four-condition-ownership'))
     fig,axes=plt.subplots(1,2,figsize=(12,5));x=np.arange(2);width=.8/len(arms)
     for index,arm in enumerate(arms):
@@ -325,19 +330,19 @@ def main():
     for s,_,_ in runs:
         resource=s['requested_resources_evaluation_and_drain'];lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {resource['consumer_container_requested_cpu_seconds_observed']/60:.2f} | {resource['consumer_container_requested_gib_seconds_observed']/60:.2f} | {resource['covered_fraction']*100:.1f}% |")
     lines+=['','Requested resources are integrated over evaluation plus drain; actual process CPU/RSS are retained separately. Missing intervals are excluded, not treated as zero.','',
-        '| Condition | Run | Transition (s) | Net additional unfinished messages | Recovery confirmed after decision (s) |','|---|---:|---:|---:|---:|']
+        '| Condition | Run | Decision to verified active/stable (s) | Handover transition (s) | Net additional unfinished messages | Recovery confirmed after decision (s) |','|---|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:
         c=s['intervention_cost']
         if c['action']=='none':continue
         rec=c['recovery_from_decision'][1]['confirmation_after_anchor_seconds'];rec='Not observed during input' if rec is None else f'{rec:.1f}'
-        lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {c['transition_seconds']:.2f} | {c['net_additional_unfinished']:,} | {rec} |")
+        lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {c['transition_end_epoch']-c['decision_epoch']:.2f} | {c['transition_seconds']:.2f} | {c['net_additional_unfinished']:,} | {rec} |")
     lines+=['','| Condition | Run | Longest observed interval without application processing during transition (s) |','|---|---:|---:|']
     for s,_,_ in runs:
         c=s['intervention_cost']
         if c['action']=='none':continue
         lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {c['longest_global_no_processing_interval']['seconds']:.3f} |")
     lines+=['','This interval is calculated from the union of application-processing intervals across all consumers. A near-zero value means some consumer continued processing; it does not establish uninterrupted service for every partition. Explicit handover pause durations are also retained separately in comparison.json.','',
-        'Explicit transition time spans release request through active verification. Native scaling spans the scale decision through ten seconds of complete stable six-owner observations. These are different operational boundaries and must not be interpreted as identical coordination costs. Message accumulation is reconstructed from acknowledgment/completion timestamps and includes warm-up. It is an observed net change, not causal excess relative to a counterfactual.','',
+        'For explicit actions, decision-to-active time includes preparation and any replica enrollment before release. Handover transition time spans release request through active verification; neither interval is identical to the processing pause. Native scaling spans the scale decision through ten seconds of complete stable six-owner observations. These are different operational boundaries and must not be interpreted as identical coordination costs. Message accumulation is reconstructed from acknowledgment/completion timestamps and includes warm-up. It is an observed net change, not causal excess relative to a counterfactual.','',
         'Recovery requires total processing backlog at most 100 offsets for thirty consecutive valid seconds with no ownership or offset reset, while production continues. Sensitivity thresholds of 50 and 200 offsets were specified in advance. Per-partition native handover intervals and verified explicit processing pauses are in comparison.json. A cold partition can be naturally idle between records, so its inter-owner message interval is not pure rebalance downtime.','',
         ('The normal Kafka arm uses classic cooperative-sticky assignment with per-pod static identities. Other arms use coordinated explicit ownership. ' if 'kafka_scale6' in arms else 'Both performance conditions use coordinated explicit ownership. Native Kafka scaling is not a performance condition in this block. ')+ 'This comparison evaluates those implemented responses, including preparation and coordination. All were scheduled, not selected by an adaptive controller. Two runs and shared-node variability limit generalization. Historical monitoring exports remain unchanged.','',
         '[Full results, definitions and evidence hashes](comparison.json) · [All plots](four-condition-metrics.pdf)','']

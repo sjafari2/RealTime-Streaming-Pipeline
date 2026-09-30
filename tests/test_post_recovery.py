@@ -67,3 +67,14 @@ def test_missing_or_later_recovery_rejected():
     row['intervention_cost']['recovery_from_decision'][0]['confirmed_epoch'] = None
     with pytest.raises(ValueError, match='No confirmed'):
         module.verified_recovery(row, 480)
+
+
+def test_multiple_deadlines_keep_the_original_cutoff_and_primary(tmp_path):
+    root=fixture_run(tmp_path/'run')
+    result=module.evaluate_cohort(root,105,110,deadline_thresholds_ms=[500,1000])
+    thresholds={x['threshold_ms']:x for x in result['completion_deadline_outcomes']}
+    assert thresholds[99]['primary'] and thresholds[99]['deadline_misses']==4
+    assert thresholds[500]['deadline_misses']==thresholds[1000]['deadline_misses']==2
+    assert thresholds[500]['unfinished_deadline_misses']==2
+    assert thresholds[1000]['admitted_evaluation_cohort']==4
+    assert thresholds[1000]['deadline_miss_fraction']==.5

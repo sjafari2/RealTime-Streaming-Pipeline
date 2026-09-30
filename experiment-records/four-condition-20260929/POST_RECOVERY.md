@@ -20,6 +20,19 @@ The cohort contains distinct producer-acknowledged messages produced in that hal
 
 The configured completion deadline is 99 ms. Unfinished work is counted separately from latency; deadline misses also retain the existing outcome definition.
 
+## Persistent hotspots before the late window
+
+The zero persistent-hot-partition counts in the final-two-minute analysis apply only to evaluation minutes 8–10. Persistent hotspots were observed earlier, before the intervention and during backlog reduction. The following table identifies the first and last observed nonempty persistent-hot sets; it does not assert continuous detection between those endpoints. All times start at the beginning of evaluation, after the one-minute warm-up.
+
+| Condition | Run | First detection (s) | Last detection (s) | Minutes 8–10: snapshots with persistent hotspots / defined snapshots |
+|---|---:|---:|---:|---:|
+| Redistribute within 3 | 1 | 28 | 340 | 0 / 60 |
+| Redistribute within 3 | 2 | 30 | 370 | 0 / 60 |
+| Scale to 6 + targeted redistribution | 1 | 30 | 210 | 0 / 60 |
+| Scale to 6 + targeted redistribution | 2 | 28 | 220 | 0 / 60 |
+
+The diagnostic requires lag above 10 offsets and above the mean plus one population standard deviation, hot classification in at least 12 of the last 15 contiguous valid observations, and hot classification at the current observation. Ownership changes, missing observations and decreasing offsets reset the window; undefined values are not zeros. These are exploratory thresholds. A small but relatively high lag can still qualify, so persistent-hot counts must be interpreted together with absolute backlog, growth and latency.
+
 ## Interpretation and limits
 
 Redistribution within three had lower recorded mean and p99 latency in both late cohorts: p99 was 172.44 and 179.77 ms, versus 211.58 and 267.50 ms with six. All four cohorts contained 84,000 acknowledged messages and had zero unfinished work. The lower late backlog observed with six therefore did not translate into lower recorded completion latency. These measurements do not identify the cause of that difference.
