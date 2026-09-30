@@ -1,0 +1,154 @@
+\subsection{Four high-input partitions: ten-minute evaluation}\label{sec:four-partition-updated}
+Four further trials retained the same aggregate rate of 700 messages/s, which had shown bounded lag under balanced input during calibration, but directed 80\% of input to four of the sixty partitions. All four initially belonged to Consumer 2. Two trials redistributed within three consumers and two scaled to six with targeted redistribution. With three consumers, the target hot-partition counts were 2--1--1; with six they were 1--1--1--1--0--0. Matching initial ownership and original consumer placement was verified, and the second repetition reversed condition order. These assignments concern high-input partitions; they do not measure service capacity or implement a capacity-optimal assignment.
+
+All four trials admitted and completed 420,000 evaluation messages by the fixed cutoff. Redistribution within three had lower p99 in both runs (84.50 and 79.28 seconds) than targeted scaling (110.19 and 112.94 seconds), and fewer one-second deadline misses (26.63\% and 25.82\%, versus 35.23\% and 34.72\%). Its mean valid total lag was approximately 6,994--7,296 offsets, compared with 12,683--12,740 for targeted scaling. The sampled peaks were 50,157--50,879 and 66,598--70,217 offsets respectively. Both useful-throughput values and the full time traces are retained so that average completion rate does not hide the transition.
+
+Redistribution used 72 requested CPU core-minutes and 36 requested memory GiB-minutes, whereas targeted scaling used approximately 136.84 core-minutes and 68.42 GiB-minutes over evaluation plus drain. Observed consumer CPU use was approximately 1,007--1,019 versus 1,301--1,302 core-seconds; observed RSS integrals were 2.72--2.75 versus 4.01--4.09 GiB-minutes. Additional requested capacity therefore had both a measured utilization footprint and an allocation cost in these trials.
+
+Redistribution confirmed recovery 173.45--180.85 seconds after the decision, compared with 266.80--290.54 seconds for targeted scaling. Decision-to-active intervals were 21.92--27.26 versus 78.52--81.26 seconds, while processing pauses were 12.31--15.08 versus 19.88--21.73 seconds. Net additional unfinished work during release-to-active handover and additional work accumulated during the processing pause are reported separately because their endpoints differ. These observations support the sufficiency of redistribution within three for the tested workload; they do not establish that scaling cannot help under other conditions.
+
+The prespecified final-two-minute production cohort completed in every trial. Its p99 was 0.187 and 0.349 seconds for redistribution, versus 2.714 and 0.481 seconds for targeted scaling. The first targeted-scaling run experienced a later backlog spike after satisfying the recovery criterion. First recovery confirmation therefore does not prove continuously low backlog thereafter. The earlier twelve-partition late window was selected retrospectively and is not interchangeable with this prespecified analysis.
+
+Unlike the twelve-partition block, small persistent-hot sets sometimes remained in the late four-partition observations. For example, redistribution Run 1 classified a partition with 11 offsets of lag as persistently hot when total lag was only 42. A relative hotspot can therefore persist in a pipeline with low absolute backlog. This motivates interpreting persistence jointly with absolute lag, growth and completion outcomes.
+
+Processing-start mean latency ranged from 9.933 to 20.020 seconds across this block; it remains separate from completion latency. Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completion attempts were detected, so completed-attempt and distinct-completion throughput coincide in these trials. Mean application work is reported below; it excludes evidence-writing and offset-commit overhead.
+Observed per-process CPU coverage over evaluation plus drain ranged from 87.22\% to 99.72\%. Coverage uses the complete observation window, including time before additional consumers started; a lower value for a newly started consumer is not automatically a monitoring failure. The integral includes only observed valid process intervals.
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+\midrule
+Redistribute 3 & 1 & 84.50 & 0.000 & 26.63 & 730.87\\
+Redistribute 3 & 2 & 79.28 & 0.000 & 25.82 & 731.38\\
+Targeted scale 6 & 1 & 110.19 & 0.000 & 35.23 & 730.89\\
+Targeted scale 6 & 2 & 112.94 & 0.000 & 34.72 & 731.13\\
+\bottomrule
+\end{tabular}
+\caption{Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.}
+\label{tab:four-partition-outcomes}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Actual CPU\\(core-s)} & \shortstack{Actual RSS\\(GiB-min)} & \shortstack{Requested CPU\\(core-min)} & \shortstack{Requested memory\\(GiB-min)}\\
+\midrule
+Redistribute 3 & 1 & 1,006.9 & 2.75 & 72.00 & 36.00\\
+Redistribute 3 & 2 & 1,018.7 & 2.72 & 72.00 & 36.00\\
+Targeted scale 6 & 1 & 1,301.6 & 4.09 & 136.83 & 68.42\\
+Targeted scale 6 & 2 & 1,300.6 & 4.01 & 136.85 & 68.42\\
+\bottomrule
+\end{tabular}
+\caption{Consumer resources over evaluation plus drain. Actual values integrate observed process CPU and RSS intervals and sum them across consumers. Requested values integrate Kubernetes resource declarations; neither is monetary or whole-cluster cost. A dash denotes unavailable full-window request coverage, not zero cost.}
+\label{tab:four-partition-resources}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Peak total\\lag} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+\midrule
+Redistribute 3 & 1 & 7,296 & 50,879 & 96.3 & 13,509 & 20.56\\
+Redistribute 3 & 2 & 6,994 & 50,157 & 97.0 & 12,258 & 20.88\\
+Targeted scale 6 & 1 & 12,683 & 66,598 & 95.7 & 15,839 & 23.00\\
+Targeted scale 6 & 2 & 12,740 & 70,217 & 95.0 & 16,277 & 22.72\\
+\bottomrule
+\end{tabular}
+\caption{Lag diagnostics during evaluation only, in offsets except skew and coverage. Means use trapezoidal area divided by covered time; peaks are sampled maxima. The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.}
+\label{tab:four-partition-diagnostics}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Response & Run & Mean (s) & p50 (s) & p95 (s) & \shortstack{Mean work\\(ms)} & \shortstack{Observed misses\\$>1$ s (\%)}\\
+\midrule
+Redistribute 3 & 1 & 10.749 & 0.096 & 67.562 & 1.874 & 29.75\\
+Redistribute 3 & 2 & 9.935 & 0.096 & 65.012 & 1.886 & 29.01\\
+Targeted scale 6 & 1 & 19.330 & 0.129 & 92.980 & 2.378 & 37.98\\
+Targeted scale 6 & 2 & 20.023 & 0.127 & 95.434 & 2.418 & 37.51\\
+\bottomrule
+\end{tabular}
+\caption{Supplementary latency diagnostics. Mean, p50 and p95 use completed evaluation-born messages. Mean work is the local monotonic application-processing duration. Observed violations use completion attempts occurring during evaluation and have a different denominator from the primary admitted-cohort deadline rate.}
+\label{tab:four-partition-latency-details}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Decision to\\active (s)} & \shortstack{Global gap\\(s)} & \shortstack{Extra pending\\during pause} & \shortstack{Net pending\\during transfer} & \shortstack{Recovery\\(s)}\\
+\midrule
+Redistribute 3 & 1 & 27.26 & 15.080 & 10,557 & 7,023 & 180.9\\
+Redistribute 3 & 2 & 21.92 & 12.307 & 8,614 & 6,019 & 173.4\\
+Targeted scale 6 & 1 & 78.52 & 19.881 & 13,918 & 4,678 & 290.5\\
+Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
+\bottomrule
+\end{tabular}
+\caption{Intervention costs. For targeted actions, transfer is release request to verified active ownership; for native scaling it is decision to stable-six-owner confirmation. The latter also defines native decision-to-active. Recovery is confirmation after the actual decision. Global gap measures the longest interval without any consumer processing, not a per-partition downtime. Negative net pending change means processing reduced outstanding work during the measured transition. Dashes denote unavailable or inapplicable values.}
+\label{tab:four-partition-intervention-cost}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Response & Run & C0 & C1 & C2 & C3 & C4 & C5\\
+\midrule
+Redistribute 3 & 1 & 2 & 1 & 1 & --- & --- & ---\\
+Redistribute 3 & 2 & 2 & 1 & 1 & --- & --- & ---\\
+Targeted scale 6 & 1 & 1 & 1 & 1 & 1 & 0 & 0\\
+Targeted scale 6 & 2 & 1 & 1 & 1 & 1 & 0 & 0\\
+\bottomrule
+\end{tabular}
+\caption{Final observed numbers of configured high-input partitions per consumer. These are traffic targets, not persistent-hot detector counts. All high-input partitions initially belonged to Consumer 2. A dash means no observed partition ownership.}
+\label{tab:four-partition-ownership}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & Reference event & C3 (s) & C4 (s) & C5 (s)\\
+\midrule
+Targeted scale 6 & 1 & Replica request & 69.06 & 68.95 & 69.09\\
+Targeted scale 6 & 2 & Replica request & 71.56 & 71.46 & 71.53\\
+\bottomrule
+\end{tabular}
+\caption{Activation delay to the first valid completion on each added consumer. Targeted scaling uses the recorded replica-request event; native scaling uses the action decision because an equivalent replica-request timestamp was not separately recorded. These are not whole-action completion times or pure rebalance delays.}
+\label{tab:four-partition-activation-delay}
+\end{table}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/four-partition-compact-outcomes.pdf}
+\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by whole-cohort p99 and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the outcome cohort.}
+\label{fig:four-partition-compact-outcomes}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/four-partition-compact-performance.pdf}
+\caption{Actual consumer CPU and resident memory, useful completion throughput, and ten-second processing-backlog growth. Resource traces sum fresh measurements for all started consumer processes; an unavailable component leaves a gap. Requested resources and their integrals remain separate in the resource table.}
+\label{fig:four-partition-compact-performance}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/four-partition-runtime-state.pdf}
+\caption{Reconstructed runtime state and partition-lag diagnostics. The first four rows show window-mean total lag, window growth, window-mean skew and persistent-hot count. The final row shows maximum and mean partition lag. Exact persistent-hot identifiers remain in the supporting data; the count alone does not identify a reassignment target. No scheduled action was selected by this reconstructed state.}
+\label{fig:four-partition-runtime-state}
+\end{figure}
+\clearpage

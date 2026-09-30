@@ -1,0 +1,51 @@
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+\midrule
+Redistribute 3 & 1 & 84.50 & 0.000 & 26.63 & 730.87\\
+Redistribute 3 & 2 & 79.28 & 0.000 & 25.82 & 731.38\\
+Targeted scale 6 & 1 & 110.19 & 0.000 & 35.23 & 730.89\\
+Targeted scale 6 & 2 & 112.94 & 0.000 & 34.72 & 731.13\\
+\bottomrule
+\end{tabular}
+\caption{Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.}
+\label{tab:four-partition-outcomes}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Actual CPU\\(core-s)} & \shortstack{Actual RSS\\(GiB-min)} & \shortstack{Requested CPU\\(core-min)} & \shortstack{Requested memory\\(GiB-min)}\\
+\midrule
+Redistribute 3 & 1 & 1,006.9 & 2.75 & 72.00 & 36.00\\
+Redistribute 3 & 2 & 1,018.7 & 2.72 & 72.00 & 36.00\\
+Targeted scale 6 & 1 & 1,301.6 & 4.09 & 136.83 & 68.42\\
+Targeted scale 6 & 2 & 1,300.6 & 4.01 & 136.85 & 68.42\\
+\bottomrule
+\end{tabular}
+\caption{Consumer resources over evaluation plus drain. Actual values integrate observed process CPU and RSS intervals and sum them across consumers. Requested values integrate Kubernetes resource declarations; neither is monetary or whole-cluster cost. A dash denotes unavailable full-window request coverage, not zero cost.}
+\label{tab:four-partition-resources}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Peak total\\lag} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+\midrule
+Redistribute 3 & 1 & 7,296 & 50,879 & 96.3 & 13,509 & 20.56\\
+Redistribute 3 & 2 & 6,994 & 50,157 & 97.0 & 12,258 & 20.88\\
+Targeted scale 6 & 1 & 12,683 & 66,598 & 95.7 & 15,839 & 23.00\\
+Targeted scale 6 & 2 & 12,740 & 70,217 & 95.0 & 16,277 & 22.72\\
+\bottomrule
+\end{tabular}
+\caption{Lag diagnostics during evaluation only, in offsets except skew and coverage. Means use trapezoidal area divided by covered time; peaks are sampled maxima. The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.}
+\label{tab:four-partition-diagnostics}
+\end{table}

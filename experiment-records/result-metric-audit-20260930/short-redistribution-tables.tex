@@ -1,0 +1,51 @@
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+\midrule
+Keep 3 & 1 & 226.34 & 30.182 & 83.41 & 422.08\\
+Redistribute 3 & 1 & 103.76 & 0.000 & 61.59 & 725.25\\
+Keep 3 & 2 & 227.13 & 30.475 & 83.24 & 421.76\\
+Redistribute 3 & 2 & 91.38 & 0.000 & 60.84 & 727.54\\
+\bottomrule
+\end{tabular}
+\caption{Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.}
+\label{tab:short-redistribution-outcomes}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Actual CPU\\(core-s)} & \shortstack{Actual RSS\\(GiB-min)} & \shortstack{Requested CPU\\(core-min)} & \shortstack{Requested memory\\(GiB-min)}\\
+\midrule
+Keep 3 & 1 & 515.8 & 1.56 & 42.00 & 21.00\\
+Redistribute 3 & 1 & 554.1 & 1.47 & 42.00 & 21.00\\
+Keep 3 & 2 & 516.5 & 1.55 & 42.00 & 21.00\\
+Redistribute 3 & 2 & 553.4 & 1.46 & 42.00 & 21.00\\
+\bottomrule
+\end{tabular}
+\caption{Consumer resources over evaluation plus drain. Actual values integrate observed process CPU and RSS intervals and sum them across consumers. Requested values integrate Kubernetes resource declarations; neither is monetary or whole-cluster cost. A dash denotes unavailable full-window request coverage, not zero cost.}
+\label{tab:short-redistribution-resources}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Peak total\\lag} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+\midrule
+Keep 3 & 1 & 58,189 & 99,805 & 99.3 & 8,109 & 4.93\\
+Redistribute 3 & 1 & 19,243 & 37,159 & 67.3 & 3,724 & 9.41\\
+Keep 3 & 2 & 57,329 & 99,153 & 99.3 & 8,025 & 4.92\\
+Redistribute 3 & 2 & 17,609 & 35,615 & 68.7 & 3,581 & 9.57\\
+\bottomrule
+\end{tabular}
+\caption{Lag diagnostics during evaluation only, in offsets except skew and coverage. Means use trapezoidal area divided by covered time; peaks are sampled maxima. The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.}
+\label{tab:short-redistribution-diagnostics}
+\end{table}

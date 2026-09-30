@@ -30,6 +30,8 @@ The September 29 baseline passed 286 tracked local tests. The September 30 repor
 
 During the September 29 block, the Mac coordinating the first baseline slept during collection. Nautilus continued the saved schedule; historical Prometheus evidence was recovered without rerunning traffic or changing cohort results. Missing local resource-request samples remain unavailable. The report separates this partial integral from complete resource observations. Original configuration restoration and stopped applications are verified after the block.
 
+The [September 30 metric audit](../experiment-records/result-metric-audit-20260930/README.md) adds compact comparison panels and timestamped windowed runtime states. All 4,063 fully defined states across twenty existing trials were checked against the formulas; six focused tests passed. Runtime-state growth retains fifteen intervals, while the separate processing-growth plot uses ten seconds. These are reconstructed observations, not an evaluated adaptive controller.
+
 ## Work still to evaluate
 
 The implemented actions are scheduled treatments. An adaptive decision policy, producer-side hot-key splitting, moving hotspots, changing processing costs, larger deployments and application-specific correctness remain future work. Further comparisons should test whether capacity-aware redistribution and intervention timing improve on the relevant existing responses under comparable information and resource budgets. Repetitions remain limited, and matching initial pods and ownership does not eliminate variability on shared machines.

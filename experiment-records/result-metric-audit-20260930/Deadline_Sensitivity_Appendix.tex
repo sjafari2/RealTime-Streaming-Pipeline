@@ -1,0 +1,74 @@
+\subsection{Completion-deadline sensitivity}\label{app:deadline-sensitivity}
+The half-second deadline is retained here to assess sensitivity. The main tables use one second. An overdue unfinished record is a miss at either applicable deadline; no unfinished latency is invented.
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Response & Run & Misses $>0.5$ s (\%) & Misses $>1$ s (\%)\\
+\midrule
+Keep 3 & 1 & 83.336 & 83.321\\
+Keep 3 & 2 & 83.388 & 83.364\\
+Redistribute 3 & 1 & 30.705 & 30.496\\
+Redistribute 3 & 2 & 32.200 & 31.838\\
+Targeted scale 6 & 1 & 26.529 & 26.260\\
+Targeted scale 6 & 2 & 27.586 & 27.331\\
+Kafka scale 6 & 1 & 26.095 & 25.828\\
+Kafka scale 6 & 2 & 21.255 & 21.051\\
+\bottomrule
+\end{tabular}
+\caption{Twelve high-input partitions: ten-minute evaluation. Retrospective calculation; original 99-ms results remain preserved.}
+\label{tab:twelve-partition-deadline-sensitivity}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Response & Run & Misses $>0.5$ s (\%) & Misses $>1$ s (\%)\\
+\midrule
+Redistribute 3 & 1 & 26.936 & 26.632\\
+Redistribute 3 & 2 & 26.496 & 25.821\\
+Targeted scale 6 & 1 & 36.053 & 35.232\\
+Targeted scale 6 & 2 & 35.064 & 34.717\\
+\bottomrule
+\end{tabular}
+\caption{Four high-input partitions: ten-minute evaluation. Both thresholds were prespecified.}
+\label{tab:four-partition-deadline-sensitivity}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Response & Run & Misses $>0.5$ s (\%) & Misses $>1$ s (\%)\\
+\midrule
+Keep 3 & 1 & 83.447 & 83.418\\
+Targeted scale 6 & 1 & 57.312 & 57.011\\
+Keep 3 & 2 & 83.258 & 83.239\\
+Targeted scale 6 & 2 & 58.572 & 58.171\\
+\bottomrule
+\end{tabular}
+\caption{Five-minute evaluation: targeted scaling. Retrospective calculation; original 99-ms results remain preserved.}
+\label{tab:short-targeted-scaling-deadline-sensitivity}
+\end{table}
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Response & Run & Misses $>0.5$ s (\%) & Misses $>1$ s (\%)\\
+\midrule
+Keep 3 & 1 & 83.438 & 83.413\\
+Redistribute 3 & 1 & 61.794 & 61.591\\
+Keep 3 & 2 & 83.278 & 83.241\\
+Redistribute 3 & 2 & 61.100 & 60.840\\
+\bottomrule
+\end{tabular}
+\caption{Five-minute evaluation: redistribution. Retrospective calculation; original 99-ms results remain preserved.}
+\label{tab:short-redistribution-deadline-sensitivity}
+\end{table}

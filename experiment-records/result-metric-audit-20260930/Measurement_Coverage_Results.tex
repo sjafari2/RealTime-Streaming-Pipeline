@@ -1,0 +1,45 @@
+\subsection{Measurement coverage and interpretation}\label{sec:result-metric-coverage}
+These comparisons report each run separately. Messages generated during evaluation form a distinct broker-acknowledged cohort followed through the original drain cutoff. Completion is the end of application processing before offset-commit acknowledgment. Warm-up messages are excluded from cohort latency and deadline outcomes but can remain queued and can contribute to completion throughput during evaluation. Every ten-minute evaluation is preceded by one minute of warm-up and followed by two minutes of drain: thirteen minutes in total. The earlier five-minute evaluations last eight minutes in total and are reported in the appendix.
+
+The main deadline is one second; the half-second calculation is retained as sensitivity analysis in the appendix. Both were specified before the four-partition trials. Their application to older trials is retrospective; the original 99-ms outcomes remain in the records. These are experimental completion deadlines, not a validated application SLA, and no acceptable violation percentage has yet been defined.
+
+Monitoring summaries and time-series figures cover evaluation, while requested-resource and observed-process integrals cover evaluation plus drain. Actual CPU use and resident memory are distinct from Kubernetes resource requests. Invalid measurements, ownership changes and offset discontinuities are excluded from continuous intervals; no missing period is filled with zero. Individual runs are retained because two repetitions do not establish a general effect or a confidence interval.
+
+The cohort replay retained the original admission, completion and unfinished counts and p99 values. New handover validations passed, and no duplicate completion attempts were found in the ten-minute blocks. These checks support record-level accounting in the synthetic application; they do not establish exactly-once business effects at an external durable sink. Latency uses producer and consumer wall-clock timestamps, while application-processing duration uses a local monotonic timer. Clock synchronization does not imply zero timing uncertainty.
+
+The combined diagnostic figures show persistent-hot counts, lag skew and maximum/mean partition lag for each run. A partition is hot when its lag is greater than 10 offsets and greater than the current mean plus one population standard deviation. It is persistently hot when it is hot now and was hot in at least twelve of fifteen contiguous valid observations. Fifteen points on the two-second grid span twenty-eight seconds between endpoints. Invalid observations, gaps greater than three seconds, ownership changes and decreasing offsets restart the history. Undefined detector values remain missing rather than being shown as zero. These are exploratory diagnostic settings; the experiments use scheduled actions and do not validate adaptive trigger thresholds.
+
+The runtime-state panels reconstruct $\mathcal{X}(t)=(\overline{B}_W(t),\overline{G}_W(t),\overline{S}_W(t),H_{\mathrm{persistent}}(t))$ from the recorded observations. Backlog and skew average fifteen samples, spanning 28 seconds; growth averages fifteen two-second intervals, spanning 30 seconds and requiring sixteen samples. These are the sample and interval conventions in the Metrics formulas. The fourth component is a set: the figure shows its size, while the supporting CSV and JSON retain the exact partition identifiers at each timestamp. A missing set is different from an observed empty set. These states are reconstructed offline; no adaptive controller using them was evaluated. The performance figure separately uses a ten-second processing-backlog growth window (five intervals and six observations). Shortening that plot window does not change the runtime-state or persistence window.
+
+The measured processing backlog uses the contiguous completion frontier, whereas consumer-position lag uses the position after records have been returned to the application. Their equality at the retained valid snapshots in these two ten-minute blocks does not make the definitions interchangeable, particularly for future batched or concurrent processing. The acknowledged-unfinished curves use message identities and include warm-up work, so they are not the evaluation-cohort unfinished percentage.
+\begingroup
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.22\linewidth}>{\raggedright\arraybackslash}p{.42\linewidth}>{\raggedright\arraybackslash}p{.29\linewidth}@{}}
+\caption{Coverage of the defined measurement families. Planned measurements are distinguished from completed evidence; no result is inferred merely because a metric is defined.}
+\label{tab:result-metric-coverage}\\
+\toprule
+Metric family & Evidence in results & Interpretation\\
+\midrule\endfirsthead
+\toprule
+Metric family & Evidence in results & Interpretation\\\midrule\endhead
+Partition lag and total lag & Main lag plots, diagnostic figure and lag-summary tables; older five-minute counterparts in the appendix. & Offsets, not guaranteed record counts.\\
+Processing backlog and growth & Main backlog-growth plots and acknowledged-unfinished plots; growth is also retained for consumer-position lag. & Completion frontier and returned-record position have different definitions.\\
+Maximum and mean partition lag & Bottom row of each diagnostic figure and sampled-peak tables. & Maximum and mean are taken across partitions at each valid observation.\\
+Lag skew and window-mean skew & Runtime-state row shows window-mean skew; the summary table and separate diagnostic plot retain raw skew. & High relative skew can coexist with small absolute lag.\\
+Hot set, persistence score and persistent-hot set & Top diagnostic row, detector settings and interpretation of early versus late observations. & Exploratory diagnostic, not a calibrated controller trigger.\\
+Window-mean backlog and runtime state & Runtime-state figure and timestamped CSV/JSON, including persistent-hot partition IDs. & Reconstructed from retained observations; no adaptive controller was evaluated.\\
+Completion mean, p50, p95 and p99 & Outcome and latency-detail tables for each block. & Each quantile uses completed evaluation-born messages, not averaged rolling quantiles.\\
+Processing-start latency and processing duration & Latency-detail tables and separation of queued delay from synthetic work. & Processing duration excludes evidence writing and commit bookkeeping.\\
+Unfinished work and completion deadlines & Unfinished percentage and 1-second cohort deadline misses in main tables; 0.5-second sensitivity in appendix. & Overdue unfinished messages count as misses; they have no fabricated completion latency.\\
+Observed-completion violation rate & Separate latency-detail column at 1 second. & Completion-attempt population during evaluation differs from the admitted cohort.\\
+Input, useful throughput and attempt throughput & Main throughput plots and outcome tables; admitted rate and replay checks in text. & Attempts and distinct completions agree only when no duplicate completions occur.\\
+Actual CPU and resident memory & Main process traces and observed resource integrals. & Consumer processes only; no full-cluster energy or monetary-cost claim.\\
+Requested CPU and memory cost & Main resource tables, integrated over evaluation plus drain; detailed resource-cost figures retained with records. & Partial request coverage is unavailable for full-run comparison, not zero.\\
+Interruption, transition backlog and recovery & Main intervention-cost tables, with operational endpoints identified. & Recovery is first threshold confirmation while input continues; not permanent stability.\\
+Correctness and measurement quality & Identity reconciliation, handover validation, clock limitations and explicit coverage discussion. & Synthetic records do not prove exactly-once business effects at a durable external sink.\\
+Controller overhead, splitting and state-transfer cost & Explicitly identified as unevaluated future measurements. & No adaptive controller, hot-key splitting or stateful transfer was evaluated in these trials.\\
+\bottomrule
+\end{longtable}
+\endgroup
