@@ -19,3 +19,28 @@ The common starting map and original consumer pods/nodes were verified before tr
 The next research question is whether a controller can select a response using measured capacity, backlog and intervention cost, and whether more selective handover or capacity-aware assignment adds value over the successful native-scaling and three-consumer redistribution baselines. No additional trials are included in this completed block.
 
 The [results and metric definitions](README.md), [validation record](validation.json), and [raw-file recovery record](local-evidence-recovery.json) document the evidence and limitations. Large raw evidence remains outside Git; public summaries and hashes are not a separate backup of that evidence.
+
+## Why retain the ten-minute comparison as the primary result
+
+The longer observation captures recovery while input continues. In the two
+redistribute-within-three trials, the predefined low-backlog criterion was
+confirmed at 372 and 396 seconds after evaluation began (6.2 and 6.6 minutes),
+after a five-minute evaluation would have ended. The ten-minute block also
+compares all four responses, including native Kafka scaling. A finite observation
+does not prove indefinite stability.
+
+Monitoring completeness is a separate issue. The earlier five-minute
+redistribution trials first regained valid total lag 79.74 and 72.22 seconds
+after active ownership verification. The corresponding later values were 1.45
+and 0.88 seconds after the monitoring correction. Longer duration alone did not
+fix missing measurements. Both blocks now display ten-second growth; this
+reduces the extra window wait by twenty seconds without reconstructing missing
+observations. Execution date, hot-partition identities and monitoring code also
+differ, so the blocks are not an isolated comparison of run duration.
+
+The proposal uses this ten-minute block as its main intervention comparison,
+with the earlier five-minute evidence retained in the appendix. Both durations
+have the same available diagnostic types: lag, growth, skew, process CPU/RSS,
+throughput, p99/unfinished outcomes, final ownership and event-based outstanding
+work, alongside requested-resource and intervention-cost tables. There is no
+separate five-minute native-Kafka-scaling trial.

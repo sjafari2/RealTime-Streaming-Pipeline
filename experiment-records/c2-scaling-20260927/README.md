@@ -38,7 +38,7 @@ The comparison tests added replicas and a predeclared assignment change together
 
 Full metric definitions, configuration, process CPU/RSS, deadline outcomes, growth windows, request integrals, coverage, transition timing, identity checks and source-evidence hashes are retained in comparison.json. Large raw evidence remains in the separate results storage.
 
-[Six time-series plots](c2-scaling-metrics.pdf) · [P99 and unfinished-work plot](c2-scaling-p99-unfinished.pdf) · [Intervention cost analysis](INTERVENTION_COST.md)
+[All metric plots](c2-scaling-metrics.pdf) · [P99 and unfinished-work plot](c2-scaling-p99-unfinished.pdf) · [Intervention cost analysis](INTERVENTION_COST.md)
 
 ![c2-scaling-lag](c2-scaling-lag.png)
 
@@ -51,3 +51,21 @@ Full metric definitions, configuration, process CPU/RSS, deadline outcomes, grow
 ![c2-scaling-growth](c2-scaling-growth.png)
 
 ![c2-scaling-skew](c2-scaling-skew.png)
+
+## Comparable diagnostic coverage
+
+The five- and ten-minute intervention reports include lag, 10-second growth,
+skew, process CPU/RSS, throughput, whole-run p99 with unfinished outcomes,
+observed final ownership, and acknowledged-but-unfinished work. The latter
+uses separate message events and includes warm-up; it does not fill missing
+broker-offset observations. Requested-resource integrals and intervention
+cost/recovery remain in the existing tables. This earlier block did not test
+Kafka native scaling as a separate condition.
+
+[Observed final ownership](c2-scaling-ownership.pdf) · [Outstanding work for every condition](c2-scaling-outstanding.pdf) · [Event evidence and plotted values](additional-diagnostics.json)
+
+Regenerate the two added diagnostics from the retained evidence:
+
+```bash
+python3 python-scripts/draw_handoff_diagnostics.py experiment-records/c2-scaling-20260927 experiment-records/c2-scaling-20260927 --prefix c2-scaling
+```

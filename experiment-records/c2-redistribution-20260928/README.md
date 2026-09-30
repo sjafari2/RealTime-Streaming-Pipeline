@@ -60,7 +60,7 @@ Finishing all evaluation messages by the drain cutoff does not demonstrate recov
 
 Lag means and sampled peaks describe valid observations only. Missing or stale partition observations around handoff are kept as gaps, so these lag summaries do not cover the entire transition. The separate message-event reconstruction supports the outstanding-work cost calculation through that interval. [Monitoring validity intervals](monitoring-quality.json) and [the evidence guide](EVIDENCE_GUIDE.md) document these distinctions.
 
-[Six time-series plots](c2-redistribution-metrics.pdf) · [P99 and unfinished work](c2-redistribution-p99-unfinished.pdf) · [Intervention cost](INTERVENTION_COST.md)
+[All metric plots](c2-redistribution-metrics.pdf) · [P99 and unfinished work](c2-redistribution-p99-unfinished.pdf) · [Intervention cost](INTERVENTION_COST.md)
 
 ![c2-redistribution-lag](c2-redistribution-lag.png)
 
@@ -73,3 +73,21 @@ Lag means and sampled peaks describe valid observations only. Missing or stale p
 ![c2-redistribution-growth](c2-redistribution-growth.png)
 
 ![c2-redistribution-skew](c2-redistribution-skew.png)
+
+## Comparable diagnostic coverage
+
+The five- and ten-minute intervention reports include lag, 10-second growth,
+skew, process CPU/RSS, throughput, whole-run p99 with unfinished outcomes,
+observed final ownership, and acknowledged-but-unfinished work. The latter
+uses separate message events and includes warm-up; it does not fill missing
+broker-offset observations. Requested-resource integrals and intervention
+cost/recovery remain in the existing tables. This earlier block did not test
+Kafka native scaling as a separate condition.
+
+[Observed final ownership](c2-redistribution-ownership.pdf) · [Outstanding work for every condition](c2-redistribution-outstanding.pdf) · [Event evidence and plotted values](additional-diagnostics.json)
+
+Regenerate the two added diagnostics from the retained evidence:
+
+```bash
+python3 python-scripts/draw_handoff_diagnostics.py experiment-records/c2-redistribution-20260928 experiment-records/c2-redistribution-20260928 --prefix c2-redistribution
+```

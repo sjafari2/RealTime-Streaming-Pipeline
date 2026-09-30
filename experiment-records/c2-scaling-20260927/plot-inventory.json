@@ -1,0 +1,21 @@
+{
+  "evaluation_seconds": 300,
+  "total_seconds": 480,
+  "plots": {
+    "lag": "c2-scaling-lag.pdf",
+    "growth": "c2-scaling-growth.pdf",
+    "skew": "c2-scaling-skew.pdf",
+    "cpu": "c2-scaling-cpu.pdf",
+    "memory": "c2-scaling-memory.pdf",
+    "throughput": "c2-scaling-throughput.pdf",
+    "p99_and_unfinished": "c2-scaling-p99-unfinished.pdf",
+    "ownership": "c2-scaling-ownership.pdf",
+    "outstanding_work": "c2-scaling-outstanding.pdf"
+  },
+  "cost_report": "INTERVENTION_COST.md",
+  "combined": "c2-scaling-metrics.pdf",
+  "limitations": [
+    "Native Kafka scaling was not tested separately in this earlier block.",
+    "Monitoring implementation, partition identities, execution dates and duration differ from the later ten-minute block."
+  ]
+}
