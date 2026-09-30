@@ -81,6 +81,13 @@ Targeted scale 6 & 2 & 20.023 & 0.127 & 95.434 & 2.418 & 37.51\\
 \caption{Supplementary latency diagnostics. Mean, p50 and p95 use completed evaluation-born messages. Mean work is the local monotonic application-processing duration. Observed violations use completion attempts occurring during evaluation and have a different denominator from the primary admitted-cohort deadline rate.}
 \label{tab:four-partition-latency-details}
 \end{table}
+\clearpage
+\begingroup
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
 \begin{table}[!htbp]
 \centering\small
 \setlength{\tabcolsep}{3pt}
@@ -95,10 +102,18 @@ Targeted scale 6 & 1 & 78.52 & 19.881 & 13,918 & 4,678 & 290.5\\
 Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
 \bottomrule
 \end{tabular}
-\caption{Intervention costs. For targeted actions, transfer is release request to verified active ownership; for native scaling it is decision to stable-six-owner confirmation. The latter also defines native decision-to-active. Recovery is confirmation after the actual decision. Global gap measures the longest interval without any consumer processing, not a per-partition downtime. Negative net pending change means processing reduced outstanding work during the measured transition. Dashes denote unavailable or inapplicable values.}
+\caption{Intervention costs. Decision-to-active ends at verified ownership; transfer spans release request to verified ownership. Global gap is the longest interval without any consumer processing. Extra pending work uses that pause; net pending change uses the transfer interval. Recovery is measured from the decision to its confirmation.}
 \label{tab:four-partition-intervention-cost}
 \end{table}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=.58\textheight,keepaspectratio]{figures/four-partition-compact-outcomes.pdf}
+\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by whole-cohort p99 and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the outcome cohort.}
+\label{fig:four-partition-compact-outcomes}
+\end{figure}
+\clearpage
 \begin{table}[!htbp]
+\begin{minipage}[t]{.48\linewidth}\vspace{0pt}
 \centering\small
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
@@ -114,33 +129,27 @@ Targeted scale 6 & 2 & 1 & 1 & 1 & 1 & 0 & 0\\
 \end{tabular}
 \caption{Final observed numbers of configured high-input partitions per consumer. These are traffic targets, not persistent-hot detector counts. All high-input partitions initially belonged to Consumer 2. A dash means no observed partition ownership.}
 \label{tab:four-partition-ownership}
-\end{table}
-\begin{table}[!htbp]
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.48\linewidth}\vspace{0pt}
 \centering\small
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}lrrrrr@{}}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-Response & Run & Reference event & C3 (s) & C4 (s) & C5 (s)\\
+Response & Run & C3 (s) & C4 (s) & C5 (s)\\
 \midrule
-Targeted scale 6 & 1 & Replica request & 69.06 & 68.95 & 69.09\\
-Targeted scale 6 & 2 & Replica request & 71.56 & 71.46 & 71.53\\
+Targeted scale 6 & 1 & 69.06 & 68.95 & 69.09\\
+Targeted scale 6 & 2 & 71.56 & 71.46 & 71.53\\
 \bottomrule
 \end{tabular}
-\caption{Activation delay to the first valid completion on each added consumer. Targeted scaling uses the recorded replica-request event; native scaling uses the action decision because an equivalent replica-request timestamp was not separately recorded. These are not whole-action completion times or pure rebalance delays.}
+\caption{Seconds from replica request to the first valid completion on each added consumer. These intervals include startup and handover; they are not pure rebalance delays or whole-action completion times.}
 \label{tab:four-partition-activation-delay}
+\end{minipage}
 \end{table}
-\clearpage
-\begin{figure}[p]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/four-partition-compact-outcomes.pdf}
-\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by whole-cohort p99 and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the outcome cohort.}
-\label{fig:four-partition-compact-outcomes}
-\end{figure}
-\clearpage
-\begin{figure}[p]
-\centering
-\includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/four-partition-compact-performance.pdf}
+\includegraphics[width=\linewidth,height=.60\textheight,keepaspectratio]{figures/four-partition-compact-performance.pdf}
 \caption{Actual consumer CPU and resident memory, useful completion throughput, and ten-second processing-backlog growth. Resource traces sum fresh measurements for all started consumer processes; an unavailable component leaves a gap. Requested resources and their integrals remain separate in the resource table.}
 \label{fig:four-partition-compact-performance}
 \end{figure}
@@ -152,3 +161,4 @@ Targeted scale 6 & 2 & Replica request & 71.56 & 71.46 & 71.53\\
 \label{fig:four-partition-runtime-state}
 \end{figure}
 \clearpage
+\endgroup

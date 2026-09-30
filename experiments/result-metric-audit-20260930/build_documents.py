@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import sys
@@ -64,6 +65,36 @@ def fig(name, caption, label):
     return '\n'.join([r'\begin{figure}[p]',r'\centering',
         r'\includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/'+name+'.pdf}',
         r'\caption{'+caption+'}',r'\label{'+label+'}',r'\end{figure}',r'\clearpage'])+'\n'
+
+
+def compact_four_partition_layout(source):
+    """Keep the small intervention tables beside their related figures."""
+    tables = re.findall(r'\\begin\{table\}.*?\\end\{table\}\n', source, re.S)
+    figures = re.findall(r'\\begin\{figure\}.*?\\end\{figure\}\n\\clearpage\n', source, re.S)
+    if len(tables) != 7 or len(figures) != 3:
+        raise ValueError('Expected seven tables and three four-partition figures')
+    costs, owners, activation = tables[4:]
+    costs = re.sub(r'\\caption\{.*?\}\n', lambda _: r'\caption{Intervention costs. Decision-to-active ends at verified ownership; transfer spans release request to verified ownership. Global gap is the longest interval without any consumer processing. Extra pending work uses that pause; net pending change uses the transfer interval. Recovery is measured from the decision to its confirmation.}'+'\n', costs)
+    activation = re.sub(r'\\caption\{.*?\}\n', lambda _: r'\caption{Seconds from replica request to the first valid completion on each added consumer. These intervals include startup and handover; they are not pure rebalance delays or whole-action completion times.}'+'\n', activation)
+    # The reference event is identical in both rows and remains in the caption.
+    activation = activation.replace('lrrrrr@{}', 'lrrrr@{}').replace(' & Reference event', '').replace(' & Replica request', '')
+    def beside_table(text):
+        body = re.sub(r'\\begin\{table\}\[.*?\]\n|\\end\{table\}\n', '', text)
+        return r'\begin{minipage}[t]{.48\linewidth}\vspace{0pt}'+'\n'+body+r'\end{minipage}'+'\n'
+    ownership_details = r'\begin{table}[!htbp]'+'\n'+beside_table(owners)+r'\hfill'+'\n'+beside_table(activation)+r'\end{table}'+'\n'
+    # Float-page stretch otherwise creates large gaps between small tables.
+    begin = r'''\clearpage
+\begingroup
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+'''
+    outcome = figures[0].replace('[p]', '[!htbp]').replace('.79\\textheight', '.58\\textheight')
+    performance = figures[1].replace('[p]', '[!htbp]').replace('.79\\textheight', '.60\\textheight')
+    prefix = source[:source.index(tables[0])] + ''.join(tables[:4])
+    return prefix + begin + costs + outcome + ownership_details + performance + figures[2] + '\\endgroup\n'
 
 
 COMMON = r"""These comparisons report each run separately. Messages generated during evaluation form a distinct broker-acknowledged cohort followed through the original drain cutoff. Completion is the end of application processing before offset-commit acknowledgment. Warm-up messages are excluded from cohort latency and deadline outcomes but can remain queued and can contribute to completion throughput during evaluation. Every ten-minute evaluation is preceded by one minute of warm-up and followed by two minutes of drain: thirteen minutes in total. The earlier five-minute evaluations last eight minutes in total and are reported in the appendix.
@@ -193,6 +224,8 @@ def main():
         for metric,caption in PLOT_CAPTIONS.items():
             src=source/('four-condition-'+metric+'.pdf');name=block+'-'+metric
             if metric!='ownership':shutil.copy2(src,out/'figures'/(name+'.pdf'))
+        if block == 'four-partition':
+            s = compact_four_partition_layout(s)
         (out/('Twelve_Partition_Results_Updated.tex' if block=='twelve-partition' else 'Four_Partition_Results_New.tex')).write_text(s)
     short_tex=r'\subsection{Five-minute evaluation experiments: additional metrics}'+'\n'+SHORT
     for block,_ in BLOCKS[2:]:
@@ -236,7 +269,7 @@ The one-second deadline is the main outcome. Half-second sensitivity is secondar
 '''
     (out/'README.md').write_text(instructions)
     (out/'Results_Metric_Update.tex').write_text(r'''\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\usepackage[a4paper,margin=1in]{geometry}
 \usepackage{graphicx,booktabs,longtable,array,amsmath,hyperref}
 \hypersetup{hidelinks}
 \title{Experimental results: expanded measurement coverage}
