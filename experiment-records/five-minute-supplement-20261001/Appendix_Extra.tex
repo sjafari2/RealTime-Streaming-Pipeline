@@ -5,14 +5,72 @@
 \usepackage[T1]{fontenc}
 \usepackage{hyperref}
 \setlength{\emergencystretch}{2em}
-\title{Extra Appendix: Five-Minute Experiments}
+\title{Extra Appendix: Measurement Details and Earlier Experiments}
 \author{Soheila Jafari Khouzani}
 \date{Fall 2026}
 \begin{document}
 \maketitle
-This supplement preserves twelve earlier performance trials and their plots, tables and monitoring limitations. The main proposal reports the balanced calibration and ten-minute comparisons separately. Each trial here used one minute of warm-up, five minutes of evaluation and two minutes of drain: eight minutes in total.
+This supplement preserves supporting measurement explanations and plots omitted from the main proposal. It contains the consumer-offset example, measurement coverage, twelve five-minute-evaluation trials, detailed plots for the eight ten-minute-evaluation trials, and the plots from the historical 24-trial scaling campaign. These are separate experiment groups; additional plots do not represent additional trials. The five-minute-evaluation trials used one minute of warm-up and two minutes of drain, for eight minutes in total. The historical campaign used different durations and an earlier deployment, as stated in its section. The main proposal retains the balanced calibration and compact ten-minute result figures.
 
 Completion latency ends when application processing finishes, before offset-commit acknowledgment. P99 uses distinct evaluation messages completed by the drain cutoff. Unfinished percentages and SLO violations use all successfully published evaluation messages; the one-second SLO also counts overdue unfinished messages. Throughput counts distinct completions during evaluation, including any queued warm-up messages. Consumer resource totals cover evaluation and drain. Missing monitoring intervals remain gaps.
+\clearpage
+\section{Consumer Position and Offset Commits: Example}
+\label{app:consumer-offset-example}
+This illustrative example concerns one partition processed sequentially. An offset identifies a record's position in that partition. The consumer application has received records 100--104. Records 100 and 101 have finished processing, record 102 is being processed, and records 103 and 104 are waiting. Kafka has most recently acknowledged a committed offset of 100, meaning that progress through record 99 was saved.
+
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.29\linewidth}r>{\raggedright\arraybackslash}X@{}}
+\toprule
+Progress measure & Value & Meaning at this instant\\
+\midrule
+Consumer position & 105 & Records through 104 were received by the consumer application; 105 is next to be received.\\
+Completion frontier & 102 & Records through 101 have finished processing; 102 is the next unfinished record.\\
+Committed offset & 100 & Kafka's saved restart point is 100. Finished work after record 99 has not yet been committed.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The application has therefore received five records but finished only two of them. If it crashes now, before any newer commit succeeds, normal consumption resumes from offset 100. Records 100 and 101 may be processed again even though their application processing had finished. A later commit can advance the restart point only through successfully completed work. Reading records and committing offsets do not delete those records from Kafka; retention settings govern their removal.
+
+In Kafka client terminology, records are \emph{returned} when the client's receive call hands them to the consumer application. This means received by the application, not sent back to Kafka and not necessarily processed.
+
+\clearpage
+\section{Measurement Coverage}
+\label{app:measurement-coverage}
+\begingroup
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.06}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.22\linewidth}>{\raggedright\arraybackslash}p{.42\linewidth}>{\raggedright\arraybackslash}p{.29\linewidth}@{}}
+\caption{Metric coverage and limitations.}
+\label{tab:result-metric-coverage}\\
+\toprule
+Metric family & Evidence in results & Interpretation\\
+\midrule\endfirsthead
+\toprule
+Metric family & Evidence in results & Interpretation\\\midrule\endhead
+Partition lag and total lag & Main lag plots, diagnostic figure and lag-summary tables; older five-minute counterparts in the separate extra appendix. & Offsets, not guaranteed record counts.\\
+Processing backlog and growth & Main backlog-growth plots and acknowledged-unfinished plots; growth is also retained for consumer-position lag. & Completion frontier and returned-record position have different definitions.\\
+Maximum and mean partition lag & Bottom row of each diagnostic figure and tables of sampled maxima. & Maximum and mean are taken across partitions at each valid observation.\\
+Lag skew and window-mean skew & Runtime-state row shows window-mean skew; the summary table and separate diagnostic plot retain raw skew. & High relative skew can coexist with small absolute lag.\\
+Hot set, persistence score and persistent-hot set & Persistent-hot row, detector settings and interpretation of early versus late observations. & Exploratory diagnostic, not a validated controller trigger.\\
+Window-mean backlog and runtime state & Runtime-state figure and timestamped CSV/JSON, including persistent-hot partition IDs. & Reconstructed from retained observations; no adaptive controller was evaluated.\\
+Completion mean and p99 & Main outcome tables for each workload. & Calculated from completed evaluation messages through drain; p99 is not an average of rolling percentiles.\\
+Unfinished work and completion deadlines & Unfinished percentage and one-second SLO violations in main tables; 0.5-second sensitivity in appendix. & Overdue unfinished messages count as misses; they have no fabricated completion latency.\\
+Input rate and throughput & Main throughput plots and outcome tables; acknowledged input rate in the text. & Throughput counts each distinct completed message once.\\
+Actual CPU and resident memory & Main process traces and observed resource integrals. & Consumer processes only; no full-cluster energy or monetary-cost claim.\\
+Requested CPU and memory cost & Main resource tables, integrated over evaluation plus drain; detailed resource-cost figures retained with records. & Partial request coverage is unavailable for full-run comparison, not zero.\\
+Interruption, transition backlog and recovery & Main intervention-cost tables, with operational endpoints identified. & Recovery is first threshold confirmation while input continues; not permanent stability.\\
+Correctness and measurement quality & Identity reconciliation, handover validation, clock limitations and explicit coverage discussion. & Checks cover the completed stateless synthetic trials.\\
+Controller overhead and hot-key splitting & Explicitly identified as unevaluated future measurements. & Neither was evaluated in these trials; stateful transfer is outside the primary scope.\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\clearpage
+\tableofcontents
+\clearpage
 \clearpage
 \section{Five-Minute Evaluation: Ownership and Intervention Results}
 \label{app:five-minute-results}
@@ -526,6 +584,168 @@ Redistribute 3 & 2 & 61.100 & 60.840\\
 \label{tab:short-targeted-scaling-deadline-sensitivity}
 \label{tab:short-redistribution-deadline-sensitivity}
 \end{table}
+
+
+\clearpage
+\section{Detailed Plots: Ten-Minute Evaluation}
+\label{app:preserved-ten-minute-plots}
+These plots preserve the detailed views of the eight trials comparing unchanged ownership, redistribution among three consumers, scaling with targeted redistribution, and scaling with Kafka's normal rebalancing. Each condition was run twice, at 700 aggregate messages/s with 80\% of input directed to twelve of sixty partitions. Each trial used one minute of warm-up, ten minutes of evaluation and two minutes of drain. These are the same trials summarized in the main proposal, not additional experiments. Missing monitoring intervals remain visible; the figures have not been altered to fill gaps.
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth]{figures/whole-experiment-resources.pdf}
+\caption{Measured consumer CPU time and integrated resident memory over evaluation plus drain for all eight trials. Bars sum covered process observations and exclude requested allocations, brokers and other node processes. Additional consumers begin during evaluation. Unchanged ownership leaves unfinished work, so its lower CPU total is not a like-for-like complete-processing cost.}
+\label{fig:four-condition-full-resources}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{figures/four-condition-cpu.pdf}
+\caption{Observed consumer-process CPU use, in cores. These measurements describe process utilization during evaluation, not requested CPU, whole-node use or monetary cost. Each panel belongs to a separate thirteen-minute trial; the ten-minute evaluation is shown.}
+\label{fig:four-condition-cpu}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{figures/four-condition-memory.pdf}
+\caption{Observed consumer-process resident memory. RSS is distinct from requested Kubernetes memory and does not measure the volume of data moved during reassignment. Each panel belongs to a separate thirteen-minute trial; the ten-minute evaluation is shown.}
+\label{fig:four-condition-memory}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{figures/four-condition-throughput.pdf}
+\caption{Acknowledged input and distinct completion throughput during evaluation. Completions include warm-up messages processed during this interval; latency and unfinished-message outcomes use the messages produced during evaluation through drain. Each panel belongs to a separate thirteen-minute trial; the ten-minute evaluation is shown.}
+\label{fig:four-condition-throughput}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{figures/four-condition-growth.pdf}
+\caption{Rolling processing-backlog growth over a ten-second window (five two-second intervals). This display window was shortened from thirty seconds after the trials and applied consistently to all eight trials. Positive values indicate accumulation and negative values indicate reduction. Missing observations, ownership changes and offset resets break the window; growth resumes only after a complete valid window. The separate requirement for thirty seconds of low backlog before confirming recovery is unchanged. Each panel belongs to a separate thirteen-minute trial; the ten-minute evaluation is shown.}
+\label{fig:four-condition-growth}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{figures/four-condition-skew.pdf}
+\caption{Partition-level lag skew during evaluation. Relative skew may rise when only a small absolute backlog remains; the ratio must be interpreted alongside total lag. Each panel belongs to a separate thirteen-minute trial; the ten-minute evaluation is shown.}
+\label{fig:four-condition-skew}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{figures/four-condition-ownership.pdf}
+\caption{Observed partition ownership and high-traffic partition counts. Targeted and normal scaling need not reach the same final map. Equal partition counts do not establish equal assigned traffic or processing capacity. Each panel belongs to a separate thirteen-minute trial; the ten-minute evaluation is shown.}
+\label{fig:four-condition-ownership}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{figures/four-condition-outstanding.pdf}
+\caption{Distinct acknowledged messages not yet completed during the ten-minute evaluation of each thirteen-minute trial. Counts include warm-up work and use acknowledgment and completion events, rather than broker-offset lag. Intervention markers describe the recorded action and coordination intervals.}
+\label{fig:four-condition-outstanding}
+\end{figure}
+
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{figures/four-condition-lag-comparison.pdf}
+\caption{Total consumer-position lag during the ten-minute evaluation, comparing all four responses within each run number. Each curve represents a separate trial. Missing observations and ownership transitions remain gaps.}
+\label{fig:preserved-four-condition-lag-comparison}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{figures/four-condition-p99-unfinished.pdf}
+\caption{Whole-run completion p99 and unfinished evaluation messages at the fixed drain cutoff for the same eight trials. This preserves the earlier standalone presentation of outcomes also summarized in the main proposal.}
+\label{fig:preserved-four-condition-p99-unfinished}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{figures/whole-experiment-lag.pdf}
+\caption{Total consumer-position lag through ten minutes of evaluation and two minutes of drain. The shaded interval is drain. Panel scales differ, and gaps remain missing observations.}
+\label{fig:preserved-whole-experiment-lag}
+\end{figure}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{figures/whole-experiment-outcomes.pdf}
+\caption{Archived combined outcome view for the same eight trials: completion p99, unfinished messages and deadline violations. The one-second deadline is the experimental SLO; the half-second result is a sensitivity check. Each trial has 420,000 acknowledged evaluation messages followed through drain.}
+\label{fig:preserved-whole-experiment-outcomes}
+\end{figure}
+\clearpage
+\section{Historical Scaling Campaign: Preserved Plots}
+\label{app:preserved-historical-plots}
+These seven plots concern the earlier 24 performance trials: twelve comparisons of keeping three consumers versus scheduled scaling to six, with two runs per workload condition. Total target input was 1,500 messages/s, except for the lower-input controls at 600 messages/s. Each trial had one minute of warm-up and two minutes of drain. Evaluation lasted two minutes for the lower-input and short-pressure trials, nine minutes for sustained balanced pressure, and four minutes for the distributed-skew and single-partition trials. Total durations were therefore five, twelve and seven minutes, respectively. Historical panel titles retain their original production-duration labels, which include warm-up but exclude drain.
+
+The original deployment, rates, outcomes and monitoring limitations are retained. These trials are not repetitions of the current 700-message/s study and do not establish its balanced operating rate. The full historical tables and discussion remain in \texttt{Old\_Experiments.tex} in the Overleaf project. The figures and their original explanatory captions are preserved below.
+\clearpage
+\subsection*{p99 end-to-end latency}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_01_latency.png}
+\refstepcounter{figure}\label{fig:01-latency}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} Run 1 and Run 2 each represent two separate trials: Keep 3 and Scale to 6. Each bar shows one trial; run numbers are not before/after observations. Latency is measured only for evaluation messages that completed by the end of the additional processing period. The lower-input panel uses a smaller vertical range so sub-second differences remain visible. No averages or logarithmic axes are used.}
+\end{center}
+
+\clearpage
+\subsection*{Unfinished messages}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_02_unfinished.png}
+\refstepcounter{figure}\label{fig:02-unfinished}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} Bars show the percentage of acknowledged evaluation messages still unfinished after the additional 120-second processing period. All panels use the same vertical scale. A labelled zero means that all these messages finished.}
+\end{center}
+
+\clearpage
+\subsection*{Total lag}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_04_total_lag.png}
+\refstepcounter{figure}\label{fig:04-total-lag}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} Total lag is the sum of partition lags based on the consumer position, consistent with the proposal definition. It is distinct from a count based on completed processing. Run 1 and Run 2 are shown for sustained balanced input and the later distributed-skew and single-partition workloads. Gaps and ownership changes are not connected. Coverage is reported in keep-three / scale-to-six order; comparisons below 90\% in either run are diagnostic only and are not used for aggregate lag comparisons.}
+\end{center}
+
+
+\clearpage
+\subsection*{Performance under distributed skew}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_8020-performance.png}
+\refstepcounter{figure}\label{fig:8020-performance}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} Throughput counts distinct completions across all consumers in 30-second bins during evaluation, including any warm-up messages completed then. Processing backlog $Q$ measures the offset distance from the contiguous processing-completion frontier to the log end; it is not the consumer-position lag $B$ or the exact unfinished-message count at the drain cutoff. Growth is the change in $Q$ over a contiguous window of approximately 30 seconds. A flat positive growth line means that backlog continues to increase. Lag skew remains $\max B_p/\mathrm{mean} B_p$. Both scaling trials show higher throughput and declining $Q$ in the available later intervals, while skew can remain high as total lag declines. Lag coverage (keep/scale) is 99.2/87.5\% for Run 1 and 99.2/90.8\% for Run 2. Gaps are unavailable observations; growth requires additional valid history. The lower-coverage comparison is diagnostic only for lag comparisons.}
+\end{center}
+
+\clearpage
+\subsection*{Performance under single-partition concentration}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_single-partition-performance.png}
+\refstepcounter{figure}\label{fig:single-partition-performance}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} The same definitions and plotting windows as the preceding figure apply. Both run comparisons are retained: scaling increases throughput in Run 1 but lowers it in the later intervals of Run 2. Processing backlog continues to grow in both scaling trials. The nearly horizontal positive growth curves therefore do not demonstrate stable backlog. Lag coverage (keep/scale) is 99.2/90.0\% for Run 1 and 99.2/81.7\% for Run 2; Run 2 is diagnostic only for lag comparisons. These curves show production-time behavior, whereas the outcome tables measure completion through the additional 120-second drain. Initial assignment and original consumer nodes were matched; placement after scaling and shared-machine variability were not controlled.}
+\end{center}
+
+\clearpage
+\subsection*{CPU and memory diagnostics: distributed skew}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_8020-resources.png}
+\refstepcounter{figure}\label{fig:8020-resources}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} Each trace represents one producer or consumer process. CPU gauges are converted to cores, and resident memory (RSS) is shown in MiB. These are observed process measurements, distinct from requested CPU and memory resources over time. Historical resource-scrape freshness could not be verified, so repeated or flat gauge values cannot establish stable resource use. Missing intervals longer than three seconds are not connected. These plots are diagnostic supplements and do not establish total container usage, resource savings, memory saturation, or the cause of a performance difference.}
+\end{center}
+
+\clearpage
+\subsection*{CPU and memory diagnostics: single-partition concentration}
+\begin{center}
+\includegraphics[width=\linewidth]{advisor_single-partition-resources.png}
+\refstepcounter{figure}\label{fig:single-partition-resources}
+\par\smallskip
+{\small\textbf{Figure \thefigure:} Both matched run comparisons are shown using the same process-level definitions and limitations as the preceding figure. A CPU trace near one core indicates the recorded usage of that process, not the capacity of the entire consumer group. Memory is resident process memory, not the Kubernetes memory request or total node memory. Original scrape freshness is unavailable. Consequently, these measurements cannot by themselves explain why scaling helped Run 1 and worsened Run 2. These historical figures describe only the original 24 scaling trials; the subsequent balanced-rate and fixed-ownership calibrations are reported separately in the main proposal and the five-minute sections of this supplement.}
+\end{center}
+
+\clearpage
+
 
 \begin{thebibliography}{1}
 \bibitem{awsMskConsumerLag} Amazon Web Services. \emph{Monitor consumer lags}. Amazon MSK documentation. \url{https://docs.aws.amazon.com/msk/latest/developerguide/consumer-lag.html}. Accessed September 29, 2026.

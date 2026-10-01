@@ -1,15 +1,21 @@
-# Five-minute experiment supplement and architecture overview
+# Extra appendix: measurement details and preserved plots
 
-The extra appendix preserves twelve earlier trials at 700 aggregate messages/s: four fixed-ownership trials and two separate four-trial intervention comparisons. Each trial uses one minute of warm-up, five minutes of evaluation and two minutes of drain. The two intervention comparisons retain their own baselines and are not pooled into a direct ranking of the interventions.
+[Read the extra appendix](Appendix_Extra.pdf) or compile [its editable LaTeX source](Appendix_Extra.tex). The 60-page supplement includes 48 plot assets. It preserves the earlier 29 assets and adds 12 detailed ten-minute plots and seven historical scaling plots. Additional figures describe existing trials, not additional experiments.
 
-[Read the five-minute supplement](Appendix_Extra.pdf) or edit [its LaTeX source](Appendix_Extra.tex). Compile the source from this directory with a LaTeX engine; the required plot files are in `figures/`. The source is flattened into one editable file for portability.
+| Material | PDF pages |
+| --- | --- |
+| Consumer offset example and measurement coverage | 2–3 |
+| Contents | 4 |
+| Five-minute evaluation trials and diagnostics | 5–38 |
+| Detailed ten-minute evaluation plots | 39–51 |
+| Historical 24-trial scaling campaign plots | 52–59 |
 
-The main proposal reports 24 other trials: twelve balanced-rate calibration trials, eight ten-minute trials comparing four responses, and four ten-minute follow-up trials using four high-traffic partitions. Together with this supplement, these selected evaluations comprise 36 trials. This is the scope of these documents, not a count of every historical pipeline experiment.
+The five-minute group comprises twelve trials at 700 aggregate messages/s, with one minute of warm-up and two minutes of drain (eight minutes total). The ten-minute views concern the eight trials already summarized in the main proposal. The historical campaign used an earlier deployment and different rates and durations; its figures retain their original labels and captions. It is not pooled with the newer 700-message/s study.
 
-Repeated five-minute outcome, resource and lag tables are consolidated. Partial resource-history coverage and historical monitoring gaps remain explicit. Related completion-outcome and lag plots share a figure. No experimental measurement was changed or reconstructed to fill a gap. The half-second deadline remains a retrospective sensitivity check; the main experimental SLO is one second.
+No plot data were changed or filled across missing observations. Partial resource-history coverage and historical monitoring limitations remain explicit. The main experimental SLO is one second; half-second results are retained as sensitivity checks. Compact ten-minute and balanced-calibration figures remain in the main proposal.
 
-The [combined architecture and workflow diagram](Architecture_Workflow.pdf) distinguishes the current experimental pipeline from the planned heuristic controller. Its [TikZ source](architecture-workflow.tex) and [standalone wrapper](Architecture_Workflow.tex) are included.
+The source is flattened for portable compilation. Its local bibliography uses an explicit reference entry; the Overleaf copy retains the project's shared bibliography configuration. Required plot files are included. `figure-sha256.json` identifies all 48 assets, and `plot-preservation-audit.json` records the completeness check. Derived figures and summaries do not replace backups of raw evidence.
 
-The `figure-sha256.json` file identifies the exact plot assets used in the supplement. These are derived figures, not a backup of raw message records. The original run records and analysis provenance remain in the corresponding experiment-record directories.
+The [architecture and workflow diagram](Architecture_Workflow.pdf), [TikZ source](architecture-workflow.tex) and [standalone wrapper](Architecture_Workflow.tex) remain available in this directory.
 
-Validation: the main proposal compiled in Overleaf without errors or warnings; the supplement and merged diagram compiled locally and were visually inspected. Source audits found no missing figure/table references or duplicate labels. Numbered metric equations and experimental values were retained.
+Validation: the extra appendix compiled in Overleaf with zero errors, warnings or informational layout messages, and compiled locally. Added pages were visually inspected, all plot references resolve, and all 29 previously included assets remain present. No runtime code or experiment measurements changed.
