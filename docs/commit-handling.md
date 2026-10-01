@@ -1,4 +1,30 @@
-# Offset commits during group changes
+# Processing completion and offset commits
+
+The consumer processes messages one at a time and records when each finishes. It periodically asks Kafka to save its completed progress. Receiving a message alone does not mark it as completed. Automatic commits and automatic offset storage are disabled, so the application controls which completed offsets are submitted. Commits are also attempted during normal partition handover and orderly shutdown. Completion latency ends when processing finishes, before Kafka confirms the commit.
+
+![Processing and commit sequence](figures/consumer-commit-sequence.png)
+
+The [vector figure](figures/consumer-commit-sequence.pdf) can be rebuilt with ReportLab:
+
+```bash
+python3 docs/figures/build_consumer_commit_sequence.py docs/figures/consumer-commit-sequence.pdf
+```
+
+## Example: received, completed and committed
+
+Consider one partition processed sequentially. The application has received records 100–104. Records 100 and 101 have finished, record 102 is being processed, and 103 and 104 are waiting. Kafka last acknowledged a committed offset of 100, so progress through record 99 was saved.
+
+| Progress measure | Value | Meaning |
+| --- | ---: | --- |
+| Consumer position | 105 | Records through 104 were received by the application; 105 is next to be received. |
+| Completion frontier | 102 | Records through 101 finished; 102 is the next unfinished record. |
+| Committed offset | 100 | Kafka's saved restart point is 100. |
+
+The application received five records but finished only two. If it crashes before a newer commit succeeds, normal consumption resumes from offset 100. Records 100 and 101 may therefore be processed again. Later commits advance the restart point only through successfully completed work. Reading and committing do not delete records from Kafka; retention settings govern their removal.
+
+Kafka client documentation uses **returned** to mean that a receive call hands fetched records to the application. It does not mean sending them back to Kafka, and it does not establish processing completion.
+
+## Offset commits during group changes
 
 Completion is recorded after the configured work and before offset-commit acknowledgment. The completion frontier used for lag starts at the assigned offset; only offsets advanced by successfully processed messages are submitted for commit. Fresh assignments therefore do not send empty startup-progress commits.
 
