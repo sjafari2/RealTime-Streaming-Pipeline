@@ -11,14 +11,14 @@
 \node[wide] (run) at (0,1.25)
   {\textbf{Run configuration and experiment scripts}\\
    Calibration and readiness checks $\rightarrow$ warm-up $\rightarrow$ evaluation $\rightarrow$ drain};
-\node[component] (producer) at (-5,-1)
+\node[component] (producer) at (-5.3,-1)
   {\textbf{Producers}\\Generate balanced\\or skewed input};
 \node[component] (kafka) at (0,-1)
   {\textbf{Kafka}\\Topics and partitions};
-\node[component] (consumer) at (5,-1)
+\node[component] (consumer) at (5.3,-1)
   {\textbf{Consumers}\\Process records; commit\\completed progress};
-\draw[flow] (producer.east) -- node[above,font=\scriptsize]{records} (kafka.west);
-\draw[flow] (kafka.east) -- node[above,font=\scriptsize]{records} (consumer.west);
+\draw[flow] (producer.east) -- node[above,yshift=2pt,font=\scriptsize]{records} (kafka.west);
+\draw[flow] (kafka.east) -- node[above,yshift=2pt,font=\scriptsize]{records} (consumer.west);
 \draw[flow] (producer.north |- run.south) -- node[left,font=\scriptsize]{workload settings} (producer.north);
 \draw[flow] (kafka.north |- run.south) -- node[right,font=\scriptsize]{fresh topic} (kafka.north);
 \draw[flow] (consumer.north |- run.south) -- node[right,font=\scriptsize]{scheduled actions} (consumer.north);
