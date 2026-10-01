@@ -15,14 +15,13 @@ Metric family & Evidence in results & Interpretation\\
 Metric family & Evidence in results & Interpretation\\\midrule\endhead
 Partition lag and total lag & Main lag plots, diagnostic figure and lag-summary tables; older five-minute counterparts in the appendix. & Offsets, not guaranteed record counts.\\
 Processing backlog and growth & Main backlog-growth plots and acknowledged-unfinished plots; growth is also retained for consumer-position lag. & Completion frontier and returned-record position have different definitions.\\
-Maximum and mean partition lag & Bottom row of each diagnostic figure and sampled-peak tables. & Maximum and mean are taken across partitions at each valid observation.\\
+Maximum and mean partition lag & Bottom row of each diagnostic figure and tables of sampled maxima. & Maximum and mean are taken across partitions at each valid observation.\\
 Lag skew and window-mean skew & Runtime-state row shows window-mean skew; the summary table and separate diagnostic plot retain raw skew. & High relative skew can coexist with small absolute lag.\\
 Hot set, persistence score and persistent-hot set & Persistent-hot row, detector settings and interpretation of early versus late observations. & Exploratory diagnostic, not a validated controller trigger.\\
 Window-mean backlog and runtime state & Runtime-state figure and timestamped CSV/JSON, including persistent-hot partition IDs. & Reconstructed from retained observations; no adaptive controller was evaluated.\\
-Completion mean and p99 & Outcome and latency-detail tables for each block. & Each quantile uses completed evaluation-born messages, not averaged rolling quantiles.\\
-Processing-start latency and processing duration & Latency-detail tables and separation of queued delay from synthetic work. & Processing duration excludes evidence writing and commit bookkeeping.\\
+Completion mean and p99 & Main outcome tables for each workload. & Calculated from completed evaluation messages through drain; p99 is not an average of rolling percentiles.\\
+Processing-start latency & Ranges reported in the text for each ten-minute comparison. & Time from production until application processing starts.\\
 Unfinished work and completion deadlines & Unfinished percentage and 1-second cohort deadline misses in main tables; 0.5-second sensitivity in appendix. & Overdue unfinished messages count as misses; they have no fabricated completion latency.\\
-Observed-completion violation rate & Separate latency-detail column at 1 second. & Completion-attempt population during evaluation differs from the admitted cohort.\\
 Input, useful throughput and attempt throughput & Main throughput plots and outcome tables; admitted rate and replay checks in text. & Attempts and distinct completions agree only when no duplicate completions occur.\\
 Actual CPU and resident memory & Main process traces and observed resource integrals. & Consumer processes only; no full-cluster energy or monetary-cost claim.\\
 Requested CPU and memory cost & Main resource tables, integrated over evaluation plus drain; detailed resource-cost figures retained with records. & Partial request coverage is unavailable for full-run comparison, not zero.\\

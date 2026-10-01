@@ -3,7 +3,7 @@ The four-partition follow-up kept the same 700-message/s total input rate and co
 
 Two trials redistributed partitions within three consumers, and two scaled to six with targeted redistribution. The four high-traffic partitions were assigned as 2--1--1 across three consumers or 1--1--1--1--0--0 across six; the remaining partitions were also redistributed. Initial ownership and the original consumer placement were checked, and workload-generation seeds 81 and 82 were used for the two repetitions, reversing the order of the two configurations in the second repetition. These trials did not include normal Kafka scaling or a no-mitigation run. Six consumers maintained the earlier scaling setting; it was not established as the best consumer count. The assignments distribute partition counts and are not guaranteed to minimize consumer load.
 
-All four trials successfully published and completed 420,000 evaluation messages by the fixed cutoff. Redistribution within three had lower p99 in both runs (84.50 and 79.28 seconds) than targeted scaling (110.19 and 112.94 seconds), and fewer one-second SLO violations (26.63\% and 25.82\%, versus 35.23\% and 34.72\%). Its mean valid total lag was approximately 6,994--7,296 offsets, compared with 12,683--12,740 for targeted scaling. The sampled peaks were 50,157--50,879 and 66,598--70,217 offsets respectively. Both useful-throughput values and the full time traces are retained so that average completion rate does not hide the transition.
+All four trials successfully published and completed 420,000 evaluation messages by the fixed cutoff. Redistribution within three had lower p99 in both runs (84.50 and 79.28 seconds) than targeted scaling (110.19 and 112.94 seconds), and fewer one-second SLO violations (26.63\% and 25.82\%, versus 35.23\% and 34.72\%). Its mean valid total lag was approximately 6,994--7,296 offsets, compared with 12,683--12,740 for targeted scaling. The sampled maxima were 50,157--50,879 and 66,598--70,217 offsets respectively. Both useful-throughput values and the full time traces are retained so that average completion rate does not hide the transition.
 
 Redistribution used 72 requested CPU core-minutes and 36 requested memory GiB-minutes, whereas targeted scaling used approximately 136.84 core-minutes and 68.42 GiB-minutes over evaluation plus drain. Observed consumer CPU use was approximately 1,007--1,019 versus 1,301--1,302 core-seconds; observed RSS integrals were 2.72--2.75 versus 4.01--4.09 GiB-minutes. Additional requested capacity therefore had both a measured utilization footprint and an allocation cost in these trials.
 
@@ -13,26 +13,32 @@ The prespecified group of messages produced in the final two evaluation minutes 
 
 Unlike the twelve-partition block, small persistent-hot sets sometimes remained in the late four-partition observations. For example, redistribution Run 1 classified a partition with 11 offsets of lag as persistently hot when total lag was only 42. A relative hotspot can therefore persist in a pipeline with low absolute backlog. This motivates interpreting persistence jointly with absolute lag, growth and completion outcomes.
 
-Processing-start mean latency ranged from 9.933 to 20.020 seconds across this block; it remains separate from completion latency. Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completion attempts were detected, so completed-attempt and distinct-completion throughput coincide in these trials. Mean application work is reported below; it excludes evidence-writing and offset-commit overhead.
+Processing-start mean latency ranged from 9.933 to 20.020 seconds across this block; it remains separate from completion latency. Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completion attempts were detected, so completed-attempt and distinct-completion throughput coincide in these trials.
 Observed per-process CPU coverage over evaluation plus drain ranged from 87.22\% to 99.72\%. Coverage uses the complete observation window, including time before additional consumers started; a lower value for a newly started consumer is not automatically a monitoring failure. The integral includes only observed valid process intervals.
-The timing and ownership columns use the definitions in the twelve-partition comparison (Section~\ref{sec:twelve-partition-updated}). Added-consumer delays start at the replica request and end at each new consumer's first valid completion, including startup and handover. The assignment counts describe the four designated high-traffic partitions, rather than the lag-based hot-partition detector.
+The timing and ownership columns use the definitions in the twelve-partition comparison (Section~\ref{sec:twelve-partition-updated}). Added-consumer delays start at the replica request and end at each new consumer's first valid completion, including startup and handover. The final assignments and added-consumer delays appear alongside the twelve-partition results in Tables~\ref{tab:combined-partition-ownership} and~\ref{tab:combined-activation-delay}.
 
+\begingroup
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
 \begin{table}[!htbp]
 \centering\small
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}lrrrrr@{}}
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{SLO violations\\1 s (\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+Response & Run & \shortstack{Mean latency\\(s)} & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{SLO violations\\1 s (\%)} & \shortstack{Useful throughput\\(msg/s)}\\
 \midrule
-Redistribute 3 & 1 & 84.50 & 0.000 & 26.63 & 730.87\\
-Redistribute 3 & 2 & 79.28 & 0.000 & 25.82 & 731.38\\
-Targeted scale 6 & 1 & 110.19 & 0.000 & 35.23 & 730.89\\
-Targeted scale 6 & 2 & 112.94 & 0.000 & 34.72 & 731.13\\
+Redistribute 3 & 1 & 10.749 & 84.50 & 0.000 & 26.63 & 730.87\\
+Redistribute 3 & 2 & 9.935 & 79.28 & 0.000 & 25.82 & 731.38\\
+Targeted scale 6 & 1 & 19.330 & 110.19 & 0.000 & 35.23 & 730.89\\
+Targeted scale 6 & 2 & 20.023 & 112.94 & 0.000 & 34.72 & 731.13\\
 \bottomrule
 \end{tabular}
-\caption{Completion outcomes and one-second SLO violations.}
-\label{tab:four-partition-outcomes}
+\caption{Completion outcomes: four high-traffic partitions.}
+\label{tab:four-partition-outcomes}\label{tab:four-partition-latency-details}
 \end{table}
 \begin{table}[!htbp]
 \centering\small
@@ -48,7 +54,7 @@ Targeted scale 6 & 1 & 1,301.6 & 4.09 & 136.83 & 68.42\\
 Targeted scale 6 & 2 & 1,300.6 & 4.01 & 136.85 & 68.42\\
 \bottomrule
 \end{tabular}
-\caption{Consumer resource use and requests.}
+\caption{Consumer resources: four high-traffic partitions.}
 \label{tab:four-partition-resources}
 \end{table}
 \begin{table}[!htbp]
@@ -57,7 +63,7 @@ Targeted scale 6 & 2 & 1,300.6 & 4.01 & 136.85 & 68.42\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum partition\\lag} & Mean skew\\
 \midrule
 Redistribute 3 & 1 & 7,296 & 50,879 & 96.3 & 13,509 & 20.56\\
 Redistribute 3 & 2 & 6,994 & 50,157 & 97.0 & 12,258 & 20.88\\
@@ -65,33 +71,10 @@ Targeted scale 6 & 1 & 12,683 & 66,598 & 95.7 & 15,839 & 23.00\\
 Targeted scale 6 & 2 & 12,740 & 70,217 & 95.0 & 16,277 & 22.72\\
 \bottomrule
 \end{tabular}
-\caption{Partition-lag measurements during evaluation.}
+\caption{Backlog and lag skew: four high-traffic partitions.}
 \label{tab:four-partition-diagnostics}
 \end{table}
-\begin{table}[!htbp]
-\centering\small
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Response & Run & \shortstack{Mean latency\\(s)} & \shortstack{Mean processing\\time (ms)} & \shortstack{Attempt violations\\1 s (\%)}\\
-\midrule
-Redistribute 3 & 1 & 10.749 & 1.874 & 29.75\\
-Redistribute 3 & 2 & 9.935 & 1.886 & 29.01\\
-Targeted scale 6 & 1 & 19.330 & 2.378 & 37.98\\
-Targeted scale 6 & 2 & 20.023 & 2.418 & 37.51\\
-\bottomrule
-\end{tabular}
-\caption{Supplementary processing and latency measurements.}
-\label{tab:four-partition-latency-details}
-\end{table}
-\clearpage
-\begingroup
-\makeatletter
-\setlength{\@fptop}{0pt}
-\setlength{\@fpsep}{12pt}
-\setlength{\@fpbot}{0pt plus 1fil}
-\makeatother
+
 \begin{table}[!htbp]
 \centering\small
 \setlength{\tabcolsep}{3pt}
@@ -106,9 +89,10 @@ Targeted scale 6 & 1 & 78.52 & 19.881 & 13,918 & 4,678 & 290.5\\
 Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
 \bottomrule
 \end{tabular}
-\caption{Intervention time, interruption and recovery.}
+\caption{Intervention time and recovery: four high-traffic partitions.}
 \label{tab:four-partition-intervention-cost}
 \end{table}
+\clearpage
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth,height=.58\textheight,keepaspectratio]{figures/four-partition-compact-outcomes.pdf}
@@ -116,41 +100,7 @@ Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
 \label{fig:four-partition-compact-outcomes}
 \end{figure}
 \clearpage
-\begin{table}[!htbp]
-\begin{minipage}[t]{.48\linewidth}\vspace{0pt}
-\centering\small
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}lrrrrrrr@{}}
-\toprule
-Response & Run & C0 & C1 & C2 & C3 & C4 & C5\\
-\midrule
-Redistribute 3 & 1 & 2 & 1 & 1 & --- & --- & ---\\
-Redistribute 3 & 2 & 2 & 1 & 1 & --- & --- & ---\\
-Targeted scale 6 & 1 & 1 & 1 & 1 & 1 & 0 & 0\\
-Targeted scale 6 & 2 & 1 & 1 & 1 & 1 & 0 & 0\\
-\bottomrule
-\end{tabular}
-\caption{Final high-traffic partition assignment.}
-\label{tab:four-partition-ownership}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{.48\linewidth}\vspace{0pt}
-\centering\small
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Response & Run & C3 (s) & C4 (s) & C5 (s)\\
-\midrule
-Targeted scale 6 & 1 & 69.06 & 68.95 & 69.09\\
-Targeted scale 6 & 2 & 71.56 & 71.46 & 71.53\\
-\bottomrule
-\end{tabular}
-\caption{Time until added consumers begin processing.}
-\label{tab:four-partition-activation-delay}
-\end{minipage}
-\end{table}
+
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth,height=.60\textheight,keepaspectratio]{figures/four-partition-compact-performance.pdf}
