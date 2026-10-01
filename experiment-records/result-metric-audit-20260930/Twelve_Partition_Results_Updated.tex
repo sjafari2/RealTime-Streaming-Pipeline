@@ -1,23 +1,31 @@
-\subsection{Twelve high-input partitions: ten-minute evaluation}\label{sec:twelve-partition-updated}
-The twelve-partition comparison used 700 aggregate messages/s over 60 partitions, with 80\% of traffic directed to twelve partitions initially owned by Consumer 2. Eight trials compared retaining the same three-consumer assignment, redistribution within three, scaling to six with targeted redistribution, and scaling to six with Kafka's normal cooperative rebalance. Each condition was run twice, reversing condition order in the second repetition. Starting ownership and the original consumers' pod identities, nodes and resource declarations were checked before traffic.
+\subsection{Twelve high-input partitions: ten-minute evaluation}\label{sec:twelve-partition-updated}\label{sec:four-condition-results}
+The twelve-partition comparison used 700 messages/s across three producers and 60 partitions. Twelve selected partitions received 80\% of the input, shared evenly within that set; the other 48 shared the remaining 20\%. All twelve high-traffic partitions initially belonged to Consumer 2. Each run followed the common processing and resource settings in Table~\ref{tab:config}, with one minute of warm-up, ten minutes of evaluation and two minutes of drain. Interventions were requested sixty seconds after evaluation began.
 
-Every trial admitted 420,000 evaluation messages. Keeping the initial assignment left 34.64--34.83\% unfinished at cutoff; all interventions completed the cohort. Redistribution within three produced p99 latency of 80.10--84.16 seconds, compared with 100.81--107.24 seconds for targeted scaling and 71.41--72.46 seconds for normal Kafka scaling. The one-second cohort deadline-miss rates reveal a different aspect of the latency distribution: 30.50--31.84\% for redistribution, 26.26--27.33\% for targeted scaling and 21.05--25.83\% for normal scaling, versus 83.32--83.36\% without intervention. Thus a higher p99 does not imply more misses at every deadline.
+Eight trials compared four responses: no mitigation with three consumers, redistribution within three consumers, scaling to six with targeted redistribution, and scaling to six with Kafka's normal Cooperative Sticky rebalancing. Each response was tested twice, with the order of runs reversed in the second repetition. Workload-generation seeds 81 and 82 reproduced the input pattern within each repetition. Initial ownership and the original consumer pods, nodes and resource declarations were checked before traffic began. Targeted reassignment gave each of three consumers four high-traffic and sixteen other partitions, or each of six consumers two high-traffic and eight other partitions. Normal scaling used Kafka's classic consumer-group protocol and stable consumer identities. Targeted actions used the handover in Section~\ref{sec:targeted-reassignment}. Consequently, this comparison includes both consumer-count and assignment-mechanism differences.
+
+Kafka acknowledged 420,000 evaluation messages in every trial. Keeping the initial assignment left 34.64--34.83\% unfinished at cutoff; all interventions completed these messages. Redistribution within three produced p99 latency of 80.10--84.16 seconds, compared with 100.81--107.24 seconds for targeted scaling and 71.41--72.46 seconds for normal Kafka scaling. The one-second SLO violation rates reveal a different aspect of the latency distribution: 30.50--31.84\% for redistribution, 26.26--27.33\% for targeted scaling and 21.05--25.83\% for normal scaling, versus 83.32--83.36\% without intervention. Thus a higher p99 does not imply more misses at every deadline.
 
 The resource measurements show the trade-off. Redistribution used approximately 1,035--1,038 observed consumer CPU core-seconds over evaluation plus drain; targeted scaling used 1,310--1,327 and normal scaling 1,452--1,459. Requested CPU was 72 core-minutes for redistribution and approximately 137 for either six-consumer response. Actual RSS integrals were 2.53--2.65, 3.95--4.15 and 3.66--3.69 GiB-minutes respectively. These values concern consumer processes and resource declarations, not total infrastructure cost. The first unchanged baseline lacks almost all local request history and cannot support a full-window request-cost comparison; its message outcomes and recovered historical process measurements remain usable within their stated coverage.
 
-Targeted scaling confirmed recovery sooner than redistribution within three (169.0--184.9 versus 305.2--328.9 seconds after the action decision), despite its higher whole-cohort p99. Recovery requires processing backlog at most 100 offsets for thirty consecutive valid seconds while input continues. Normal scaling's recovery varied from 143.0 to 259.0 seconds. Explicit ownership changes use a global release/acquire/resume barrier; their 14.40--14.54-second and 19.05--19.50-second processing pauses are distinguished from complete action duration. Normal cooperative scaling had much shorter global gaps, which does not imply every partition processed continuously.
+Targeted scaling confirmed recovery sooner than redistribution within three (169.0--184.9 versus 305.2--328.9 seconds after the action decision), despite its higher p99 across completed evaluation messages. Recovery requires processing backlog at most 100 offsets for thirty consecutive valid seconds while input continues. Normal scaling's recovery varied from 143.0 to 259.0 seconds. Explicit ownership changes use a global release/acquire/resume barrier; their 14.40--14.54-second and 19.05--19.50-second processing pauses are distinguished from complete action duration. Normal cooperative scaling had much shorter global gaps, which does not imply every partition processed continuously.
 
 Persistent hotspots were present before intervention. In the redistribution and targeted-scaling runs, none remained at any defined snapshot in the final two evaluation minutes. The diagnostic figure also shows that relative skew may rise during successful backlog clearance: the maximum and mean absolute partition lags are then small. Persistence and skew are useful descriptions of concentration, but neither alone establishes overload.
 
 Processing-start mean latency ranged from 7.552 to 160.117 seconds across this block; it remains separate from completion latency. Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completion attempts were detected, so completed-attempt and distinct-completion throughput coincide in these trials. Mean application work is reported below; it excludes evidence-writing and offset-commit overhead.
 Observed per-process CPU coverage over evaluation plus drain ranged from 87.50\% to 99.72\%. Coverage uses the complete observation window, including time before additional consumers started; a lower value for a newly started consumer is not automatically a monitoring failure. The integral includes only observed valid process intervals.
+The tables distinguish action timing from recovery. \emph{Decision to active} runs from the action decision to confirmation of the intended partition ownership. For targeted reassignment, the transfer interval starts when release is requested; the processing pause can be shorter because processing may resume before ownership verification finishes. \emph{Global gap} is the longest interval with no consumer processing, rather than the downtime of every partition. Extra pending work is measured over the pause, and net pending change over the transfer; a negative change means processing reduced unfinished work during that interval. Recovery is measured from the action decision to confirmation of the low-backlog criterion. Dashes identify unavailable or inapplicable measurements.
+
+For normal Kafka scaling, active ownership is confirmed when all six consumers have stable assignments. The added-consumer delay table measures the first valid completion on each new consumer, using the replica-request timestamp for targeted scaling and the action-decision timestamp for normal scaling, where an equivalent request timestamp was not separately recorded. These activation delays include startup and processing, so they are not pure rebalance durations. In the ownership table, C0--C5 identify consumers and a dash means no observed assignment; the counts refer to designated high-traffic partitions, not the lag-based hot-partition detector.
+
+The lag tables use time-weighted means over valid intervals and the largest observed values as peaks. Lag is reported in offsets, skew as a ratio, and coverage as a percentage. Mean skew averages the ratio at each observation, rather than dividing two run-level means. The supplementary latency tables use completed evaluation messages for mean latency. Their processing-time column measures the local task duration; their completion-attempt violation rate includes attempts completed during evaluation and can include warm-up messages. This denominator differs from the primary SLO rate for all evaluation messages followed through drain. Actual CPU and resident-memory totals sum observed consumer-process measurements over time, while requested-resource totals use Kubernetes declarations. A dash in a resource table indicates missing full-period measurements, not zero resource use.
+
 \begin{table}[!htbp]
 \centering\small
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
-Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{SLO violations\\1 s (\%)} & \shortstack{Useful throughput\\(msg/s)}\\
 \midrule
 Keep 3 & 1 & 366.64 & 34.641 & 83.32 & 423.23\\
 Keep 3 & 2 & 362.79 & 34.828 & 83.36 & 422.62\\
@@ -29,8 +37,8 @@ Kafka scale 6 & 1 & 71.41 & 0.000 & 25.83 & 727.65\\
 Kafka scale 6 & 2 & 72.46 & 0.000 & 21.05 & 728.48\\
 \bottomrule
 \end{tabular}
-\caption{Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.}
-\label{tab:twelve-partition-outcomes}
+\caption{Completion outcomes and one-second SLO violations.}
+\label{tab:twelve-partition-outcomes}\label{tab:four-condition-outcomes}
 \end{table}
 \begin{table}[!htbp]
 \centering\small
@@ -50,8 +58,8 @@ Kafka scale 6 & 1 & 1,451.5 & 3.66 & 137.15 & 68.58\\
 Kafka scale 6 & 2 & 1,459.0 & 3.69 & 137.15 & 68.57\\
 \bottomrule
 \end{tabular}
-\caption{Consumer resources over evaluation plus drain. Actual values integrate observed process CPU and RSS intervals and sum them across consumers. Requested values integrate Kubernetes resource declarations; neither is monetary or whole-cluster cost. A dash denotes unavailable full-window request coverage, not zero cost.}
-\label{tab:twelve-partition-resources}
+\caption{Consumer resource use and requests.}
+\label{tab:twelve-partition-resources}\label{tab:four-condition-cost}
 \end{table}
 \begin{table}[!htbp]
 \centering\small
@@ -59,7 +67,7 @@ Kafka scale 6 & 2 & 1,459.0 & 3.69 & 137.15 & 68.57\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean total\\lag} & \shortstack{Peak total\\lag} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
 \midrule
 Keep 3 & 1 & 98,929 & 180,743 & 99.7 & 14,752 & 4.90\\
 Keep 3 & 2 & 100,033 & 182,438 & 99.7 & 14,794 & 4.90\\
@@ -71,28 +79,28 @@ Kafka scale 6 & 1 & 6,688 & 38,516 & 98.0 & 4,332 & 10.34\\
 Kafka scale 6 & 2 & 5,702 & 40,065 & 98.0 & 4,510 & 8.91\\
 \bottomrule
 \end{tabular}
-\caption{Lag diagnostics during evaluation only, in offsets except skew and coverage. Means use trapezoidal area divided by covered time; peaks are sampled maxima. The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.}
+\caption{Partition-lag measurements during evaluation.}
 \label{tab:twelve-partition-diagnostics}
 \end{table}
 \begin{table}[!htbp]
 \centering\small
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}lrrrrrr@{}}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-Response & Run & Mean (s) & p50 (s) & p95 (s) & \shortstack{Mean work\\(ms)} & \shortstack{Observed misses\\$>1$ s (\%)}\\
+Response & Run & \shortstack{Mean latency\\(s)} & \shortstack{Mean processing\\time (ms)} & \shortstack{Attempt violations\\1 s (\%)}\\
 \midrule
-Keep 3 & 1 & 158.994 & 161.677 & 341.123 & 2.613 & 72.41\\
-Keep 3 & 2 & 160.120 & 164.185 & 344.752 & 2.614 & 72.45\\
-Redistribute 3 & 1 & 11.585 & 0.099 & 62.417 & 1.956 & 33.16\\
-Redistribute 3 & 2 & 12.676 & 0.100 & 65.276 & 1.943 & 34.61\\
-Targeted scale 6 & 1 & 13.813 & 0.124 & 81.024 & 2.451 & 29.08\\
-Targeted scale 6 & 2 & 15.245 & 0.125 & 87.387 & 2.457 & 30.27\\
-Kafka scale 6 & 1 & 9.140 & 0.120 & 57.805 & 2.764 & 28.66\\
-Kafka scale 6 & 2 & 7.555 & 0.120 & 57.333 & 2.773 & 24.15\\
+Keep 3 & 1 & 158.994 & 2.613 & 72.41\\
+Keep 3 & 2 & 160.120 & 2.614 & 72.45\\
+Redistribute 3 & 1 & 11.585 & 1.956 & 33.16\\
+Redistribute 3 & 2 & 12.676 & 1.943 & 34.61\\
+Targeted scale 6 & 1 & 13.813 & 2.451 & 29.08\\
+Targeted scale 6 & 2 & 15.245 & 2.457 & 30.27\\
+Kafka scale 6 & 1 & 9.140 & 2.764 & 28.66\\
+Kafka scale 6 & 2 & 7.555 & 2.773 & 24.15\\
 \bottomrule
 \end{tabular}
-\caption{Supplementary latency diagnostics. Mean, p50 and p95 use completed evaluation-born messages. Mean work is the local monotonic application-processing duration. Observed violations use completion attempts occurring during evaluation and have a different denominator from the primary admitted-cohort deadline rate.}
+\caption{Supplementary processing and latency measurements.}
 \label{tab:twelve-partition-latency-details}
 \end{table}
 \begin{table}[!htbp]
@@ -113,7 +121,7 @@ Kafka scale 6 & 1 & 31.01 & 0.092 & N/A & -6,777 & 259.0\\
 Kafka scale 6 & 2 & 33.01 & 0.202 & N/A & -9,823 & 143.0\\
 \bottomrule
 \end{tabular}
-\caption{Intervention costs. For targeted actions, transfer is release request to verified active ownership; for native scaling it is decision to stable-six-owner confirmation. The latter also defines native decision-to-active. Recovery is confirmation after the actual decision. Global gap measures the longest interval without any consumer processing, not a per-partition downtime. Negative net pending change means processing reduced outstanding work during the measured transition. Dashes denote unavailable or inapplicable values.}
+\caption{Intervention time, interruption and recovery.}
 \label{tab:twelve-partition-intervention-cost}
 \end{table}
 \begin{table}[!htbp]
@@ -134,7 +142,7 @@ Kafka scale 6 & 1 & 0 & 0 & 2 & 4 & 2 & 4\\
 Kafka scale 6 & 2 & 0 & 0 & 2 & 4 & 3 & 3\\
 \bottomrule
 \end{tabular}
-\caption{Final observed numbers of configured high-input partitions per consumer. These are traffic targets, not persistent-hot detector counts. All high-input partitions initially belonged to Consumer 2. A dash means no observed partition ownership.}
+\caption{Final high-traffic partition assignment.}
 \label{tab:twelve-partition-ownership}
 \end{table}
 \begin{table}[!htbp]
@@ -151,15 +159,39 @@ Kafka scale 6 & 1 & Action decision & 9.22 & 16.43 & 14.35\\
 Kafka scale 6 & 2 & Action decision & 9.42 & 18.66 & 9.54\\
 \bottomrule
 \end{tabular}
-\caption{Activation delay to the first valid completion on each added consumer. Targeted scaling uses the recorded replica-request event; native scaling uses the action decision because an equivalent replica-request timestamp was not separately recorded. These are not whole-action completion times or pure rebalance delays.}
+\caption{Time until added consumers begin processing.}
 \label{tab:twelve-partition-activation-delay}
 \end{table}
+\paragraph{Performance and resource use after recovery.}
+A supplementary comparison examines messages produced during the final two evaluation minutes, from minute eight to minute ten, while input continued. This is distinct from the two-minute drain, which follows the evaluation. Both redistribution within three consumers and scaling with targeted redistribution had met the recovery criterion before this interval. Each selected group contained 84,000 messages whose publication was acknowledged by Kafka, and all completed by the original drain cutoff. This interval and the one-second SLO comparison were selected after the trials. The comparison therefore supplements the results for all evaluation messages. CPU use and resident memory are averaged over time for each consumer and then summed across consumers. Valid measurements cover 98.3\% of this interval. These are measured usage values rather than Kubernetes resource requests.
+
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}p{0.28\linewidth}rrrrr@{}}
+\toprule
+\textbf{Response} & \textbf{Run} & \shortstack{\textbf{p99}\\\textbf{(ms)}} & \shortstack{\textbf{SLO violations}\\\textbf{1 s (\%)}} & \shortstack{\textbf{CPU use}\\\textbf{(cores)}} & \shortstack{\textbf{Memory}\\\textbf{(MiB)}}\\
+\midrule
+Redistribute within 3 & 1 & 172.44 & 0 & 1.61 & 224.48\\
+ & 2 & 179.77 & 0.021 & 1.58 & 237.78\\
+Scale + targeted redistribution & 1 & 211.58 & 0.033 & 2.05 & 391.75\\
+ & 2 & 267.50 & 0 & 2.11 & 370.12\\
+\bottomrule
+\end{tabular}
+\caption{Performance during evaluation minutes 8--10.}
+\label{tab:four-condition-after-recovery}
+\end{table}
+
+Redistribution within three consumers recorded lower p99 and used less measured CPU and memory in both repetitions during this interval. Throughput was approximately 700 messages/s with either response, and neither had a persistent hot partition during minutes eight to ten under the stated monitoring rule (Section~\ref{sec:result-metric-coverage}). Thus, the six-consumer response cleared accumulated work sooner, but did not record lower p99 for messages arriving after recovery. The SLO results do not always favor the same response: at one second the second six-consumer run had no violations, whereas the corresponding three-consumer run had eighteen. The observations do not identify a single cause of the latency difference or establish that either response is preferable for every metric.
+
+
 \clearpage
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/twelve-partition-compact-outcomes.pdf}
-\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by whole-cohort p99 and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the outcome cohort.}
-\label{fig:twelve-partition-compact-outcomes}
+\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by p99 across completed evaluation messages and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the evaluation-message outcomes.}
+\label{fig:twelve-partition-compact-outcomes}\label{fig:four-condition-p99}\label{fig:four-condition-lag}
 \end{figure}
 \clearpage
 \begin{figure}[p]
