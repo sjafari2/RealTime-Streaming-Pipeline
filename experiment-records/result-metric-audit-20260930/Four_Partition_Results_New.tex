@@ -20,7 +20,7 @@ Small persistent-hot sets sometimes remained late in these runs despite low abso
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean latency\\(s)} & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{SLO violations\\1 s (\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+Response & Run & \shortstack{Mean latency\\(s)} & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{SLO violations\\1 s (\%)} & \shortstack{Throughput\\(msg/s)}\\
 \midrule
 Redistribute 3 & 1 & 10.749 & 84.50 & 0.000 & 26.63 & 730.87\\
 Redistribute 3 & 2 & 9.935 & 79.28 & 0.000 & 25.82 & 731.38\\
@@ -87,7 +87,7 @@ Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth,height=.58\textheight,keepaspectratio]{figures/four-partition-compact-outcomes.pdf}
-\caption{Outcomes with four high-traffic partitions. The upper panels show total consumer-position lag and acknowledged but unfinished messages during the ten-minute evaluation. The lower panels show p99 for completed evaluation messages and the unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the evaluation-message outcomes.}
+\caption{Outcomes with four high-traffic partitions. The upper panels show total consumer-position lag and acknowledged but unfinished messages during the ten-minute evaluation. The lower panels show p99 for completed evaluation messages and the unfinished percentage at the drain cutoff. Warm-up work is included in the upper panels but excluded from the evaluation-message outcomes.}
 \label{fig:four-partition-compact-outcomes}
 \end{figure}
 \clearpage

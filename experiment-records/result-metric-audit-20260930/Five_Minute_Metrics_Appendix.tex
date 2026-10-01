@@ -11,7 +11,7 @@ The tables use the message sets, measurement intervals and resource definitions 
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
-Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Throughput\\(msg/s)}\\
 \midrule
 Keep 3 & 1 & 231.58 & 31.760 & 83.42 & 415.93\\
 Targeted scale 6 & 1 & 110.70 & 0.000 & 57.01 & 757.32\\
@@ -45,7 +45,7 @@ Targeted scale 6 & 2 & 687.6 & 2.25 & 76.81 & 38.40\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum\\partition lag} & Mean skew\\
 \midrule
 Keep 3 & 1 & 58,517 & 101,938 & 99.3 & 8,290 & 4.92\\
 Targeted scale 6 & 1 & 19,438 & 50,671 & 86.0 & 4,960 & 8.47\\
@@ -59,7 +59,7 @@ Targeted scale 6 & 2 & 19,473 & 51,721 & 83.3 & 4,245 & 8.92\\
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/short-targeted-scaling-diagnostics.pdf}
-\caption{Earlier five-minute evaluation with the original monitoring gaps retained. Persistent-hot counts, skew and maximum/mean partition lag are interpreted together.}
+\caption{Partition-level measurements during five-minute scaling-with-reassignment trials. The panels show persistent-hot-partition count, lag skew, and maximum and mean partition lag. Missing observations are left as gaps.}
 \label{fig:short-targeted-scaling-diagnostics}
 \end{figure}
 \clearpage
@@ -70,7 +70,7 @@ Targeted scale 6 & 2 & 19,473 & 51,721 & 83.3 & 4,245 & 8.92\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
-Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Useful throughput\\(msg/s)}\\
+Response & Run & \shortstack{p99\\(s)} & \shortstack{Unfinished\\(\%)} & \shortstack{Misses $>1$ s\\(\%)} & \shortstack{Throughput\\(msg/s)}\\
 \midrule
 Keep 3 & 1 & 226.34 & 30.182 & 83.41 & 422.08\\
 Redistribute 3 & 1 & 103.76 & 0.000 & 61.59 & 725.25\\
@@ -104,7 +104,7 @@ Redistribute 3 & 2 & 553.4 & 1.46 & 42.00 & 21.00\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Peak partition\\lag} & Mean skew\\
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum\\partition lag} & Mean skew\\
 \midrule
 Keep 3 & 1 & 58,189 & 99,805 & 99.3 & 8,109 & 4.93\\
 Redistribute 3 & 1 & 19,243 & 37,159 & 67.3 & 3,724 & 9.41\\
@@ -118,7 +118,7 @@ Redistribute 3 & 2 & 17,609 & 35,615 & 68.7 & 3,581 & 9.57\\
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/short-redistribution-diagnostics.pdf}
-\caption{Earlier five-minute evaluation with the original monitoring gaps retained. Persistent-hot counts, skew and maximum/mean partition lag are interpreted together.}
+\caption{Partition-level measurements during five-minute reassignment trials with three consumers. The panels show persistent-hot-partition count, lag skew, and maximum and mean partition lag. Missing observations are left as gaps.}
 \label{fig:short-redistribution-diagnostics}
 \end{figure}
 \clearpage
