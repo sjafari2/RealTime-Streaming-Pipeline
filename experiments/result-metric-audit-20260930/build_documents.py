@@ -31,7 +31,7 @@ COVERAGE = [
  ('Processing backlog and growth', 'Main backlog-growth plots and acknowledged-unfinished plots; growth is also retained for consumer-position lag.', 'Completion frontier and returned-record position have different definitions.'),
  ('Maximum and mean partition lag', 'Bottom row of each diagnostic figure and sampled-peak tables.', 'Maximum and mean are taken across partitions at each valid observation.'),
  ('Lag skew and window-mean skew', 'Runtime-state row shows window-mean skew; the summary table and separate diagnostic plot retain raw skew.', 'High relative skew can coexist with small absolute lag.'),
- ('Hot set, persistence score and persistent-hot set', 'Top diagnostic row, detector settings and interpretation of early versus late observations.', 'Exploratory diagnostic, not a calibrated controller trigger.'),
+ ('Hot set, persistence score and persistent-hot set', 'Persistent-hot row, detector settings and interpretation of early versus late observations.', 'Exploratory diagnostic, not a calibrated controller trigger.'),
  ('Window-mean backlog and runtime state', 'Runtime-state figure and timestamped CSV/JSON, including persistent-hot partition IDs.', 'Reconstructed from retained observations; no adaptive controller was evaluated.'),
  ('Completion mean, p50, p95 and p99', 'Outcome and latency-detail tables for each block.', 'Each quantile uses completed evaluation-born messages, not averaged rolling quantiles.'),
  ('Processing-start latency and processing duration', 'Latency-detail tables and separation of queued delay from synthetic work.', 'Processing duration excludes evidence writing and commit bookkeeping.'),
@@ -131,7 +131,7 @@ DIAGNOSTIC = r"""The combined diagnostic figures show persistent-hot counts, lag
 
 The runtime-state panels reconstruct $\mathcal{X}(t)=(\overline{B}_W(t),\overline{G}_W(t),\overline{S}_W(t),H_{\mathrm{persistent}}(t))$ from the recorded observations. Backlog and skew average fifteen samples, spanning 28 seconds; growth averages fifteen two-second intervals, spanning 30 seconds and requiring sixteen samples. These are the sample and interval conventions in the Metrics formulas. The fourth component is a set: the figure shows its size, while the supporting CSV and JSON retain the exact partition identifiers at each timestamp. A missing set is different from an observed empty set. These states are reconstructed offline; no adaptive controller using them was evaluated. The performance figure separately uses a ten-second processing-backlog growth window (five intervals and six observations). Shortening that plot window does not change the runtime-state or persistence window.
 
-The measured processing backlog uses the contiguous completion frontier, whereas consumer-position lag uses the position after records have been returned to the application. Their equality at the retained valid snapshots in these two ten-minute blocks does not make the definitions interchangeable, particularly for future batched or concurrent processing. The acknowledged-unfinished curves use message identities and include warm-up work, so they are not the evaluation-cohort unfinished percentage.
+The measured processing backlog uses the contiguous completion frontier, while consumer-position lag uses the position after records have been returned to the application. Their equality at the retained valid snapshots in these two ten-minute blocks does not make the definitions interchangeable, particularly for future batched or concurrent processing. The acknowledged-unfinished curves use message identities and include warm-up work, so they are not the evaluation-cohort unfinished percentage.
 """
 SHORT = r"""These two earlier blocks each used a five-minute evaluation, one-minute warm-up and two-minute drain, with 210,000 admitted evaluation messages per trial. Each block contains its own unchanged-assignment baseline and its intervention, each run twice. They remain separate comparisons rather than being pooled into the later ten-minute experiments. Their diagnostics, process resources and retrospective completion-deadline sensitivity are included here for completeness.
 
@@ -149,9 +149,11 @@ def main():
     main_tex=r'\subsection{Measurement coverage and interpretation}\label{sec:result-metric-coverage}'+'\n'+COMMON+'\n'+DIAGNOSTIC
     coverage_table=table(['Metric family','Evidence in results','Interpretation'],
         [[tex_escape(x) for x in row] for row in COVERAGE],
-        'Coverage of the defined measurement families. Planned measurements are distinguished from completed evidence; no result is inferred merely because a metric is defined.',
+        'Summary of the defined metrics, where their results are reported, and measurement limitations or remaining planned evaluations.',
         'tab:result-metric-coverage',r'>{\raggedright\arraybackslash}p{.22\linewidth}>{\raggedright\arraybackslash}p{.42\linewidth}>{\raggedright\arraybackslash}p{.29\linewidth}')
-    # This coverage inventory is longer than one page; it must not be a float.
+    # Keep this appendix inventory compact; longtable can still split it safely.
+    coverage_table=coverage_table.replace(r'\centering\small',r'\centering\footnotesize')
+    coverage_table=coverage_table.replace(r'\renewcommand{\arraystretch}{1.12}',r'\renewcommand{\arraystretch}{1.06}')
     coverage_table=coverage_table.replace(r'\begin{table}[!htbp]',r'\begingroup').replace(r'\end{table}',r'\endgroup')
     coverage_table=coverage_table.replace(r'\begin{tabular}',r'\begin{longtable}').replace(r'\end{tabular}',r'\end{longtable}')
     caption=coverage_table[coverage_table.index(r'\caption{'):coverage_table.index(r'\endgroup')]
@@ -161,7 +163,10 @@ def main():
     coverage_table=coverage_table[:at]+caption+coverage_table[at:]
     header=r'Metric family & Evidence in results & Interpretation\\'
     coverage_table=coverage_table.replace(r'\midrule',r'\midrule\endfirsthead'+'\n'+r'\toprule'+'\n'+header+r'\midrule\endhead',1)
-    main_tex+=coverage_table
+    main_tex+=r'The metric-by-metric coverage summary is provided in Table~\ref{tab:result-metric-coverage} in Appendix~\ref{app:measurement-coverage}.'+'\n'
+    (out/'Measurement_Coverage_Appendix.tex').write_text(
+        r'\clearpage'+'\n'+r'\section{Measurement Coverage}'+'\n'+
+        r'\label{app:measurement-coverage}'+'\n'+coverage_table)
     (out/'Measurement_Coverage_Results.tex').write_text(main_tex)
     for block,prose in [('twelve-partition',TWELVE),('four-partition',FOUR)]:
         rows=groups[block]
@@ -257,6 +262,7 @@ The one-second deadline is the main outcome. Half-second sensitivity is secondar
 - Insert `Measurement_Coverage_Results.tex` at the beginning of the relevant results discussion, reconciling terminology with the current Measurement section.
 - Replace the existing twelve-partition comparison with `Twelve_Partition_Results_Updated.tex`, avoiding a second duplicate report.
 - Add `Four_Partition_Results_New.tex` immediately afterward. Keep the two workloads separate.
+- Put `Measurement_Coverage_Appendix.tex` in the appendix; retain the interpretation text in main results.
 - Keep `Five_Minute_Metrics_Appendix.tex` and `Deadline_Sensitivity_Appendix.tex` in the appendix. Retain the existing five-minute process plots alongside the added diagnostics.
 - Copy the PDFs from `figures/` into the project's figure directory. Remove old appendix includes for the ten-minute figures so each appears once in main results.
 - Compile, inspect changed pages and confirm all labels, figures and references resolve before claiming online completion.
@@ -272,6 +278,7 @@ The one-second deadline is the main outcome. Half-second sensitivity is secondar
 \usepackage[a4paper,margin=1in]{geometry}
 \usepackage{graphicx,booktabs,longtable,array,amsmath,hyperref}
 \hypersetup{hidelinks}
+\setlength{\emergencystretch}{1em}
 \title{Experimental results: expanded measurement coverage}
 \author{}
 \date{30 September 2026}
@@ -290,6 +297,7 @@ The one-second deadline is the main outcome. Half-second sensitivity is secondar
 \input{Five_Minute_Metrics_Appendix.tex}
 \clearpage
 \input{Deadline_Sensitivity_Appendix.tex}
+\input{Measurement_Coverage_Appendix.tex}
 \end{document}
 ''')
     print('Created proposal-ready text and figure references; compile Results_Metric_Update.tex for the review PDF')

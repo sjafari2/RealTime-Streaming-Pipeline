@@ -1,0 +1,22 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{Starting configuration for controlled comparisons. Experiment-specific changes are recorded before each comparison.}
+\label{tab:config}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Parameter & Setting\\\midrule
+Kafka deployment & Bitnami Kafka (KRaft) on Kubernetes\\
+Brokers / topics / partitions & 3 brokers; 1 fresh topic per run; 60 partitions\\
+Replication factor & 1\\
+Producer / initial consumer pods & 3 producers / 3 consumers\\
+Consumer scaling & 3 to 6 consumers when scaling is tested\\
+Payload setting & 100 bytes; actual message size recorded\\
+Processing task & 2,000 SHA-256 iterations per message; no added processing sleep\\
+Reference input rate & 700 messages/s in total across all three producers\\
+Partition assignment & Cooperative Sticky for normal Kafka scaling; coordinated handover for targeted reassignment\\
+Main run phases & 1 minute warm-up, 10 minutes evaluation, 2 minutes drain (13 minutes total)\\
+Scheduled intervention & 60 seconds after evaluation begins; none in the baseline\\
+Completion deadline & 1 second from production to application completion, before offset-commit acknowledgment\\
+\bottomrule
+\end{tabularx}
+\end{table}

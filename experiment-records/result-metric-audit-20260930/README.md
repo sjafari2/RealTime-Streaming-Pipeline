@@ -12,6 +12,7 @@ The one-second deadline is the main outcome. Half-second sensitivity is secondar
 - Insert `Measurement_Coverage_Results.tex` at the beginning of the relevant results discussion, reconciling terminology with the current Measurement section.
 - Replace the existing twelve-partition comparison with `Twelve_Partition_Results_Updated.tex`, avoiding a second duplicate report.
 - Add `Four_Partition_Results_New.tex` immediately afterward. Keep the two workloads separate.
+- Put `Measurement_Coverage_Appendix.tex` in the appendix; retain the interpretation text in main results.
 - Keep `Five_Minute_Metrics_Appendix.tex` and `Deadline_Sensitivity_Appendix.tex` in the appendix. Retain the existing five-minute process plots alongside the added diagnostics.
 - Copy the PDFs from `figures/` into the project's figure directory. Remove old appendix includes for the ten-minute figures so each appears once in main results.
 - Compile, inspect changed pages and confirm all labels, figures and references resolve before claiming online completion.
@@ -34,3 +35,9 @@ The one-second deadline is the main outcome. Half-second sensitivity is secondar
 All 4,063 fully defined reconstructed states across twenty trials were independently checked against the window-mean, growth and persistent-set definitions. Six targeted tests passed. All twelve compact outcome/performance panels' event-file hashes match the published comparison records; admitted and completed counts reconcile. The standalone LaTeX report compiles without warnings and its changed figure/table pages were visually inspected. The report uses three compact figure pages per main workload instead of ten separate pages; detailed plots are retained here. This is an analysis update, not twelve or twenty additional trials.
 
 The historical source checkout for this analysis was `d9d201ebb7bfb1443d6b5dd24a7dd4f0c28723dd`. This reporting revision does not alter the code revisions recorded for the original trials. The main results discuss one-second completion deadlines, with half-second sensitivity in the appendix. Raw skew remains in the detailed diagnostic figures and numeric summaries; the runtime-state panel shows window-mean skew.
+
+## Compact experiment overview
+
+`Starting_Configuration.tex` and `Experiment_Plan.tex` provide the configuration and concise completed/planned experiment tables. Include configuration first and load `tabularx` and `colortbl` for the table layout and section colors. `Experiment_Tables.pdf` previews both tables and the measurement-coverage appendix. The overview covers 36 trials presented in the proposal, including 12 balanced-rate calibration trials; it does not change the twenty-trial metric-audit scope or the repository total of sixty trials.
+
+The primary comparison deadline is one second. The main skewed trials use one minute of warm-up, ten minutes of evaluation and two minutes of drain (13 minutes total). Balanced calibration uses twenty minutes of evaluation with the same warm-up and drain periods (23 minutes total); earlier five-minute evaluations total eight minutes. During drain, producers stop and consumers continue processing until the fixed cutoff.

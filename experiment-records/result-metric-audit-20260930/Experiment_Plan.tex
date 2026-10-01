@@ -1,0 +1,25 @@
+\begin{table}[!htbp]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.14}
+\caption{Completed experiments and planned comparisons. All rates are aggregate. Evaluation durations exclude one minute of warm-up and two minutes of drain. Planned settings and repetition counts will be fixed before testing.}
+\label{tab:experimental-scenarios}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.21\linewidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{.22\linewidth}@{}}
+\toprule
+Experiment & Workload and comparison & Trials / evaluation\\
+\midrule
+\rowcolor[HTML]{DDEEDD}\multicolumn{3}{@{}l@{}}{\strut\textbf{Completed: 36 trials reported here}}\\
+\rowcolor[HTML]{F0F7F0}Balanced calibration & 600--1,500 msg/s; 60 balanced partitions; keep 3 consumers. & 12; two per rate. 20 min (23 total).\\
+\rowcolor[HTML]{F0F7F0}Twelve hot partitions & 700 msg/s; 80\% to 12/60 partitions. Keep 3; redistribute 3; scale to 6 with targeted redistribution or Kafka rebalancing. & 8; two per configuration. 10 min (13 total).\\
+\rowcolor[HTML]{F0F7F0}Four hot partitions & 700 msg/s; 80\% to 4/60 partitions. Redistribute 3 versus scale to 6 with targeted reassignment. & 4; two per configuration. 10 min (13 total).\\
+\rowcolor[HTML]{F0F7F0}Earlier comparisons & 700 msg/s; 80\% to 12/60 partitions. Fixed ownership, redistribution and targeted scaling tests (appendix). & 12 trials. 5 min (8 total).\\
+\addlinespace[4pt]
+\rowcolor[HTML]{DFEAF5}\multicolumn{3}{@{}l@{}}{\strut\textbf{Planned: not yet evaluated}}\\
+\rowcolor[HTML]{F1F5FA}Hot-key splitting & Frequent-key input: splitting versus no action, scaling and redistribution. & To be specified.\\
+\rowcolor[HTML]{F1F5FA}Combinations and order & Splitting with scaling, redistribution or both; selected reverse action orders. & To be specified.\\
+\rowcolor[HTML]{F1F5FA}Automated policy & Heuristic controller versus HPA, KEDA and feasible research baselines. & To be specified.\\
+\rowcolor[HTML]{F1F5FA}Larger scale & Repeat selected comparisons with more partitions and consumers. & To be specified.\\
+\rowcolor[HTML]{F1F5FA}Applications & Drug--target interaction prediction and fire detection. & To be specified.\\
+\bottomrule
+\end{tabularx}
+\end{table}
