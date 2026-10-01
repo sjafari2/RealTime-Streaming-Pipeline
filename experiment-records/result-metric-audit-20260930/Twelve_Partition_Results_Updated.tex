@@ -11,7 +11,7 @@ Targeted scaling confirmed recovery sooner than redistribution within three (169
 
 Persistent hotspots were present before intervention. In the redistribution and targeted-scaling runs, none remained at any defined snapshot in the final two evaluation minutes. The diagnostic figure also shows that relative skew may rise during successful backlog clearance: the maximum and mean absolute partition lags are then small. Persistence and skew are useful descriptions of concentration, but neither alone establishes overload.
 
-Processing-start mean latency ranged from 7.552 to 160.117 seconds across this block; it remains separate from completion latency. Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completion attempts were detected, so completed-attempt and distinct-completion throughput coincide in these trials.
+Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completions were detected.
 Observed per-process CPU coverage over evaluation plus drain ranged from 87.50\% to 99.72\%. Coverage uses the complete observation window, including time before additional consumers started; a lower value for a newly started consumer is not automatically a monitoring failure. The integral includes only observed valid process intervals.
 The tables distinguish action timing from recovery. \emph{Decision to active} runs from the action decision to confirmation of the intended partition ownership. For targeted reassignment, the transfer interval starts when release is requested; the processing pause can be shorter because processing may resume before ownership verification finishes. \emph{Global gap} is the longest interval with no consumer processing, rather than the downtime of every partition. Extra pending work is measured over the pause, and net pending change over the transfer; a negative change means processing reduced unfinished work during that interval. Recovery is measured from the action decision to confirmation of the low-backlog criterion. Dashes identify unavailable or inapplicable measurements.
 
@@ -67,7 +67,7 @@ Kafka scale 6 & 2 & 1,459.0 & 3.69 & 137.15 & 68.57\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum partition\\lag} & Mean skew\\
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum\\partition lag} & Mean skew\\
 \midrule
 Keep 3 & 1 & 98,929 & 180,743 & 99.7 & 14,752 & 4.90\\
 Keep 3 & 2 & 100,033 & 182,438 & 99.7 & 14,794 & 4.90\\
@@ -104,7 +104,14 @@ Kafka scale 6 & 2 & 33.01 & 0.202 & N/A & -9,823 & 143.0\\
 \caption{Intervention time and recovery: twelve high-traffic partitions.}
 \label{tab:twelve-partition-intervention-cost}
 \end{table}
-\begin{table}[!htbp]
+
+% Keep the assignment and activation tables together on the following page.
+\clearpage
+\begingroup
+\setlength{\floatsep}{12pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{12pt plus 2pt minus 2pt}
+\begin{table}[H]
 \centering\small
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.12}
@@ -127,7 +134,7 @@ Targeted scale 6 & 1 and 2 & 1 & 1 & 1 & 1 & 0 & 0\\
 \caption{Final high-traffic partition assignments in both workload comparisons.}
 \label{tab:combined-partition-ownership}\label{tab:twelve-partition-ownership}\label{tab:four-partition-ownership}
 \end{table}
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering\small
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.12}
@@ -150,9 +157,9 @@ Targeted scale 6 & 2 & Replica request & 71.56 & 71.46 & 71.53\\
 \label{tab:combined-activation-delay}\label{tab:twelve-partition-activation-delay}\label{tab:four-partition-activation-delay}
 \end{table}
 \paragraph{Performance and resource use after recovery.}
-A supplementary comparison examines messages produced during the final two evaluation minutes, from minute eight to minute ten, while input continued. This is distinct from the two-minute drain, which follows the evaluation. Both redistribution within three consumers and scaling with targeted redistribution had met the recovery criterion before this interval. Each selected group contained 84,000 messages whose publication was acknowledged by Kafka, and all completed by the original drain cutoff. This interval and the one-second SLO comparison were selected after the trials. The comparison therefore supplements the results for all evaluation messages. CPU use and resident memory are averaged over time for each consumer and then summed across consumers. Valid measurements cover 98.3\% of this interval. These are measured usage values rather than Kubernetes resource requests.
+Table~\ref{tab:four-condition-after-recovery} compares messages produced during evaluation minutes eight to ten, after both redistribution and targeted scaling had met the recovery criterion. Input continued during this interval; the two-minute drain followed evaluation. Each run contributed 84,000 acknowledged messages, all completed by the original drain cutoff. This interval and its one-second SLO comparison were selected after the trials and supplement the full-evaluation results. CPU use and resident memory are time-weighted means for each consumer, summed across consumers, with 98.3\% measurement coverage. They represent actual use, not Kubernetes resource requests.
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering\small
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.15}
@@ -170,28 +177,28 @@ Scale + targeted redistribution & 1 & 211.58 & 0.033 & 2.05 & 391.75\\
 \label{tab:four-condition-after-recovery}
 \end{table}
 
-Redistribution within three consumers recorded lower p99 and used less measured CPU and memory in both repetitions during this interval. Throughput was approximately 700 messages/s with either response, and neither had a persistent hot partition during minutes eight to ten under the stated monitoring rule (Section~\ref{sec:result-metric-coverage}). Thus, the six-consumer response cleared accumulated work sooner, but did not record lower p99 for messages arriving after recovery. The SLO results do not always favor the same response: at one second the second six-consumer run had no violations, whereas the corresponding three-consumer run had eighteen. The observations do not identify a single cause of the latency difference or establish that either response is preferable for every metric.
-
+Redistribution within three consumers had lower p99 and used less CPU and memory in both repetitions during this interval. Both responses sustained approximately 700 completions/s with no persistent hot partitions. Targeted scaling therefore cleared accumulated work sooner but did not give later messages lower p99. SLO violations showed a different pattern: the second targeted-scaling run had none, whereas the corresponding redistribution run had eighteen. These observations do not establish that either response is preferable for every metric.
 
 \clearpage
+\endgroup
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/twelve-partition-compact-outcomes.pdf}
-\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by p99 across completed evaluation messages and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the evaluation-message outcomes.}
+\caption{Outcomes with twelve high-traffic partitions. The upper panels show total consumer-position lag and acknowledged but unfinished messages during the ten-minute evaluation. The lower panels show p99 for completed evaluation messages and the unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the evaluation-message outcomes.}
 \label{fig:twelve-partition-compact-outcomes}\label{fig:four-condition-p99}\label{fig:four-condition-lag}
 \end{figure}
 \clearpage
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/twelve-partition-compact-performance.pdf}
-\caption{Actual consumer CPU and resident memory, useful completion throughput, and ten-second processing-backlog growth. Resource traces sum fresh measurements for all started consumer processes; an unavailable component leaves a gap. Requested resources and their integrals remain separate in the resource table.}
+\caption{Consumer CPU use, resident memory, completion throughput and ten-second processing-backlog growth during the ten-minute evaluation. Resource traces sum fresh measurements for all started consumer processes; an unavailable component leaves a gap. Requested resources and their integrals remain separate in the resource table.}
 \label{fig:twelve-partition-compact-performance}
 \end{figure}
 \clearpage
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/twelve-partition-runtime-state.pdf}
-\caption{Reconstructed runtime state and partition-lag diagnostics. The first four rows show window-mean total lag, window growth, window-mean skew and persistent-hot count. The final row shows maximum and mean partition lag. Exact persistent-hot identifiers remain in the supporting data; the count alone does not identify a reassignment target. No scheduled action was selected by this reconstructed state.}
+\caption{Partition-level measurements during the ten-minute evaluation. The first four rows show window-mean total lag, window growth, window-mean skew and persistent-hot count. The final row shows maximum and mean partition lag. Exact persistent-hot identifiers remain in the supporting data; the count alone does not identify a reassignment target. No scheduled action was selected by this reconstructed state.}
 \label{fig:twelve-partition-runtime-state}
 \end{figure}
 \clearpage

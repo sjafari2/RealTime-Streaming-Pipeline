@@ -13,7 +13,7 @@ The prespecified group of messages produced in the final two evaluation minutes 
 
 Unlike the twelve-partition block, small persistent-hot sets sometimes remained in the late four-partition observations. For example, redistribution Run 1 classified a partition with 11 offsets of lag as persistently hot when total lag was only 42. A relative hotspot can therefore persist in a pipeline with low absolute backlog. This motivates interpreting persistence jointly with absolute lag, growth and completion outcomes.
 
-Processing-start mean latency ranged from 9.933 to 20.020 seconds across this block; it remains separate from completion latency. Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completion attempts were detected, so completed-attempt and distinct-completion throughput coincide in these trials.
+Every trial achieved 700 acknowledged evaluation messages/s. No duplicate completions were detected.
 Observed per-process CPU coverage over evaluation plus drain ranged from 87.22\% to 99.72\%. Coverage uses the complete observation window, including time before additional consumers started; a lower value for a newly started consumer is not automatically a monitoring failure. The integral includes only observed valid process intervals.
 The timing and ownership columns use the definitions in the twelve-partition comparison (Section~\ref{sec:twelve-partition-updated}). Added-consumer delays start at the replica request and end at each new consumer's first valid completion, including startup and handover. The final assignments and added-consumer delays appear alongside the twelve-partition results in Tables~\ref{tab:combined-partition-ownership} and~\ref{tab:combined-activation-delay}.
 
@@ -63,7 +63,7 @@ Targeted scale 6 & 2 & 1,300.6 & 4.01 & 136.85 & 68.42\\
 \renewcommand{\arraystretch}{1.12}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum partition\\lag} & Mean skew\\
+Response & Run & \shortstack{Mean total\\lag} & \shortstack{Maximum\\total backlog} & \shortstack{Lag coverage\\(\%)} & \shortstack{Maximum\\partition lag} & Mean skew\\
 \midrule
 Redistribute 3 & 1 & 7,296 & 50,879 & 96.3 & 13,509 & 20.56\\
 Redistribute 3 & 2 & 6,994 & 50,157 & 97.0 & 12,258 & 20.88\\
@@ -96,7 +96,7 @@ Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth,height=.58\textheight,keepaspectratio]{figures/four-partition-compact-outcomes.pdf}
-\caption{Compact outcome comparison: total consumer-position lag and exact acknowledged-but-unfinished work during evaluation, followed by p99 across completed evaluation messages and unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the evaluation-message outcomes.}
+\caption{Outcomes with four high-traffic partitions. The upper panels show total consumer-position lag and acknowledged but unfinished messages during the ten-minute evaluation. The lower panels show p99 for completed evaluation messages and the unfinished percentage at the drain cutoff. Warm-up work is included in the time-series counts but excluded from the evaluation-message outcomes.}
 \label{fig:four-partition-compact-outcomes}
 \end{figure}
 \clearpage
@@ -104,14 +104,14 @@ Targeted scale 6 & 2 & 81.26 & 21.732 & 15,305 & 5,523 & 266.8\\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth,height=.60\textheight,keepaspectratio]{figures/four-partition-compact-performance.pdf}
-\caption{Actual consumer CPU and resident memory, useful completion throughput, and ten-second processing-backlog growth. Resource traces sum fresh measurements for all started consumer processes; an unavailable component leaves a gap. Requested resources and their integrals remain separate in the resource table.}
+\caption{Consumer CPU use, resident memory, completion throughput and ten-second processing-backlog growth during the ten-minute evaluation. Resource traces sum fresh measurements for all started consumer processes; an unavailable component leaves a gap. Requested resources and their integrals remain separate in the resource table.}
 \label{fig:four-partition-compact-performance}
 \end{figure}
 \clearpage
 \begin{figure}[p]
 \centering
 \includegraphics[width=\linewidth,height=.79\textheight,keepaspectratio]{figures/four-partition-runtime-state.pdf}
-\caption{Reconstructed runtime state and partition-lag diagnostics. The first four rows show window-mean total lag, window growth, window-mean skew and persistent-hot count. The final row shows maximum and mean partition lag. Exact persistent-hot identifiers remain in the supporting data; the count alone does not identify a reassignment target. No scheduled action was selected by this reconstructed state.}
+\caption{Partition-level measurements during the ten-minute evaluation. The first four rows show window-mean total lag, window growth, window-mean skew and persistent-hot count. The final row shows maximum and mean partition lag. Exact persistent-hot identifiers remain in the supporting data; the count alone does not identify a reassignment target. No scheduled action was selected by this reconstructed state.}
 \label{fig:four-partition-runtime-state}
 \end{figure}
 \clearpage

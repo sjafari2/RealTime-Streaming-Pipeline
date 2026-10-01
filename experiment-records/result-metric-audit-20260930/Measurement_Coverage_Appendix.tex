@@ -20,9 +20,8 @@ Lag skew and window-mean skew & Runtime-state row shows window-mean skew; the su
 Hot set, persistence score and persistent-hot set & Persistent-hot row, detector settings and interpretation of early versus late observations. & Exploratory diagnostic, not a validated controller trigger.\\
 Window-mean backlog and runtime state & Runtime-state figure and timestamped CSV/JSON, including persistent-hot partition IDs. & Reconstructed from retained observations; no adaptive controller was evaluated.\\
 Completion mean and p99 & Main outcome tables for each workload. & Calculated from completed evaluation messages through drain; p99 is not an average of rolling percentiles.\\
-Processing-start latency & Ranges reported in the text for each ten-minute comparison. & Time from production until application processing starts.\\
 Unfinished work and completion deadlines & Unfinished percentage and 1-second cohort deadline misses in main tables; 0.5-second sensitivity in appendix. & Overdue unfinished messages count as misses; they have no fabricated completion latency.\\
-Input, useful throughput and attempt throughput & Main throughput plots and outcome tables; admitted rate and replay checks in text. & Attempts and distinct completions agree only when no duplicate completions occur.\\
+Input rate and useful throughput & Main throughput plots and outcome tables; acknowledged input rate in the text. & Useful throughput counts each distinct completed message once.\\
 Actual CPU and resident memory & Main process traces and observed resource integrals. & Consumer processes only; no full-cluster energy or monetary-cost claim.\\
 Requested CPU and memory cost & Main resource tables, integrated over evaluation plus drain; detailed resource-cost figures retained with records. & Partial request coverage is unavailable for full-run comparison, not zero.\\
 Interruption, transition backlog and recovery & Main intervention-cost tables, with operational endpoints identified. & Recovery is first threshold confirmation while input continues; not permanent stability.\\
