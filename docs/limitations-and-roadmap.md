@@ -1,6 +1,6 @@
 # Limitations and research roadmap
 
-The repository provides an instrumented Kafka pipeline and **56 performance trials** spanning rate calibration, ownership and scheduled mitigation. See [current status](current-status.md) and the [experiment register](../EXPERIMENT_REGISTER.md). The adaptive decision policy and optional hot-key splitting remain unimplemented.
+The repository provides an instrumented Kafka pipeline and **60 performance trials** spanning rate calibration, ownership and scheduled mitigation. See [current status](current-status.md) and the [experiment register](../EXPERIMENT_REGISTER.md). The adaptive decision policy and optional hot-key splitting remain unimplemented.
 
 ## Implemented and evaluated capabilities
 
@@ -15,11 +15,11 @@ Local tests establish specific code behavior. The [experiment records](../experi
 
 The original scaling block contains twenty-four trials. Its first sixteen recorded ownership and placement without requiring matching starts; the later eight verified the initial ownership and original-consumer placement. Matched single-partition scaling outcomes were mixed. Later balanced calibration and 700-message/s ownership experiments address a different question: how a rate that is sustainable under balanced input can overload one assigned consumer.
 
-The latest four-condition block has two trials per condition with verified common starts. Kafka's native rebalance and the explicit handoff use different coordination mechanisms, so the comparison evaluates the implemented responses, not replica count in isolation. Matching original pods and ownership does not eliminate changing load on shared machines or variability in newly added consumers. No universal capacity limit, permanent stability or adaptive-policy superiority is established.
+The September 29 four-condition block has two trials per condition with verified common starts. Kafka's native rebalance and the explicit handoff use different coordination mechanisms, so the comparison evaluates the implemented responses, not replica count in isolation. Matching original pods and ownership does not eliminate changing load on shared machines or variability in newly added consumers. No universal capacity limit, permanent stability or adaptive-policy superiority is established.
 
-The completion endpoint follows synthetic application work and precedes commit acknowledgment. Identity, offset-continuity and handoff checks do not establish exactly-once external effects or correctness for arbitrary stateful applications. The 99 ms deadline is provisional; its application basis and clock accuracy require further validation.
+The completion endpoint follows synthetic application work and precedes commit acknowledgment. Identity, offset-continuity and handoff checks do not establish exactly-once external effects or correctness for arbitrary stateful applications. The main reported completion deadline is one second, with a half-second sensitivity analysis. Both were specified before the four-partition trials; their use for older trials is retrospective, and the original 99 ms outcomes remain in the records. These are experimental targets whose application basis and clock accuracy require further validation.
 
-Resource accounting separates process CPU/RSS from requested consumer resources over time. Neither is total cluster or economic cost. The first baseline in the latest block has incomplete local resource-request observations after the coordinating Mac slept. Its historical monitoring and outcome evidence were recovered without rerunning traffic; missing request intervals remain unavailable.
+Resource accounting separates process CPU/RSS from requested consumer resources over time. Neither is total cluster or economic cost. The first baseline in the September 29 block has incomplete local resource-request observations after the coordinating Mac slept. Its historical monitoring and outcome evidence were recovered without rerunning traffic; missing request intervals remain unavailable.
 
 The offset-initialization monitoring correction does not fill historical gaps or remove legitimate interruptions during handoff. Recovery means the specified threshold and holding interval were observed while production continued; it is not a guarantee of indefinite stability. Sensitivity to recovery thresholds is retained.
 
@@ -32,5 +32,9 @@ The offset-initialization monitoring correction does not fill historical gaps or
 | Robustness and scale | Limits under moving hotspots, bursts, changing costs and larger deployments | Valid measurements, intervention overhead and unfavorable outcomes |
 | Optional hot-key splitting | Finer-grained work distribution where semantics permit | Routing, combination, ordering and final-output correctness |
 | Application evaluation | Representative stateless processing workloads | A justified completion endpoint, performance targets and application-specific validation |
+
+Policy evaluation will begin in the current 60-partition pipeline. The proposed controller and selected baselines, including configured CPU-based HPA and KEDA lag-based autoscaling, will use the same workload schedules and comparable consumer-resource limits. These comparisons will establish the observed performance and resource trade-offs at the current scale.
+
+Selected policy comparisons will then be repeated with more partitions and consumers. Input rates will be calibrated for each larger configuration before balanced and skewed testing, with partition count fixed within each comparison. The larger-scale stage will assess whether the trade-offs persist and measure monitoring overhead, decision time and partition-coordination cost. Deployment sizes will be selected according to available resources and recorded before testing. These are successive stages of the planned policy evaluation.
 
 The immediate evidence does not justify declaring one response universally best. Latency, unfinished work, recovery, interruption and resource cost can favor different choices. Future evaluation will test whether a decision policy improves that trade-off compared with the selected baselines. Existing whole-partition handoff is implemented; broader fault handling and stateful transfer are separate research problems.
