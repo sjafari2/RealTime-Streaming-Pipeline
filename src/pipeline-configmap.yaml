@@ -4,18 +4,20 @@ metadata:
   name: pipeline-configmap
   namespace: kafkastreamingdata
 data:
-  # I edit the shared copy while applications are stopped. save-run.sh freezes it for each run.
+  # Shared configuration is changed between runs; each run uses a saved copy.
   NAMESPACE: "kafkastreamingdata"
   RELEASE_NAME: "pip"
-  EXP_ID: "B0"
-  TRAFFIC_MODE: "skew"
-  TARGET_RATE: "3000"
-  EXP_DURATION_SEC: "300"
-  WARMUP_SECONDS: "0"
-  DRAIN_SECONDS: "60"
+  EXP_ID: "balanced-reference"
+  TRAFFIC_MODE: "balanced"
+  # Per producer: three producers target 700 messages/s in total.
+  TARGET_RATE: "233.33333333333334"
+  # Production includes 60 s warm-up and 600 s evaluation; drain follows.
+  EXP_DURATION_SEC: "660"
+  WARMUP_SECONDS: "60"
+  DRAIN_SECONDS: "120"
   READINESS_TIMEOUT_SECONDS: "180"
   FINAL_SCRAPE_SECONDS: "15"
-  WORKLOAD_SEED: "1"
+  WORKLOAD_SEED: "81"
   MITIGATION_POLICY: "none"
 
   BOOTSTRAP_SERVERS: "pip-kafka:9092"
@@ -56,7 +58,7 @@ data:
 
   CONSUMER_GROUP_ID: "consgroup"
   CONSUMER_STATIC_MEMBERSHIP: "false" # Controlled startup enables this; each pod supplies its own ID.
-  CONSUMER_POD_COUNT: "6"
+  CONSUMER_POD_COUNT: "3"
   CONSUMER_CLIENT_ID: "pipeline-consumer"
   PARTITION_ASSIGNMENT_STRATEGY: "cooperative-sticky"
   ENABLE_AUTO_COMMIT: "false"
@@ -73,9 +75,9 @@ data:
   HEARTBEAT_INTERVAL_MS: "1000"
   SOCKET_TIMEOUT_MS: "30000"
   CONSUMER_HTTP_PORT: "8002"
-  SLO_THRESHOLD_MS: "99"
+  SLO_THRESHOLD_MS: "1000"
   APP_DELAY_MS: "0"
-  APP_CPU_ITERATIONS: "0"
+  APP_CPU_ITERATIONS: "2000"
   LAG_QUERY_INTERVAL: "2"
   LAG_QUERY_TIMEOUT: "0.1"
   LAG_QUERY_BUDGET_SEC: "0.2"

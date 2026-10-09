@@ -1,23 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Open a shell in a producer or consumer pod.
+set -euo pipefail
 
-#pod_name=${1}
-#pod_number=${2}
-#container_name=$3-sts
-#:${pod_name}-sts}
-#echo ${container_name}
-
-#kubectl exec -it ${pod_name}-sts-${pod_number} -c ${container_name} -- bash
-
-
-# Another Approach
-
-pod_name=${1}
-pod_number=${2:-0}
-#container_name=${3:${pod_name}-sts}
-#echo ${container_name}
-
-if [[ $pod_name == "application" ]]; then
-   kubectl exec -it consumer-application-sts-${pod_number} -c application-container  -- bash
-else 
-   kubectl exec -it ${pod_name}-sts-${pod_number}  -- bash
+role=${1:-}
+ordinal=${2:-0}
+if [[ "$role" != producer && "$role" != consumer ]]; then
+  echo "Usage: $0 producer|consumer [ordinal]" >&2
+  exit 1
 fi
+kubectl -n "${NAMESPACE:-kafkastreamingdata}" exec -it "${role}-sts-${ordinal}" \
+  -c "${role}-container" -- bash

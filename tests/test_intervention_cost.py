@@ -4,7 +4,7 @@ from pathlib import Path
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
-spec=importlib.util.spec_from_file_location('intervention_cost',ROOT/'experiments/c2-scaling-20260927/analyze_intervention_cost.py')
+spec=importlib.util.spec_from_file_location('intervention_cost',ROOT/'python-scripts/intervention_cost.py')
 cost=importlib.util.module_from_spec(spec);spec.loader.exec_module(cost)
 
 

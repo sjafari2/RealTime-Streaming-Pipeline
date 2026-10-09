@@ -117,7 +117,7 @@ spec:
 
             chmod +x ./run.sh
 
-            # Do NOT start yet. You will start via your script across pods.
+            # The run coordinator starts producers after preparation.
             echo "[main] Ready. Waiting for manual start..."
             tail -f /dev/null
         ports:

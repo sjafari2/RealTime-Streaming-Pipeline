@@ -71,8 +71,8 @@ def main():
             raise RuntimeError('Another managed experiment is active')
         original = r.shared_read(r.CONFIG)
         (audit / 'original-config.yaml').write_bytes(original)
-        template = yaml.safe_load((ROOT / 'experiments/stability-20260914/lower-keep3-run1.yaml').read_text())
-        intervention = json.loads((ROOT / 'experiments/stability-20260914/lower-keep3-run1-plan.json').read_text())
+        template = yaml.safe_load((ROOT / 'experiments/stability-fixed3-20260921/base-config.yaml').read_text())
+        intervention = json.loads((ROOT / 'experiments/stability-fixed3-20260921/no-action.json').read_text())
         expected = None
         def normalized(raw):
             cfg = yaml.safe_load(raw)

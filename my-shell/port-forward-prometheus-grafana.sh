@@ -34,7 +34,7 @@ GRAF_PID=$!
 sleep 3
 
 # Open both in browser
-echo "Opening Prometheus and Grafana in your browser..."
+echo "Opening Prometheus and Grafana..."
 if command -v xdg-open >/dev/null; then
   xdg-open http://localhost:9090
   xdg-open http://localhost:3000
@@ -42,7 +42,7 @@ elif command -v open >/dev/null; then
   open http://localhost:9090
   open http://localhost:3000
 else
-  echo "[Open http://localhost:9090 (Prometheus) and http://localhost:3000 (Grafana) in your browser manually."
+  echo "Open http://localhost:9090 (Prometheus) and http://localhost:3000 (Grafana)."
 fi
 
 # Wait for user to exit

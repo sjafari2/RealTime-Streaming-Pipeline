@@ -1,75 +1,40 @@
-# Four responses to concentrated hot-partition ownership
+# Twelve-hot-partition comparison
 
-This block compares four scheduled responses at an aggregate target of 700 messages/s. Each trial has 60 seconds warm-up, 600 seconds evaluation, and 120 seconds drain (13 minutes total). There are two trials per condition; the second run reverses condition order. Seeds 81 and 82 identify the two workload schedules.
+This protocol compares four scheduled responses at **700 aggregate messages/s**. The workload sends 80% of input to twelve of sixty partitions: an 80/20 distribution. All twelve hot partitions initially belong to Consumer 2. Processing is 2,000 SHA-256 iterations per record, with no added sleep.
 
-| Condition | Consumers | Scheduled response |
+| Response | Consumers | Resulting assignment rule |
 |---|---:|---|
-| Keep three | 3 | Keep the starting partition ownership |
+| Keep three | 3 | Retain the starting assignment |
 | Redistribute within three | 3 | Four hot and sixteen cold partitions per consumer |
-| Scale and redistribute | 3 → 6 | Two hot and eight cold partitions per consumer |
-| Kafka scaling | 3 → 6 | Kafka's classic cooperative-sticky rebalance; no targeted assignment |
+| Targeted scaling | 3 to 6 | Two hot and eight cold partitions per consumer |
+| Native Kafka scaling | 3 to 6 | Cooperative-sticky group assignment without a targeted map |
 
-The action is scheduled 60 seconds after evaluation begins. The workload sends 80% of traffic to twelve of sixty partitions. All twelve initially belong to Consumer 2. The application performs 2,000 SHA-256 iterations per record without an added sleep.
+Each condition has two trials with one-minute warm-up, ten-minute evaluation and two-minute drain. The action is scheduled one minute into evaluation. Condition order is reversed in Run 2; seeds 81 and 82 identify the two workload schedules.
 
-## Comparable starting conditions
+Preparation captures a native empty-topic map, selects the twelve lowest-numbered partitions owned by Consumer 2 and saves that hot set. Original pod identities, nodes, resources and ownership are checked before traffic in every condition. Native scaling and explicit targeted handover use different coordination mechanisms; the comparison includes those differences.
 
-The preparation captures Kafka's normal three-consumer assignment on an empty topic. The twelve lowest-numbered partitions initially owned by Consumer 2 become the frozen hot set. All conditions use that hot set and starting map. Original pod identities, hosting nodes, resource declarations, and partition ownership are checked before workload release. This avoids imposing a manually chosen starting map that Kafka's built-in assignor cannot reproduce. Matching does not eliminate variability on shared machines.
-
-Kafka scaling uses a normal consumer group with a unique static identity per pod. The other three conditions use the existing explicit exclusive-ownership adapter. Their coordination mechanisms differ, so this is a comparison of the implemented responses, not an isolated test of replica count alone. Normal Kafka scaling can also move hot partitions; it is not scaling with ownership held fixed.
-
-The procedure admits no performance trial until the monitoring correction passes its live validation. A matching empty-topic restart and a low-load native scaling technical trial precede the performance block. Technical validations and rejected preparations do not count as performance trials. Only an ownership mismatch before traffic may be retried, at most three times; runtime and evidence failures stop the block. Valid unfavorable outcomes remain in the results.
-
-## Evidence and interpretation
-
-`protocol.json` fixes timing, workload, measurement definitions, intervention-cost boundaries, recovery thresholds, and failure rules before performance trials. The runner saves configurations, the starting reference, action journals, run identifiers, source revision, validation outcomes, and independent resource observations. The underlying managed runner retains producer acknowledgments, completion and assignment events, clock checks, and Prometheus exports.
-
-Completion p99 uses distinct acknowledged evaluation messages completed by the drain cutoff. Warm-up records are excluded from that cohort but remain part of system backlog. Unfinished work is reported alongside completion latency. Growth, skew, CPU, memory, throughput, requested resources, processing interruption, transition backlog accumulation, and recovery are retained. Genuine monitoring gaps remain unavailable.
-
-For native Kafka rebalancing, some consumers can continue working while others transfer partitions. Per-partition handover delays are therefore reported without assuming a pipeline-wide processing pause. Completion during drain and recovery while input continues are separate outcomes.
-
-## Reproducing the figures
-
-The current growth figure uses a 10-second window for every condition and run.
-It is recomputed from the retained lag snapshots using five 2-second intervals.
-Missing data and ownership/offset changes still interrupt the curve; after a
-break, growth requires ten seconds of fresh contiguous observations. The
-15-snapshot skew mean and the separate 30-second recovery criterion are unchanged.
-This is an analysis update after the trials; the original observations and
-run summaries remain unchanged.
-
-```bash
-python3 experiments/four-condition-20260929/summarize.py \
-  results/four-condition-20260929-015500 \
-  experiment-records/four-condition-20260929 \
-  --growth-window-samples 5
-```
-
-For a sensitivity comparison, 10 intervals give 20 seconds and 15 give the
-original 30 seconds. Use a separate output directory to preserve the main figures.
-
-## Execution
-
-Dry-run review:
+## Preview and execution
 
 ```bash
 python3 experiments/four-condition-20260929/run.py
 ```
 
-After inspecting a passed monitoring-gate record:
+This previews the original protocol, including its 99 ms runtime deadline. The published one-second and half-second outcomes were reconstructed retrospectively from the same event evidence. A new protocol with the current one-second target is previewed with `--slo-ms 1000`; it does not change the historical trials.
+
+Execution adds `--execute` and a passed [monitoring check](../monitoring-gap-20260929/README.md):
 
 ```bash
-python3 experiments/four-condition-20260929/run.py --execute \
-  --monitoring-gate experiment-records/monitoring-gap-20260929/live-verification.json
+python3 experiments/four-condition-20260929/run.py --slo-ms 1000 --execute \
+  --monitoring-gate results/TECHNICAL_RUN/monitoring-gap-verification.json
 ```
 
-The runner restores the original shared configuration and returns to three stopped consumer applications. Local source must be committed and deployed before execution. Large raw evidence stays under the ignored `results/` directory and on the shared evidence volumes; small reviewed results are versioned separately.
+The technical-run path is a placeholder. Empty-topic preparation and a low-load native scaling check precede performance trials. Failed preparations are retained separately; valid unfavorable performance outcomes are retained. The runner restores the saved shared configuration and returns to three stopped consumer applications. `--resume results/CAMPAIGN_DIRECTORY` accepts only a validated, restored partial campaign with an unchanged protocol.
 
-## Resuming a restored campaign
-
-A collection failure can be repaired from existing evidence without rerunning traffic. Resume accepts only an unchanged protocol, passed monitoring/native-scaling checks, a verified configuration restoration, and an unrepeated prefix of validated trials. It skips those trials and preserves the frozen starting reference. Resource observers use separate files for resumed segments; missing intervals are never interpolated. The temporary `caffeinate -is` assertion also prevents system sleep while on AC power and ends with the runner.
+## Analysis
 
 ```bash
-python3 experiments/four-condition-20260929/run.py --execute \
-  --monitoring-gate experiment-records/monitoring-gap-20260929/live-verification.json \
-  --resume results/<campaign-directory>
+python3 experiments/four-condition-20260929/summarize.py \
+  results/CAMPAIGN_DIRECTORY results/comparison-analysis --growth-window-samples 5
 ```
+
+Five two-second intervals give a ten-second plotted growth window. Missing observations, ownership changes and offset resets interrupt it; the fifteen-observation skew window and separate thirty-second recovery hold retain their own definitions. The [protocol](protocol.json) preserves the original design. [Published results](../../experiment-records/four-condition-20260929/README.md) include measurement limitations and links to the numerical evidence.

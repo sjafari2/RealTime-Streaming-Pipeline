@@ -271,7 +271,7 @@ def main():
                 row.update(run_id=run,H_persistent=json.dumps(s['H_persistent']))
                 writer.writerow(row)
     (out/'compact-plot-data.json').write_text(json.dumps(details,indent=2))
-    print('Saved runtime states for 20 trials and six compact figures',flush=True)
+    print(f'Saved runtime states for {len(states)} trials and compact figures',flush=True)
 
 
 if __name__=='__main__':main()

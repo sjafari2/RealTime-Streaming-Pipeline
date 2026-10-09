@@ -75,7 +75,7 @@ spec:
 
 
             
-            # Copy code into RWX CephFS once (keeps your existing workflow)
+            # Initialize application code on the shared RWX volume once
             if [ ! -f /app/consumer-merge-data/.code_initialized ]; then
               cp -r /code/* /app/consumer-merge-data/
               touch /app/consumer-merge-data/.code_initialized

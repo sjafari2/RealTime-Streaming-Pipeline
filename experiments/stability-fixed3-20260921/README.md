@@ -1,17 +1,17 @@
-# Balanced stability trials with fixed consumer count
+# Balanced-rate calibration
 
-This campaign measures whether backlog remains bounded during a sustained balanced workload with three consumers. It runs 600 messages/s twice, then 1,500 messages/s twice. Three producers each target one third of the aggregate rate. There is no scaling or reassignment intervention.
+This protocol tests balanced input with three fixed consumers and no mitigation. The published set contains two trials at each aggregate rate: 600, 700, 800, 900, 1,200 and 1,500 messages/s. Three producers each target one third of the selected rate, retaining fractional values.
 
-Each trial has 60 seconds of warm-up, 1,200 seconds of evaluation production, and 120 seconds of drain (23 minutes total). Warm-up messages are excluded from the evaluation cohort; any remaining warm-up backlog stays in the system. The configuration uses 60 partitions, 2,000 SHA-256 iterations per message, zero added application delay, and workload seed 71, inherited from the reviewed stability configuration. Repetitions use fresh topics and consumer groups.
+Each trial uses 60 partitions, 2,000 SHA-256 iterations per message, no added sleep, seed 71, and fresh topics. Timing is one minute warm-up, twenty minutes evaluation and two minutes drain: 23 minutes in total. Warm-up work can remain queued even though warm-up messages are excluded from the outcome cohort.
 
-Run `python3 experiments/stability-fixed3-20260921/run.py` to inspect the design, then add `--execute` to run the four trials. The normal runner checks readiness, source versions, monitoring and evidence quality. The campaign stops on failure and restores the previous shared configuration. Campaign status and configuration copies are written under `results/stability-fixed3-*`; full trial evidence is retained in each recorded run directory.
+Preview the complete design:
 
-Stability analysis reports backlog growth over fixed windows, throughput and completion outcomes. Finite observations can support stability at the tested load and duration; they do not prove stability at arbitrary load or indefinitely. CPU and memory monitoring are retained with coverage information. Completed-message latency must be interpreted together with unfinished work.
+```bash
+python3 experiments/stability-fixed3-20260921/run.py --rates 600 700 800 900 1200 1500 --repetitions 2
+```
 
-On 21 September, the existing `pip-kafka` bootstrap service was switched to the validated replacement Kafka deployment and its brokers added to Prometheus. Original Kafka disks were preserved. Prometheus now uses the Recreate deployment strategy because its existing single-writer volume cannot attach to two nodes during a rolling restart. Consumer scheduling excludes `patternlab.calit2.optiputer.net`, where initialization stalled; actual placements are recorded per trial. All three replacement brokers were on one host at preparation time, so these trials do not establish broker fault tolerance. This recovered infrastructure differs from the earlier campaign and must be identified when comparing results across campaigns.
+Adding `--execute` starts the selected trials. A smaller calibration uses a subset of `--rates`. The runner stops on failure and restores the previous shared configuration. Campaign status and trial paths are saved under `results/stability-fixed3-*`.
 
-To retain a validated first 600 messages/s trial and execute only the three remaining trials, pass `--resume-first-run /absolute/path/to/run-directory --execute`. The runner checks its completion status, configuration and stability analysis before skipping it. The original failed-analysis records are retained when offline recovery is necessary.
+The [base configuration](base-config.yaml) and [no-action plan](no-action.json) retain the calibration settings. The [results](../../experiment-records/stability-fixed3-20260921/README.md) report latency, unfinished work and growth. Bounded backlog during the observed interval does not prove indefinite stability.
 
-For the intermediate-rate follow-up, run `python3 experiments/stability-fixed3-20260921/run.py --rates 900 1200 --repetitions 1 --execute` after the current campaign has completed and restored its configuration. These are aggregate rates (300 and 400 messages/s per producer), with one trial per rate and unchanged timing, workload and consumer settings. Single repetitions are exploratory evidence.
-
-Additional boundary checks use `--rates 700 800 --repetitions 1 --execute`. The shared per-producer target is the aggregate rate divided by three, retaining fractional rates (approximately 233.333 and 266.667 messages/s) rather than rounding the aggregate down to 699 or 798. Report measured admission throughput alongside the requested rate. Other settings remain unchanged.
+With the twelve collected raw run directories, `plot_lag_multipanel.py OUTPUT_PREFIX RUN_DIRECTORY...` reproduces the aggregate lag figure. `python-scripts/analyze_stability.py RUN_DIRECTORY` computes per-run growth windows and stability summaries.

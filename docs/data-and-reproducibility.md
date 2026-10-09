@@ -1,56 +1,39 @@
-# Data availability and reproducible analysis
+# Data and reproducibility
 
-I publish the experiment configurations, analysis code, compact result summaries, and available evidence hashes with this repository. The recorded results describe synthetic Kafka workloads; they are not measurements of a deployed biomedical or fire-detection application.
+I publish the configurations, analysis code, compact summaries and available evidence hashes for the [24 current trials](../experiment-records/README.md). These are synthetic Kafka experiments. Earlier campaigns and superseded reports are preserved on the [archive branch](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008).
 
-## Published material
+## Public results
 
-| Location | Contents |
-| --- | --- |
-| `EXPERIMENT_REGISTER.md` | Summary of completed comparisons and planned work |
-| `experiment-records/paired-table-20260914/paired-results-data.json` | Run identifiers and per-trial results for the 24 performance trials |
-| `experiment-records/campaign-20260912/` | Earlier campaign summaries, comparisons, and calibration records |
-| `experiment-records/repetitions-20260913/` | Later repeated comparisons, plots, and ownership reviews |
-| `experiment-records/stability-fixed3-20260921/` | Twelve balanced fixed-three-consumer stability trials and rate-comparison plots |
-| `experiment-records/hot-ownership-consumers-20260927/` | Four fixed-ownership calibrations at 700 aggregate messages/s |
-| `experiment-records/c2-scaling-20260927/` | Four controlled keep-three versus scale-and-redistribute trials, metric plots and handoff validation |
-| `experiment-records/c2-redistribution-20260928/` | Four fixed-three redistribution trials with prospectively specified interruption, accumulation and recovery metrics |
-| `experiment-records/four-condition-20260929/` | Eight matched-start thirteen-minute trials, all-metric figures, observed ownership and intervention costs |
-| `experiment-records/monitoring-gap-20260929/` | Offset-initialization diagnosis and live correction verification |
-| `experiments/` | Dated workload configurations and execution protocols; some remain unexecuted |
-| `python-scripts/` | Outcome reconciliation, lag, resource, comparison, and repetition analysis |
+Each result group contains a short README and its numerical comparison file. The intervention metric summary includes the reported one-second deadline analysis and resource coverage; selected figures show performance, resources, outcomes and reconstructed runtime signals. Run identifiers and original execution revisions remain in the evidence records.
 
-In the original 24-trial scaling block, each comparison contains two separate trials: keep three consumers and scheduled scaling from three to six. A Run 1 or Run 2 label identifies a comparison, not two phases of a single trial. The later eight trials checked matching starting ownership and original-consumer placement; the earlier sixteen did not require matching starts.
+Generated JSON, CSV and plots are analysis outputs, not a second manually maintained report. A human-readable summary needs only the design, main findings, limitations and links to those outputs. The [experiment index](../experiments/README.md) identifies the scripts that produce them.
 
-## Raw evidence availability
+## Raw evidence
 
-Full per-message evidence and monitoring exports are not distributed as a complete public raw-data package in this repository. They are retained separately from Git. The public JSON summaries support inspection of reported values and comparisons, but they cannot independently reconstruct a latency distribution without the underlying message records. Historical absolute paths inside evidence files describe the original execution environment; they are not paths that another researcher must create.
+Full per-message logs and monitoring exports are stored separately under ignored `results/` directories and independent backups. The repository summaries cannot reconstruct an entire latency distribution without those records. An issue identifying the required run IDs can be used to request a raw-evidence package; a public download or permanent external archive is not currently promised.
 
-Researchers seeking a raw-evidence package can open a repository issue identifying the required run IDs and intended analysis. Availability and transfer arrangements must be confirmed; no public download or permanent external archive is currently promised. Raw archives require checksum verification and preservation separately from source history.
+A collected run normally contains:
 
-## Collected run format
+| File or directory | Evidence |
+|---|---|
+| `manifest.json`, `pipeline-configmap.yaml` | Run identity, timing, configuration, intervention and source signatures |
+| `producer/`, `consumer/` | Message events, ownership events, final status and metric snapshots |
+| `prometheus.json` | Run-scoped monitoring with labels and unavailable observations |
+| `resource-history.jsonl` | Sampled consumer resource requests and pod history |
+| `intervention-events.jsonl`, `explicit-handoff-events.jsonl` | Action and handover observations, when applicable |
+| `outcome-summary.json`, `lag-summary.json`, `execution-summary.json` | Derived outcomes and coverage |
 
-A complete local run directory normally contains:
+File availability is checked per trial. Historical absolute paths describe the original execution environment, not directories that another researcher must recreate.
 
-- `manifest.json` and `pipeline-configmap.yaml`: run identity, timing boundaries, intervention, and frozen configuration.
-- `producer/` and `consumer/`: per-process event logs (`events.jsonl` or compressed equivalents), final status, and final metric snapshots.
-- `resource-history.jsonl` and `intervention-events.jsonl`: sampled requests and action observations.
-- Monitoring exports and generated `outcome-summary.json`, `lag-summary.json`, and `execution-summary.json`, where collection succeeded.
+## Reanalysis
 
-File availability and measurement coverage are checked per run. A missing monitoring interval is not zero backlog, and an unfinished message has no observed completion latency at the cutoff.
-
-## Recomputing outcomes
-
-The following commands run from the repository root in a Python environment with the documented dependencies. `RUN_ID` and other capitalized run labels are placeholders for collected directories. Preserve an untouched raw-evidence copy before regenerating summaries.
+With collected raw evidence under `results/`, the following commands recompute individual and repeated-run summaries:
 
 ```bash
 python3 python-scripts/evaluate_run.py results/RUN_ID
 python3 python-scripts/summarize_runs.py results/RUN_A results/RUN_B --output results/recomputed-summary.json
 ```
 
-The evaluator writes the selected run's outcome summary. The repetition analyzer writes outside its input run directories and groups compatible configurations; it does not automatically treat different interventions as repetitions. A treatment comparison uses the reviewed comparison plan and `compare_runs.py`, documented in the runtime guide.
+`RUN_ID`, `RUN_A` and `RUN_B` are placeholders. Reanalysis uses a copy of the raw evidence; the original files and checksums remain preserved. Different configurations and interventions are not automatically treated as repetitions. See [metric definitions](metric-definitions.md) for cohort p99, pooled quantiles, unfinished work and coverage rules.
 
-Completion p99 is computed from distinct acknowledged evaluation messages that finish application processing by the drain cutoff. It is not the mean of rolling p99 values. Unfinished percentage uses all admitted evaluation messages as its denominator. Requested consumer CPU-time is separate from measured CPU usage and whole-cluster cost. Exact definitions and coverage rules are in [Metric definitions](metric-definitions.md).
-
-## Reusing the software and reporting results
-
-A new deployment requires cluster access, compatible images and packages, configured volumes and services, and readiness checks. The [Nautilus setup](nautilus-measurement-update.md) and [runtime guide](runtime-and-data-flow.md) describe those prerequisites and run commands. New experiments should record their own source revision, configuration, placement, timing, admission counts, and measurement coverage. Report observed outcomes separately from proposed mechanisms and application benefits.
+Source history, compact result records and raw evidence require separate backups. A Git summary is not a backup of its underlying measurements.

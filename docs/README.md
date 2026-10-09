@@ -1,33 +1,19 @@
-# Research software documentation
+# Documentation
 
-I maintain these guides for researchers who want to understand the experimental design, deploy the pipeline, reproduce the analysis, or extend the implementation. They describe the software in this repository and identify which results are supported by completed experiments.
+These guides describe the experimental design, implementation and published evidence.
 
-[Current status](current-status.md): 60 completed performance trials spanning balanced-rate calibration, partition ownership and scheduled mitigation, with explicit evidence limitations.
-
-## Research design
-
-- [Research questions](research-questions.md): the five proposal topics and their current implementation status.
-- [Architecture](architecture.md): message processing, run coordination, monitoring and analysis.
-- [Experiment methodology](experiment-methodology.md): a fair comparison, initial pilots and evidence requirements.
-- [Limitations and roadmap](limitations-and-roadmap.md): what is established, what remains provisional and the next research stages.
-
-## Deployment, execution, and analysis
-
-- [Nautilus measurement update](nautilus-measurement-update.md): initial deployment and synchronization prerequisites.
-- [Runtime and data flow](runtime-and-data-flow.md): supported commands, timing, file relationships and troubleshooting.
-- [Metric definitions](metric-definitions.md): cohorts, completion, lag, percentiles, coverage, resource accounting and recovery.
-- [Completed stability measurements](../experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md): twelve balanced fixed-three trials used to assess the observed operating range.
-- [Four high-input partitions](../experiment-records/four-hot-partitions-20260930/README.md): two runs each of redistribution within three and scaling to six with targeted redistribution, including prespecified completion deadlines and late-period outcomes.
-- [Four scheduled responses](../experiment-records/four-condition-20260929/README.md): eight matched-start trials comparing no action, redistribution, combined scaling and redistribution, and native Kafka scaling.
-- [Data and reproducibility](data-and-reproducibility.md): published evidence, raw-data availability, file formats, and analysis entry points.
-- [Experiment records](../experiment-records/README.md): small records of completed runs, with explicit limitations.
-- [12 September preliminary campaign](../experiment-records/campaign-20260912/campaign-report.md): all 16 controlled trials, paired plots, technical exclusions and the connection to the proposal experiment table.
-- [Git history and backups](git-history-and-backups.md): source history, commits and separate raw-data preservation.
-
-## Repository organization
-
-The active runtime remains in `src/`; the coordinator is in `my-shell/`; offline analysis is in `python-scripts/`. The directory names are retained because deployment and synchronization use these paths. `experiments/` contains configuration plans; `experiment-records/` contains evidence about completed runs. These have different purposes.
-
-Infrastructure resources are retained in `k8s/`, `helm/` and `charts/`. They are configuration material to inspect for the intended deployment, not a promise that every historical manifest is a current one-command installation. Superseded code is explained in [the managed-run archive](../archive/legacy-before-managed-runs/README.md) and [the earlier repository archive](../archive/repository-before-managed-runs/ARCHIVE.md).
-
-The [GitHub wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) is a reading-oriented entry point. Versioned source documentation is authoritative for the branch being used. Metric definitions document the implementation used to interpret the results.
+| Guide | Contents |
+|---|---|
+| [Research questions](research-questions.md) | Individual methods, combinations, execution order and costs |
+| [Architecture](architecture.md) | Processing, coordination and evidence paths |
+| [Experiment methodology](experiment-methodology.md) | Calibration, timing and comparison controls |
+| [Results](../experiment-records/README.md) | The 24 main-proposal trials, tables and plots |
+| [Metric definitions](metric-definitions.md) | Populations, formulas, coverage and repetition summaries |
+| [Experiment protocols](../experiments/README.md) | Configurations and campaign commands |
+| [Deployment](nautilus-measurement-update.md) | Kubernetes setup and source updates |
+| [Runtime and data flow](runtime-and-data-flow.md) | Run commands, file relationships and outputs |
+| [Data and reproducibility](data-and-reproducibility.md) | Public summaries and separate raw evidence |
+| [Commit handling](commit-handling.md) | Completion frontier and offset commits |
+| [Evidence collection](evidence-collection.md) | Transfer validation and recovery |
+| [Limitations and next steps](limitations-and-roadmap.md) | What remains to be implemented or evaluated |
+| [History and backups](git-history-and-backups.md) | Branches, provenance and preservation |

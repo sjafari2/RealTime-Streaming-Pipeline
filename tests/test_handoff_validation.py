@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import pytest
 ROOT=Path(__file__).resolve().parents[1]
-spec=importlib.util.spec_from_file_location('live_handoff_audit', ROOT/'experiments/c2-scaling-20260927/validate.py')
+spec=importlib.util.spec_from_file_location('live_handoff_audit', ROOT/'python-scripts/validate_handoff.py')
 v=importlib.util.module_from_spec(spec);spec.loader.exec_module(v)
 
 

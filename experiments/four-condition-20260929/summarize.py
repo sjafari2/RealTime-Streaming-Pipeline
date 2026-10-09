@@ -2,7 +2,6 @@
 import argparse
 from collections import Counter
 import hashlib
-import importlib.util
 import json
 import math
 import os
@@ -23,11 +22,8 @@ from analyze_lag import signals, growth_plot_lag
 from analyze_execution import resource_integral
 from evaluate_run import evaluate
 
-def module(name,path):
-    spec=importlib.util.spec_from_file_location(name,ROOT/path)
-    mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);return mod
-old=module('ownership_figures','experiments/hot-ownership-20260927/summarize.py')
-cost=module('intervention_cost','experiments/c2-scaling-20260927/analyze_intervention_cost.py')
+import comparison_series as series
+import intervention_cost as cost
 ARMS=['keep3','redistribute3','scale_redistribute6','kafka_scale6']
 LABELS={'keep3':'Keep 3','redistribute3':'Redistribute within 3','scale_redistribute6':'Scale + targeted redistribution','kafka_scale6':'Scale + Kafka rebalance'}
 COLORS=['#2563a6','#dc862d','#21875e','#9a4eaa','#bc4148','#5d7390']
@@ -205,14 +201,14 @@ def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,
     s['growth_plot_parameters']=plot_lag['growth_plot_parameters']
     s['lag_metric_coverage']=lag_metric_coverage(plot_lag)
     s['lag_analysis_parameters']=plot_lag['parameters']
-    x,lag_y,_,growth=old.lag_lines(m,plot_lag);skx,sk,skmean=old.skew_lines(m,lag)
+    x,lag_y,_,growth=series.lag_lines(m,plot_lag);skx,sk,skmean=series.skew_lines(m,lag)
     data={'lag':[(x,lag_y)],'growth':[(x,growth)],'skew':[(skx,sk),(skx,skmean)],'outstanding':[outstanding]}
     data['partition-lag']=diagnostic_lines(plot_lag,start,['mean_partition_lag','max_partition_lag'])
     data['persistent-hot']=diagnostic_lines(plot_lag,start,['persistent_hot'])
     prom=read(p,'prometheus.json')['data']['result'];consumers=6 if 'scale' in row['arm'] else 3
     for key,name,div in [('cpu','consumer_cpu_percent',100),('memory','consumer_memory_bytes',1024**2)]:
-        data[key]=[old.resource_line(prom,name,'consumer-sts-'+str(i),start,finish,div) for i in range(consumers)]
-    tx,ys=old.throughput_bins(p,start,finish);data['throughput']=[(tx,y) for y in ys]
+        data[key]=[series.resource_line(prom,name,'consumer-sts-'+str(i),start,finish,div) for i in range(consumers)]
+    tx,ys=series.throughput_bins(p,start,finish);data['throughput']=[(tx,y) for y in ys]
     return s,data,{k:(v-start)/60 for k,v in marks.items()}
 
 def campaign_design(campaign):
@@ -325,7 +321,7 @@ def main():
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
     lines+=['','P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
-        f'The growth figure uses a {growth_seconds}-second window ({a.growth_window_samples} intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery hold. Earlier figures retain their original window settings.','',
+        f'The growth figure uses a {growth_seconds}-second window ({a.growth_window_samples} intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery hseries. Earlier figures retain their original window settings.','',
         '| Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |','|---|---:|---:|---:|---:|']
     for s,_,_ in runs:
         resource=s['requested_resources_evaluation_and_drain'];lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {resource['consumer_container_requested_cpu_seconds_observed']/60:.2f} | {resource['consumer_container_requested_gib_seconds_observed']/60:.2f} | {resource['covered_fraction']*100:.1f}% |")

@@ -22,8 +22,6 @@ import numpy as np
 BLOCKS = {
     'twelve-partition': ('four-condition-20260929', 'Twelve high-input partitions; 10-minute evaluation'),
     'four-partition': ('four-hot-partitions-20260930', 'Four high-input partitions; 10-minute evaluation'),
-    'short-targeted-scaling': ('c2-scaling-20260927', 'Earlier targeted scaling; 5-minute evaluation'),
-    'short-redistribution': ('c2-redistribution-20260928', 'Earlier redistribution; 5-minute evaluation'),
 }
 LABELS = {'keep3': 'Keep 3', 'redistribute3': 'Redistribute within 3',
           'scale_redistribute6': 'Scale + targeted redistribution',
@@ -323,7 +321,7 @@ def main():
             resource_plot(rows, title, out / 'figures' / (block + '-resource-cost'))
             ownership_plot(rows, title, out / 'figures' / (block + '-ownership'))
         (out / 'metrics.json').write_text(json.dumps({'groups': groups, 'source_sha256': hashes}, indent=2))
-    print('Completed all twenty trial summaries and eight diagnostic/resource/ownership figures', flush=True)
+    print(f'Completed {sum(map(len, groups.values()))} trial summaries', flush=True)
 
 
 if __name__ == '__main__':

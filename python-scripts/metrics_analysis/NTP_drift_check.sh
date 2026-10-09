@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🔍 Checking node time drift (in seconds.nanoseconds):"
+echo "Checking node time drift (in seconds.nanoseconds):"
 
 # Get all node names
 nodes=$(kubectl get nodes -o name | cut -d'/' -f2)
@@ -11,6 +11,6 @@ for node in $nodes; do
   # Use kubectl debug to run `date` inside the node's host namespace
   kubectl debug node/$node \
     --image=busybox \
-    -- chroot /host date +%s.%N 2>/dev/null || echo "❌ Failed"
+    -- chroot /host date +%s.%N 2>/dev/null || echo "[ERROR] Failed"
 done
 

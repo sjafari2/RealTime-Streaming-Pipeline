@@ -15,8 +15,8 @@ sys.path.insert(0,str(ROOT/'my-shell'))
 import run_experiment as r
 from placement_control import PlacementMismatch,pod_identity
 from static_startup import audit_preparation
-sys.path.insert(0,str(ROOT/'experiments/c2-scaling-20260927'))
-from validate import validate
+sys.path.insert(0,str(ROOT/'python-scripts'))
+from validate_handoff import validate
 HPA_PLAN=dict(action='scale',initial_consumers=3,target_consumers=6,after_evaluation_start_seconds=60)
 ORDER=[('keep3',1,81),('redistribute3',1,81),('scale_redistribute6',1,81),('kafka_scale6',1,81),
        ('kafka_scale6',2,82),('scale_redistribute6',2,82),('redistribute3',2,82),('keep3',2,82)]
@@ -31,7 +31,7 @@ def target_map(hot,count):
 def prepared(arm,number,seed,reference=None,hot=None,gate=False,aggregate_rate=700,hot_count=12,deadline_ms=99):
     if aggregate_rate not in (700,800):raise ValueError('Unreviewed aggregate rate')
     if hot_count not in (4,12):raise ValueError('Unreviewed hot-partition count')
-    config=yaml.safe_load((ROOT/'experiments/hot-ownership-20260927/concentrated-c2.yaml').read_text())
+    config=yaml.safe_load((ROOT/'experiments/four-condition-20260929/base-config.yaml').read_text())
     data=config['data'];native=arm=='kafka_scale6'
     prefix='four-condition-' if aggregate_rate==700 and hot_count==12 else 'hot'+str(hot_count)+'-rate'+str(aggregate_rate)+'-'
     data.update(EXP_ID=prefix+arm+('-technical' if gate else '-run'+str(number)),

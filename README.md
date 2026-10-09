@@ -1,90 +1,62 @@
-# Kafka Partition Skew and Consumer Elasticity
+# RealTime Streaming Pipeline
 
-**Current status:** [Completed evidence and pending work](docs/current-status.md).
+I developed this Kafka research platform to study how workload skew, partition ownership and consumer capacity affect stream processing. The study compares scaling, targeted partition redistribution and their costs, and provides a foundation for evaluating hot-key splitting, combinations of interventions and execution order.
 
-**Experiment progress:** [Open the experiment register](EXPERIMENT_REGISTER.md) for completed trials, plots, preparation outcomes, and planned experiments.
+The implementation uses Python producers and consumers on Kubernetes, with Prometheus and Grafana for monitoring. Experiments retain message identities and completion records alongside the monitoring data, so latency can be reported with unfinished work.
 
-A research platform for studying how workload imbalance affects a Kafka stream-processing pipeline, when additional consumers help, and how the cost of changing the configuration should influence mitigation decisions.
+## Research and results
 
-I developed this experimental platform as part of my PhD research, **Skew-Resilient Kafka: A Lag-Driven Autoscaling Approach**, in the Department of Computer Science at the University of New Mexico. I maintain the code, experiment configurations, measurement definitions, and result summaries here so that other researchers can inspect the methods and run comparable experiments.
+The current result set contains **24 performance trials** used in the main proposal:
 
-The platform combines Python producers and consumers, Kubernetes deployment resources, managed experiment execution, and offline analysis of message completion and partition-level behavior. 
+| Experiment | Trials | Main observation |
+|---|---:|---|
+| Balanced input, 600–1,500 messages/s | 12 | Backlog remained bounded at 600–800 messages/s over the observed interval and grew at higher rates. |
+| 80% of input across 12 of 60 partitions | 8 | Redistribution and both scaling responses completed all evaluation messages; keeping the starting assignment left about 35% unfinished. |
+| 80% of input across 4 of 60 partitions | 4 | Redistribution within three consumers recorded lower whole-cohort p99 than targeted scaling to six in both runs. |
 
-**Current implementation:** managed measurements, evidence collection, repeated-run analysis, native consumer scaling, coordinated whole-partition redistribution, and scaling combined with targeted redistribution. The completed inventory contains 60 performance trials, including the [eight-trial comparison of four scheduled responses](experiment-records/four-condition-20260929/README.md) and the [four-trial comparison with four high-input partitions](experiment-records/four-hot-partitions-20260930/README.md). The adaptive decision policy and optional hot-key splitting remain future implementation stages. These scheduled trials evaluate individual responses; they do not establish the effectiveness or novelty of an adaptive policy.
+The skew comparisons use **700 messages/s in total across three producers**. Each condition has two runs. These are scheduled interventions on a synthetic workload; the adaptive controller and hot-key splitting remain research work.
 
-The active development branch is [`main`](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/main). Earlier implementations remain available in Git history and the documented archive.
+[Results, tables and plots](experiment-records/README.md) · [Research questions](docs/research-questions.md) · [Methodology](docs/experiment-methodology.md) · [Metric definitions](docs/metric-definitions.md)
 
-## Documentation for researchers
+## Running the pipeline
 
-| Purpose | Guide |
-|---|---|
-| Understand the project and navigate the repository | [Documentation index](docs/README.md) |
-| Understand the research questions | [Research direction](docs/research-questions.md) |
-| Follow the data and control paths | [Architecture](docs/architecture.md) |
-| Prepare and operate the deployed environment | [Nautilus setup](docs/nautilus-measurement-update.md) and [runtime guide](docs/runtime-and-data-flow.md) |
-| Interpret measurements correctly | [Metric definitions](docs/metric-definitions.md) |
-| Design a comparison and assess its evidence | [Experiment methodology](docs/experiment-methodology.md) |
-| Inspect balanced-rate calibration and stability | [Completed stability measurements](experiment-records/stability-fixed3-20260921/COMPLETED_RESULTS.md) |
-| Inspect completed runs and their limitations | [Experiment records](experiment-records/README.md) |
-| Read the project overview on GitHub | [Project wiki](https://github.com/sjafari2/RealTime-Streaming-Pipeline/wiki) |
+A configured Kubernetes deployment, shared volumes, compatible images and monitoring are required. The [deployment guide](docs/nautilus-measurement-update.md) covers these prerequisites. From the repository root:
 
-## Research scope
+```bash
+# One experiment using the shared configuration.
+bash my-shell/save-run.sh
 
-The core study retains exclusive whole-partition ownership: at most one consumer actively processes a partition at a time, and processing within that partition is sequential. Native scaling uses Kafka consumer-group rebalancing; targeted trials use a coordinated explicit handoff. Additional consumers can process different partitions in parallel. They cannot divide one overloaded partition's sequential work among multiple consumers.
+# Two runs of the same configuration.
+bash my-shell/run_pipeline.sh --repetitions 2
+```
 
-The research evaluates partition-level monitoring, consumer scaling, and targeted ownership changes. A later decision rule will use the results to choose an appropriate action, including waiting when intervention is unlikely to help. Producer-side key splitting remains an optional study for compatible processing semantics. Its results would require separate ordering and partial-result correctness evidence.
+The coordinator prepares fresh topics, checks readiness, runs warm-up, evaluation and drain, then collects and analyzes the evidence. Configuration changes are made between runs in `/config/pipeline-configmap.yaml`. The local [template](src/pipeline-configmap.yaml) does not update a running deployment automatically.
+
+The [experiment protocols](experiments/README.md) provide the specific commands and settings for the published comparisons. The [runtime guide](docs/runtime-and-data-flow.md) explains the file relationships and output format.
 
 ## Repository layout
 
-```text
-src/                    Producer, consumer, shared runtime, configuration template
-my-shell/               Managed run coordinator and operational entry points
-python-scripts/         Offline outcome, backlog, execution and repetition analysis
-tests/                  Local behavior and measurement checks
-docs/                   Architecture, research, operations and metric documentation
-experiments/            Proposed or reviewed experiment configurations
-experiment-records/     Small run summaries, configurations and evidence hashes
-dockerfiles_confluent/  Application images and runtime dependencies
-k8s/ helm/ charts/      Infrastructure manifests and deployment resources
-grafana/                Monitoring dashboard definitions
-archive/                Superseded implementations with provenance
-```
+| Directory | Contents |
+|---|---|
+| `src/` | Producer, consumer and shared runtime |
+| `my-shell/` | Run coordination, deployment helpers and source synchronization |
+| `python-scripts/` | Outcome, lag, resource and comparison analysis |
+| `experiments/` | Current experiment protocols and analysis entry points |
+| `experiment-records/` | Published summaries, provenance and selected plots |
+| `k8s/`, `dockerfiles_confluent/` | Infrastructure and image definitions |
+| `grafana/` | Monitoring dashboards |
+| `tests/` | Local tests for runtime and measurement behavior |
+| `docs/` | Research and operational documentation |
 
-Large raw run evidence is stored separately from Git. The generated `results/` directory is ignored. Read [Git history and backups](docs/git-history-and-backups.md) for the distinction between source history, small experiment records and raw-data backups.
+Large raw results are stored separately from Git. Public summaries do not replace the per-message evidence needed to recompute latency distributions; see [data availability](docs/data-and-reproducibility.md).
 
-## Running an experiment
+## Development
 
-Complete the [deployment and synchronization steps](docs/nautilus-measurement-update.md) first. These commands operate an existing configured cluster; cloning the repository alone does not provision a working experiment environment. Review the workload, available storage and run duration before starting.
-
-From the repository root, one complete run uses:
+Changes are prepared on **`development`** and merged into **`main`** after review. Earlier campaigns and legacy implementations are preserved on the [archive branch](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008). This keeps the active tree focused while retaining the original history and outcomes.
 
 ```bash
-bash my-shell/save-run.sh
+python3 -m pip install -r dockerfiles_confluent/runtime-requirements.txt pytest numpy matplotlib
+python3 -m pytest -q
 ```
 
-To repeat the current shared configuration five times:
-
-```bash
-bash my-shell/run_pipeline.sh --repetitions 5
-```
-
-The coordinator checks readiness, freezes the configuration, schedules production and drain, retains evidence, exports monitoring data and calculates summaries. Every run has a separate identifier and output directory. A failed batch stops and preserves its completed outputs. Fresh topics are created; old topics are not automatically removed.
-
-The shared `/config/pipeline-configmap.yaml` is edited while applications are stopped. `src/pipeline-configmap.yaml` is a local template. Code synchronization does not automatically apply that template to the live configuration. See [runtime commands](docs/runtime-and-data-flow.md) for rate sweeps, interruption, export and scheduled scale-up.
-
-## Data and result interpretation
-
-The published summaries report completion latency alongside unfinished records, actual admission, and completed throughput. Backlog and resource-time estimates include measurement coverage. Rolling Grafana attempt metrics and whole-run, distinct-message cohort results answer different questions. The [data and reproducibility guide](docs/data-and-reproducibility.md) explains the available files, access limits, and analysis workflow.
-
-The current synthetic completion endpoint precedes commit acknowledgement and does not represent a durable external business result. A 99 ms deadline is provisional. Clock uncertainty, missing measurements and the scope of resource accounting must accompany conclusions. See [limitations and roadmap](docs/limitations-and-roadmap.md).
-
-## Local checks
-
-In an isolated Python environment:
-
-```bash
-python3 -m pip install -r dockerfiles_confluent/runtime-requirements.txt pytest
-python3 -m pytest -q tests
-```
-
-Local checks do not replace live deployment validation or repeated performance experiments. Research reuse should preserve the distinction between implemented behavior, proposed experiments, and observed results.
+See [contributing](CONTRIBUTING.md) for the branch workflow and [limitations and next steps](docs/limitations-and-roadmap.md) for the remaining research.
