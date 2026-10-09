@@ -46,7 +46,7 @@ spec:
             done
           done
 
-          echo "[INFO] ✅ All scripts executed and results saved to /results/$TIMESTAMP"
+          echo "[INFO] All scripts executed and results saved to /results/$TIMESTAMP"
         volumeMounts:
         - name: results-volume
           mountPath: /results
