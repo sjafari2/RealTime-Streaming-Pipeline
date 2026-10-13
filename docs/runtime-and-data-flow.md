@@ -25,9 +25,9 @@ The default namespace is `kafkastreamingdata`. The coordinator's `NAMESPACE` ove
 1. Stop preceding applications and retain their evidence.
 2. Restore the declared initial consumer count, validate pods and create fresh run-specific topics.
 3. Save the configuration under `/config/runs/RUN_ID/` and publish preparation state.
-4. Start applications and verify readiness, configuration hashes and unique ownership of all partitions. Controlled comparisons additionally verify their saved starting reference.
+4. Start applications and verify readiness, configuration hashes, unique ownership of all partitions and required node separation. Controlled comparisons additionally verify their saved starting reference.
 5. Publish common warm-up, evaluation and drain boundaries. Producers wait for release.
-6. Apply any declared scheduled action and record its actual timing and outcome.
+6. Apply any declared scheduled action, verify placement/readiness after scaling, and record its actual timing and outcome.
 7. Stop production at its boundary, allow drain, retain final snapshots, then collect and analyze.
 
 Warm-up records are excluded from the evaluation cohort but remain real queued work. The schedule is shared through `run-control.json`; a later edit to the original YAML does not change a running experiment's saved configuration. Old topics are not automatically deleted.
@@ -47,6 +47,7 @@ The filename is a placeholder for the actual recovery record. This experiment is
 | `my-shell/save-run.sh`, `run_pipeline.sh` | Shell entry points for one run or a batch |
 | `my-shell/run_experiment.py` | Readiness, timing, scheduled actions, collection and analysis |
 | `my-shell/placement_control.py`, `static_startup.py` | Starting-condition checks |
+| `my-shell/node_placement.py` | Required node separation, deployed-rule validation and placement evidence |
 | `my-shell/explicit_control.py`, `explicit_scale.py` | Coordinated whole-partition ownership transfer |
 | `my-shell/sync_code.py` | Source copying and hash verification on shared volumes |
 | `src/common/launch.py` | Load the saved configuration and launch a role |

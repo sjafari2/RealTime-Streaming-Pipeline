@@ -13,9 +13,18 @@ from placement_control import PlacementMismatch
 from test_placement_control import example
 
 
-@pytest.mark.parametrize('mode', ['prepare', 'capture', 'run', 'wrong_owner', 'budget'])
+@pytest.mark.parametrize('mode', ['prepare', 'capture', 'run', 'wrong_owner', 'budget', 'shared_node'])
 def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     ref, cfg, rows, items = example()
+    from test_node_placement import deployment
+    _, sets, _, _ = deployment()
+    for item in items:
+        item['metadata']['namespace'] = r.NS
+        role = item['metadata']['labels']['app']
+        item['spec']['affinity'] = next(s for s in sets if s['metadata']['name']==role)['spec']['template']['spec']['affinity']
+    if mode == 'shared_node':
+        items[2]['spec']['nodeName'] = items[1]['spec']['nodeName']
+        ref['pods'][2]['node'] = ref['pods'][1]['node']
     cfg['RUN_ID'] = 'run'
     raw = json.dumps(cfg).encode()
     for row in rows.values():
@@ -39,7 +48,7 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     monkeypatch.setattr(r, 'set_consumer_baseline', lambda *a: None)
     monkeypatch.setattr(r, 'preflight', lambda: None)
     monkeypatch.setattr(r, 'pods', lambda role: [p['pod'] for p in ref['pods'] if p['role'] == role])
-    monkeypatch.setattr(r, 'kubectl', lambda *a, **k: json.dumps(dict(items=items)).encode())
+    monkeypatch.setattr(r, 'kubectl', lambda *a, **k: json.dumps(dict(items=sets if len(a)>1 and a[1]=='statefulset' else items)).encode())
     monkeypatch.setattr(r, 'shared_write', lambda *a: None)
     monkeypatch.setattr(r, 'publish', lambda c: published.append(copy.deepcopy(c)))
     monkeypatch.setattr(r, 'estimate_capacity', lambda *a: {})
@@ -51,8 +60,8 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     monkeypatch.setattr(r, 'monitoring_readiness', lambda *a: {})
     monkeypatch.setattr(r, 'journal', lambda *a: journal.append(copy.deepcopy(a[-1])))
     monkeypatch.setattr(r.time, 'sleep', lambda *a: None)
-    if mode in ('wrong_owner', 'budget'):
-        with pytest.raises(PlacementMismatch, match='ownership differs|budget exhausted'):
+    if mode in ('wrong_owner', 'budget', 'shared_node'):
+        with pytest.raises(PlacementMismatch, match='ownership differs|budget exhausted|share node'):
             r.start(plan)
         assert [c['state'] for c in published] == ['preparing', 'failed']
         assert all('start_epoch' not in c for c in published)
@@ -74,6 +83,7 @@ def test_shared_stop_during_gate_prevents_scale(monkeypatch):
     states = iter([control, dict(run_id='run', state='stopped')])
     monkeypatch.setattr(r, 'read_control', lambda: next(states))
     monkeypatch.setattr(r, 'verify_placement', lambda *a: None)
+    monkeypatch.setattr(r, 'verify_node_placement', lambda *a: None)
     monkeypatch.setattr(r, 'kubectl', lambda *a, **k: pytest.fail('must not scale'))
     with pytest.raises(RuntimeError, match='changed during placement'):
         r.apply_intervention(control)

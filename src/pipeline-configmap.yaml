@@ -16,6 +16,9 @@ data:
   WARMUP_SECONDS: "60"
   DRAIN_SECONDS: "120"
   READINESS_TIMEOUT_SECONDS: "180"
+  # Hard producer/consumer separation is always checked by the coordinator.
+  # Set true only with the deployment option --separate-brokers on both roles.
+  SEPARATE_BROKER_NODES: "false"
   FINAL_SCRAPE_SECONDS: "15"
   WORKLOAD_SEED: "81"
   MITIGATION_POLICY: "none"

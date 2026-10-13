@@ -1,0 +1,166 @@
+{
+  "review_date": "2026-10-12",
+  "scope": "Six scaling trials in the September 29\u201330 main-proposal comparisons; a retrospective placement check, not new performance trials.",
+  "observation_limit": "Only saved valid snapshots with all six consumers ready were checked; gaps are not evidence of continuous placement. Producer locations are the verified starting reference, not continuous producer monitoring.",
+  "trials": [
+    {
+      "run_id": "run-20260929-025321",
+      "condition": "scale_redistribute6",
+      "run_number": 1,
+      "six_ready_samples": 120,
+      "other_samples": 28,
+      "added_consumer_colocation_with_original_consumers_or_starting_producers_observed": false,
+      "observed_mappings": [
+        {
+          "first_line": 29,
+          "consumer_nodes": {
+            "consumer-sts-0": "edex.calit2.optiputer.net",
+            "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+            "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+            "consumer-sts-3": "k8s-chase-ci-02.calit2.optiputer.net",
+            "consumer-sts-4": "k8s-chase-ci-01.calit2.optiputer.net",
+            "consumer-sts-5": "k8s-gpu-01.calit2.optiputer.net"
+          }
+        }
+      ],
+      "evidence_sha256": {
+        "results/run-20260929-025321/manifest.json": "33b01f4af4cd0b865e832bd001ad45c15cbfa314d7f06a53a5c8e683bd70eeb3",
+        "results/run-20260929-025321/resource-history.jsonl": "3bf68d0e7068b55128abbc385346168e4311a4eaeb2a28254a9d6fef3c5e9c76"
+      }
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "condition": "scale_redistribute6",
+      "run_number": 2,
+      "six_ready_samples": 121,
+      "other_samples": 28,
+      "added_consumer_colocation_with_original_consumers_or_starting_producers_observed": false,
+      "observed_mappings": [
+        {
+          "first_line": 29,
+          "consumer_nodes": {
+            "consumer-sts-0": "edex.calit2.optiputer.net",
+            "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+            "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+            "consumer-sts-3": "k8s-chase-ci-02.calit2.optiputer.net",
+            "consumer-sts-4": "k8s-gpu-01.calit2.optiputer.net",
+            "consumer-sts-5": "k8s-chase-ci-01.calit2.optiputer.net"
+          }
+        }
+      ],
+      "evidence_sha256": {
+        "results/run-20260929-034520/manifest.json": "beee83b33c9bc85d35dfb3c8091570976ab756c3e1e31df266d23375c2638ba5",
+        "results/run-20260929-034520/resource-history.jsonl": "f997e5fa948186c4df952e7603693c5ae2ee6ecfcac9c0328e5fb71ca5cfb183"
+      }
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "condition": "kafka_scale6",
+      "run_number": 1,
+      "six_ready_samples": 124,
+      "other_samples": 30,
+      "added_consumer_colocation_with_original_consumers_or_starting_producers_observed": false,
+      "observed_mappings": [
+        {
+          "first_line": 31,
+          "consumer_nodes": {
+            "consumer-sts-0": "edex.calit2.optiputer.net",
+            "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+            "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+            "consumer-sts-3": "k8s-chase-ci-01.calit2.optiputer.net",
+            "consumer-sts-4": "k8s-chase-ci-02.calit2.optiputer.net",
+            "consumer-sts-5": "k8s-gpu-01.calit2.optiputer.net"
+          }
+        }
+      ],
+      "evidence_sha256": {
+        "results/run-20260929-031044/manifest.json": "c2c57768525957ce49ba5defb1240dde6e64d69e260df59c10bb9259b854d716",
+        "results/run-20260929-031044/resource-history.jsonl": "640497eaf002896d883f457f670085ba1e47882b22f9e00a422f3f738c632034"
+      }
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "condition": "kafka_scale6",
+      "run_number": 2,
+      "six_ready_samples": 124,
+      "other_samples": 30,
+      "added_consumer_colocation_with_original_consumers_or_starting_producers_observed": false,
+      "observed_mappings": [
+        {
+          "first_line": 31,
+          "consumer_nodes": {
+            "consumer-sts-0": "edex.calit2.optiputer.net",
+            "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+            "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+            "consumer-sts-3": "k8s-gpu-01.calit2.optiputer.net",
+            "consumer-sts-4": "k8s-chase-ci-01.calit2.optiputer.net",
+            "consumer-sts-5": "k8s-chase-ci-02.calit2.optiputer.net"
+          }
+        }
+      ],
+      "evidence_sha256": {
+        "results/run-20260929-032802/manifest.json": "4d5ca4ea209a8785d1fbf1dd0a7ee8150a7612256c0b97e535399173bc41ae5b",
+        "results/run-20260929-032802/resource-history.jsonl": "c1265e69da2ff7c04b8626e8daaa9b4c5cb1631fa286e9c3465a20cd066c9f7a"
+      }
+    },
+    {
+      "run_id": "run-20260930-005056",
+      "condition": "scale_redistribute6",
+      "run_number": 1,
+      "six_ready_samples": 119,
+      "other_samples": 28,
+      "added_consumer_colocation_with_original_consumers_or_starting_producers_observed": false,
+      "observed_mappings": [
+        {
+          "first_line": 29,
+          "consumer_nodes": {
+            "consumer-sts-0": "edex.calit2.optiputer.net",
+            "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+            "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+            "consumer-sts-3": "k8s-chase-ci-02.calit2.optiputer.net",
+            "consumer-sts-4": "k8s-chase-ci-01.calit2.optiputer.net",
+            "consumer-sts-5": "k8s-gpu-01.calit2.optiputer.net"
+          }
+        }
+      ],
+      "evidence_sha256": {
+        "results/run-20260930-005056/manifest.json": "c75a6e174e939e40d8235a37b46b63a49c5beab9d4d0d4dd18c1d63a9bb8ff1d",
+        "results/run-20260930-005056/resource-history.jsonl": "a824666e4951d8771e0ed1e1c13f7a58fdefe65772a4422c69859f3f302502d5"
+      }
+    },
+    {
+      "run_id": "run-20260930-010811",
+      "condition": "scale_redistribute6",
+      "run_number": 2,
+      "six_ready_samples": 120,
+      "other_samples": 28,
+      "added_consumer_colocation_with_original_consumers_or_starting_producers_observed": false,
+      "observed_mappings": [
+        {
+          "first_line": 29,
+          "consumer_nodes": {
+            "consumer-sts-0": "edex.calit2.optiputer.net",
+            "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+            "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+            "consumer-sts-3": "k8s-chase-ci-02.calit2.optiputer.net",
+            "consumer-sts-4": "k8s-chase-ci-01.calit2.optiputer.net",
+            "consumer-sts-5": "k8s-chase-ci-04.calit2.optiputer.net"
+          }
+        }
+      ],
+      "evidence_sha256": {
+        "results/run-20260930-010811/manifest.json": "36c7a18a053b20b100b40f00e023df13eb508a78131fc5839c337da2767a9bd6",
+        "results/run-20260930-010811/resource-history.jsonl": "afeeb7b2dbe3a668d439aa2ba40645adffb2b2ea2aebf4e4abbba6edb709649a"
+      }
+    }
+  ],
+  "common_verified_starting_nodes": {
+    "consumer-sts-0": "edex.calit2.optiputer.net",
+    "consumer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+    "consumer-sts-2": "unseenu.crbs.ucsd.edu",
+    "producer-sts-0": "edex.calit2.optiputer.net",
+    "producer-sts-1": "k8s-usra-01.calit2.optiputer.net",
+    "producer-sts-2": "k8s-igrok-05.calit2.optiputer.net"
+  },
+  "review_base_revision": "6d312244a89b7fef2e7e0d127543c6eb1a366172"
+}

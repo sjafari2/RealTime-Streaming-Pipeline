@@ -138,6 +138,8 @@ def test_process_duration_uses_monotonic_evidence_across_wall_clock_adjustment(t
 
 
 def test_intervention_validation_and_guard(monkeypatch, tmp_path):
+    monkeypatch.setattr(runner, 'verify_node_placement', lambda *a: None)
+    monkeypatch.setattr(runner, 'wait_for_scaled_placement', lambda *a: None)
     config = dict(EXP_DURATION_SEC='300',RETENTION_MS='86400000',ACKS='all')
     plan = dict(action='scale',after_evaluation_start_seconds=60,initial_consumers=2,target_consumers=3)
     runner.validate_intervention(plan,config)
@@ -158,6 +160,7 @@ def test_intervention_validation_and_guard(monkeypatch, tmp_path):
 
 
 def test_no_action_records_decision_without_scaling(monkeypatch, tmp_path):
+    monkeypatch.setattr(runner, 'verify_node_placement', lambda *a: None)
     monkeypatch.setattr(runner,'ROOT',tmp_path)
     control=dict(run_id='r',state='running',producer_end_epoch=200,intervention=dict(action='none',at_epoch=100))
     monkeypatch.setattr(runner,'read_control',lambda:control)

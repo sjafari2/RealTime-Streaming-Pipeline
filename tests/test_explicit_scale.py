@@ -68,6 +68,9 @@ class ScaleAPI:
     def kubectl(self,*args):self.names=['c0','c1']
     def resource_snapshot(self,c):pass
     def preflight(self):pass
+    def verify_node_placement(self,c,stage,consumers=None):
+        if self.fault=='shared_node' or (self.fault=='post_move' and stage=='after_scaling'):
+            raise RuntimeError('producer and consumer share node')
     def clock_probes(self,*args):return []
     def journal(self,c,f,row):self.events.append(row['event'])
     def status(self,role,name):
@@ -89,7 +92,7 @@ def test_scale_checks_empty_newcomers_before_transfer(monkeypatch):
     assert api.control['explicit_scale_result']['status']=='resumed'
 
 
-@pytest.mark.parametrize('fault',['restart','early_claim','failure'])
+@pytest.mark.parametrize('fault',['restart','early_claim','failure','shared_node'])
 def test_bad_enrollment_stops_run_without_transfer(monkeypatch,fault):
     api=ScaleAPI(fault);handoff=Mock();monkeypatch.setattr(scale,'transfer',handoff)
     with pytest.raises(RuntimeError):scale.scale_and_transfer(api,api.control)
@@ -111,3 +114,11 @@ def test_explicit_scale_plan_requires_complete_predeclared_target(monkeypatch):
     r.validate_intervention(plan,config)
     plan['target_assignment'][1]['owner']='consumer-sts-0'
     with pytest.raises(ValueError,match='Every scaled'):r.validate_intervention(plan,config)
+
+
+def test_explicit_scale_rechecks_nodes_after_handoff(monkeypatch):
+    api=ScaleAPI('post_move');handoff=Mock(return_value={'status':'resumed'})
+    monkeypatch.setattr(scale,'transfer',handoff)
+    with pytest.raises(RuntimeError,match='share node'):scale.scale_and_transfer(api,api.control)
+    handoff.assert_called_once()
+    assert api.control['state']=='failed' and 'explicit_scale_result' not in api.control

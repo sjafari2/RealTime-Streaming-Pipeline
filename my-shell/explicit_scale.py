@@ -63,7 +63,9 @@ def scale_and_transfer(api, control, startup_timeout=90, handoff_timeout=60):
                 break
             time.sleep(.5)
         else:
+            api.verify_node_placement(control, 'scale_timeout', consumers=names)
             raise RuntimeError('New consumer enrollment timed out; no ownership handoff')
+        api.verify_node_placement(control, 'before_handoff', consumers=names)
         # Check packages/shared source on the newly created pods as well.
         api.preflight()
         value = current()
@@ -72,6 +74,7 @@ def scale_and_transfer(api, control, startup_timeout=90, handoff_timeout=60):
         api.journal(control, 'intervention-events.jsonl', dict(event='empty_enrollment_verified', timestamp=time.time(), members=names))
         result = transfer(api, value, plan['target_assignment'], timeout=handoff_timeout)
         value = current()
+        api.verify_node_placement(control, 'after_scaling', consumers=names)
         value['explicit_scale_result'] = result
         api.publish(value)
         return result

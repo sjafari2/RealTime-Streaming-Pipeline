@@ -11,6 +11,7 @@ These guides describe the experimental design, implementation and published evid
 | [Metric definitions](metric-definitions.md) | Populations, formulas, coverage and repetition summaries |
 | [Experiment protocols](../experiments/README.md) | Configurations and campaign commands |
 | [Deployment](nautilus-measurement-update.md) | Kubernetes setup and source updates |
+| [Node placement](node-placement.md) | Required separation, runtime checks and historical limitations |
 | [Runtime and data flow](runtime-and-data-flow.md) | Run commands, file relationships and outputs |
 | [Data and reproducibility](data-and-reproducibility.md) | Public summaries and separate raw evidence |
 | [Commit handling](commit-handling.md) | Completion frontier and offset commits |

@@ -48,6 +48,24 @@ The shared YAML is changed while applications are stopped. Bootstrap address, na
 
 The consumer StatefulSet starts `supervise.py`. The supervisor waits for an active managed run and launches a consumer, including in a newly added replica. The producer application is started by the coordinator. Source synchronization must precede any rollout that needs newly added runtime files. Removing a volume or its initialization marker is not part of this workflow.
 
+## Applying the placement requirement
+
+`k8s/statefullsets/producer-sts.yaml` and `consumer-sts.yaml` are the authoritative client manifests. Both require separate nodes for producer and consumer pods, including replicas added by scaling. This is a new condition for subsequent trials; previous results retain their recorded placement.
+
+After stopping applications, collecting the preceding evidence, synchronizing source and reviewing the manifests against the deployed volumes and other settings, apply both roles:
+
+```bash
+bash my-shell/deploy-sts.sh producer
+bash my-shell/deploy-sts.sh consumer
+kubectl -n kafkastreamingdata rollout status statefulset/producer-sts --timeout=180s
+kubectl -n kafkastreamingdata rollout status statefulset/consumer-sts --timeout=180s
+bash my-shell/save-run.sh preflight
+```
+
+This rollout can replace pods and change their nodes. Keep `SEPARATE_BROKER_NODES: "false"` for the default broker preference. If broker separation is part of the declared design, pass `--separate-brokers` to **both** deployment commands and set that shared configuration value to `"true"`. Do not change it during a run. The runtime checks require the deployment and saved configuration to agree.
+
+A strict placement that cannot be scheduled remains Pending; inspect pod conditions and available eligible nodes instead of relaxing the rule within a comparison. A passing preflight checks templates, configuration and source; the managed start additionally checks actual pods before workload release. Recapture any matching-start reference and repeat empty-topic preparations after a rollout. The [placement guide](node-placement.md) distinguishes separation from machine exclusivity and documents the earlier trials.
+
 ## Monitoring
 
 The supplied standalone Prometheus configuration supports dynamic pod discovery. An existing Prometheus Operator deployment uses its own discovery configuration instead. Metrics must cover every producer and consumer incarnation, including added replicas, before accepting an experiment. Broker JMX monitoring is separate from application metrics.

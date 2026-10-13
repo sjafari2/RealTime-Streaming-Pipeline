@@ -36,7 +36,16 @@ spec:
               - key: topology.kubernetes.io/zone
                 operator: In
                 values: ["ucsd"]
+        # These rules also apply to replicas added during a run.
         podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values: [producer-sts, consumer-sts]
+          # Broker separation is a preference unless explicitly enabled at deployment.
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
             podAffinityTerm:

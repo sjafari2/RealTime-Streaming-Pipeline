@@ -12,6 +12,8 @@ The balanced trials established 700 messages/s as the reference rate for the ske
 
 [Detailed intervention metrics and plots](result-metric-audit-20260930/README.md) include throughput, CPU, memory, lag, growth, skew, completion latency and unfinished work. Missing observations remain gaps. The first twelve-partition baseline lacks full-window resource-request coverage.
 
+The retrospective [node-placement review](node-placement-review.json) records observed co-location in the six scaling trials. Original producers and consumers sometimes shared nodes; the stricter [placement requirement](../docs/node-placement.md) applies to subsequent trials and does not change these results.
+
 Run 1 and Run 2 columns refer to separate trials of each response. P99 is a whole-cohort percentile among completed evaluation messages, not an average of dashboard values. Every table reports unfinished work alongside it. See [methodology](../docs/experiment-methodology.md), [metric definitions](../docs/metric-definitions.md) and [data availability](../docs/data-and-reproducibility.md).
 
 Earlier campaigns, supplementary trials and superseded reports are preserved on [archive/pre-cleanup-20261008](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008/experiment-records). They use different designs or deployment stages and are not pooled into these 24 trials. This selection follows the main proposal, not the direction of the outcomes.

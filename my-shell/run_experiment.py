@@ -16,6 +16,7 @@ import re
 import uuid
 import urllib.parse
 import urllib.request
+import node_placement
 from managed_hpa import paused_for_experiment
 from placement_control import (PlacementMismatch, capture_reference, check_placement,
                                pod_identity, reference_hash, validate_pod_reference, validate_reference)
@@ -235,6 +236,7 @@ def read_config():
 
 
 def validate_config(config):
+    node_placement.policy(config)
     duration = float(config.get('EXP_DURATION_SEC', 300))
     drain = float(config.get('DRAIN_SECONDS', 60))
     warmup = float(config.get('WARMUP_SECONDS', 0))
@@ -323,6 +325,7 @@ def set_consumer_baseline(count, timeout):
     if current != count:
         kubectl('scale', 'statefulset', 'consumer-sts', '--current-replicas=' + str(current), '--replicas=' + str(count))
     limit = time.monotonic() + timeout
+    items = []
     while time.monotonic() < limit:
         items = json.loads(kubectl('get', 'pods', '-l', 'app=consumer-sts', '-o', 'json'))['items']
         ready = [p for p in items if not p['metadata'].get('deletionTimestamp') and
@@ -330,7 +333,10 @@ def set_consumer_baseline(count, timeout):
         if len(items) == len(ready) == count:
             return
         time.sleep(2)
-    raise RuntimeError('Consumer baseline did not become ready before the timeout; no workload was released')
+    reasons = [p['metadata']['name'] + ': ' + c.get('reason', 'not ready') + ' ' + c.get('message', '')
+               for p in items for c in p.get('status', {}).get('conditions', [])
+               if c.get('status') == 'False' and c.get('type') in ('PodScheduled', 'Ready')]
+    raise RuntimeError('Consumer baseline did not become ready before the timeout; no workload was released. ' + '; '.join(reasons))
 
 
 def journal(control, filename, row):
@@ -405,12 +411,81 @@ def verify_placement(control, stage):
         journal(control, 'placement-checks.jsonl', record)
 
 
+def validate_node_templates(config):
+    items = json.loads(kubectl('get', 'statefulset', *node_placement.APPS, '-o', 'json'))['items']
+    issues = node_placement.template_issues(items, NS, node_placement.policy(config))
+    if issues:
+        raise PlacementMismatch('; '.join(issues) + '. Review and deploy the placement manifests between runs.')
+
+
+def verify_node_placement(control, stage, consumers=None):
+    return node_placement.verify(sys.modules[__name__], control, stage, consumers)
+
+
+def wait_for_scaled_placement(control):
+    """Native scaling must finish enrollment and the placement check within production."""
+    names = ['consumer-sts-' + str(i) for i in range(control['intervention']['target_consumers'])]
+    seconds = min(float(control['config'].get('READINESS_TIMEOUT_SECONDS', 180)),
+                  control['producer_end_epoch'] - time.time())
+    deadline = time.monotonic() + max(0, seconds)
+    expected = {(f"{control['config']['TOPIC_TITLE']}_{t}", p)
+                for t in range(int(control['config']['TOPIC_COUNT']))
+                for p in range(int(control['config']['NUM_PARTITIONS']))}
+    previous, stable = None, 0
+    try:
+        while time.monotonic() < deadline:
+            current = read_control()
+            if (not current or current.get('run_id') != control['run_id'] or
+                    current.get('config_sha256') != control['config_sha256'] or current.get('state') != 'running'):
+                raise RuntimeError('Shared run changed during scale-up readiness')
+            resource_snapshot(control)
+            present = pods('consumer')
+            if not set(control['consumer_pods']) <= set(present) <= set(names):
+                raise PlacementMismatch('Unexpected consumer membership during scale-up')
+            rows = [status('consumer', name) for name in present]
+            partitions = [tuple(pair) for row in rows for pair in row.get('assignments', [])]
+            ready = present == names
+            for name, row in zip(present, rows):
+                matching = row.get('run_id') == control['run_id'] and row.get('config_sha256') == control['config_sha256']
+                if matching and (row.get('failure') or row.get('evidence_error') or row.get('evidence_dropped')):
+                    raise RuntimeError(name + ': consumer failed during scale-up')
+                ready = ready and bool(matching and row.get('pod') == name and row.get('incarnation') and
+                    row.get('phase') in ('ready', 'running') and 0 <= time.time()-row.get('timestamp', 0) <= 10)
+                initial = control.get('initial_consumer_incarnations', {}).get(name)
+                if initial and matching and row.get('incarnation') != initial:
+                    raise PlacementMismatch(name + ': original consumer process restarted during scale-up')
+            ready = ready and len(partitions) == len(set(partitions)) and set(partitions) == expected
+            assignment = [(r.get('incarnation'), r.get('assignment_epoch'), r.get('assignments')) for r in rows]
+            stable = stable + 1 if ready and assignment == previous else (1 if ready else 0)
+            previous = assignment
+            if stable >= 3:
+                verify_node_placement(control, 'after_scaling', consumers=names)
+                if time.time() >= control['producer_end_epoch']:
+                    raise RuntimeError('Scale-up verification exceeded the production period')
+                journal(control, 'intervention-events.jsonl', dict(event='scale_readiness_verified',
+                    timestamp=time.time(), members=names))
+                return
+            time.sleep(1)
+        # Preserve Pending/unschedulable messages as well as the explicit timeout.
+        verify_node_placement(control, 'scale_timeout', consumers=names)
+        raise RuntimeError('Scale-up readiness timed out; the requested comparison was not established')
+    except BaseException as exc:
+        journal(control, 'intervention-events.jsonl', dict(event='scale_readiness_failed',
+            timestamp=time.time(), error=str(exc)))
+        current = read_control()
+        if current and current.get('run_id') == control['run_id']:
+            current.update(state='failed', node_placement_failure=str(exc))
+            publish(current)
+        raise
+
+
 def apply_intervention(control):
     plan = control['intervention']
     current = read_control()
     if not current or current['run_id'] != control['run_id'] or current.get('state') != 'running':
         raise RuntimeError('Shared run changed before the intervention; refusing to act')
     verify_placement(control, 'before_intervention')
+    verify_node_placement(control, 'before_intervention')
     current = read_control()
     if not current or current['run_id'] != control['run_id'] or current.get('state') != 'running':
         raise RuntimeError('Shared run changed during placement verification; refusing to act')
@@ -422,13 +497,16 @@ def apply_intervention(control):
     if plan['action'] == 'scale':
         kubectl('scale', 'statefulset', 'consumer-sts', '--current-replicas=' + str(plan['initial_consumers']),
                 '--replicas=' + str(plan['target_consumers']))
+        journal(control, 'intervention-events.jsonl', dict(event='request_completed', timestamp=time.time(), action=plan['action']))
+        wait_for_scaled_placement(control)
     if plan['action'] == 'scale_redistribute':
         from explicit_scale import scale_and_transfer
         scale_and_transfer(sys.modules[__name__], control)
     if plan['action'] == 'redistribute':
         from explicit_control import transfer
         transfer(sys.modules[__name__], control, plan['target_assignment'])
-    journal(control, 'intervention-events.jsonl', dict(event='request_completed', timestamp=time.time(), action=plan['action']))
+    if plan['action'] != 'scale':
+        journal(control, 'intervention-events.jsonl', dict(event='request_completed', timestamp=time.time(), action=plan['action']))
 
 
 def validate_replica_control(config, plan=None, hpas=None):
@@ -470,6 +548,7 @@ def start(plan=None):
     # Validate a requested pilot before stopping existing applications or changing replica counts.
     validate_intervention(plan, read_config()[1])
     validate_replica_control(read_config()[1], plan)
+    validate_node_templates(read_config()[1])
     stop()
     initial = (plan or {}).get('initial_consumers') or read_config()[1].get('CONSUMER_POD_COUNT')
     if initial is not None:
@@ -559,6 +638,8 @@ def start(plan=None):
             control['explicit_start_verification'] = explicit_start
         control['monitoring_readiness'] = monitoring_readiness(control)
         verify_placement(control, 'before_production')
+        verify_node_placement(control, 'before_production')
+        control['initial_consumer_incarnations'] = {p: row['incarnation'] for p, row in zip(consumer_pods, consumers)}
         control['preparation_elapsed_seconds'] = time.monotonic() - preparation_started
         budget = (plan or {}).get('preparation_budget_seconds')
         if budget is not None:
@@ -888,6 +969,7 @@ print(json.dumps({{name:hashlib.sha256((root/name).read_bytes()).hexdigest() if 
     config = read_config()[1]
     validate_config(config)
     validate_replica_control(config)
+    validate_node_templates(config)
     print('[CONFIG] Rate per producer:', config['TARGET_RATE'], 'production seconds:',
           config.get('EXP_DURATION_SEC', 300), 'drain seconds:', config.get('DRAIN_SECONDS', 60), flush=True)
 
@@ -1104,6 +1186,7 @@ def main():
   run      Run once, wait through drain, export and analyze (default).
   repeat   Run --repetitions times; optionally sweep --rates; summarize the batch.
   start    Prepare and start only; return before the experiment finishes.
+  preflight  Check source, configuration and templates without changing the cluster.
   status   Print per-pod run status, configuration hashes and assignments.
   stop     End production and allow the bounded consumer drain and cleanup.
   collect  Copy current-run evidence to results/RUN_ID without Prometheus.
@@ -1132,7 +1215,7 @@ Detailed help: docs/runtime-and-data-flow.md
 Complete-run commands create fresh topics and preserve old topics/results.
 One-time code/configuration/monitoring setup must already be complete.
 """)
-    parser.add_argument('action', choices=['run', 'repeat', 'interactive', 'start', 'stop', 'collect', 'export', 'status', 'backup', 'sweep'], nargs='?', default='run')
+    parser.add_argument('action', choices=['run', 'repeat', 'interactive', 'start', 'stop', 'collect', 'export', 'status', 'backup', 'sweep', 'preflight'], nargs='?', default='run')
     parser.add_argument('--rates', type=int, nargs='+')
     parser.add_argument('--repetitions', type=int, default=1)
     parser.add_argument('--intervention', choices=['none', 'scale', 'redistribute', 'scale_redistribute'], help='Optional scheduled pilot action; not an automatic selector')
@@ -1193,6 +1276,8 @@ One-time code/configuration/monitoring setup must already be complete.
             if input('Wait, collect evidence and export Prometheus after the run? [Y/n] ').lower() != 'n':
                 wait_for_end(control)
                 export_metrics(collect(), read_control())
+    elif args.action == 'preflight':
+        preflight()
     elif args.action == 'start':
         start()
     elif args.action == 'stop':
