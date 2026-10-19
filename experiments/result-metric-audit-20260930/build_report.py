@@ -199,8 +199,8 @@ def write_tables(rows, prefix, out):
     latency_columns = [('p99_seconds', r'\shortstack{p99\\(s)}', 2)]
     if prefix == 'twelve-partition':
         latency_columns = [('completion_min_seconds', r'\shortstack{Minimum\\(s)}', 3),
-                           ('completion_max_seconds', r'\shortstack{Maximum\\(s)}', 2),
-                           ('completion_mean_seconds', r'\shortstack{Mean latency\\(s)}', 3)] + latency_columns
+                           ('completion_mean_seconds', r'\shortstack{Mean latency\\(s)}', 3),
+                           ('completion_max_seconds', r'\shortstack{Maximum\\(s)}', 2)] + latency_columns
     outcomes = [[short[r['arm']], r['run_number']] +
                 [fmt(r.get(key), digits) for key, _, digits in latency_columns] +
                 [fmt(r['unfinished_percent'], 3), fmt(r['deadline_percent']['1000']),

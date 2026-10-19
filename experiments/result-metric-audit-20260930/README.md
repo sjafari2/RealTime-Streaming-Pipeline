@@ -15,4 +15,4 @@ The runtime state is reconstructed from recorded observations with explicit gap 
 
 Resource tables and integral plots report both observed and requested CPU in core-minutes. The saved CPU integral remains in core-seconds; conversion divides the unrounded value by 60 before display. Time-series CPU plots continue to show cores.
 
-The twelve-partition outcome table includes minimum and maximum completion latency before the mean. Older outcome summaries are replayed from raw evidence when these fields are absent; the replay must agree with the original cohort counts, p99 and deadline results.
+The twelve-partition outcome table reports completion latency in the order minimum, mean, maximum and p99. Older outcome summaries are replayed from raw evidence when these fields are absent; the replay must agree with the original cohort counts, p99 and deadline results.
