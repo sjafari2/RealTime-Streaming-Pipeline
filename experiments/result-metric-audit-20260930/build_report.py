@@ -172,17 +172,28 @@ def ownership_plot(rows, title, destination):
     plt.close(fig)
 
 
-def tex_table(headers, values, caption, label, widths=None, shade_rows=False):
-    spec = widths or ('l' + 'r' * (len(headers) - 1))
+TABLE_COLORS = {
+    'tab:twelve-partition-outcomes': ('CDDFEF', 'EAF3FA'),
+    'tab:twelve-partition-resources': ('D4E8D8', 'EFF7F0'),
+    'tab:twelve-partition-diagnostics': ('DED8EE', 'F3F0FA'),
+    'tab:four-partition-outcomes': ('D8DDF4', 'F0F2FC'),
+    'tab:four-partition-resources': ('D2EADD', 'EEF8F2'),
+    'tab:four-partition-diagnostics': ('E4D9EE', 'F7F0FA'),
+}
+
+
+def tex_table(headers, values, caption, label, widths=None):
+    spec = widths or ('l' + 'c' * (len(headers) - 1))
+    colors = TABLE_COLORS.get(label)
     lines = [r'\begin{table}[!htbp]', r'\centering\small', r'\setlength{\tabcolsep}{3pt}',
              r'\renewcommand{\arraystretch}{1.12}', r'\begin{tabular}{@{}' + spec + r'@{}}',
              r'\toprule']
-    if shade_rows:
-        lines.append(r'\rowcolor[HTML]{CDDFEF}')
+    if colors:
+        lines.append(r'\rowcolor[HTML]{' + colors[0] + '}')
     lines += [' & '.join(headers) + r'\\', r'\midrule']
     for index, row in enumerate(values):
-        if shade_rows and index % 2 == 0:
-            lines.append(r'\rowcolor[HTML]{EAF3FA}')
+        if colors and index % 2 == 0:
+            lines.append(r'\rowcolor[HTML]{' + colors[1] + '}')
         lines.append(' & '.join(str(x) for x in row) + r'\\')
     lines += [r'\bottomrule', r'\end{tabular}', r'\caption{' + caption + '}',
               r'\label{' + label + '}', r'\end{table}']
@@ -217,8 +228,7 @@ def write_tables(rows, prefix, out):
                   'Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. '
                   'Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.',
                   'tab:' + prefix + '-outcomes',
-                  widths='lcccccccc' if prefix == 'twelve-partition' else None,
-                  shade_rows=prefix == 'twelve-partition')
+                  widths='lcccccccc' if prefix == 'twelve-partition' else None)
     # Convert the unrounded CPU integral for comparison with requested core-minutes.
     resources = [[short[r['arm']], r['run_number'],
                   fmt(None if r['resources']['actual_cpu_core_seconds'] is None
