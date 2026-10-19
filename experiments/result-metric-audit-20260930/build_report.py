@@ -210,7 +210,8 @@ def write_tables(rows, prefix, out):
                    r'\shortstack{Useful throughput\\(msg/s)}'], outcomes,
                   'Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. '
                   'Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.',
-                  'tab:' + prefix + '-outcomes')
+                  'tab:' + prefix + '-outcomes',
+                  widths=r'lrrrr@{\hspace{10pt}}rrrr' if prefix == 'twelve-partition' else None)
     # Convert the unrounded CPU integral for comparison with requested core-minutes.
     resources = [[short[r['arm']], r['run_number'],
                   fmt(None if r['resources']['actual_cpu_core_seconds'] is None
