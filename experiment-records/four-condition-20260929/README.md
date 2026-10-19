@@ -15,4 +15,6 @@ All three interventions completed every evaluation message in both runs; keeping
 
 ![Performance and resources](../result-metric-audit-20260930/figures/twelve-partition-compact-performance.png)
 
+[Minimum and maximum completion latencies](completion-latency-extremes.json) were recovered from the same distinct-message cohort using the original drain cutoff. The replay reproduced the published mean, p99 and completion counts for all eight trials; its evidence hashes are included in that record. These extremes exclude unfinished messages.
+
 P99 covers completed evaluation messages through the fixed drain cutoff, before commit acknowledgment. Unfinished percentage uses all acknowledged evaluation messages. Small repetition counts and shared-machine variability limit generalization.

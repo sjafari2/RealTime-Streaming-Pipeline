@@ -8,6 +8,8 @@ The frozen manifest defines evaluation start, production end and drain end. The 
 
 Completion is after synthetic work and before offset storage/commit. Processing-start latency is start minus producer time. Completion latency is finish minus producer time. Processing duration uses a local monotonic timer around synthetic work, excluding evidence writing and offset bookkeeping. It includes scheduler/sleep delay during that work. APP_DELAY_MS is a requested sleep, not an exact measured duration. Adding work can also increase queueing, so its effect need not be a constant latency shift.
 
+Minimum and maximum completion latency are the smallest and largest valid latencies in the same distinct evaluation-message cohort used for mean and p99, considering first completion by the drain cutoff. They are unavailable when that cohort has no valid completions. Maximum is an observed extreme, not p99 or a bound for unfinished messages; cross-machine clock uncertainty also applies.
+
 | Metric | Exact calculation | Output in outcome-summary.json |
 |---|---|---|
 | Completion mean | Sum of valid earliest cohort completion latencies / their count | admitted_cohort_completion_mean_seconds |
@@ -210,7 +212,9 @@ The Prometheus export retains CPU/RSS scrape timestamps in addition to the raw
 process gauges. Per-process evaluation and evaluation-plus-drain summaries report
 covered duration, mean, peak and integral. Mean is trapezoidal area divided by
 covered seconds. CPU percent divided by 100 gives cores; its integrated value
-divided by 100 gives observed CPU-seconds. Memory remains RSS bytes. Only finite,
+divided by 100 gives observed CPU-seconds. Resource tables and integral plots divide
+this unrounded CPU total by 60 to report core-minutes, matching requested CPU
+units; the saved `actual_cpu_core_seconds` field retains its original unit. Memory remains RSS bytes. Only finite,
 nonnegative values with scrape age at most ten seconds contribute; adjacent samples
 must be at most three seconds apart. No extrapolation or missing-to-zero conversion
 is performed. Scrape freshness does not prove the exporter sampling loop is fresh.

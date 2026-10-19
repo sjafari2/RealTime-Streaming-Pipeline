@@ -111,7 +111,8 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None, deadline
                     if latency_sink is not None:
                         latency_sink(delay)
                     late += delay > deadline
-        latency_sum = db.execute('SELECT coalesce(sum(seconds),0) FROM latency').fetchone()[0]
+        latency_sum, latency_min, latency_max = db.execute(
+            'SELECT coalesce(sum(seconds),0),min(seconds),max(seconds) FROM latency').fetchone()
         db.execute('CREATE INDEX ordered_latency ON latency(seconds)')
         percentiles = quantiles(db, 'latency', 'seconds')
         diagnostics = {}
@@ -161,13 +162,15 @@ def evaluate(directory, latency_sink=None, partition_latency_sink=None, deadline
                     admitted_cohort_valid_completion_count=valid_completions,
                     admitted_cohort_completion_latency_sum_seconds=latency_sum,
                     admitted_cohort_completion_mean_seconds=latency_sum / valid_completions if valid_completions else None,
+                    admitted_cohort_completion_min_seconds=latency_min,
+                    admitted_cohort_completion_max_seconds=latency_max,
                     admitted_cohort_completion_p50_seconds=percentiles['p50'],
                     admitted_cohort_completion_p95_seconds=percentiles['p95'],
                     admitted_cohort_completion_p99_seconds=percentiles['p99'],
                     partition_metrics=partitions,
                     incomplete_fraction=missing / admitted if admitted else None,
                     capacity_estimate=manifest.get('capacity_estimate'),
-                    notes=['Mean and p50/p95/p99 exclude unfinished messages; always report incomplete/deadline results alongside them.',
+                    notes=['Minimum, maximum, mean and p50/p95/p99 exclude unfinished messages; always report incomplete/deadline results alongside them.',
                            'Percentiles use nearest rank among valid cohort completions by the drain bound.',
                            'Start/processing diagnostic counts may be lower for older evidence without those fields.',
                            'Clock uncertainty still needs a Nautilus measurement.',

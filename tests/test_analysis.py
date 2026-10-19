@@ -43,6 +43,8 @@ def test_worked_example_with_pending_and_duplicate(tmp_path):
     assert row['admitted_cohort_completion_latency_sum_seconds']==pytest.approx(1.09)
     assert row['admitted_cohort_completion_mean_seconds']==pytest.approx(1.09/19)
     assert row['admitted_cohort_completion_p99_seconds']==pytest.approx(.1)
+    assert row['admitted_cohort_completion_min_seconds']==pytest.approx(.01)
+    assert row['admitted_cohort_completion_max_seconds']==pytest.approx(.1)
     assert row['deadline_miss_fraction']==pytest.approx(.15)
     assert row['incomplete_fraction']==pytest.approx(.05)
     assert row['useful_throughput_per_second']==pytest.approx(1.9)
@@ -56,7 +58,16 @@ def test_no_completions_is_not_zero_latency(tmp_path):
     row=evaluate(make_run(tmp_path/'run',values=[10],unfinished=True))
     assert row['admitted_cohort_completion_mean_seconds'] is None
     assert row['admitted_cohort_completion_p99_seconds'] is None
+    assert row['admitted_cohort_completion_min_seconds'] is None
+    assert row['admitted_cohort_completion_max_seconds'] is None
     assert row['deadline_miss_fraction']==1
+
+
+def test_maximum_preserves_the_tail_beyond_p99(tmp_path):
+    row=evaluate(make_run(tmp_path/'run',values=[10]*99+[10000]))
+    assert row['admitted_cohort_completion_min_seconds']==pytest.approx(.01)
+    assert row['admitted_cohort_completion_p99_seconds']==pytest.approx(.01)
+    assert row['admitted_cohort_completion_max_seconds']==pytest.approx(10)
 
 
 def test_repetitions_pool_messages_not_quantiles_and_exclude_invalid(tmp_path):

@@ -122,12 +122,12 @@ def resource_plot(rows, title, destination):
     short = {'keep3':'Keep 3', 'redistribute3':'Redistribute 3', 'scale_redistribute6':'Targeted 6',
              'scale6':'Targeted 6', 'kafka_scale6':'Kafka 6'}
     names = [f'{short[x["arm"]]}\nRun {x["run_number"]}' for x in rows]
-    keys = [('actual_cpu_core_seconds', 'Observed consumer-process CPU', 'Core-seconds'),
-            ('actual_rss_gib_minutes', 'Observed consumer resident memory', 'GiB-minutes'),
-            ('requested_cpu_core_minutes', 'Requested consumer CPU', 'Core-minutes'),
-            ('requested_memory_gib_minutes', 'Requested consumer memory', 'GiB-minutes')]
-    for ax, (key, label, units) in zip(axes.flat, keys):
-        vals = [r['resources'][key] for r in rows]
+    keys = [('actual_cpu_core_seconds', 'Observed consumer-process CPU', 'Core-minutes', 60),
+            ('actual_rss_gib_minutes', 'Observed consumer resident memory', 'GiB-minutes', 1),
+            ('requested_cpu_core_minutes', 'Requested consumer CPU', 'Core-minutes', 1),
+            ('requested_memory_gib_minutes', 'Requested consumer memory', 'GiB-minutes', 1)]
+    for ax, (key, label, units, divisor) in zip(axes.flat, keys):
+        vals = [None if r['resources'][key] is None else r['resources'][key] / divisor for r in rows]
         for i, (row, val) in enumerate(zip(rows, vals)):
             if val is None:
                 ax.text(i, .02, 'Partial\nonly', transform=ax.get_xaxis_transform(), ha='center', fontsize=8)
@@ -196,17 +196,28 @@ def figure(name, caption, label):
 def write_tables(rows, prefix, out):
     short = {'keep3': 'Keep 3', 'redistribute3': 'Redistribute 3', 'scale6': 'Targeted scale 6',
              'scale_redistribute6': 'Targeted scale 6', 'kafka_scale6': 'Kafka scale 6'}
-    outcomes = [[short[r['arm']], r['run_number'], fmt(r['p99_seconds']), fmt(r['unfinished_percent'], 3),
-                 fmt(r['deadline_percent']['1000']), fmt(r['useful_throughput'])] for r in rows]
-    s = tex_table(['Response', 'Run', r'\shortstack{p99\\(s)}', r'\shortstack{Unfinished\\(\%)}',
-                   r'\shortstack{Misses $>1$ s\\(\%)}', r'\shortstack{Useful throughput\\(msg/s)}'], outcomes,
+    latency_columns = [('p99_seconds', r'\shortstack{p99\\(s)}', 2)]
+    if prefix == 'twelve-partition':
+        latency_columns = [('completion_min_seconds', r'\shortstack{Minimum\\(s)}', 3),
+                           ('completion_max_seconds', r'\shortstack{Maximum\\(s)}', 2),
+                           ('completion_mean_seconds', r'\shortstack{Mean latency\\(s)}', 3)] + latency_columns
+    outcomes = [[short[r['arm']], r['run_number']] +
+                [fmt(r.get(key), digits) for key, _, digits in latency_columns] +
+                [fmt(r['unfinished_percent'], 3), fmt(r['deadline_percent']['1000']),
+                 fmt(r['useful_throughput'])] for r in rows]
+    s = tex_table(['Response', 'Run'] + [label for _, label, _ in latency_columns] +
+                  [r'\shortstack{Unfinished\\(\%)}', r'\shortstack{Misses $>1$ s\\(\%)}',
+                   r'\shortstack{Useful throughput\\(msg/s)}'], outcomes,
                   'Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. '
                   'Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.',
                   'tab:' + prefix + '-outcomes')
-    resources = [[short[r['arm']], r['run_number'], fmt(r['resources']['actual_cpu_core_seconds'], 1),
+    # Convert the unrounded CPU integral for comparison with requested core-minutes.
+    resources = [[short[r['arm']], r['run_number'],
+                  fmt(None if r['resources']['actual_cpu_core_seconds'] is None
+                      else r['resources']['actual_cpu_core_seconds'] / 60),
                   fmt(r['resources']['actual_rss_gib_minutes']), fmt(r['resources']['requested_cpu_core_minutes']),
                   fmt(r['resources']['requested_memory_gib_minutes'])] for r in rows]
-    s += tex_table(['Response', 'Run', r'\shortstack{Actual CPU\\(core-s)}', r'\shortstack{Actual RSS\\(GiB-min)}',
+    s += tex_table(['Response', 'Run', r'\shortstack{Actual CPU\\(core-min)}', r'\shortstack{Actual RSS\\(GiB-min)}',
                     r'\shortstack{Requested CPU\\(core-min)}', r'\shortstack{Requested memory\\(GiB-min)}'], resources,
                    'Consumer resources over evaluation plus drain. Actual values integrate observed process CPU and RSS intervals and sum them across consumers. '
                    'Requested values integrate Kubernetes resource declarations; neither is monetary or whole-cluster cost. A dash denotes unavailable full-window request coverage, not zero cost.',
@@ -255,7 +266,10 @@ def main():
                 for key in ['persistent_hot', 'hot']:
                     x[key + '_count'] = len(x[key]) if x.get(key) is not None else None
             deadline_rows = original.get('completion_deadline_outcomes')
-            if not deadline_rows:
+            needs_extremes = (block == 'twelve-partition' and
+                              'admitted_cohort_completion_min_seconds' not in outcome)
+            latency_outcome = outcome
+            if not deadline_rows or needs_extremes:
                 candidate = args.outcome_cache / (run + '-outcomes.json') if args.outcome_cache else None
                 if candidate and candidate.exists():
                     replay = read(candidate); hashes['reused-outcomes/' + run] = sha(candidate)
@@ -265,6 +279,10 @@ def main():
                     print('Replaying deadline sensitivity', run, flush=True)
                     replay = evaluate(p, deadline_thresholds_ms=[500, 1000])
                     (cache / (run + '.json')).write_text(json.dumps(replay, indent=2))
+                if needs_extremes and 'admitted_cohort_completion_min_seconds' not in replay:
+                    replay = evaluate(p, deadline_thresholds_ms=[500, 1000])
+                    (cache / (run + '.json')).write_text(json.dumps(replay, indent=2))
+                latency_outcome = replay
                 assert not replay['validity_failures']
                 for key in ['admitted_evaluation_cohort', 'completed_by_drain', 'incomplete_by_drain',
                             'admitted_cohort_completion_p99_seconds', 'deadline_miss_fraction']:
@@ -306,6 +324,9 @@ def main():
                 timeseries=compact_series(points, start),
                 parameters=lag['parameters'], growth_plot_parameters=lag.get('growth_plot_parameters'),
                 intervention_cost=original.get('intervention_cost', {}))
+            if block == 'twelve-partition':
+                row['completion_min_seconds'] = latency_outcome['admitted_cohort_completion_min_seconds']
+                row['completion_max_seconds'] = latency_outcome['admitted_cohort_completion_max_seconds']
             row['observed_completion_deadline_percent'] = {
                 str(int(x['threshold_ms'])): 100*x['observed_completion_deadline_miss_fraction']
                 for x in deadline_rows}
