@@ -178,11 +178,11 @@ def tex_table(headers, values, caption, label, widths=None, shade_rows=False):
              r'\renewcommand{\arraystretch}{1.12}', r'\begin{tabular}{@{}' + spec + r'@{}}',
              r'\toprule']
     if shade_rows:
-        lines.append(r'\rowcolor{black!15}')
+        lines.append(r'\rowcolor[HTML]{CDDFEF}')
     lines += [' & '.join(headers) + r'\\', r'\midrule']
     for index, row in enumerate(values):
         if shade_rows and index % 2 == 0:
-            lines.append(r'\rowcolor{black!7}')
+            lines.append(r'\rowcolor[HTML]{EAF3FA}')
         lines.append(' & '.join(str(x) for x in row) + r'\\')
     lines += [r'\bottomrule', r'\end{tabular}', r'\caption{' + caption + '}',
               r'\label{' + label + '}', r'\end{table}']
