@@ -172,12 +172,18 @@ def ownership_plot(rows, title, destination):
     plt.close(fig)
 
 
-def tex_table(headers, values, caption, label, widths=None):
+def tex_table(headers, values, caption, label, widths=None, shade_rows=False):
     spec = widths or ('l' + 'r' * (len(headers) - 1))
     lines = [r'\begin{table}[!htbp]', r'\centering\small', r'\setlength{\tabcolsep}{3pt}',
              r'\renewcommand{\arraystretch}{1.12}', r'\begin{tabular}{@{}' + spec + r'@{}}',
-             r'\toprule', ' & '.join(headers) + r'\\', r'\midrule']
-    lines += [' & '.join(str(x) for x in row) + r'\\' for row in values]
+             r'\toprule']
+    if shade_rows:
+        lines.append(r'\rowcolor{black!15}')
+    lines += [' & '.join(headers) + r'\\', r'\midrule']
+    for index, row in enumerate(values):
+        if shade_rows and index % 2 == 0:
+            lines.append(r'\rowcolor{black!7}')
+        lines.append(' & '.join(str(x) for x in row) + r'\\')
     lines += [r'\bottomrule', r'\end{tabular}', r'\caption{' + caption + '}',
               r'\label{' + label + '}', r'\end{table}']
     return '\n'.join(lines) + '\n'
@@ -211,7 +217,8 @@ def write_tables(rows, prefix, out):
                   'Whole evaluation-born cohort through the fixed drain cutoff. Deadline misses include overdue unfinished messages. '
                   'Useful throughput counts distinct completions during evaluation, including warm-up records completed then; it can exceed the input rate while queued work is cleared.',
                   'tab:' + prefix + '-outcomes',
-                  widths=r'lrrrr@{\hspace{10pt}}rrrr' if prefix == 'twelve-partition' else None)
+                  widths='lcccccccc' if prefix == 'twelve-partition' else None,
+                  shade_rows=prefix == 'twelve-partition')
     # Convert the unrounded CPU integral for comparison with requested core-minutes.
     resources = [[short[r['arm']], r['run_number'],
                   fmt(None if r['resources']['actual_cpu_core_seconds'] is None
