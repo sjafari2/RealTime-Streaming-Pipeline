@@ -335,7 +335,7 @@ def write_tables(rows, prefix, out):
                    'Lag diagnostics during evaluation only, in offsets except skew and coverage. ' + diagnostic_note +
                    'The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.',
                    'tab:' + prefix + '-diagnostics',
-                   widths=r'lcc@{\hspace{6pt}}ccccccc' if prefix == 'twelve-partition' else None,
+                   widths=r'lcc<{\hspace{3pt}}ccccccc' if prefix == 'twelve-partition' else None,
                    tabcolsep=1.5 if prefix == 'twelve-partition' else 3,
                    font_size='footnotesize' if prefix == 'twelve-partition' else 'small')
     if prefix == 'twelve-partition':
