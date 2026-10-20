@@ -1,0 +1,639 @@
+{
+  "window": "15 individual samples at evaluation seconds 30,32,...,58; scheduled action at60; Keep3 same window",
+  "formula": "arithmetic mean of per-sample maximum partition lag divided by per-sample mean partition lag over all60partitions",
+  "analysis_source_sha256": "ebb8689af3197512eecc15a1c1a60cd58cf53dd310b0af753e7df947b0190a2f",
+  "runs": [
+    {
+      "run_id": "run-20260929-020644",
+      "arm": "keep3",
+      "run_number": 1,
+      "mean_skew": 4.916586220145771,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.00024104118347,
+      "observed_last_sample_seconds": 58.00024104118347,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "669bf57219df5fa56c5d40f359a2a2f1d77e56f1ef345f2e0575b49e2723c5e7",
+        "lag-summary.json": "a240405039594c7fefe08d8125b064265757e5d89533e8fc06f70031179177c4"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 30.00024104118347,
+          "skew": 4.909270055012727
+        },
+        {
+          "evaluation_seconds": 32.00024104118347,
+          "skew": 4.90967318114633
+        },
+        {
+          "evaluation_seconds": 34.00024104118347,
+          "skew": 4.90967318114633
+        },
+        {
+          "evaluation_seconds": 36.00024104118347,
+          "skew": 4.905848513902205
+        },
+        {
+          "evaluation_seconds": 38.00024104118347,
+          "skew": 4.905848513902205
+        },
+        {
+          "evaluation_seconds": 40.00024104118347,
+          "skew": 4.919366661779797
+        },
+        {
+          "evaluation_seconds": 42.00024104118347,
+          "skew": 4.920809502859656
+        },
+        {
+          "evaluation_seconds": 44.00024104118347,
+          "skew": 4.920809502859656
+        },
+        {
+          "evaluation_seconds": 46.00024104118347,
+          "skew": 4.935433616063701
+        },
+        {
+          "evaluation_seconds": 48.00024104118347,
+          "skew": 4.935262757044935
+        },
+        {
+          "evaluation_seconds": 50.00024104118347,
+          "skew": 4.934052757793765
+        },
+        {
+          "evaluation_seconds": 52.00024104118347,
+          "skew": 4.933724105774995
+        },
+        {
+          "evaluation_seconds": 54.00024104118347,
+          "skew": 4.933724105774995
+        },
+        {
+          "evaluation_seconds": 56.00024104118347,
+          "skew": 4.887725495143181
+        },
+        {
+          "evaluation_seconds": 58.00024104118347,
+          "skew": 4.887571351982087
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-041940",
+      "arm": "keep3",
+      "run_number": 2,
+      "mean_skew": 4.952796940232732,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.999897241592407,
+      "observed_last_sample_seconds": 57.99989724159241,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "11d50fccaff96e65c98edd8edc807726306c54927ec2c0d96f41817fe5373e72",
+        "lag-summary.json": "8927618fdbca3b3b2d136150cb8a77f5e20783b36d76cf64f240cf5be689db43"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 29.999897241592407,
+          "skew": 4.960861056751468
+        },
+        {
+          "evaluation_seconds": 31.999897241592407,
+          "skew": 4.961265595694365
+        },
+        {
+          "evaluation_seconds": 33.99989724159241,
+          "skew": 4.963231091636502
+        },
+        {
+          "evaluation_seconds": 35.99989724159241,
+          "skew": 4.963041987350453
+        },
+        {
+          "evaluation_seconds": 37.99989724159241,
+          "skew": 4.963041987350453
+        },
+        {
+          "evaluation_seconds": 39.99989724159241,
+          "skew": 4.961829272747196
+        },
+        {
+          "evaluation_seconds": 41.99989724159241,
+          "skew": 4.9620105201636475
+        },
+        {
+          "evaluation_seconds": 43.99989724159241,
+          "skew": 4.976775049767751
+        },
+        {
+          "evaluation_seconds": 45.99989724159241,
+          "skew": 4.976427448926139
+        },
+        {
+          "evaluation_seconds": 47.99989724159241,
+          "skew": 4.976427448926139
+        },
+        {
+          "evaluation_seconds": 49.99989724159241,
+          "skew": 4.904648390941597
+        },
+        {
+          "evaluation_seconds": 51.99989724159241,
+          "skew": 4.904973180584067
+        },
+        {
+          "evaluation_seconds": 53.99989724159241,
+          "skew": 4.9391403575504
+        },
+        {
+          "evaluation_seconds": 55.99989724159241,
+          "skew": 4.9391403575504
+        },
+        {
+          "evaluation_seconds": 57.99989724159241,
+          "skew": 4.9391403575504
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-023622",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "mean_skew": 4.911176923161169,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.000061988830566,
+      "observed_last_sample_seconds": 58.000061988830566,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "04bbd8fc040c6947b11f0b96a05cd07835fa06851b34ea7666009ba3469f9b7c",
+        "lag-summary.json": "d6794306306279de2947f30425316c52d725c190bb94f29a62f449a25eb9d099"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 30.000061988830566,
+          "skew": 4.918569509738079
+        },
+        {
+          "evaluation_seconds": 32.000061988830566,
+          "skew": 4.922682477365595
+        },
+        {
+          "evaluation_seconds": 34.000061988830566,
+          "skew": 4.922879692320019
+        },
+        {
+          "evaluation_seconds": 36.000061988830566,
+          "skew": 4.889857732905003
+        },
+        {
+          "evaluation_seconds": 38.000061988830566,
+          "skew": 4.890418818129661
+        },
+        {
+          "evaluation_seconds": 40.000061988830566,
+          "skew": 4.890418818129661
+        },
+        {
+          "evaluation_seconds": 42.000061988830566,
+          "skew": 4.920047432534407
+        },
+        {
+          "evaluation_seconds": 44.000061988830566,
+          "skew": 4.920047432534407
+        },
+        {
+          "evaluation_seconds": 46.000061988830566,
+          "skew": 4.934787845417943
+        },
+        {
+          "evaluation_seconds": 48.000061988830566,
+          "skew": 4.934278439198954
+        },
+        {
+          "evaluation_seconds": 50.000061988830566,
+          "skew": 4.934278439198954
+        },
+        {
+          "evaluation_seconds": 52.000061988830566,
+          "skew": 4.913078797725427
+        },
+        {
+          "evaluation_seconds": 54.000061988830566,
+          "skew": 4.913877153071173
+        },
+        {
+          "evaluation_seconds": 56.000061988830566,
+          "skew": 4.881598343945049
+        },
+        {
+          "evaluation_seconds": 58.000061988830566,
+          "skew": 4.880832915203211
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "mean_skew": 4.938992750185811,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.999842882156372,
+      "observed_last_sample_seconds": 57.99984288215637,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "1db91b94b678c25e6ed774fdfe064a7966ffba9b74faacc1277f3f926130f7b4",
+        "lag-summary.json": "e5c2ab593099221bcaa54ef05d889b890086771ed663750e57636db43838e825"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 29.999842882156372,
+          "skew": 4.964873064026824
+        },
+        {
+          "evaluation_seconds": 31.999842882156372,
+          "skew": 4.906739901590571
+        },
+        {
+          "evaluation_seconds": 33.99984288215637,
+          "skew": 4.906739901590571
+        },
+        {
+          "evaluation_seconds": 35.99984288215637,
+          "skew": 4.9476327116212335
+        },
+        {
+          "evaluation_seconds": 37.99984288215637,
+          "skew": 4.947987660520841
+        },
+        {
+          "evaluation_seconds": 39.99984288215637,
+          "skew": 4.947987660520841
+        },
+        {
+          "evaluation_seconds": 41.99984288215637,
+          "skew": 4.960060597713814
+        },
+        {
+          "evaluation_seconds": 43.99984288215637,
+          "skew": 4.959889826131865
+        },
+        {
+          "evaluation_seconds": 45.99984288215637,
+          "skew": 4.9503977998232
+        },
+        {
+          "evaluation_seconds": 47.99984288215637,
+          "skew": 4.950721980288792
+        },
+        {
+          "evaluation_seconds": 49.99984288215637,
+          "skew": 4.950721980288792
+        },
+        {
+          "evaluation_seconds": 51.99984288215637,
+          "skew": 4.897115474960068
+        },
+        {
+          "evaluation_seconds": 53.99984288215637,
+          "skew": 4.897115474960068
+        },
+        {
+          "evaluation_seconds": 55.99984288215637,
+          "skew": 4.948378916862887
+        },
+        {
+          "evaluation_seconds": 57.99984288215637,
+          "skew": 4.9485283018867925
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-025321",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "mean_skew": 4.92561123842374,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.9999840259552,
+      "observed_last_sample_seconds": 57.9999840259552,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "33b01f4af4cd0b865e832bd001ad45c15cbfa314d7f06a53a5c8e683bd70eeb3",
+        "lag-summary.json": "b31c93a6e6a3c8077e492de98da1da0e2de625b14c713661004602a742ffdd83"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 29.9999840259552,
+          "skew": 4.917950853810912
+        },
+        {
+          "evaluation_seconds": 31.9999840259552,
+          "skew": 4.922807575998727
+        },
+        {
+          "evaluation_seconds": 33.9999840259552,
+          "skew": 4.9231993633107844
+        },
+        {
+          "evaluation_seconds": 35.9999840259552,
+          "skew": 4.933313125189451
+        },
+        {
+          "evaluation_seconds": 37.9999840259552,
+          "skew": 4.932752415230157
+        },
+        {
+          "evaluation_seconds": 39.9999840259552,
+          "skew": 4.932378679395386
+        },
+        {
+          "evaluation_seconds": 41.9999840259552,
+          "skew": 4.908896034297964
+        },
+        {
+          "evaluation_seconds": 43.9999840259552,
+          "skew": 4.9094222317504554
+        },
+        {
+          "evaluation_seconds": 45.9999840259552,
+          "skew": 4.9624214969628335
+        },
+        {
+          "evaluation_seconds": 47.9999840259552,
+          "skew": 4.9624214969628335
+        },
+        {
+          "evaluation_seconds": 49.9999840259552,
+          "skew": 4.962591804516439
+        },
+        {
+          "evaluation_seconds": 51.9999840259552,
+          "skew": 4.935822637106184
+        },
+        {
+          "evaluation_seconds": 53.9999840259552,
+          "skew": 4.935502690088805
+        },
+        {
+          "evaluation_seconds": 55.9999840259552,
+          "skew": 4.872267909071011
+        },
+        {
+          "evaluation_seconds": 57.9999840259552,
+          "skew": 4.872420262664165
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "mean_skew": 4.941928509493551,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.00030207633972,
+      "observed_last_sample_seconds": 58.00030207633972,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "beee83b33c9bc85d35dfb3c8091570976ab756c3e1e31df266d23375c2638ba5",
+        "lag-summary.json": "96dd3bb4b74fb7e5dbb279199b09ab333edb52688b6d2969af42c859ac92d99e"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 30.00030207633972,
+          "skew": 4.977641798070135
+        },
+        {
+          "evaluation_seconds": 32.00030207633972,
+          "skew": 4.977641798070135
+        },
+        {
+          "evaluation_seconds": 34.00030207633972,
+          "skew": 4.939086104134648
+        },
+        {
+          "evaluation_seconds": 36.00030207633972,
+          "skew": 4.937975490012367
+        },
+        {
+          "evaluation_seconds": 38.00030207633972,
+          "skew": 4.966810662733115
+        },
+        {
+          "evaluation_seconds": 40.00030207633972,
+          "skew": 4.967508518037163
+        },
+        {
+          "evaluation_seconds": 42.00030207633972,
+          "skew": 4.967508518037163
+        },
+        {
+          "evaluation_seconds": 44.00030207633972,
+          "skew": 4.9483491999189795
+        },
+        {
+          "evaluation_seconds": 46.00030207633972,
+          "skew": 4.948182155757351
+        },
+        {
+          "evaluation_seconds": 48.00030207633972,
+          "skew": 4.899869464166321
+        },
+        {
+          "evaluation_seconds": 50.00030207633972,
+          "skew": 4.900025471217524
+        },
+        {
+          "evaluation_seconds": 52.00030207633972,
+          "skew": 4.900025471217524
+        },
+        {
+          "evaluation_seconds": 54.00030207633972,
+          "skew": 4.9422576198499
+        },
+        {
+          "evaluation_seconds": 56.00030207633972,
+          "skew": 4.942711843637032
+        },
+        {
+          "evaluation_seconds": 58.00030207633972,
+          "skew": 4.913333527543916
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "mean_skew": 4.926437186850084,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.999931812286377,
+      "observed_last_sample_seconds": 57.99993181228638,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "c2c57768525957ce49ba5defb1240dde6e64d69e260df59c10bb9259b854d716",
+        "lag-summary.json": "8f87b28b74899ad77279de47d3e9b2f0f3e5a6687d02638332eaff9fbe57eb6a"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 29.999931812286377,
+          "skew": 4.913878767803908
+        },
+        {
+          "evaluation_seconds": 31.999931812286377,
+          "skew": 4.913878767803908
+        },
+        {
+          "evaluation_seconds": 33.99993181228638,
+          "skew": 4.925111845944369
+        },
+        {
+          "evaluation_seconds": 35.99993181228638,
+          "skew": 4.92434555992065
+        },
+        {
+          "evaluation_seconds": 37.99993181228638,
+          "skew": 4.90773952594017
+        },
+        {
+          "evaluation_seconds": 39.99993181228638,
+          "skew": 4.908647089281752
+        },
+        {
+          "evaluation_seconds": 41.99993181228638,
+          "skew": 4.908647089281752
+        },
+        {
+          "evaluation_seconds": 43.99993181228638,
+          "skew": 4.983864178476217
+        },
+        {
+          "evaluation_seconds": 45.99993181228638,
+          "skew": 4.983689361254341
+        },
+        {
+          "evaluation_seconds": 47.99993181228638,
+          "skew": 4.9433470369999
+        },
+        {
+          "evaluation_seconds": 49.99993181228638,
+          "skew": 4.942521053335115
+        },
+        {
+          "evaluation_seconds": 51.99993181228638,
+          "skew": 4.942521053335115
+        },
+        {
+          "evaluation_seconds": 53.99993181228638,
+          "skew": 4.906596238082968
+        },
+        {
+          "evaluation_seconds": 55.99993181228638,
+          "skew": 4.907070381703979
+        },
+        {
+          "evaluation_seconds": 57.99993181228638,
+          "skew": 4.884699853587116
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "mean_skew": 4.946049599902744,
+      "valid_window": true,
+      "sample_count": 15,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.00010895729065,
+      "observed_last_sample_seconds": 58.00010895729065,
+      "scheduled_action_seconds": 60,
+      "source_sha256": {
+        "manifest.json": "4d5ca4ea209a8785d1fbf1dd0a7ee8150a7612256c0b97e535399173bc41ae5b",
+        "lag-summary.json": "378b68a9bf6ad4cac5c397bdabe461fab781404389806c9b291e373efcb6ce2b"
+      },
+      "samples": [
+        {
+          "evaluation_seconds": 30.00010895729065,
+          "skew": 4.907497565725413
+        },
+        {
+          "evaluation_seconds": 32.00010895729065,
+          "skew": 4.907879873797374
+        },
+        {
+          "evaluation_seconds": 34.00010895729065,
+          "skew": 4.907879873797374
+        },
+        {
+          "evaluation_seconds": 36.00010895729065,
+          "skew": 5.024312386325675
+        },
+        {
+          "evaluation_seconds": 38.00010895729065,
+          "skew": 5.024125900081657
+        },
+        {
+          "evaluation_seconds": 40.00010895729065,
+          "skew": 4.95483870967742
+        },
+        {
+          "evaluation_seconds": 42.00010895729065,
+          "skew": 4.9546659227228345
+        },
+        {
+          "evaluation_seconds": 44.00010895729065,
+          "skew": 4.9546659227228345
+        },
+        {
+          "evaluation_seconds": 46.00010895729065,
+          "skew": 4.958926066920457
+        },
+        {
+          "evaluation_seconds": 48.00010895729065,
+          "skew": 4.9595885378398235
+        },
+        {
+          "evaluation_seconds": 50.00010895729065,
+          "skew": 4.910607113525807
+        },
+        {
+          "evaluation_seconds": 52.00010895729065,
+          "skew": 4.910607113525807
+        },
+        {
+          "evaluation_seconds": 54.00010895729065,
+          "skew": 4.910607113525807
+        },
+        {
+          "evaluation_seconds": 56.00010895729065,
+          "skew": 4.952572053994892
+        },
+        {
+          "evaluation_seconds": 58.00010895729065,
+          "skew": 4.9519698443579765
+        }
+      ]
+    }
+  ]
+}

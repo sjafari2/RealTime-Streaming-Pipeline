@@ -140,3 +140,35 @@ def test_process_sum_does_not_treat_missing_active_process_as_zero():
                      dict(metric={'pod':pod,'__name__':'cpu_scrape_timestamp_seconds'},values=stamps)])
     output=process_total(prom,'cpu',100,{'C0':-1,'C1':1},0,4)
     assert output['values']==[1,None,1.5]
+
+
+def test_pre_action_skew_averages_ratios_on_the_declared_grid():
+    rows = [dict(point(t, 1), skew=1, max_partition_lag=1, mean_partition_lag=1)
+            for t in range(0, 64, 2)]
+    for row in rows:
+        if row['timestamp'] == 30:
+            row.update(skew=10, max_partition_lag=100, mean_partition_lag=10)
+        if row['timestamp'] == 60:
+            row['skew'] = 999  # The action boundary is outside the window.
+    result = audit.pre_mitigation_skew(rows, 0)
+    assert result['valid_window'] and result['sample_count'] == 15
+    assert result['mean_skew'] == pytest.approx(1.6)
+    assert result['mean_skew'] != pytest.approx(114 / 24)  # Ratio of sums is different.
+
+
+@pytest.mark.parametrize('failure', ['missing', 'undefined', 'nonfinite', 'owner', 'reset'])
+def test_pre_action_skew_rejects_incomplete_or_discontinuous_windows(failure):
+    rows = [dict(point(t, 20, offset=t), skew=5) for t in range(30, 60, 2)]
+    if failure == 'missing':
+        rows.pop(7)
+    elif failure == 'undefined':
+        rows[7]['skew'] = None
+    elif failure == 'nonfinite':
+        rows[7]['skew'] = float('nan')
+    elif failure == 'owner':
+        rows[7]['owners'] = {'P0': 'C1'}
+    else:
+        rows[7]['positions'] = {'P0': 0}
+    result = audit.pre_mitigation_skew(rows, 0)
+    assert not result['valid_window']
+    assert result['mean_skew'] is None
