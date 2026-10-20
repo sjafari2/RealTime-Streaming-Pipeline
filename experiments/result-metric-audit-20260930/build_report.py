@@ -64,7 +64,8 @@ def stats(points, field, duration):
         area += (a[field] + b[field]) * .5 * dt
         covered += dt
     values = [r[field] for r in points if r.get('valid') and r.get(field) is not None]
-    return {'time_weighted_mean': area / covered if covered else None,
+    return {'sample_mean': statistics.mean(values) if values else None,
+            'time_weighted_mean': area / covered if covered else None,
             'sampled_peak': max(values, default=None), 'covered_seconds': covered,
             'coverage_fraction': covered / duration, 'defined_samples': len(values)}
 
@@ -296,13 +297,13 @@ def write_tables(rows, prefix, out):
                    'Consumer resources over evaluation plus drain. Actual values integrate observed process CPU and RSS intervals and sum them across consumers. '
                    'Requested values integrate Kubernetes resource declarations; neither is monetary or whole-cluster cost. A dash denotes unavailable full-window request coverage, not zero cost.',
                    'tab:' + prefix + '-resources')
-    diagnostics = [[short[r['arm']], r['run_number'], fmt(r['statistics']['total_lag']['time_weighted_mean'], 0),
+    diagnostics = [[short[r['arm']], r['run_number'], fmt(r['statistics']['total_lag']['sample_mean'], 0),
                     fmt(r['statistics']['total_lag']['sampled_peak'], 0), fmt(100*r['statistics']['total_lag']['coverage_fraction'], 1),
                     fmt(r['statistics']['max_partition_lag']['sampled_peak'], 0),
-                    fmt(r['statistics']['skew']['time_weighted_mean'])] for r in rows]
+                    fmt(r['statistics']['skew']['sample_mean'])] for r in rows]
     diagnostic_headers = ['Response', 'Run', r'\shortstack{Mean total\\lag}', r'\shortstack{Peak total\\lag}',
                           r'\shortstack{Lag coverage\\(\%)}', r'\shortstack{Peak partition\\lag}', r'Mean skew']
-    diagnostic_note = ('Means use trapezoidal area divided by covered time; '
+    diagnostic_note = ('Means are arithmetic averages of valid evaluation samples; '
                        'peaks are sampled maxima. ')
     if prefix == 'twelve-partition':
         diagnostic_headers = ['Response', 'Run',
@@ -314,16 +315,16 @@ def write_tables(rows, prefix, out):
                               r'\shortstack{Lag\\coverage\\(\%)}']
         diagnostics = [[short[row['arm']], row['run_number'],
                         fmt(row['statistics']['total_lag']['sampled_peak'], 0),
-                        fmt(row['statistics']['total_lag']['time_weighted_mean'], 0),
+                        fmt(row['statistics']['total_lag']['sample_mean'], 0),
                         fmt(row['pre_mitigation_backlog']['mean_total_backlog'], 0),
                         fmt(row['end_evaluation_backlog']['mean_total_backlog'], 1),
                         fmt(row['end_evaluation_backlog']['total_backlog_at_last_sample'], 0),
                         fmt(row['statistics']['max_partition_lag']['sampled_peak'], 0),
-                        fmt(row['statistics']['skew']['time_weighted_mean']),
+                        fmt(row['statistics']['skew']['sample_mean']),
                         fmt(100*row['statistics']['total_lag']['coverage_fraction'], 1)]
                        for row in rows]
         diagnostic_note = ('Maxima are sampled extrema. Mean total backlog and mean skew '
-                           'are time-weighted over evaluation. Mean backlog before mitigation '
+                           'are arithmetic averages of valid evaluation samples. Mean backlog before mitigation '
                            'is the arithmetic mean of 15 valid, contiguous samples at evaluation '
                            'seconds 30, 32, ..., 58, before the scheduled action at 60 seconds; '
                            'Evaluation-end mean backlog uses the final 15 samples, at seconds '
@@ -333,7 +334,7 @@ def write_tables(rows, prefix, out):
                            'Keep 3 uses the same windows. ')
     diagnostic_table = tex_table(diagnostic_headers, diagnostics,
                    'Lag diagnostics during evaluation only, in offsets except skew and coverage. ' + diagnostic_note +
-                   'The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.',
+                   'Mean skew averages individual skew measurements, not the ratio of mean maximum and mean partition lag. Missing values are excluded; coverage counts valid continuous time.',
                    'tab:' + prefix + '-diagnostics',
                    widths=r'lcc<{\hspace{3pt}}ccccccc' if prefix == 'twelve-partition' else None,
                    tabcolsep=1.5 if prefix == 'twelve-partition' else 3,

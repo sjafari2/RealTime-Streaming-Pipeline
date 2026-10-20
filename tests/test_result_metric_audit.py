@@ -18,10 +18,11 @@ def point(t,value,offset=0,owner='C0',valid=True):
                 highs={'P0':100},total_lag=value,persistent_hot_count=value)
 
 
-def test_mean_weights_elapsed_time():
+def test_sample_mean_is_distinct_from_time_weighted_diagnostic():
     rows=[point(0,0),point(2,2),point(5,8)]
     result=audit.stats(rows,'total_lag',5)
     assert result['time_weighted_mean']==pytest.approx(3.4)
+    assert result['sample_mean']==pytest.approx(10/3)
     assert result['covered_seconds']==5
     assert result['sampled_peak']==8
 
@@ -31,6 +32,8 @@ def test_missing_and_owner_changes_are_not_bridged():
     result=audit.stats(rows,'total_lag',8)
     assert result['covered_seconds']==4
     assert result['time_weighted_mean']==8.5
+    assert result['sample_mean']==8.5
+    assert result['defined_samples']==4
     assert result['sampled_peak']==20
 
 
@@ -44,6 +47,8 @@ def test_unknown_detector_is_not_zero():
     rows=[point(0,None),point(2,0),point(4,0)]
     result=audit.stats(rows,'persistent_hot_count',4)
     assert result['time_weighted_mean']==0
+    assert result['sample_mean']==0
+    assert audit.stats([point(0, None)], 'total_lag', 2)['sample_mean'] is None
     assert result['covered_seconds']==2
     assert result['defined_samples']==2
     series=audit.compact_series([point(0,1),point(2,2,owner='C1')],0)
