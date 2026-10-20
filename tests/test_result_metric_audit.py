@@ -65,6 +65,37 @@ def test_lag_minima_preserve_missing_and_real_zero():
     assert audit.lag_minima(rows) == {'min_total_lag': 10, 'min_partition_lag': 0}
 
 
+@pytest.mark.parametrize('rounding', [-.0003, 0, .0003])
+def test_pre_mitigation_mean_uses_same_fifteen_samples(rounding):
+    rows = [point(1000 + t + rounding, t) for t in range(0, 64, 2)]
+    # The boundary at 60 must be excluded despite export timestamp rounding.
+    result = audit.pre_mitigation_backlog(rows, 1000)
+    assert result['valid_window']
+    assert result['sample_count'] == 15
+    assert result['mean_total_backlog'] == 44
+    assert result['observed_first_sample_seconds'] == pytest.approx(30 + rounding)
+    assert result['observed_last_sample_seconds'] == pytest.approx(58 + rounding)
+
+
+@pytest.mark.parametrize('failure', ['missing', 'invalid', 'owner', 'offset', 'duplicate'])
+def test_pre_mitigation_mean_does_not_substitute_or_bridge_samples(failure):
+    rows = [point(t, t, offset=t) for t in range(0, 64, 2)]
+    index = next(i for i, row in enumerate(rows) if row['timestamp'] == 44)
+    if failure == 'missing':
+        rows.pop(index)
+    elif failure == 'invalid':
+        rows[index]['valid'] = False
+    elif failure == 'owner':
+        rows[index]['owners'] = {'P0': 'C1'}
+    elif failure == 'offset':
+        rows[index]['positions'] = {'P0': 0}
+    else:
+        rows.insert(index, dict(rows[index]))
+    result = audit.pre_mitigation_backlog(rows, 0)
+    assert not result['valid_window']
+    assert result['mean_total_backlog'] is None
+
+
 def test_runtime_preserves_full_set_and_original_window_growth():
     rows=[dict(point(0,9),window_mean_backlog=8,window_growth_offsets_per_second=3,
                window_mean_skew=2,persistent_hot=['topic/2','topic/5']),

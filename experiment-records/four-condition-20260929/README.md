@@ -19,4 +19,6 @@ All three interventions completed every evaluation message in both runs; keeping
 
 [Sampled lag minima](lag-minima.json) add the minimum total backlog and the minimum individual partition lag during evaluation. These use the same valid observations as the reported peaks; a zero partition minimum does not mean that all partitions were caught up. Source hashes are included in the record.
 
+[Mean backlog before mitigation](pre-mitigation-backlog.json) uses 15 valid measurements at evaluation seconds 30, 32, ..., 58, before the scheduled action at one minute. Keep 3 uses the same interval. This arithmetic mean describes recent backlog before mitigation; the mean total backlog in the results table remains a time-weighted average over the full evaluation. The record includes the selected observations and their source hashes.
+
 P99 covers completed evaluation messages through the fixed drain cutoff, before commit acknowledgment. Unfinished percentage uses all acknowledged evaluation messages. Small repetition counts and shared-machine variability limit generalization.

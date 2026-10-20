@@ -1,0 +1,641 @@
+{
+  "units": "offsets",
+  "definition": "Arithmetic mean of 15 valid total-backlog observations at nominal evaluation seconds 30, 32, ..., 58. The scheduled action is at 60 seconds. Keep 3 uses the same window.",
+  "timestamp_rounding_tolerance_seconds": 0.001,
+  "comparison_sha256": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074",
+  "analysis_code_sha256": "f2c972e77bad18c0568cf7e04f85f7d1cecf6995d647b94dc2ad66460b4c005b",
+  "runs": [
+    {
+      "run_id": "run-20260929-020644",
+      "arm": "keep3",
+      "run_number": 1,
+      "mean_total_backlog": 27888.0,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.00024104118347,
+      "observed_last_sample_seconds": 58.00024104118347,
+      "samples": [
+        {
+          "evaluation_seconds": 30.00024104118347,
+          "total_lag": 24358.0
+        },
+        {
+          "evaluation_seconds": 32.00024104118347,
+          "total_lag": 24356.0
+        },
+        {
+          "evaluation_seconds": 34.00024104118347,
+          "total_lag": 24356.0
+        },
+        {
+          "evaluation_seconds": 36.00024104118347,
+          "total_lag": 26075.0
+        },
+        {
+          "evaluation_seconds": 38.00024104118347,
+          "total_lag": 26075.0
+        },
+        {
+          "evaluation_seconds": 40.00024104118347,
+          "total_lag": 27284.0
+        },
+        {
+          "evaluation_seconds": 42.00024104118347,
+          "total_lag": 27276.0
+        },
+        {
+          "evaluation_seconds": 44.00024104118347,
+          "total_lag": 27276.0
+        },
+        {
+          "evaluation_seconds": 46.00024104118347,
+          "total_lag": 28885.0
+        },
+        {
+          "evaluation_seconds": 48.00024104118347,
+          "total_lag": 28886.0
+        },
+        {
+          "evaluation_seconds": 50.00024104118347,
+          "total_lag": 30024.0
+        },
+        {
+          "evaluation_seconds": 52.00024104118347,
+          "total_lag": 30026.0
+        },
+        {
+          "evaluation_seconds": 54.00024104118347,
+          "total_lag": 30026.0
+        },
+        {
+          "evaluation_seconds": 56.00024104118347,
+          "total_lag": 31708.0
+        },
+        {
+          "evaluation_seconds": 58.00024104118347,
+          "total_lag": 31709.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "669bf57219df5fa56c5d40f359a2a2f1d77e56f1ef345f2e0575b49e2723c5e7",
+        "lag-summary.json": "a240405039594c7fefe08d8125b064265757e5d89533e8fc06f70031179177c4"
+      }
+    },
+    {
+      "run_id": "run-20260929-041940",
+      "arm": "keep3",
+      "run_number": 2,
+      "mean_total_backlog": 28233.133333333335,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.999897241592407,
+      "observed_last_sample_seconds": 57.99989724159241,
+      "samples": [
+        {
+          "evaluation_seconds": 29.999897241592407,
+          "total_lag": 24528.0
+        },
+        {
+          "evaluation_seconds": 31.999897241592407,
+          "total_lag": 24526.0
+        },
+        {
+          "evaluation_seconds": 33.99989724159241,
+          "total_lag": 26245.0
+        },
+        {
+          "evaluation_seconds": 35.99989724159241,
+          "total_lag": 26246.0
+        },
+        {
+          "evaluation_seconds": 37.99989724159241,
+          "total_lag": 26246.0
+        },
+        {
+          "evaluation_seconds": 39.99989724159241,
+          "total_lag": 27377.0
+        },
+        {
+          "evaluation_seconds": 41.99989724159241,
+          "total_lag": 27376.0
+        },
+        {
+          "evaluation_seconds": 43.99989724159241,
+          "total_lag": 28633.0
+        },
+        {
+          "evaluation_seconds": 45.99989724159241,
+          "total_lag": 28635.0
+        },
+        {
+          "evaluation_seconds": 47.99989724159241,
+          "total_lag": 28635.0
+        },
+        {
+          "evaluation_seconds": 49.99989724159241,
+          "total_lag": 30204.0
+        },
+        {
+          "evaluation_seconds": 51.99989724159241,
+          "total_lag": 30202.0
+        },
+        {
+          "evaluation_seconds": 53.99989724159241,
+          "total_lag": 31548.0
+        },
+        {
+          "evaluation_seconds": 55.99989724159241,
+          "total_lag": 31548.0
+        },
+        {
+          "evaluation_seconds": 57.99989724159241,
+          "total_lag": 31548.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "11d50fccaff96e65c98edd8edc807726306c54927ec2c0d96f41817fe5373e72",
+        "lag-summary.json": "8927618fdbca3b3b2d136150cb8a77f5e20783b36d76cf64f240cf5be689db43"
+      }
+    },
+    {
+      "run_id": "run-20260929-023622",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "mean_total_backlog": 28022.8,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.000061988830566,
+      "observed_last_sample_seconds": 58.000061988830566,
+      "samples": [
+        {
+          "evaluation_seconds": 30.000061988830566,
+          "total_lag": 23824.0
+        },
+        {
+          "evaluation_seconds": 32.000061988830566,
+          "total_lag": 24962.0
+        },
+        {
+          "evaluation_seconds": 34.000061988830566,
+          "total_lag": 24961.0
+        },
+        {
+          "evaluation_seconds": 36.000061988830566,
+          "total_lag": 26148.0
+        },
+        {
+          "evaluation_seconds": 38.000061988830566,
+          "total_lag": 26145.0
+        },
+        {
+          "evaluation_seconds": 40.000061988830566,
+          "total_lag": 26145.0
+        },
+        {
+          "evaluation_seconds": 42.000061988830566,
+          "total_lag": 27829.0
+        },
+        {
+          "evaluation_seconds": 44.000061988830566,
+          "total_lag": 27829.0
+        },
+        {
+          "evaluation_seconds": 46.000061988830566,
+          "total_lag": 29059.0
+        },
+        {
+          "evaluation_seconds": 48.000061988830566,
+          "total_lag": 29062.0
+        },
+        {
+          "evaluation_seconds": 50.000061988830566,
+          "total_lag": 29062.0
+        },
+        {
+          "evaluation_seconds": 52.000061988830566,
+          "total_lag": 30775.0
+        },
+        {
+          "evaluation_seconds": 54.000061988830566,
+          "total_lag": 30770.0
+        },
+        {
+          "evaluation_seconds": 56.000061988830566,
+          "total_lag": 31883.0
+        },
+        {
+          "evaluation_seconds": 58.000061988830566,
+          "total_lag": 31888.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "04bbd8fc040c6947b11f0b96a05cd07835fa06851b34ea7666009ba3469f9b7c",
+        "lag-summary.json": "d6794306306279de2947f30425316c52d725c190bb94f29a62f449a25eb9d099"
+      }
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "mean_total_backlog": 29396.333333333332,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.999842882156372,
+      "observed_last_sample_seconds": 57.99984288215637,
+      "samples": [
+        {
+          "evaluation_seconds": 29.999842882156372,
+          "total_lag": 25052.0
+        },
+        {
+          "evaluation_seconds": 31.999842882156372,
+          "total_lag": 26217.0
+        },
+        {
+          "evaluation_seconds": 33.99984288215637,
+          "total_lag": 26217.0
+        },
+        {
+          "evaluation_seconds": 35.99984288215637,
+          "total_lag": 27880.0
+        },
+        {
+          "evaluation_seconds": 37.99984288215637,
+          "total_lag": 27878.0
+        },
+        {
+          "evaluation_seconds": 39.99984288215637,
+          "total_lag": 27878.0
+        },
+        {
+          "evaluation_seconds": 41.99984288215637,
+          "total_lag": 29044.0
+        },
+        {
+          "evaluation_seconds": 43.99984288215637,
+          "total_lag": 29045.0
+        },
+        {
+          "evaluation_seconds": 45.99984288215637,
+          "total_lag": 30543.0
+        },
+        {
+          "evaluation_seconds": 47.99984288215637,
+          "total_lag": 30541.0
+        },
+        {
+          "evaluation_seconds": 49.99984288215637,
+          "total_lag": 30541.0
+        },
+        {
+          "evaluation_seconds": 51.99984288215637,
+          "total_lag": 31929.0
+        },
+        {
+          "evaluation_seconds": 53.99984288215637,
+          "total_lag": 31929.0
+        },
+        {
+          "evaluation_seconds": 55.99984288215637,
+          "total_lag": 33126.0
+        },
+        {
+          "evaluation_seconds": 57.99984288215637,
+          "total_lag": 33125.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "1db91b94b678c25e6ed774fdfe064a7966ffba9b74faacc1277f3f926130f7b4",
+        "lag-summary.json": "e5c2ab593099221bcaa54ef05d889b890086771ed663750e57636db43838e825"
+      }
+    },
+    {
+      "run_id": "run-20260929-025321",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "mean_total_backlog": 28167.733333333334,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.9999840259552,
+      "observed_last_sample_seconds": 57.9999840259552,
+      "samples": [
+        {
+          "evaluation_seconds": 29.9999840259552,
+          "total_lag": 24010.0
+        },
+        {
+          "evaluation_seconds": 31.9999840259552,
+          "total_lag": 25132.0
+        },
+        {
+          "evaluation_seconds": 33.9999840259552,
+          "total_lag": 25130.0
+        },
+        {
+          "evaluation_seconds": 35.9999840259552,
+          "total_lag": 26392.0
+        },
+        {
+          "evaluation_seconds": 37.9999840259552,
+          "total_lag": 26395.0
+        },
+        {
+          "evaluation_seconds": 39.9999840259552,
+          "total_lag": 26397.0
+        },
+        {
+          "evaluation_seconds": 41.9999840259552,
+          "total_lag": 27990.0
+        },
+        {
+          "evaluation_seconds": 43.9999840259552,
+          "total_lag": 27987.0
+        },
+        {
+          "evaluation_seconds": 45.9999840259552,
+          "total_lag": 29139.0
+        },
+        {
+          "evaluation_seconds": 47.9999840259552,
+          "total_lag": 29139.0
+        },
+        {
+          "evaluation_seconds": 49.9999840259552,
+          "total_lag": 29138.0
+        },
+        {
+          "evaluation_seconds": 51.9999840259552,
+          "total_lag": 30852.0
+        },
+        {
+          "evaluation_seconds": 53.9999840259552,
+          "total_lag": 30854.0
+        },
+        {
+          "evaluation_seconds": 55.9999840259552,
+          "total_lag": 31981.0
+        },
+        {
+          "evaluation_seconds": 57.9999840259552,
+          "total_lag": 31980.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "33b01f4af4cd0b865e832bd001ad45c15cbfa314d7f06a53a5c8e683bd70eeb3",
+        "lag-summary.json": "b31c93a6e6a3c8077e492de98da1da0e2de625b14c713661004602a742ffdd83"
+      }
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "mean_total_backlog": 29522.866666666665,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.00030207633972,
+      "observed_last_sample_seconds": 58.00030207633972,
+      "samples": [
+        {
+          "evaluation_seconds": 30.00030207633972,
+          "total_lag": 25494.0
+        },
+        {
+          "evaluation_seconds": 32.00030207633972,
+          "total_lag": 25494.0
+        },
+        {
+          "evaluation_seconds": 34.00030207633972,
+          "total_lag": 26677.0
+        },
+        {
+          "evaluation_seconds": 36.00030207633972,
+          "total_lag": 26683.0
+        },
+        {
+          "evaluation_seconds": 38.00030207633972,
+          "total_lag": 28473.0
+        },
+        {
+          "evaluation_seconds": 40.00030207633972,
+          "total_lag": 28469.0
+        },
+        {
+          "evaluation_seconds": 42.00030207633972,
+          "total_lag": 28469.0
+        },
+        {
+          "evaluation_seconds": 44.00030207633972,
+          "total_lag": 29622.0
+        },
+        {
+          "evaluation_seconds": 46.00030207633972,
+          "total_lag": 29623.0
+        },
+        {
+          "evaluation_seconds": 48.00030207633972,
+          "total_lag": 31409.0
+        },
+        {
+          "evaluation_seconds": 50.00030207633972,
+          "total_lag": 31408.0
+        },
+        {
+          "evaluation_seconds": 52.00030207633972,
+          "total_lag": 31408.0
+        },
+        {
+          "evaluation_seconds": 54.00030207633972,
+          "total_lag": 32645.0
+        },
+        {
+          "evaluation_seconds": 56.00030207633972,
+          "total_lag": 32642.0
+        },
+        {
+          "evaluation_seconds": 58.00030207633972,
+          "total_lag": 34327.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "beee83b33c9bc85d35dfb3c8091570976ab756c3e1e31df266d23375c2638ba5",
+        "lag-summary.json": "96dd3bb4b74fb7e5dbb279199b09ab333edb52688b6d2969af42c859ac92d99e"
+      }
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "mean_total_backlog": 28166.533333333333,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 29.999931812286377,
+      "observed_last_sample_seconds": 57.99993181228638,
+      "samples": [
+        {
+          "evaluation_seconds": 29.999931812286377,
+          "total_lag": 24152.0
+        },
+        {
+          "evaluation_seconds": 31.999931812286377,
+          "total_lag": 24152.0
+        },
+        {
+          "evaluation_seconds": 33.99993181228638,
+          "total_lag": 25705.0
+        },
+        {
+          "evaluation_seconds": 35.99993181228638,
+          "total_lag": 25709.0
+        },
+        {
+          "evaluation_seconds": 37.99993181228638,
+          "total_lag": 27043.0
+        },
+        {
+          "evaluation_seconds": 39.99993181228638,
+          "total_lag": 27038.0
+        },
+        {
+          "evaluation_seconds": 41.99993181228638,
+          "total_lag": 27038.0
+        },
+        {
+          "evaluation_seconds": 43.99993181228638,
+          "total_lag": 28508.0
+        },
+        {
+          "evaluation_seconds": 45.99993181228638,
+          "total_lag": 28509.0
+        },
+        {
+          "evaluation_seconds": 47.99993181228638,
+          "total_lag": 29919.0
+        },
+        {
+          "evaluation_seconds": 49.99993181228638,
+          "total_lag": 29924.0
+        },
+        {
+          "evaluation_seconds": 51.99993181228638,
+          "total_lag": 29924.0
+        },
+        {
+          "evaluation_seconds": 53.99993181228638,
+          "total_lag": 31048.0
+        },
+        {
+          "evaluation_seconds": 55.99993181228638,
+          "total_lag": 31045.0
+        },
+        {
+          "evaluation_seconds": 57.99993181228638,
+          "total_lag": 32784.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "c2c57768525957ce49ba5defb1240dde6e64d69e260df59c10bb9259b854d716",
+        "lag-summary.json": "8f87b28b74899ad77279de47d3e9b2f0f3e5a6687d02638332eaff9fbe57eb6a"
+      }
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "mean_total_backlog": 29172.066666666666,
+      "valid_window": true,
+      "sample_count": 15,
+      "scheduled_action_seconds": 60,
+      "nominal_first_sample_seconds": 30,
+      "nominal_last_sample_seconds": 58,
+      "observed_first_sample_seconds": 30.00010895729065,
+      "observed_last_sample_seconds": 58.00010895729065,
+      "samples": [
+        {
+          "evaluation_seconds": 30.00010895729065,
+          "total_lag": 25675.0
+        },
+        {
+          "evaluation_seconds": 32.00010895729065,
+          "total_lag": 25673.0
+        },
+        {
+          "evaluation_seconds": 34.00010895729065,
+          "total_lag": 25673.0
+        },
+        {
+          "evaluation_seconds": 36.00010895729065,
+          "total_lag": 26941.0
+        },
+        {
+          "evaluation_seconds": 38.00010895729065,
+          "total_lag": 26942.0
+        },
+        {
+          "evaluation_seconds": 40.00010895729065,
+          "total_lag": 28675.0
+        },
+        {
+          "evaluation_seconds": 42.00010895729065,
+          "total_lag": 28676.0
+        },
+        {
+          "evaluation_seconds": 44.00010895729065,
+          "total_lag": 28676.0
+        },
+        {
+          "evaluation_seconds": 46.00010895729065,
+          "total_lag": 29946.0
+        },
+        {
+          "evaluation_seconds": 48.00010895729065,
+          "total_lag": 29942.0
+        },
+        {
+          "evaluation_seconds": 50.00010895729065,
+          "total_lag": 31658.0
+        },
+        {
+          "evaluation_seconds": 52.00010895729065,
+          "total_lag": 31658.0
+        },
+        {
+          "evaluation_seconds": 54.00010895729065,
+          "total_lag": 31658.0
+        },
+        {
+          "evaluation_seconds": 56.00010895729065,
+          "total_lag": 32892.0
+        },
+        {
+          "evaluation_seconds": 58.00010895729065,
+          "total_lag": 32896.0
+        }
+      ],
+      "source_sha256": {
+        "manifest.json": "4d5ca4ea209a8785d1fbf1dd0a7ee8150a7612256c0b97e535399173bc41ae5b",
+        "lag-summary.json": "378b68a9bf6ad4cac5c397bdabe461fab781404389806c9b291e373efcb6ce2b"
+      }
+    }
+  ]
+}
