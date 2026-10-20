@@ -71,6 +71,8 @@ Population standard deviation divides squared deviations by the partition count.
 
 Time-weighted run mean lag uses trapezoidal area / covered seconds. Each eligible interval contributes (B_previous + B_current)/2 × elapsed seconds. Coverage excludes invalid intervals and long gaps. Report coverage with area and mean; never silently bridge missing periods. Peak lag is the largest valid sampled total. Final lag requires a valid sample exactly at the evaluation boundary; otherwise it is null.
 
+Min total backlog is the smallest total consumer-position lag among valid evaluation samples. Min partition lag is the smallest lag across every partition in those valid samples, not the minimum of the maximum-partition-lag series. Missing observations do not contribute zeros, and minima are unavailable when no valid observations exist. A zero partition minimum means that at least one partition was caught up at one observed moment; other partitions may still have backlog. These are sampled diagnostic extrema, not guarantees about the unobserved intervals or controller inputs.
+
 Defaults are exploratory: window_samples=15, hot_k=1, minimum_lag=10, persistence=0.8, max_gap=3 seconds. They are analyzer options, not automatically calibrated thresholds or controller settings. With eight zero-lag partitions and two equal hot partitions, k=2 puts the threshold exactly on the hot value; strict > detects none. Calibrate on pilot runs before comparisons.
 
 The growth window can be set independently with `growth_window_samples` (CLI:

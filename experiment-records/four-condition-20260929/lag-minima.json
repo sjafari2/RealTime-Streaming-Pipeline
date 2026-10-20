@@ -1,0 +1,124 @@
+{
+  "scope": "Valid observed consumer-position lag samples during evaluation; warm-up and drain are excluded.",
+  "units": "offsets",
+  "definitions": {
+    "min_total_lag": "Smallest total lag in a valid evaluation snapshot.",
+    "min_partition_lag": "Smallest individual partition lag across all partitions and valid evaluation snapshots; not the minimum of the maximum-partition series."
+  },
+  "comparison_sha256": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074",
+  "analysis_code_sha256": "ceca4be40eef92ef5386eb72e4723a3cd4a2914c2a236985b695345a35b84177",
+  "runs": [
+    {
+      "run_id": "run-20260929-020644",
+      "arm": "keep3",
+      "run_number": 1,
+      "valid_snapshots": 300,
+      "lag_minima": {
+        "min_total_lag": 16169.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "669bf57219df5fa56c5d40f359a2a2f1d77e56f1ef345f2e0575b49e2723c5e7",
+        "lag-summary.json": "a240405039594c7fefe08d8125b064265757e5d89533e8fc06f70031179177c4"
+      }
+    },
+    {
+      "run_id": "run-20260929-041940",
+      "arm": "keep3",
+      "run_number": 2,
+      "valid_snapshots": 300,
+      "lag_minima": {
+        "min_total_lag": 16131.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "11d50fccaff96e65c98edd8edc807726306c54927ec2c0d96f41817fe5373e72",
+        "lag-summary.json": "8927618fdbca3b3b2d136150cb8a77f5e20783b36d76cf64f240cf5be689db43"
+      }
+    },
+    {
+      "run_id": "run-20260929-023622",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "valid_snapshots": 291,
+      "lag_minima": {
+        "min_total_lag": 38.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "04bbd8fc040c6947b11f0b96a05cd07835fa06851b34ea7666009ba3469f9b7c",
+        "lag-summary.json": "d6794306306279de2947f30425316c52d725c190bb94f29a62f449a25eb9d099"
+      }
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "valid_snapshots": 291,
+      "lag_minima": {
+        "min_total_lag": 30.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "1db91b94b678c25e6ed774fdfe064a7966ffba9b74faacc1277f3f926130f7b4",
+        "lag-summary.json": "e5c2ab593099221bcaa54ef05d889b890086771ed663750e57636db43838e825"
+      }
+    },
+    {
+      "run_id": "run-20260929-025321",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "valid_snapshots": 288,
+      "lag_minima": {
+        "min_total_lag": 22.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "33b01f4af4cd0b865e832bd001ad45c15cbfa314d7f06a53a5c8e683bd70eeb3",
+        "lag-summary.json": "b31c93a6e6a3c8077e492de98da1da0e2de625b14c713661004602a742ffdd83"
+      }
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "valid_snapshots": 288,
+      "lag_minima": {
+        "min_total_lag": 26.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "beee83b33c9bc85d35dfb3c8091570976ab756c3e1e31df266d23375c2638ba5",
+        "lag-summary.json": "96dd3bb4b74fb7e5dbb279199b09ab333edb52688b6d2969af42c859ac92d99e"
+      }
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "valid_snapshots": 297,
+      "lag_minima": {
+        "min_total_lag": 35.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "c2c57768525957ce49ba5defb1240dde6e64d69e260df59c10bb9259b854d716",
+        "lag-summary.json": "8f87b28b74899ad77279de47d3e9b2f0f3e5a6687d02638332eaff9fbe57eb6a"
+      }
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "valid_snapshots": 297,
+      "lag_minima": {
+        "min_total_lag": 27.0,
+        "min_partition_lag": 0.0
+      },
+      "source_sha256": {
+        "manifest.json": "4d5ca4ea209a8785d1fbf1dd0a7ee8150a7612256c0b97e535399173bc41ae5b",
+        "lag-summary.json": "378b68a9bf6ad4cac5c397bdabe461fab781404389806c9b291e373efcb6ce2b"
+      }
+    }
+  ]
+}

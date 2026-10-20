@@ -17,4 +17,6 @@ All three interventions completed every evaluation message in both runs; keeping
 
 [Minimum and maximum completion latencies](completion-latency-extremes.json) were recovered from the same distinct-message cohort using the original drain cutoff. The replay reproduced the published mean, p99 and completion counts for all eight trials; its evidence hashes are included in that record. These extremes exclude unfinished messages.
 
+[Sampled lag minima](lag-minima.json) add the minimum total backlog and the minimum individual partition lag during evaluation. These use the same valid observations as the reported peaks; a zero partition minimum does not mean that all partitions were caught up. Source hashes are included in the record.
+
 P99 covers completed evaluation messages through the fixed drain cutoff, before commit acknowledgment. Unfinished percentage uses all acknowledged evaluation messages. Small repetition counts and shared-machine variability limit generalization.

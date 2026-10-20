@@ -51,6 +51,20 @@ def test_unknown_detector_is_not_zero():
     assert series[1]['persistent_hot_count'] is None
 
 
+def test_lag_minima_use_valid_partition_samples():
+    rows = [dict(point(0, 14), lags={'P0': 3, 'P1': 11}),
+            dict(point(2, 0, valid=False), lags={'P0': 0, 'P1': 0}),
+            dict(point(4, 10), lags={'P0': 4, 'P1': 6})]
+    assert audit.lag_minima(rows) == {'min_total_lag': 10, 'min_partition_lag': 3}
+
+
+def test_lag_minima_preserve_missing_and_real_zero():
+    assert audit.lag_minima([point(0, 0, valid=False)]) == {
+        'min_total_lag': None, 'min_partition_lag': None}
+    rows = [dict(point(0, 10), lags={'P0': 0, 'P1': 10})]
+    assert audit.lag_minima(rows) == {'min_total_lag': 10, 'min_partition_lag': 0}
+
+
 def test_runtime_preserves_full_set_and_original_window_growth():
     rows=[dict(point(0,9),window_mean_backlog=8,window_growth_offsets_per_second=3,
                window_mean_skew=2,persistent_hot=['topic/2','topic/5']),

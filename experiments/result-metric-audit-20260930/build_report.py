@@ -68,6 +68,17 @@ def stats(points, field, duration):
             'coverage_fraction': covered / duration, 'defined_samples': len(values)}
 
 
+def lag_minima(points):
+    valid = [row for row in points if row.get('valid')]
+    return {
+        'min_total_lag': min((row['total_lag'] for row in valid
+                              if row.get('total_lag') is not None), default=None),
+        # Search all observed partitions, not the maximum-partition time series.
+        'min_partition_lag': min((value for row in valid
+                                 for value in row.get('lags', {}).values()), default=None),
+    }
+
+
 def compact_series(points, start):
     result = []
     for i, row in enumerate(points):
@@ -244,9 +255,19 @@ def write_tables(rows, prefix, out):
                     fmt(r['statistics']['total_lag']['sampled_peak'], 0), fmt(100*r['statistics']['total_lag']['coverage_fraction'], 1),
                     fmt(r['statistics']['max_partition_lag']['sampled_peak'], 0),
                     fmt(r['statistics']['skew']['time_weighted_mean'])] for r in rows]
-    s += tex_table(['Response', 'Run', r'\shortstack{Mean total\\lag}', r'\shortstack{Peak total\\lag}',
-                    r'\shortstack{Lag coverage\\(\%)}', r'\shortstack{Peak partition\\lag}', r'Mean skew'], diagnostics,
-                   'Lag diagnostics during evaluation only, in offsets except skew and coverage. Means use trapezoidal area divided by covered time; peaks are sampled maxima. '
+    diagnostic_headers = ['Response', 'Run', r'\shortstack{Mean total\\lag}', r'\shortstack{Peak total\\lag}',
+                          r'\shortstack{Lag coverage\\(\%)}', r'\shortstack{Peak partition\\lag}', r'Mean skew']
+    minima_note = ''
+    if prefix == 'twelve-partition':
+        minima_note = ('Minima use valid observed samples; minimum partition lag ranges over all partitions '
+                       'and does not imply zero total backlog. ')
+        diagnostic_headers.insert(2, r'\shortstack{Min total\\backlog}')
+        diagnostic_headers.insert(6, r'\shortstack{Min partition\\lag}')
+        for values, row in zip(diagnostics, rows):
+            values.insert(2, fmt(row['lag_minima']['min_total_lag'], 0))
+            values.insert(6, fmt(row['lag_minima']['min_partition_lag'], 0))
+    s += tex_table(diagnostic_headers, diagnostics,
+                   'Lag diagnostics during evaluation only, in offsets except skew and coverage. Means use trapezoidal area divided by covered time; peaks are sampled maxima. ' + minima_note +
                    'The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.',
                    'tab:' + prefix + '-diagnostics')
     (out / (prefix + '-tables.tex')).write_text(s)
@@ -343,6 +364,7 @@ def main():
                 parameters=lag['parameters'], growth_plot_parameters=lag.get('growth_plot_parameters'),
                 intervention_cost=original.get('intervention_cost', {}))
             if block == 'twelve-partition':
+                row['lag_minima'] = lag_minima(points)
                 row['completion_min_seconds'] = latency_outcome['admitted_cohort_completion_min_seconds']
                 row['completion_max_seconds'] = latency_outcome['admitted_cohort_completion_max_seconds']
             row['observed_completion_deadline_percent'] = {
