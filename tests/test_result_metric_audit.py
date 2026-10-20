@@ -96,6 +96,22 @@ def test_pre_mitigation_mean_does_not_substitute_or_bridge_samples(failure):
     assert result['mean_total_backlog'] is None
 
 
+def test_ending_mean_excludes_recovery_and_drain():
+    rows = [point(t, 20000 if t < 570 else 50) for t in range(0, 602, 2)]
+    rows[-2]['total_lag'] = 80
+    rows[-1]['total_lag'] = 99999
+    result = audit.end_evaluation_backlog(rows, 0, 600)
+    assert result['valid_window']
+    assert result['mean_total_backlog'] == 52
+    assert result['total_backlog_at_last_sample'] == 80
+    assert result['sample_count'] == 15
+    assert result['nominal_first_sample_seconds'] == 570
+    assert result['nominal_last_sample_seconds'] == 598
+    rows = [row for row in rows if row['timestamp'] != 598]
+    assert audit.end_evaluation_backlog(rows, 0, 600)['mean_total_backlog'] is None
+    assert audit.end_evaluation_backlog(rows, 0, 600)['total_backlog_at_last_sample'] is None
+
+
 def test_runtime_preserves_full_set_and_original_window_growth():
     rows=[dict(point(0,9),window_mean_backlog=8,window_growth_offsets_per_second=3,
                window_mean_skew=2,persistent_hot=['topic/2','topic/5']),

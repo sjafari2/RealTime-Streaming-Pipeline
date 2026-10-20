@@ -122,16 +122,21 @@ def process_total(prom, name, divisor, starts, start, finish):
     return dict(minutes=x,values=y)
 
 
-def setup(rows, nrows, title, height, sharey='row'):
+def setup(rows, nrows, title, height, sharey='row', expanded=False):
     fig,axes=plt.subplots(nrows,2,figsize=(8.1,height),sharex=False,sharey=sharey,squeeze=False)
     for col in range(2):
-        axes[0,col].set_title(f'Run {col+1}',fontsize=11)
+        axes[0,col].set_title(f'Run {col+1}',fontsize=12 if expanded else 11)
     arms=list(dict.fromkeys(r['arm'] for r in rows))
     handles=[Line2D([0],[0],color=COLORS[a],lw=2,label=LABELS[a]) for a in arms]
-    fig.suptitle(title,fontsize=12,y=.993)
-    fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.54,.966),ncol=2,fontsize=8,frameon=False)
+    fig.suptitle(title,fontsize=13 if expanded else 12,y=.993)
+    fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.54,.966),ncol=2,
+               fontsize=9 if expanded else 8,frameon=False)
     for ax in axes.flat:
         ax.grid(alpha=.2);ax.set_axisbelow(True)
+        if expanded:
+            ax.tick_params(labelsize=9)
+            ax.xaxis.label.set_size(10)
+            ax.yaxis.label.set_size(10)
     fig.subplots_adjust(left=.14,right=.99,bottom=.13,top=.87,wspace=.12,hspace=.24)
     return fig,axes
 
@@ -146,8 +151,8 @@ def save(fig,destination,note):
     plt.close(fig)
 
 
-def runtime_figure(rows,states,title,destination):
-    fig,axes=setup(rows,5,title,9.1)
+def runtime_figure(rows,states,title,destination,expanded=False):
+    fig,axes=setup(rows,5,title,10.0 if expanded else 9.1,expanded=expanded)
     keys=['B_W','G_W','S_W','H_persistent','max_partition_lag']
     labels=[r'$\overline{B}_W$ (offsets)',r'$\overline{G}_W$ (offsets/s)',r'$\overline{S}_W$ (ratio)',r'$|H_{\mathrm{persistent}}|$', 'Partition lag\n(offsets)']
     for r in rows:
@@ -171,8 +176,8 @@ def runtime_figure(rows,states,title,destination):
          'B and partition-lag axes: linear near zero, logarithmic above one offset. Hot-set IDs are retained.')
 
 
-def performance_figure(rows,details,title,destination):
-    fig,axes=setup(rows,4,title,8.0)
+def performance_figure(rows,details,title,destination,expanded=False):
+    fig,axes=setup(rows,4,title,9.5 if expanded else 8.0,expanded=expanded)
     for r in rows:
         col=r['run_number']-1;d=details[r['run_id']];color=COLORS[r['arm']]
         for i,k in enumerate(('cpu','memory')):
@@ -194,21 +199,24 @@ def performance_figure(rows,details,title,destination):
          'Evaluation only; warm-up records completed here count toward throughput. Dotted: scheduled action.')
 
 
-def outcome_figure(rows,details,title,destination):
-    fig,axes=setup(rows,3,title,7.1,sharey=False)
+def outcome_figure(rows,details,title,destination,expanded=False,log_backlog=False):
+    fig,axes=setup(rows,3,title,9.2 if expanded else 7.1,sharey=False,expanded=expanded)
     for r in rows:
         col=r['run_number']-1;color=COLORS[r['arm']];d=details[r['run_id']]
         axes[0,col].plot([s['time_minutes'] for s in r['timeseries']],
             [np.nan if s['total_lag'] is None else s['total_lag'] for s in r['timeseries']],color=color,lw=1.1)
         axes[1,col].plot(d['outstanding_minutes'],d['outstanding'],color=color,lw=1.1)
-    for i,label in enumerate(['Total position lag\n(offsets)','Acknowledged but\nunfinished (messages)']):
+    for i,label in enumerate(['Total backlog\n(offsets)','Acknowledged but\nunfinished (messages)']):
         axes[i,0].set_ylabel(label)
         ymax=max(ax.get_ylim()[1] for ax in axes[i])
         for col in range(2):
-            time_axis(axes[i,col],rows[0]['evaluation_seconds']);axes[i,col].set_ylim(0,ymax)
-            axes[i,col].tick_params(labelsize=8)
+            time_axis(axes[i,col],rows[0]['evaluation_seconds'])
+            if log_backlog:
+                axes[i,col].set_yscale('symlog',linthresh=1)
+            axes[i,col].set_ylim(0,ymax)
+            axes[i,col].tick_params(labelsize=9 if expanded else 8)
             if i==0:axes[i,col].tick_params(labelbottom=False)
-            else:axes[i,col].set_xlabel('Minutes since evaluation began',fontsize=8)
+            else:axes[i,col].set_xlabel('Minutes since evaluation began',fontsize=9 if expanded else 8)
     arms=list(dict.fromkeys(r['arm'] for r in rows));width=.35
     for col,(key,label) in enumerate([('p99_seconds','Completion p99 (s)'),('unfinished_percent','Unfinished at cutoff (%)')]):
         ax=axes[2,col]
@@ -219,10 +227,13 @@ def outcome_figure(rows,details,title,destination):
             for xx,value in zip(pos,values):
                 if value==0:ax.text(xx,.02,'0',transform=ax.get_xaxis_transform(),ha='center',fontsize=8)
         short={'keep3':'Keep 3','redistribute3':'Redis. 3','scale_redistribute6':'Targeted 6','kafka_scale6':'Kafka 6'}
-        ax.set_xticks(range(len(arms)),[short[a] for a in arms],fontsize=8,rotation=15)
-        ax.set_ylabel(label,fontsize=9);ax.set_ylim(0,max(1,max(r[key] for r in rows)*1.1))
+        ax.set_xticks(range(len(arms)),[short[a] for a in arms],fontsize=9 if expanded else 8,rotation=15)
+        ax.set_ylabel(label,fontsize=10 if expanded else 9);ax.set_ylim(0,max(1,max(r[key] for r in rows)*1.1))
     fig.subplots_adjust(hspace=.5,wspace=.32,bottom=.16)
-    save(fig,destination,'Top: evaluation only; outstanding count includes warm-up messages. Dotted: scheduled action.\n'
+    scale_note = ('First four panels: linear up to 1, logarithmic above 1; zeros are retained.\n'
+                  if log_backlog else '')
+    save(fig,destination,scale_note +
+         'Top: evaluation only; outstanding count includes warm-up messages. Dotted: scheduled action.\n'
          'Bottom: evaluation-born cohort through drain cutoff; left bar: Run 1, hatched right bar: Run 2.\n'
          'P99 conditions on completion; no latency is assigned to unfinished records.')
 
@@ -255,11 +266,13 @@ def main():
             for k,name,divisor in [('cpu','consumer_cpu_percent',100),('memory','consumer_memory_bytes',2**20)]:
                 d[k]=process_total(prom,name,divisor,d['consumer_start_epoch'],start,finish)
             details[r['run_id']]=d
-        title=('12' if block=='twelve-partition' else '4')+' high-input partitions at 700 messages/s'
+        title=('12' if block=='twelve-partition' else '4')+' high-traffic partitions at 700 messages/s'
         if block in ('twelve-partition','four-partition'):
-            runtime_figure(rows,states,title+' — runtime state',out/'figures'/(block+'-runtime-state'))
-            performance_figure(rows,details,title+' — performance and resources',out/'figures'/(block+'-compact-performance'))
-            outcome_figure(rows,details,title+' — outcomes',out/'figures'/(block+'-compact-outcomes'))
+            expanded = block == 'twelve-partition'
+            runtime_figure(rows,states,title+' — runtime state',out/'figures'/(block+'-runtime-state'),expanded=expanded)
+            performance_figure(rows,details,title+' — performance and resources',out/'figures'/(block+'-compact-performance'),expanded=expanded)
+            outcome_figure(rows,details,title+' — outcomes',out/'figures'/(block+'-compact-outcomes'),
+                           expanded=expanded,log_backlog=expanded)
     (out/'runtime-states.json').write_text(json.dumps(states,indent=2))
     # CSV preserves the set of partition IDs, not just the plotted count.
     with (out/'runtime-states.csv').open('w',newline='') as stream:

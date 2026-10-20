@@ -21,4 +21,8 @@ All three interventions completed every evaluation message in both runs; keeping
 
 [Mean backlog before mitigation](pre-mitigation-backlog.json) uses 15 valid measurements at evaluation seconds 30, 32, ..., 58, before the scheduled action at one minute. Keep 3 uses the same interval. This arithmetic mean describes recent backlog before mitigation; the mean total backlog in the results table remains a time-weighted average over the full evaluation. The record includes the selected observations and their source hashes.
 
+[Mean backlog at evaluation end](end-evaluation-backlog.json) uses the final 15 samples at seconds 570, 572, ..., 598, while input continues. The mitigation runs ended with means of 37.7–60.1 offsets; Keep 3 ended with 177,266.3 and 178,040.4 offsets. The much larger full-evaluation means include accumulation and recovery earlier in the trials. The outcome plot uses logarithmic spacing above one for backlog and unfinished-message counts so that these small positive values remain visible.
+
+The same record includes total backlog at the last sample (second 598). Table 5 calls these two values **Eval. end mean backlog** and **Eval. end total backlog**. The Keep 3 reference uses the same times. Minimum total backlog is retained in the analysis and commented out of the displayed table.
+
 P99 covers completed evaluation messages through the fixed drain cutoff, before commit acknowledgment. Unfinished percentage uses all acknowledged evaluation messages. Small repetition counts and shared-machine variability limit generalization.

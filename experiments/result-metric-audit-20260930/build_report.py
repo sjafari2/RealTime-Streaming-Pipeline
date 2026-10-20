@@ -80,18 +80,18 @@ def lag_minima(points):
     }
 
 
-def pre_mitigation_backlog(points, start):
-    """Mean of the 15 evaluation samples at nominal seconds 30, 32, ..., 58."""
-    # Exclude the scheduled action boundary at 60 seconds in every response.
+def backlog_window(points, start, stop_seconds):
+    """Mean of 15 two-second samples immediately before a specified boundary."""
+    # Exclude the boundary itself, using the same sampling positions in every run.
     # A 1 ms tolerance only accommodates export timestamp rounding; it neither
     # interpolates values nor substitutes an earlier window when data is missing.
     slots = []
-    for second in range(30, 60, 2):
+    for second in (stop_seconds - 30 + 2*i for i in range(15)):
         matches = [row for row in points
                    if abs(row['timestamp'] - start - second) <= .001]
         if len(matches) != 1:
             return {'mean_total_backlog': None, 'valid_window': False,
-                    'reason': 'Missing or duplicate sample on the 30–58 second grid'}
+                    'reason': 'Missing or duplicate sample on the requested two-second grid'}
         slots.append(matches[0])
     if (not all(row.get('valid') and row.get('total_lag') is not None for row in slots)
             or not all(continuous(a, b) for a, b in zip(slots, slots[1:]))):
@@ -99,10 +99,28 @@ def pre_mitigation_backlog(points, start):
                 'reason': 'Invalid sample, ownership change or offset reset in the window'}
     return {'mean_total_backlog': statistics.mean(row['total_lag'] for row in slots),
             'valid_window': True, 'sample_count': len(slots),
-            'scheduled_action_seconds': 60,
-            'nominal_first_sample_seconds': 30, 'nominal_last_sample_seconds': 58,
+            'nominal_first_sample_seconds': stop_seconds - 30,
+            'nominal_last_sample_seconds': stop_seconds - 2,
             'observed_first_sample_seconds': slots[0]['timestamp'] - start,
             'observed_last_sample_seconds': slots[-1]['timestamp'] - start}
+
+
+def pre_mitigation_backlog(points, start):
+    """Recent mean before the scheduled action at evaluation second 60."""
+    result = backlog_window(points, start, 60)
+    if result['valid_window']:
+        result['scheduled_action_seconds'] = 60
+    return result
+
+
+def end_evaluation_backlog(points, start, finish):
+    """Recent mean while input continues, excluding the subsequent drain."""
+    result = backlog_window(points, start, finish-start)
+    result['total_backlog_at_last_sample'] = (
+        next(row['total_lag'] for row in points
+             if row['timestamp'] - start == result['observed_last_sample_seconds'])
+        if result['valid_window'] else None)
+    return result
 
 
 def compact_series(points, start):
@@ -287,31 +305,48 @@ def write_tables(rows, prefix, out):
     diagnostic_note = ('Means use trapezoidal area divided by covered time; '
                        'peaks are sampled maxima. ')
     if prefix == 'twelve-partition':
-        diagnostic_headers = ['Response', 'Run', r'\shortstack{Min total\\backlog}',
-                              r'\shortstack{Max total\\backlog}', r'\shortstack{Mean total\\backlog}',
-                              r'\shortstack{Mean backlog\\before mitigation}',
-                              r'\shortstack{Max partition\\lag}', r'Mean skew',
-                              r'\shortstack{Lag coverage\\(\%)}']
+        diagnostic_headers = ['Response', 'Run',
+                              r'\shortstack{Max\\total\\backlog}', r'\shortstack{Mean\\total\\backlog}',
+                              r'\shortstack{Mean backlog\\before\\mitigation}',
+                              r'\shortstack{Eval. end\\mean backlog}',
+                              r'\shortstack{Eval. end\\total backlog}',
+                              r'\shortstack{Max\\partition lag}', r'\shortstack{Mean\\skew}',
+                              r'\shortstack{Lag\\coverage\\(\%)}']
         diagnostics = [[short[row['arm']], row['run_number'],
-                        fmt(row['lag_minima']['min_total_lag'], 0),
                         fmt(row['statistics']['total_lag']['sampled_peak'], 0),
                         fmt(row['statistics']['total_lag']['time_weighted_mean'], 0),
                         fmt(row['pre_mitigation_backlog']['mean_total_backlog'], 0),
+                        fmt(row['end_evaluation_backlog']['mean_total_backlog'], 1),
+                        fmt(row['end_evaluation_backlog']['total_backlog_at_last_sample'], 0),
                         fmt(row['statistics']['max_partition_lag']['sampled_peak'], 0),
                         fmt(row['statistics']['skew']['time_weighted_mean']),
                         fmt(100*row['statistics']['total_lag']['coverage_fraction'], 1)]
                        for row in rows]
-        diagnostic_note = ('Min and max are sampled extrema. Mean total backlog and mean skew '
+        diagnostic_note = ('Maxima are sampled extrema. Mean total backlog and mean skew '
                            'are time-weighted over evaluation. Mean backlog before mitigation '
                            'is the arithmetic mean of 15 valid, contiguous samples at evaluation '
                            'seconds 30, 32, ..., 58, before the scheduled action at 60 seconds; '
-                           'Keep 3 uses the same window. ')
-    s += tex_table(diagnostic_headers, diagnostics,
+                           'Evaluation-end mean backlog uses the final 15 samples, at seconds '
+                           '570, 572, ..., 598 for these ten-minute evaluations, before drain. '
+                           'Evaluation-end total backlog is the total at the final sample, '
+                           'at evaluation second 598. '
+                           'Keep 3 uses the same windows. ')
+    diagnostic_table = tex_table(diagnostic_headers, diagnostics,
                    'Lag diagnostics during evaluation only, in offsets except skew and coverage. ' + diagnostic_note +
                    'The time mean of the skew ratio is not the ratio of time-averaged maximum and mean lag. Invalid samples and ownership changes are not bridged.',
                    'tab:' + prefix + '-diagnostics',
                    tabcolsep=1.5 if prefix == 'twelve-partition' else 3,
                    font_size='footnotesize' if prefix == 'twelve-partition' else 'small')
+    if prefix == 'twelve-partition':
+        # Retain the omitted column in LaTeX comments beside its original rows.
+        diagnostic_table = diagnostic_table.replace(
+            'Response & Run & ',
+            'Response & Run & % ' + r'\shortstack{Min total\\backlog} &' + '\n')
+        for row in rows:
+            leading = f"{short[row['arm']]} & {row['run_number']} & "
+            diagnostic_table = diagnostic_table.replace(
+                leading, leading + '% ' + fmt(row['lag_minima']['min_total_lag'], 0) + ' &\n')
+    s += diagnostic_table
     (out / (prefix + '-tables.tex')).write_text(s)
 
 
@@ -408,6 +443,7 @@ def main():
             if block == 'twelve-partition':
                 row['lag_minima'] = lag_minima(points)
                 row['pre_mitigation_backlog'] = pre_mitigation_backlog(points, start)
+                row['end_evaluation_backlog'] = end_evaluation_backlog(points, start, end)
                 row['completion_min_seconds'] = latency_outcome['admitted_cohort_completion_min_seconds']
                 row['completion_max_seconds'] = latency_outcome['admitted_cohort_completion_max_seconds']
             row['observed_completion_deadline_percent'] = {
