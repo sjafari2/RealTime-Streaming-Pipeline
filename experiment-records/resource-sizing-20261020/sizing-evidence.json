@@ -1,0 +1,37 @@
+{
+  "source_sha256": {
+    "experiment-records/four-condition-20260929/comparison.json": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074",
+    "experiment-records/four-hot-partitions-20260930/comparison.json": "7a6e62f797f3eb49c9d6e34cab5d70e72ecf5ba1557e95728617d7cd93500409"
+  },
+  "scope": "12 intervention trials from 2026-09-29 and 2026-09-30; sampled process metrics over observed evaluation-and-drain intervals, not whole-container peaks",
+  "metrics": {
+    "consumer_cpu_percent": {
+      "maximum_sampled": 105.5,
+      "peak_run": "run-20260929-032802",
+      "peak_pod": "consumer-sts-3",
+      "minimum_observed_process_mean": 7.022562674094733,
+      "maximum_observed_process_mean": 99.83871866295252
+    },
+    "consumer_memory_bytes": {
+      "maximum_sampled": 289103872.0,
+      "peak_run": "run-20260929-020644",
+      "peak_pod": "consumer-sts-2",
+      "minimum_observed_process_mean": 33409457.55988858,
+      "maximum_observed_process_mean": 223281579.8551532
+    },
+    "producer_cpu_percent": {
+      "maximum_sampled": 25.0,
+      "peak_run": "run-20260930-012528",
+      "peak_pod": "producer-sts-0",
+      "minimum_observed_process_mean": 4.7046925566343045,
+      "maximum_observed_process_mean": 9.023615635179153
+    },
+    "producer_memory_bytes": {
+      "maximum_sampled": 34537472.0,
+      "peak_run": "run-20260930-005056",
+      "peak_pod": "producer-sts-1",
+      "minimum_observed_process_mean": 32682833.986928105,
+      "maximum_observed_process_mean": 33577834.873786405
+    }
+  }
+}

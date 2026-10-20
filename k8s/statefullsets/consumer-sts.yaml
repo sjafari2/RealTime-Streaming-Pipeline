@@ -85,6 +85,14 @@ spec:
             chmod -R u+w /app/consumer-merge-data
         securityContext:
           runAsUser: 0
+        # Avoid the namespace's 1 GiB default for this short file-copy step.
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "120m"
+            memory: "152Mi"
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data
@@ -123,13 +131,14 @@ spec:
         ports:
         - name: metrics
           containerPort: 8002
+        # Initial sizing for 700 aggregate messages/s; validate again after deployment.
         resources:
           requests:
-            cpu: "2"
-            memory: "1Gi"
+            cpu: "1"
+            memory: "512Mi"
           limits:
-            cpu: "4"
-            memory: "2Gi"
+            cpu: "1200m"
+            memory: "600Mi"
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data
