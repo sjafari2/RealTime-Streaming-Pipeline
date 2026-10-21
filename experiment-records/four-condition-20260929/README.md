@@ -26,3 +26,5 @@ All three interventions completed every evaluation message in both runs; keeping
 The same record includes total backlog at the last sample (second 598). Table 5 calls these two values **Eval. end mean backlog** and **Eval. end total backlog**. The Keep 3 reference uses the same times. Minimum total backlog is retained in the analysis and commented out of the displayed table.
 
 P99 covers completed evaluation messages through the fixed drain cutoff, before commit acknowledgment. Unfinished percentage uses all acknowledged evaluation messages. Small repetition counts and shared-machine variability limit generalization.
+
+[Performance before intervention and at evaluation end](ACTION_WINDOWS.md) compares completion throughput and window p99 over seconds 30–60 and 570–600. The accompanying plot shows trailing thirty-second values with pending evaluation-message counts. These completion-window diagnostics are distinct from the whole-run production-cohort p99 above; incomplete work cannot contribute to a completed-message percentile.
