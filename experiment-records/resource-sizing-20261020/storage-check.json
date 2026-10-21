@@ -1,0 +1,51 @@
+{
+  "checked_at_utc": "2026-10-21T02:45:11.358711+00:00",
+  "scope": "Read-only storage inventory; no performance experiment",
+  "pod": "producer-sts-1",
+  "pod_deletion_timestamp": "2026-10-05T05:18:38Z",
+  "node": "k8s-gpu-01.calit2.optiputer.net",
+  "producer_statefulset_present_at_check": false,
+  "consumer_desired_replicas": 0,
+  "volumes": [
+    {
+      "claim": "producer-data-ucsd-20260915",
+      "inventoried_bytes": 6959983717,
+      "inventoried_files": 447,
+      "run_directory_count": 47,
+      "run_files": 423,
+      "run_bytes": 6959909736,
+      "retained": true
+    },
+    {
+      "claim": "pipeline-config-recovery-ucsd-20260915",
+      "inventoried_bytes": 2065426,
+      "inventoried_files": 97,
+      "run_directory_count": 47,
+      "run_files": 93,
+      "run_bytes": 2015262,
+      "retained": true
+    }
+  ],
+  "read_only_inventory_completed": true,
+  "temporary_job_removed": true,
+  "inventory_sha256": "723e147d4e9d9eab1beb86e7cd11464222de9ec3df07e9a480689058e6ac993d",
+  "cleanup": {
+    "inspection_pods_remaining": 0,
+    "claims": [
+      {
+        "name": "producer-data-ucsd-20260915",
+        "uid": "007272ce-5960-4bbe-aa3a-c11da3133139",
+        "phase": "Bound",
+        "deletionTimestamp": null
+      },
+      {
+        "name": "pipeline-config-recovery-ucsd-20260915",
+        "uid": "f6ae55bb-f268-4274-b506-2d1411fc07c3",
+        "phase": "Bound",
+        "deletionTimestamp": null
+      }
+    ]
+  },
+  "decision": "Keep both PVCs: producer evidence includes reported experiments; configuration is shared with consumers. No full independent-backup equivalence check was performed.",
+  "run_count_note": "Directory count includes preparations and other retained runs; it is not a performance-trial count."
+}

@@ -44,3 +44,12 @@ On October 20, both server-side validations passed and the corrected client temp
 [Deployment verification](deployment-check.json) records the accepted resources, init-container settings, affinity rules, and zero desired replicas for both clients. All 17 PVC identities and backing-volume names were unchanged. No experiment was started, and these settings still require workload calibration and checks of actual placement, achieved rate, throttling, memory and restarts.
 
 The old `producer-sts-1` pod remains Terminating on `k8s-gpu-01.calit2.optiputer.net`, with a deletion timestamp of October 5. It was not force-deleted. The current account cannot inspect node health at cluster scope, so administrator confirmation that the old process has stopped, or safe node recovery, is needed before reusing that producer identity. Removing the utilization block does not establish that this separate node issue is resolved.
+
+
+## Producer storage inspection
+
+A later October 20 check found that the producer StatefulSet was absent again, while the old `producer-sts-1` pod still had its October 5 deletion request pending. The consumer StatefulSet remained at zero desired replicas. The check did not recreate either workload.
+
+Both PVCs mounted successfully in a temporary inspection job on another UCSD node, with read-only mounts and no service-account token. The producer volume contained approximately 6.96 GB, principally producer evidence in 47 run directories, including the reported September 29–30 experiments. This directory count includes preparations and is not a performance-trial count. The shared configuration volume contained approximately 2.07 MB, including pipeline settings, run control and saved run configurations. It remains referenced by the consumer template; the producer deployment manifest also requires both claims.
+
+Both PVCs were retained. The inspection did not establish that all volume contents have verified independent backups, and deleting these shared volumes is not a remedy for the old pod's unresolved termination. The temporary job was removed after successful inspection, and both claims remained Bound with their original identities and no deletion request. [Storage verification](storage-check.json) records the sizes and cleanup result. No performance experiment was run.
