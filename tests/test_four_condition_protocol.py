@@ -205,7 +205,8 @@ def test_600_native_gate_allows_startup_without_changing_performance_duration():
 
 def test_resume_can_retry_technical_gate_before_any_performance_trial():
     state, protocol = resume_state()
-    state.update(runs=[], technical=[], preparations=[{'validation': {'status': 'passed'}}]*2)
+    state.update(runs=[], technical=[], preparations=[dict(label=label+'-attempt1',
+        validation=dict(valid=True, issues=[])) for label in ('capture-initial', 'verify-native-restart')])
     assert module.validate_resume_state(state, protocol) == 0
     state['preparations'].pop()
     import pytest

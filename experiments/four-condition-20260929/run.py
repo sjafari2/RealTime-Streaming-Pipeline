@@ -123,9 +123,11 @@ def validate_resume_state(state, protocol):
     if any(x['validation']['status'] != 'passed' for x in technical):
         raise ValueError('Native scaling validation is missing')
     if not technical:
-        prepared_count = sum(row.get('validation', {}).get('status') == 'passed'
-                             for row in state.get('preparations', []))
-        if completed or prepared_count < 2:
+        prepared_labels = {row.get('label', '').rsplit('-attempt', 1)[0]
+                           for row in state.get('preparations', [])
+                           if row.get('validation', {}).get('valid') is True
+                           and not row['validation'].get('issues')}
+        if completed or not {'capture-initial', 'verify-native-restart'} <= prepared_labels:
             raise ValueError('Native scaling validation is missing')
     if not state.get('reference') or len(state.get('hot_partitions',[]))!=protocol['hot_partition_count']:
         raise ValueError('Frozen starting conditions are missing')
