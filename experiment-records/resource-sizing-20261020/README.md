@@ -23,7 +23,7 @@ The twelve September 29–30 intervention trials provide the following maximum s
 
 [sizing-evidence.json](sizing-evidence.json) identifies source hashes, peak runs and processes. CPU percent is divided by 100 to obtain cores; memory bytes are divided by 1,048,576. Observed process means retain their original coverage. These are process measurements, not a guarantee of container peaks or memory bounds. The proposed limits require fresh calibration, including achieved input, processing capacity, container memory, CPU throttling and restarts. The existing 24-trial results and their resource-cost calculations are unchanged.
 
-## Cluster changes and remaining blockers
+## Initial cleanup and blockers
 
 - The managed run was already stopped. Its last run ID was `run-20260930-012528`.
 - `consumer-sts` and `producer-sts` were scaled from three desired replicas to zero. Three consumers and two reachable producers terminated normally.
@@ -31,7 +31,16 @@ The twelve September 29–30 intervention trials provide the following maximum s
 - All 17 PVC identities and backing volume names were verified unchanged. No PVC, topic or evidence file was deleted.
 - The three active replacement brokers, Prometheus and Grafana remain running. Broker resource declarations and JVM heap are unchanged; Python process measurements are not a basis for sizing Kafka.
 - `producer-sts-1` remains Terminating on an unreachable node since October 5. It was not force-deleted. A safe node/pod recovery check is required before restoring three producers.
-- The revised client resource templates are saved in the repository. Server-side dry runs remain rejected by the Nautilus utilization admission webhook. They have **not yet been deployed**.
-- Hard producer–consumer separation remains undeployed. It must be applied and verified, alongside the smaller resources, before the next campaign. Existing live locality exclusions must be preserved when patching.
+- The revised client resource templates were saved in the repository. At the initial cleanup, server-side dry runs were rejected by the Nautilus utilization admission webhook and the templates were not deployed.
+- Hard producer–consumer separation was also undeployed at the initial cleanup. The existing live locality exclusions were retained for the later update.
 
-The cleanup releases unused reservations while retaining evidence. Administrator help is needed if the stale utilization record continues to prevent corrective updates, and to resolve the unreachable-node producer. No performance result is inferred from these maintenance checks.
+The initial cleanup released unused reservations while retaining evidence. No performance result is inferred from these maintenance checks.
+
+
+## Corrected templates applied
+
+On October 20, both server-side validations passed and the corrected client templates were applied. The consumer StatefulSet retained its existing UCSD locality and excluded-node rules. The producer StatefulSet was absent at the recheck and was recreated from the reviewed manifest with zero desired replicas, preserving its existing PVC references. Both templates now require producer and consumer pods to use separate nodes within this namespace. Broker separation remains a preference.
+
+[Deployment verification](deployment-check.json) records the accepted resources, init-container settings, affinity rules, and zero desired replicas for both clients. All 17 PVC identities and backing-volume names were unchanged. No experiment was started, and these settings still require workload calibration and checks of actual placement, achieved rate, throttling, memory and restarts.
+
+The old `producer-sts-1` pod remains Terminating on `k8s-gpu-01.calit2.optiputer.net`, with a deletion timestamp of October 5. It was not force-deleted. The current account cannot inspect node health at cluster scope, so administrator confirmation that the old process has stopped, or safe node recovery, is needed before reusing that producer identity. Removing the utilization block does not establish that this separate node issue is resolved.

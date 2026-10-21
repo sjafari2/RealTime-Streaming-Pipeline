@@ -1,0 +1,252 @@
+{
+  "checked_at_utc": "2026-10-21T00:38:46.017177+00:00",
+  "namespace": "kafkastreamingdata",
+  "dry_runs": [
+    "statefulset.apps/consumer-sts patched\n",
+    "statefulset.apps/producer-sts created (server dry run)\n"
+  ],
+  "applied": [
+    "statefulset.apps/consumer-sts patched\n",
+    "statefulset.apps/producer-sts created\n"
+  ],
+  "clients": [
+    {
+      "name": "consumer-sts",
+      "replicas": 0,
+      "containers": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "1200m",
+              "memory": "600Mi"
+            },
+            "requests": {
+              "cpu": "1",
+              "memory": "512Mi"
+            }
+          }
+        }
+      ],
+      "init_containers": [
+        {
+          "name": "bootstrap-consumer",
+          "resources": {
+            "limits": {
+              "cpu": "120m",
+              "memory": "152Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            }
+          }
+        }
+      ],
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  },
+                  {
+                    "key": "kubernetes.io/hostname",
+                    "operator": "NotIn",
+                    "values": [
+                      "patternlab.calit2.optiputer.net"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app": "consumer-sts"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            },
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "kafka"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ],
+          "requiredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "labelSelector": {
+                "matchExpressions": [
+                  {
+                    "key": "app",
+                    "operator": "In",
+                    "values": [
+                      "producer-sts",
+                      "consumer-sts"
+                    ]
+                  }
+                ]
+              },
+              "topologyKey": "kubernetes.io/hostname"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "producer-sts",
+      "replicas": 0,
+      "containers": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "300m",
+              "memory": "152Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "memory": "128Mi"
+            }
+          }
+        }
+      ],
+      "init_containers": [
+        {
+          "name": "bootstrap-producer",
+          "resources": {
+            "limits": {
+              "cpu": "120m",
+              "memory": "152Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            }
+          }
+        }
+      ],
+      "affinity": {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "topology.kubernetes.io/region",
+                    "operator": "In",
+                    "values": [
+                      "us-west"
+                    ]
+                  },
+                  {
+                    "key": "topology.kubernetes.io/zone",
+                    "operator": "In",
+                    "values": [
+                      "ucsd"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "podAntiAffinity": {
+          "preferredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "podAffinityTerm": {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "kafka"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              },
+              "weight": 100
+            }
+          ],
+          "requiredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "labelSelector": {
+                "matchExpressions": [
+                  {
+                    "key": "app",
+                    "operator": "In",
+                    "values": [
+                      "producer-sts",
+                      "consumer-sts"
+                    ]
+                  }
+                ]
+              },
+              "topologyKey": "kubernetes.io/hostname"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "pvc_count": 17,
+  "pvc_identities_unchanged": true,
+  "remaining_pods": [
+    {
+      "name": "grafana-767954686f-6mqbf",
+      "node": "sidco-ps.sox.net",
+      "deletion_timestamp": null
+    },
+    {
+      "name": "pip-kafka-recovery-ucsd-controller-0",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "deletion_timestamp": null
+    },
+    {
+      "name": "pip-kafka-recovery-ucsd-controller-1",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "deletion_timestamp": null
+    },
+    {
+      "name": "pip-kafka-recovery-ucsd-controller-2",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "deletion_timestamp": null
+    },
+    {
+      "name": "producer-sts-1",
+      "node": "k8s-gpu-01.calit2.optiputer.net",
+      "deletion_timestamp": "2026-10-05T05:18:38Z"
+    },
+    {
+      "name": "prometheus-64bc49fcb8-gjtg5",
+      "node": "sdsmt-fiona.sdsmt.edu",
+      "deletion_timestamp": null
+    }
+  ],
+  "experiment_started": false,
+  "stuck_producer_force_deleted": false
+}
