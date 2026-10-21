@@ -20,6 +20,7 @@ data:
   # Set true only with the deployment option --separate-brokers on both roles.
   SEPARATE_BROKER_NODES: "false"
   FINAL_SCRAPE_SECONDS: "15"
+  # Each producer's stable workload ID is supplied by its pod environment.
   WORKLOAD_SEED: "81"
   MITIGATION_POLICY: "none"
 

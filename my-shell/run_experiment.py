@@ -23,6 +23,7 @@ from placement_control import (PlacementMismatch, capture_reference, check_place
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src/common'))
+from pipeline_runtime import producer_workload
 NS = os.getenv('NAMESPACE', 'kafkastreamingdata')
 CONTROL = '/config/run-control.json'
 CONFIG = '/config/pipeline-configmap.yaml'
@@ -236,6 +237,8 @@ def read_config():
 
 
 def validate_config(config):
+    if 'PRODUCER_WORKLOAD_ID' in config:
+        raise ValueError('PRODUCER_WORKLOAD_ID belongs in each producer pod environment, not the shared YAML')
     node_placement.policy(config)
     duration = float(config.get('EXP_DURATION_SEC', 300))
     drain = float(config.get('DRAIN_SECONDS', 60))
@@ -255,6 +258,23 @@ def validate_config(config):
     if str(config.get('ACKS', '0')) == '0':
         raise ValueError('Set ACKS=1 or all in the shared YAML before this measurement run')
     return duration, drain, warmup, readiness_timeout
+
+
+def verify_producer_workloads(names, rows, config):
+    """Reject repeated streams and save the seed identity actually used by each producer."""
+    if not names or len(names) != len(rows) or len(set(names)) != len(names):
+        raise ValueError('Producer workload observations must cover each producer exactly once')
+    streams, seen = {}, set()
+    for name, row in zip(names, rows):
+        expected = producer_workload(config.get('WORKLOAD_SEED', '1'), row.get('producer_workload_id'))
+        identity = expected['producer_workload_id']
+        if identity in seen:
+            raise ValueError('Duplicate PRODUCER_WORKLOAD_ID: ' + identity + '; no workload was released')
+        if any(row.get(key) != value for key, value in expected.items()):
+            raise ValueError(name + ': producer workload seed or RNG scheme differs from the run configuration')
+        seen.add(identity)
+        streams[name] = expected
+    return streams
 
 
 def validate_intervention(plan, config):
@@ -625,6 +645,7 @@ def start(plan=None):
             time.sleep(1)
         else:
             raise RuntimeError('Readiness timed out. Check assignments, shared mounts and logs; no workload was released.')
+        control['producer_workloads'] = verify_producer_workloads(producer_pods, producers, config)
         control['clock_probes'] = clock_probes('producer', producer_pods) + clock_probes('consumer', consumer_pods)
         validate_initial_replicas(config, pods('producer'), pods('consumer'), plan)
         if pods('consumer') != consumer_pods or pods('producer') != producer_pods:
@@ -970,6 +991,14 @@ print(json.dumps({{name:hashlib.sha256((root/name).read_bytes()).hexdigest() if 
     validate_config(config)
     validate_replica_control(config)
     validate_node_templates(config)
+    names = pods('producer')
+    code = f"""import os,sys,json
+sys.path.insert(0, {ROLES['producer'][1]!r})
+from pipeline_runtime import producer_workload
+print(json.dumps(producer_workload({str(config.get('WORKLOAD_SEED', '1'))!r}, os.getenv('PRODUCER_WORKLOAD_ID'))))
+"""
+    streams = verify_producer_workloads(names, [json.loads(remote('producer', p, code)) for p in names], config)
+    print('[CHECK] Producer workload IDs:', {p: s['producer_workload_id'] for p, s in streams.items()}, flush=True)
     print('[CONFIG] Rate per producer:', config['TARGET_RATE'], 'production seconds:',
           config.get('EXP_DURATION_SEC', 300), 'drain seconds:', config.get('DRAIN_SECONDS', 60), flush=True)
 

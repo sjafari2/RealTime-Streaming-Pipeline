@@ -7,7 +7,7 @@ import hashlib
 import psutil
 from confluent_kafka import Producer
 from prometheus_client import Counter, Gauge, generate_latest
-from pipeline_runtime import Runtime, seed_for
+from pipeline_runtime import Runtime, seed_for, producer_workload
 
 LABELS = ['pod', 'client_id', 'exp_id', 'run_id', 'traffic_mode', 'incarnation']
 sent = Counter('producer_messages_sent_total', 'Locally enqueued messages', LABELS)
@@ -60,7 +60,9 @@ def hot_partitions(spec, count, seed):
 
 class MyProducer:
     def __init__(self):
+        workload = producer_workload(os.getenv('WORKLOAD_SEED', '1'), os.getenv('PRODUCER_WORKLOAD_ID'))
         self.runtime = Runtime('producer')
+        self.runtime.details.update(workload)
         self.labels = dict(pod=self.runtime.pod, client_id=os.getenv('PRODUCER_CLIENT_ID', self.runtime.pod),
                            exp_id=os.getenv('EXP_ID', 'B0'), run_id=self.runtime.run_id,
                            traffic_mode=os.getenv('TRAFFIC_MODE', 'balanced'), incarnation=self.runtime.incarnation)
@@ -72,8 +74,9 @@ class MyProducer:
         self.max_messages = int(os.getenv('MAX_MESSAGES', os.getenv('PRODUCER_MAX_MESSAGES', '0')))
         self.max_burst = int(os.getenv('MAX_BURST', '2'))
         self.drop_catchup = os.getenv('DROP_CATCHUP', 'true').lower() == 'true'
-        self.seed = os.getenv('WORKLOAD_SEED', '1')
-        self.rng = random.Random(seed_for(self.seed, self.runtime.pod))
+        self.seed = workload['workload_seed']
+        # Deployment names remain in evidence, but do not choose the workload sequence.
+        self.rng = random.Random(int(workload['workload_rng_seed_hex'], 16))
         self.payload = random.Random(seed_for(self.seed, 'payload')).randbytes(int(os.getenv('PAYLOAD_SIZE_BYTES', '100')))
         self.hot = hot_partitions(os.getenv('SKEW_PARTITION', '.2'), self.count, self.seed) if self.labels['traffic_mode'] == 'skew' else []
         self.cold = [p for p in range(self.count) if p not in self.hot]
@@ -87,7 +90,7 @@ class MyProducer:
         self.resolved = 0
         self.process = psutil.Process()
         self.runtime.event('producer_config', config=self.config, hot_partitions=self.hot, seed=self.seed,
-                           payload_sha256=hashlib.sha256(self.payload).hexdigest())
+                           payload_sha256=hashlib.sha256(self.payload).hexdigest(), **workload)
         rate_metric.labels(**self.labels).set(self.rate)
         for metric in (sent, bytes_sent, acknowledged, errors, missed):
             metric.labels(**self.labels).inc(0)

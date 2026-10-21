@@ -97,3 +97,20 @@ def test_stop_distinguishes_exited_children_from_live_processes(tmp_path, monkey
     assert (signal.SIGKILL in signals) == forced
     if initial_state == 'Z':
         assert not signals
+
+
+
+def test_launcher_preserves_pod_identity_and_rejects_shared_override(tmp_path):
+    import shutil
+    shutil.copy(ROOT / 'src/common/launch.py', tmp_path / 'launch.py')
+    (tmp_path / 'producer.py').write_text('import os; print(os.environ["PRODUCER_WORKLOAD_ID"])')
+    config = tmp_path / 'pipeline.yaml'
+    env = dict(os.environ, PIPELINE_CONFIG=str(config), PIPELINE_STANDALONE='true',
+               PIPELINE_APP_DIR=str(tmp_path), PRODUCER_WORKLOAD_ID='2')
+    config.write_text('data: {WORKLOAD_SEED: "81"}')
+    command = [sys.executable, str(tmp_path / 'launch.py'), 'producer']
+    result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=10)
+    assert result.returncode == 0 and result.stdout.strip().endswith('2')
+    config.write_text('data: {WORKLOAD_SEED: "81", PRODUCER_WORKLOAD_ID: "0"}')
+    result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=10)
+    assert result.returncode != 0 and 'not the shared YAML' in result.stderr

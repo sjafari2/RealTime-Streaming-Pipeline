@@ -25,7 +25,7 @@ The default namespace is `kafkastreamingdata`. The coordinator's `NAMESPACE` ove
 1. Stop preceding applications and retain their evidence.
 2. Restore the declared initial consumer count, validate pods and create fresh run-specific topics.
 3. Save the configuration under `/config/runs/RUN_ID/` and publish preparation state.
-4. Start applications and verify readiness, configuration hashes, unique ownership of all partitions and required node separation. Controlled comparisons additionally verify their saved starting reference.
+4. Start applications and verify readiness, configuration hashes, distinct producer workload IDs and their seeds, unique ownership of all partitions and required node separation. Controlled comparisons additionally verify their saved starting reference.
 5. Publish common warm-up, evaluation and drain boundaries. Producers wait for release.
 6. Apply any declared scheduled action, verify placement/readiness after scaling, and record its actual timing and outcome.
 7. Stop production at its boundary, allow drain, retain final snapshots, then collect and analyze.

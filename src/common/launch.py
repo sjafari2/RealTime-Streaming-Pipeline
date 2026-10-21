@@ -19,6 +19,8 @@ def launch(role):
         os.environ['PIPELINE_RUN_CONTROL'] = str(control_path)
     raw = path.read_bytes()
     config = yaml.safe_load(raw)['data']
+    if 'PRODUCER_WORKLOAD_ID' in config:
+        raise ValueError('PRODUCER_WORKLOAD_ID belongs in each producer pod environment, not the shared YAML')
     for name, value in config.items():
         os.environ[name] = str(value).lower() if isinstance(value, bool) else str(value)
     os.environ['PIPELINE_CONFIG_SHA256'] = hashlib.sha256(raw).hexdigest()

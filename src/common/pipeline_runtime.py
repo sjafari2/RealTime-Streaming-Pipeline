@@ -8,6 +8,7 @@ import math
 import os
 from pathlib import Path
 import queue
+import re
 import signal
 import socket
 import threading
@@ -41,6 +42,16 @@ def valid_lag(low, high, position):
 
 def seed_for(*parts):
     return int.from_bytes(hashlib.sha256('|'.join(map(str, parts)).encode()).digest()[:8], 'big')
+
+
+def producer_workload(seed, workload_id):
+    """Describe a reproducible stream without using the runtime pod identity."""
+    if not isinstance(workload_id, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}', workload_id):
+        raise ValueError('PRODUCER_WORKLOAD_ID must be a stable, nonempty per-producer ID '
+                         '(letters, digits, dot, underscore, colon or hyphen); set it in the pod environment')
+    return dict(producer_workload_id=workload_id, workload_seed=str(seed),
+                workload_rng='sha256-workload-id-v1',
+                workload_rng_seed_hex=f'{seed_for(str(seed), workload_id):016x}')
 
 
 class EvidenceWriter:

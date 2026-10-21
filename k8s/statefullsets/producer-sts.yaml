@@ -117,6 +117,12 @@ spec:
         - name: PRODUCER_HTTP_PORT
           value: "8001"
 
+        # The ordinal stays the same when the StatefulSet is renamed.
+        - name: PRODUCER_WORKLOAD_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+
         - name: POD_NAME
           valueFrom:
             fieldRef:

@@ -13,7 +13,7 @@ from placement_control import PlacementMismatch
 from test_placement_control import example
 
 
-@pytest.mark.parametrize('mode', ['prepare', 'capture', 'run', 'wrong_owner', 'budget', 'shared_node'])
+@pytest.mark.parametrize('mode', ['prepare', 'capture', 'run', 'wrong_owner', 'budget', 'shared_node', 'missing_workload_id'])
 def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     ref, cfg, rows, items = example()
     from test_node_placement import deployment
@@ -25,6 +25,9 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     if mode == 'shared_node':
         items[2]['spec']['nodeName'] = items[1]['spec']['nodeName']
         ref['pods'][2]['node'] = ref['pods'][1]['node']
+    rows['producer-sts-0'].update(r.producer_workload('1', '0'))
+    if mode == 'missing_workload_id':
+        rows['producer-sts-0'].pop('producer_workload_id')
     cfg['RUN_ID'] = 'run'
     raw = json.dumps(cfg).encode()
     for row in rows.values():
@@ -60,7 +63,12 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     monkeypatch.setattr(r, 'monitoring_readiness', lambda *a: {})
     monkeypatch.setattr(r, 'journal', lambda *a: journal.append(copy.deepcopy(a[-1])))
     monkeypatch.setattr(r.time, 'sleep', lambda *a: None)
-    if mode in ('wrong_owner', 'budget', 'shared_node'):
+    if mode == 'missing_workload_id':
+        with pytest.raises(ValueError, match='PRODUCER_WORKLOAD_ID'):
+            r.start(plan)
+        assert [c['state'] for c in published] == ['preparing', 'failed']
+        assert all('start_epoch' not in c for c in published)
+    elif mode in ('wrong_owner', 'budget', 'shared_node'):
         with pytest.raises(PlacementMismatch, match='ownership differs|budget exhausted|share node'):
             r.start(plan)
         assert [c['state'] for c in published] == ['preparing', 'failed']
@@ -70,6 +78,7 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
         control = r.start(plan)
         assert [c['state'] for c in published] == ['preparing', 'stopped' if mode in ('prepare', 'capture') else 'running']
         assert journal[-1]['valid'] is True
+        assert control['producer_workloads'] == {'producer-sts-0': r.producer_workload('1', '0')}
         assert control['initial_placement_processes']
         assert ('start_epoch' in control) == (mode == 'run')
         if mode == 'capture':
@@ -87,3 +96,23 @@ def test_shared_stop_during_gate_prevents_scale(monkeypatch):
     monkeypatch.setattr(r, 'kubectl', lambda *a, **k: pytest.fail('must not scale'))
     with pytest.raises(RuntimeError, match='changed during placement'):
         r.apply_intervention(control)
+
+
+
+@pytest.mark.parametrize('change', ['duplicate', 'seed', 'scheme', 'derived_seed', 'missing_row'])
+def test_producer_workload_checks_reject_ambiguous_or_changed_streams(change):
+    rows = [r.producer_workload('81', str(i)) for i in range(3)]
+    if change == 'duplicate': rows[1] = dict(rows[0])
+    elif change == 'seed': rows[1] = r.producer_workload('82', '1')
+    elif change == 'scheme': rows[1]['workload_rng'] = 'hostname'
+    elif change == 'derived_seed': rows[1]['workload_rng_seed_hex'] = '0'
+    else: rows.pop()
+    with pytest.raises(ValueError):
+        r.verify_producer_workloads(['p0', 'p1', 'p2'], rows, {'WORKLOAD_SEED': '81'})
+
+
+def test_shared_config_cannot_assign_one_identity_to_all_producers():
+    _, config, _, _ = example()
+    config['PRODUCER_WORKLOAD_ID'] = '0'
+    with pytest.raises(ValueError, match='not the shared YAML'):
+        r.validate_config(config)

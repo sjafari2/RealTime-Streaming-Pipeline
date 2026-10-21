@@ -22,6 +22,12 @@ Actions are scheduled 60 seconds after evaluation begins. Run 1 and Run 2 are se
 
 Native scaling uses Kafka's cooperative-sticky group assignment. Targeted actions use explicit release, acquire and resume stages with exclusive ownership and verified offsets. The comparison therefore includes coordination behavior and resulting assignment, as well as resource count. A whole partition remains indivisible.
 
+## Reproducible producer streams
+
+The revised producer derives its partition-choice sequence from `WORKLOAD_SEED` and a separate `PRODUCER_WORKLOAD_ID`. The deployment supplies IDs `0`, `1`, and `2` from the StatefulSet ordinal label, so renaming the StatefulSet does not change those streams. The coordinator rejects missing or repeated IDs before releasing traffic and saves the verified IDs, seed and RNG scheme in the run manifest. Each producer also records them in its configuration event and status.
+
+With the same seed, ID, workload settings and compatible Python runtime, each producer repeats its sequence of partition choices. This does not guarantee identical send timestamps, inter-producer arrival order or achieved rates. Actual pod names remain in message identities and monitoring. The historical trials seeded streams with the pod hostname; switching to ordinal IDs changes their sequences and must be recorded as a new workload-generation revision. It does not change or invalidate the historical measurements.
+
 ## Placement in subsequent trials
 
 The revised deployment requires separate nodes for producers and consumers in the experiment namespace, including added consumers. The coordinator checks the deployed rules and actual placement before production and after scaling, and rejects unmet requirements. Broker isolation is a separate explicit option. These controls do not exclude unrelated workloads or guarantee equal machine capacity. The historical trials used softer scheduling preferences and include producer–consumer co-location; their measurements remain unchanged. New trials must record the revised placement conditions and repeat calibration and starting checks. See [node placement](node-placement.md) for the evidence and exact scope.

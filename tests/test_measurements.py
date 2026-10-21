@@ -357,3 +357,68 @@ def test_assignment_does_not_retry_authorization_or_expired_metadata(app):
     broker.list_topics.assert_not_called()
     with pytest.raises(RuntimeError,match='deadline'):
         app.assignment_bounds(broker,consumer.TopicPartition('topic_0',0),consumer.time.monotonic()-1)
+
+
+
+@pytest.mark.parametrize('mode,spec', [('balanced', '.2'), ('skew', '.2'), ('skew', '0,1,2,3')])
+def test_partition_sequence_survives_producer_rename(monkeypatch, mode, spec):
+    for key, value in yaml.safe_load((ROOT / 'src/pipeline-configmap.yaml').read_text())['data'].items():
+        monkeypatch.setenv(key, str(value))
+    monkeypatch.setenv('TOPIC_TITLE', 'test-topic')
+    monkeypatch.setenv('TRAFFIC_MODE', mode)
+    monkeypatch.setenv('SKEW_PARTITION', spec)
+
+    class CapturingProducer:
+        def __init__(self, config): self.messages = []
+        def produce(self, **kwargs): self.messages.append(kwargs)
+
+    monkeypatch.setattr(producer, 'Producer', CapturingProducer)
+
+    def sequence(pod, workload_id='0', seed='81'):
+        runtime = FakeRuntime('producer')
+        runtime.pod = pod
+        runtime.should_stop = lambda: False
+        runtime.production_open = lambda: True
+        monkeypatch.setattr(producer, 'Runtime', lambda role: runtime)
+        monkeypatch.setenv('PRODUCER_WORKLOAD_ID', workload_id)
+        monkeypatch.setenv('WORKLOAD_SEED', seed)
+        obj = producer.MyProducer()
+        for _ in range(1000): obj.send_one()
+        return obj
+
+    old = sequence('producer-sts-0')
+    renamed = sequence('replacement-producer-0')
+    other_id = sequence('replacement-producer-1', workload_id='1')
+    other_seed = sequence('replacement-producer-0', seed='82')
+    choices = lambda obj: [m['partition'] for m in obj.producer.messages]
+    assert choices(old) == choices(renamed)
+    assert choices(old) != choices(other_id)
+    assert choices(old) != choices(other_seed)
+    assert old.hot == renamed.hot == other_id.hot
+    assert old.payload == renamed.payload == other_id.payload
+    assert old.runtime.details == renamed.runtime.details
+    assert old.runtime.details['producer_workload_id'] == '0'
+    for obj in (old, renamed):
+        headers = dict(obj.producer.messages[0]['headers'])
+        assert headers['producer_pod_name'].decode() == obj.runtime.pod
+        assert '/' + obj.runtime.pod + '/' in headers['message_id'].decode()
+        event = next(r for r in obj.runtime.rows if r['event'] == 'producer_config')
+        assert all(event[k] == v for k, v in obj.runtime.details.items())
+
+
+@pytest.mark.parametrize('identity', [None, '', ' ', '0|1', 'a' * 129])
+def test_missing_or_invalid_producer_identity_fails_before_runtime(monkeypatch, identity):
+    if identity is None:
+        monkeypatch.delenv('PRODUCER_WORKLOAD_ID', raising=False)
+    else:
+        monkeypatch.setenv('PRODUCER_WORKLOAD_ID', identity)
+    monkeypatch.setattr(producer, 'Runtime', lambda role: pytest.fail('must validate before opening evidence'))
+    with pytest.raises(ValueError, match='PRODUCER_WORKLOAD_ID'):
+        producer.MyProducer()
+
+
+def test_producer_manifest_uses_ordinal_label_instead_of_pod_name():
+    deployment = yaml.safe_load((ROOT / 'k8s/statefullsets/producer-sts.yaml').read_text())
+    container = next(c for c in deployment['spec']['template']['spec']['containers'] if c['name'] == 'producer-container')
+    env = {e['name']: e for e in container['env']}
+    assert env['PRODUCER_WORKLOAD_ID']['valueFrom']['fieldRef']['fieldPath'] == "metadata.labels['apps.kubernetes.io/pod-index']"

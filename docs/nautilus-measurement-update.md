@@ -104,3 +104,18 @@ kubectl --context nautilus -n kafkastreamingdata scale statefulset producer-sts 
 Check that the live StatefulSets retain their PVCs when scaled, that autoscaling is paused, and that no run is active before cleanup. Application data and configuration remain on the volumes; deleting PVCs is not part of idle cleanup. Scale the clients back to the declared starting count only when preparing the next campaign, then verify readiness, source, resource declarations and placement. An unreachable-node pod that remains Terminating requires a safe recovery check; do not force-delete it merely to clear the display.
 
 The [October 20 resource record](../experiment-records/resource-sizing-20261020/README.md) distinguishes completed cluster cleanup from pending deployment and calibration.
+
+
+## Producer workload identity
+
+The producer manifest supplies `PRODUCER_WORKLOAD_ID` from `metadata.labels['apps.kubernetes.io/pod-index']`. This is a stable ordinal (`0`, `1`, `2`), independent of the StatefulSet name. The [Kubernetes downward API](https://kubernetes.io/docs/concepts/workloads/pods/downward-api/) exposes this label to the process. Keep the same producer count and ID mapping within a comparison.
+
+This change requires both the updated source and the producer pod environment. Source synchronization alone does not update existing pod environments. Between runs, deploy the reviewed producer manifest through the normal recovery/setup procedure and verify the IDs with `bash my-shell/save-run.sh preflight`. A missing label produces an empty ID and fails validation; there is no hostname fallback. Do not put `PRODUCER_WORKLOAD_ID` in the shared configuration, which all replicas load.
+
+For standalone troubleshooting inside the producer application directory, provide an explicit ID if the pod environment does not already supply one:
+
+```bash
+PRODUCER_WORKLOAD_ID=0 PIPELINE_STANDALONE=true bash run.sh
+```
+
+Use different IDs for simultaneous producers. In managed runs, preflight checks the pod environments and the start barrier checks the running applications again. The manifest's `producer_workloads` map and each producer's status/configuration event retain the actual ID, seed, RNG scheme and derived seed. These changes are local until source and deployment updates are applied; they do not establish that a live calibration has passed. See [experimental methodology](experiment-methodology.md#reproducible-producer-streams) for the distinction from historical hostname-seeded runs.
