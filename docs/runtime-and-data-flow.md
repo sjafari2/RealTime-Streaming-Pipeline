@@ -18,7 +18,7 @@ bash my-shell/run_pipeline.sh --repetitions 2
 
 The batch records exactly which run directories it created and stops on a failure. `--rates` sets **per-producer** target rates; the dedicated [calibration runner](../experiments/stability-fixed3-20260921/README.md) instead accepts aggregate rates. The intervention comparisons use their [protocol-specific runner](../experiments/four-condition-20260929/README.md).
 
-The default namespace is `kafkastreamingdata`. The coordinator's `NAMESPACE` override and the namespace declared in deployment resources must agree. `--help` lists command options.
+The active StatefulSets are `producer-workers` and `consumer-sts`; their selectors are defined in `my-shell/placement_control.py`. The default namespace is `kafkastreamingdata`. The coordinator's `NAMESPACE` override and the namespace declared in deployment resources must agree. `--help` lists command options.
 
 ## Preparation and control
 

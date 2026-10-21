@@ -6,6 +6,10 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import subprocess
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'my-shell'))
+from placement_control import APP_NAMES, ROLE_BY_APP
 import time
 
 # modes=0 asks adjtimex for status only. The oversized zeroed buffer lets libc
@@ -56,11 +60,14 @@ def inspect(context, namespace):
     selected = []
     for item in pods:
         name = item['metadata']['name']
-        if name.startswith(('producer-sts-', 'consumer-sts-', 'pip-kafka-controller-')):
+        if item['metadata'].get('deletionTimestamp'):
+            continue
+        app = item['metadata'].get('labels', {}).get('app')
+        if app in ROLE_BY_APP or item['metadata'].get('labels', {}).get('app.kubernetes.io/name') == 'kafka':
             placements.append(dict(pod=name,node=item['spec'].get('nodeName'),
                 resources=[dict(container=c['name'],resources=c.get('resources',{})) for c in item['spec']['containers']]))
         for role in ('producer','consumer'):
-            if name.startswith(role+'-sts-'):
+            if app == APP_NAMES[role]:
                 selected.append((role,item))
     if not selected:
         raise RuntimeError('No experiment producer/consumer pods found')

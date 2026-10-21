@@ -25,13 +25,13 @@ data:
               names: [kafkastreamingdata]
         relabel_configs:
           - source_labels: [__meta_kubernetes_pod_label_app]
-            regex: '(producer|consumer)-sts'
+            regex: 'producer-workers|consumer-sts'
             action: keep
           - source_labels: [__meta_kubernetes_pod_container_port_name]
             regex: metrics
             action: keep
           - source_labels: [__meta_kubernetes_pod_label_app]
-            regex: '(producer|consumer)-sts'
+            regex: '(producer|consumer)-(workers|sts)'
             target_label: role
             replacement: '$1'
       # Scrape each broker separately. A service address can alternate brokers.

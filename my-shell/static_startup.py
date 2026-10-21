@@ -3,7 +3,7 @@ import copy
 import json
 import time
 
-from placement_control import PlacementMismatch, pod_identity, reference_hash
+from placement_control import POD_SELECTOR, PlacementMismatch, pod_identity, reference_hash
 
 
 def stages(include_comparison=False, order=('scale', 'none')):
@@ -118,7 +118,7 @@ def execute_stages(runner, audit, block, config, original_pods, save, write,
                                 timeout=min(60, remaining - (time.monotonic() - started)))
             runner.set_consumer_baseline(count, min(180, max(0, remaining - (time.monotonic() - started))))
             observed = [pod_identity(item) for item in json.loads(runner.kubectl(
-                'get', 'pods', '-l', 'app in (producer-sts,consumer-sts)', '-o', 'json'))['items']]
+                'get', 'pods', '-l', POD_SELECTOR, '-o', 'json'))['items']]
             check_original_pods(original_pods, observed)
             plan = dict(action=action, initial_consumers=count,
                         target_consumers=6 if action == 'scale' else None,

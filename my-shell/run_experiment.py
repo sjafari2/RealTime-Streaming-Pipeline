@@ -18,7 +18,7 @@ import urllib.parse
 import urllib.request
 import node_placement
 from managed_hpa import paused_for_experiment
-from placement_control import (PlacementMismatch, capture_reference, check_placement,
+from placement_control import (APP_NAMES, POD_SELECTOR, PlacementMismatch, capture_reference, check_placement,
                                pod_identity, reference_hash, validate_pod_reference, validate_reference)
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +37,7 @@ def kubectl(*args, input=None, timeout=60, request_timeout='30s'):
 
 
 def pods(role):
-    result = json.loads(kubectl('get', 'pods', '-l', 'app=' + role + '-sts', '-o', 'json'))
+    result = json.loads(kubectl('get', 'pods', '-l', 'app=' + APP_NAMES[role], '-o', 'json'))
     return sorted(item['metadata']['name'] for item in result['items'] if not item['metadata'].get('deletionTimestamp'))
 
 
@@ -402,7 +402,7 @@ def verify_placement(control, stage):
         expected_pods = reference['pods'] if reference is not None else capture_pods
         rows = {p['pod']: status(p['role'], p['pod']) for p in expected_pods}
         record['application_status'] = rows
-        items = json.loads(kubectl('get', 'pods', '-l', 'app in (producer-sts,consumer-sts)',
+        items = json.loads(kubectl('get', 'pods', '-l', POD_SELECTOR,
                                   '-o', 'json', timeout=10))['items']
         record['observed_pods'] = [pod_identity(item) for item in items]
         if reference is None:
@@ -536,7 +536,7 @@ def validate_replica_control(config, plan=None, hpas=None):
     initial = ((plan or {}).get('initial_consumers') or int(config.get('CONSUMER_POD_COUNT', 0)))
     target = (plan or {}).get('target_consumers')
     requested = {'consumer-sts': [n for n in (initial, target) if n],
-                 'producer-sts': [int(config['PRODUCER_POD_COUNT'])] if 'PRODUCER_POD_COUNT' in config else []}
+                 APP_NAMES['producer']: [int(config['PRODUCER_POD_COUNT'])] if 'PRODUCER_POD_COUNT' in config else []}
     records = []
     for item in hpas:
         spec = item['spec']
@@ -593,7 +593,7 @@ def start(plan=None):
     frozen = f'/config/runs/{run_id}/pipeline-configmap.yaml'
     shared_write(frozen, raw)
     control = dict(run_id=run_id, state='preparing', config_path=frozen,
-                   lag_freshness_clock='monotonic_scrape_v2',
+                   lag_freshness_clock='monotonic_scrape_v2', deployment_names=APP_NAMES.copy(),
                    preparing_epoch=time.time(),
                    config_sha256=hashlib.sha256(raw).hexdigest(), drain_seconds=drain,
                    duration_seconds=duration, warmup_seconds=warmup,

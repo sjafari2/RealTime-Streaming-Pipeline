@@ -1,6 +1,6 @@
 # Node placement in controlled experiments
 
-Producer and consumer pods use `k8s/statefullsets/producer-sts.yaml` and `consumer-sts.yaml`. Their selectors are `app: producer-sts` and `app: consumer-sts` in `kafkastreamingdata`. The managed runner scales the existing consumer StatefulSet; it does not switch to a second deployment definition.
+Producer and consumer pods use `k8s/statefullsets/producer-sts.yaml` and `consumer-sts.yaml`. Their selectors are `app: producer-workers` and `app: consumer-sts` in `kafkastreamingdata`. The managed runner scales the existing consumer StatefulSet; it does not switch to a second deployment definition.
 
 ## Requirements for subsequent trials
 

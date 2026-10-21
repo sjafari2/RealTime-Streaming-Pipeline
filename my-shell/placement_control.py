@@ -4,6 +4,12 @@ import hashlib
 import json
 
 
+# Keep deployment selectors separate from workload IDs and message identities.
+APP_NAMES = {'producer': 'producer-workers', 'consumer': 'consumer-sts'}
+ROLE_BY_APP = {app: role for role, app in APP_NAMES.items()}
+POD_SELECTOR = 'app in (' + ','.join(APP_NAMES.values()) + ')'
+
+
 class PlacementMismatch(RuntimeError):
     """The observed starting condition is not the one approved for this block."""
 
@@ -86,7 +92,7 @@ def capture_reference(expected_pods, config, run_id, config_hash, status_rows, p
 def pod_identity(item):
     """Include pod and container identity: the same pod name can hide a restart."""
     meta, spec, state = (item.get(k, {}) for k in ('metadata', 'spec', 'status'))
-    role = {'producer-sts': 'producer', 'consumer-sts': 'consumer'}.get(meta.get('labels', {}).get('app'))
+    role = ROLE_BY_APP.get(meta.get('labels', {}).get('app'))
     if role is None:
         raise PlacementMismatch('Unexpected pod in placement observation')
     name = meta.get('name', '?')

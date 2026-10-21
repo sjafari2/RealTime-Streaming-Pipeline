@@ -4,10 +4,10 @@ import copy
 import json
 from pathlib import Path
 
-from placement_control import PlacementMismatch, pod_identity, validate_pod_reference
+from placement_control import APP_NAMES, PlacementMismatch, pod_identity, validate_pod_reference
 
 HOST = 'kubernetes.io/hostname'
-APPS = ('producer-sts', 'consumer-sts')
+APPS = tuple(APP_NAMES.values())
 BROKER_LABEL = {'app.kubernetes.io/name': 'kafka'}
 
 
@@ -91,7 +91,7 @@ def observe(items, expected, namespace, rules, initial=None):
     for item in pipeline:
         meta, spec = item['metadata'], item.get('spec', {})
         name = meta.get('name', '?')
-        if meta.get('labels', {}).get('app') != expected.get(name, '') + '-sts':
+        if meta.get('labels', {}).get('app') != APP_NAMES.get(expected.get(name)):
             issues.append(name + ': unexpected role label')
         if not has_required_term(spec, namespace):
             issues.append(name + ': pod lacks required producer/consumer anti-affinity; rollout needed')

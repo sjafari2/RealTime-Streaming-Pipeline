@@ -25,9 +25,9 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
     if mode == 'shared_node':
         items[2]['spec']['nodeName'] = items[1]['spec']['nodeName']
         ref['pods'][2]['node'] = ref['pods'][1]['node']
-    rows['producer-sts-0'].update(r.producer_workload('1', '0'))
+    rows['producer-workers-0'].update(r.producer_workload('1', '0'))
     if mode == 'missing_workload_id':
-        rows['producer-sts-0'].pop('producer_workload_id')
+        rows['producer-workers-0'].pop('producer_workload_id')
     cfg['RUN_ID'] = 'run'
     raw = json.dumps(cfg).encode()
     for row in rows.values():
@@ -78,7 +78,7 @@ def test_start_releases_only_a_verified_experiment(monkeypatch, mode):
         control = r.start(plan)
         assert [c['state'] for c in published] == ['preparing', 'stopped' if mode in ('prepare', 'capture') else 'running']
         assert journal[-1]['valid'] is True
-        assert control['producer_workloads'] == {'producer-sts-0': r.producer_workload('1', '0')}
+        assert control['producer_workloads'] == {'producer-workers-0': r.producer_workload('1', '0')}
         assert control['initial_placement_processes']
         assert ('start_epoch' in control) == (mode == 'run')
         if mode == 'capture':

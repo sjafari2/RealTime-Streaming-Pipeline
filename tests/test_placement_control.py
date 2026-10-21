@@ -9,7 +9,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'my-shell'))
 import run_experiment as runner
-from placement_control import PlacementMismatch, check_placement, pod_identity, reference_hash, validate_reference
+from placement_control import APP_NAMES, PlacementMismatch, check_placement, pod_identity, reference_hash, validate_reference
 
 
 def example():
@@ -19,8 +19,8 @@ def example():
                   WARMUP_SECONDS='60', READINESS_TIMEOUT_SECONDS='180')
     items, rows = [], {}
     for role, ordinal in [('producer', 0), ('consumer', 0), ('consumer', 1)]:
-        name = f'{role}-sts-{ordinal}'
-        items.append(dict(metadata=dict(name=name, uid=name+'-uid', labels=dict(app=role+'-sts')),
+        name = f'{APP_NAMES[role]}-{ordinal}'
+        items.append(dict(metadata=dict(name=name, uid=name+'-uid', labels=dict(app=APP_NAMES[role])),
                           spec=dict(nodeName=name+'-node', containers=[dict(name=role+'-container',
                               resources=dict(requests=dict(cpu='2', memory='1Gi'), limits=dict(cpu='4')))]),
                           status=dict(phase='Running', conditions=[dict(type='Ready', status='True')],

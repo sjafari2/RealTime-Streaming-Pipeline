@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'my-shell'))
 import node_placement as placement
 import run_experiment as runner
-from placement_control import PlacementMismatch
+from placement_control import APP_NAMES, ROLE_BY_APP, PlacementMismatch
 from test_placement_control import example
 
 
@@ -22,11 +22,11 @@ def deployment():
             for role in ('producer', 'consumer')]
     _, config, _, items = example()
     for item in items:
-        role = item['metadata']['labels']['app'].removesuffix('-sts')
-        template = next(s for s in sets if s['metadata']['name'] == role+'-sts')['spec']['template']
+        role = ROLE_BY_APP[item['metadata']['labels']['app']]
+        template = next(s for s in sets if s['metadata']['name'] == APP_NAMES[role])['spec']['template']
         item['metadata']['namespace'] = runner.NS
         item['spec']['affinity'] = copy.deepcopy(template['spec']['affinity'])
-    expected = {p['metadata']['name']: p['metadata']['labels']['app'].removesuffix('-sts') for p in items}
+    expected = {p['metadata']['name']: ROLE_BY_APP[p['metadata']['labels']['app']] for p in items}
     return items, sets, expected, config
 
 
@@ -110,7 +110,7 @@ def test_optional_broker_rendering_preserves_resources_volumes_and_locality():
 
 def api_fixture(monkeypatch):
     items, sets, expected, config = deployment()
-    control = dict(run_id='run', config=config, producer_pods=['producer-sts-0'],
+    control = dict(run_id='run', config=config, producer_pods=['producer-workers-0'],
                    consumer_pods=['consumer-sts-0','consumer-sts-1'])
     records = []
     monkeypatch.setattr(runner, 'kubectl', lambda *a, **k: json.dumps(dict(items=sets if a[1]=='statefulset' else items)).encode())

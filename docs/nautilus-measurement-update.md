@@ -34,7 +34,7 @@ The runtime dependencies are pinned in `dockerfiles_confluent/runtime-requiremen
 ```bash
 kubectl -n kafkastreamingdata exec consumer-sts-0 -c consumer-container -- \
   python3 -c 'import confluent_kafka, prometheus_client, psutil, yaml; print(confluent_kafka.version(), confluent_kafka.libversion())'
-kubectl -n kafkastreamingdata exec producer-sts-0 -c producer-container -- \
+kubectl -n kafkastreamingdata exec producer-workers-0 -c producer-container -- \
   python3 -c 'import confluent_kafka, prometheus_client, psutil, yaml; print(confluent_kafka.version(), confluent_kafka.libversion())'
 ```
 
@@ -57,7 +57,7 @@ After stopping applications, collecting the preceding evidence, synchronizing so
 ```bash
 bash my-shell/deploy-sts.sh producer
 bash my-shell/deploy-sts.sh consumer
-kubectl -n kafkastreamingdata rollout status statefulset/producer-sts --timeout=180s
+kubectl -n kafkastreamingdata rollout status statefulset/producer-workers --timeout=180s
 kubectl -n kafkastreamingdata rollout status statefulset/consumer-sts --timeout=180s
 bash my-shell/save-run.sh preflight
 ```
@@ -98,7 +98,7 @@ Stopping the Python applications alone does not release the pods' reserved CPU a
 ```bash
 bash my-shell/save-run.sh stop
 kubectl --context nautilus -n kafkastreamingdata scale statefulset consumer-sts --replicas=0
-kubectl --context nautilus -n kafkastreamingdata scale statefulset producer-sts --replicas=0
+kubectl --context nautilus -n kafkastreamingdata scale statefulset producer-workers --replicas=0
 ```
 
 Check that the live StatefulSets retain their PVCs when scaled, that autoscaling is paused, and that no run is active before cleanup. Application data and configuration remain on the volumes; deleting PVCs is not part of idle cleanup. Scale the clients back to the declared starting count only when preparing the next campaign, then verify readiness, source, resource declarations and placement. An unreachable-node pod that remains Terminating requires a safe recovery check; do not force-delete it merely to clear the display.
@@ -119,3 +119,12 @@ PRODUCER_WORKLOAD_ID=0 PIPELINE_STANDALONE=true bash run.sh
 ```
 
 Use different IDs for simultaneous producers. In managed runs, preflight checks the pod environments and the start barrier checks the running applications again. The manifest's `producer_workloads` map and each producer's status/configuration event retain the actual ID, seed, RNG scheme and derived seed. These changes are local until source and deployment updates are applied; they do not establish that a live calibration has passed. See [experimental methodology](experiment-methodology.md#reproducible-producer-streams) for the distinction from historical hostname-seeded runs.
+
+
+## Replacement producer deployment
+
+The active producer StatefulSet is `producer-workers`, with pods `producer-workers-0` through `producer-workers-2`. The existing manifest filename remains `producer-sts.yaml`. `my-shell/placement_control.py` defines the deployment selectors used by discovery, readiness, ownership checks and HPA isolation. The producer headless Service now selects this deployment; monitoring must discover these pod names before a run is accepted.
+
+The replacement uses `producer-data-20261020` and shares `pipeline-config-20261020` with the consumers. Their mounts remain `/app/producer-data` and `/config`, respectively. The retired `producer-sts-1` and its original claims are retained for administrator recovery and are not part of new run membership. The new deployment does not reuse that pod name, source volume or configuration volume. Original run evidence remains associated with its recorded deployments and resources.
+
+Create the claims from `k8s/pvc/client-recovery-20261020.yaml` only when preparing this replacement. Seed the new configuration with a stopped run control and the reviewed calibration settings, synchronize the current source, and verify all hashes before releasing traffic. Preserve existing consumer locality exclusions when updating its template. The replacement producer IDs remain `0`, `1`, and `2`; deployment names do not seed their random streams.

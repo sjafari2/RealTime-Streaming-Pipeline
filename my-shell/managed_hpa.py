@@ -1,5 +1,6 @@
 """Temporarily isolate fixed/scheduled experiments from competing HPA decisions."""
 from contextlib import contextmanager
+from placement_control import APP_NAMES
 import copy
 import json
 from pathlib import Path
@@ -49,7 +50,7 @@ def paused_for_experiment(api, plan=None):
     api.validate_config(config);api.validate_intervention(plan,config)
     hpas=json.loads(api.kubectl('get','hpa','-o','json'))['items']
     requested={'consumer-sts':[int((plan or {}).get('initial_consumers') or config['CONSUMER_POD_COUNT'])],
-               'producer-sts':[int(config['PRODUCER_POD_COUNT'])]}
+               APP_NAMES['producer']:[int(config['PRODUCER_POD_COUNT'])]}
     if (plan or {}).get('target_consumers'):requested['consumer-sts'].append(plan['target_consumers'])
     proposed=copy.deepcopy(hpas);changes=[]
     for item in proposed:

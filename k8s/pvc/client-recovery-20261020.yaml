@@ -1,0 +1,24 @@
+# Separate active producer/configuration storage from the retired producer pod.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: producer-data-20261020
+  namespace: kafkastreamingdata
+spec:
+  accessModes: [ReadWriteMany]
+  storageClassName: rook-cephfs-ucsd
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pipeline-config-20261020
+  namespace: kafkastreamingdata
+spec:
+  accessModes: [ReadWriteMany]
+  storageClassName: rook-cephfs-ucsd
+  resources:
+    requests:
+      storage: 1Gi

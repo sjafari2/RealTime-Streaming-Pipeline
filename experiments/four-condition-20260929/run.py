@@ -166,7 +166,7 @@ def main():
         else:(audit/'original-config.yaml').write_bytes(original)
         count=json.loads(r.kubectl('get','statefulset','consumer-sts','-o','json'))['spec']['replicas']
         if count!=3:raise RuntimeError('Three starting consumers are required')
-        items=json.loads(r.kubectl('get','pods','-l','app in (producer-sts,consumer-sts)','-o','json'))['items']
+        items=json.loads(r.kubectl('get','pods','-l',r.POD_SELECTOR,'-o','json'))['items']
         original_pods=[pod_identity(p) for p in items]
         expected=None;observer=None;observer_log=None
         def configure(config,label,plan):

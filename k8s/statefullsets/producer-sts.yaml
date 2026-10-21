@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: producer-sts
+  name: producer-workers
   namespace: kafkastreamingdata
   labels:
-    app: producer-sts
-    app.kubernetes.io/name: producer-sts
+    app: producer-workers
+    app.kubernetes.io/name: producer-workers
 spec:
   serviceName: producer-headless-svc
   selector:
     matchLabels:
-      app: producer-sts
+      app: producer-workers
   replicas: 3
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
-        app: producer-sts
-        app.kubernetes.io/name: producer-sts
+        app: producer-workers
+        app.kubernetes.io/name: producer-workers
     spec:
       terminationGracePeriodSeconds: 120
       securityContext:
@@ -36,6 +36,9 @@ spec:
               - key: topology.kubernetes.io/zone
                 operator: In
                 values: ["ucsd"]
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values: ["patternlab.calit2.optiputer.net", "k8s-gpu-01.calit2.optiputer.net"]
         # These rules also apply to replicas added during a run.
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -44,7 +47,7 @@ spec:
               matchExpressions:
               - key: app
                 operator: In
-                values: [producer-sts, consumer-sts]
+                values: [producer-workers, consumer-sts]
           # Broker separation is a preference unless explicitly enabled at deployment.
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -165,8 +168,8 @@ spec:
       volumes:
       - name: producer-data
         persistentVolumeClaim:
-          claimName: producer-data-ucsd-20260915
+          claimName: producer-data-20261020
       - name: pipeline-config
         persistentVolumeClaim:
-          claimName: pipeline-config-recovery-ucsd-20260915
+          claimName: pipeline-config-20261020
 
