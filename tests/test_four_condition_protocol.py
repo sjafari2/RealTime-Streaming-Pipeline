@@ -170,3 +170,24 @@ def test_rates_above_user_limit_rejected():
 def test_published_four_hot_protocol_matches_generated_protocol():
     expected=json.loads((ROOT/'experiments/four-hot-partitions-20260930/protocol.json').read_text())
     assert module.campaign_protocol(700,True,4,1000)==expected
+
+
+def test_recalibrated_600_block_has_four_responses_twice(monkeypatch):
+    monkeypatch.setattr(module.r, 'validate_intervention', lambda *args: None)
+    protocol = module.campaign_protocol(600, False, 4, 1000)
+    assert protocol['performance_trials'] == 8
+    assert protocol['order'] == [list(row) for row in module.ORDER]
+    assert protocol['calibration_reference'] == 'run-20261021-055708'
+    assert protocol['performance_windows']['before'] == [30, 60]
+    assert protocol['performance_windows']['evaluation_end'] == [570, 600]
+    hot = list(range(40, 44))
+    configs = [module.prepared(arm, 1, 81, reference(), hot, aggregate_rate=600,
+               hot_count=4, deadline_ms=1000) for arm in protocol['conditions']]
+    for config, plan in configs:
+        assert float(config['data']['TARGET_RATE']) * 3 == 600
+        assert config['data']['SKEW_PARTITION'] == '40,41,42,43'
+        assert config['data']['EXP_DURATION_SEC'] == '660'
+        assert config['data']['WARMUP_SECONDS'] == '60'
+        assert config['data']['DRAIN_SECONDS'] == '120'
+        assert config['data']['APP_CPU_ITERATIONS'] == '2000'
+        assert plan['after_evaluation_start_seconds'] == 60

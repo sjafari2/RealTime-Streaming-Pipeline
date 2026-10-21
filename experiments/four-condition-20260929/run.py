@@ -29,7 +29,7 @@ def target_map(hot,count):
 
 
 def prepared(arm,number,seed,reference=None,hot=None,gate=False,aggregate_rate=700,hot_count=12,deadline_ms=99):
-    if aggregate_rate not in (700,800):raise ValueError('Unreviewed aggregate rate')
+    if aggregate_rate not in (600,700,800):raise ValueError('Unreviewed aggregate rate')
     if hot_count not in (4,12):raise ValueError('Unreviewed hot-partition count')
     config=yaml.safe_load((ROOT/'experiments/four-condition-20260929/base-config.yaml').read_text())
     data=config['data'];native=arm=='kafka_scale6'
@@ -66,7 +66,7 @@ def normalized(raw):
 
 
 def campaign_protocol(aggregate_rate=700,targeted_only=False,hot_count=12,deadline_ms=99):
-    if aggregate_rate not in (700,800):raise ValueError('Unreviewed aggregate rate')
+    if aggregate_rate not in (600,700,800):raise ValueError('Unreviewed aggregate rate')
     protocol=json.loads((ROOT/'experiments/four-condition-20260929/protocol.json').read_text())
     if hot_count not in (4,12):raise ValueError('Unreviewed hot-partition count')
     if deadline_ms not in (99,1000):raise ValueError('Unreviewed completion deadline')
@@ -92,6 +92,18 @@ def campaign_protocol(aggregate_rate=700,targeted_only=False,hot_count=12,deadli
         'Requested CPU and memory over time','Throughput, lag, skew and ownership',
         'Admitted-cohort completion deadline misses at the primary and prespecified sensitivity thresholds']
     protocol['interpretation']='Compare the complete scheduled responses, including preparation and handover. A capacity-limited condition is a hypothesis, not a guaranteed favorable scaling result. The late cohort is a fixed-window outcome, not called post-recovery unless recovery actually precedes its start.'
+    if aggregate_rate == 600:
+        protocol['study_purpose'] = ('Compare four scheduled responses after a separate balanced calibration at 600 aggregate messages/s. '
+            'This deployment uses revised client resources and placement. Keep historical 700 messages/s results separate and retain every valid outcome.')
+        protocol['calibration_reference'] = 'run-20261021-055708'
+        protocol['slo_rationale'] = ('One second is the primary experimental completion deadline and 0.5 seconds is a prespecified sensitivity threshold. '
+            'The 600 messages/s calibration recorded completion p99 of 0.321 seconds. This is context, not a validated application SLA.')
+        protocol['performance_windows'] = dict(before=[30, 60], evaluation_end=[570, 600],
+            after='Verified action activation to evaluation end; Keep 3 uses second 60.',
+            rolling='Trailing 30-second completion windows at 2-second steps.',
+            metrics=['Distinct completion throughput', 'Completion mean and nearest-rank p99',
+                     'Pending evaluation messages', 'Total and partition backlog', 'Growth', 'Skew',
+                     'Process CPU and RSS with coverage', 'Requested consumer resources'])
     return protocol
 
 
@@ -119,7 +131,7 @@ def main():
     parser.add_argument('--resume',type=Path,help='Continue only unexecuted trials in a restored campaign')
     parser.add_argument('--monitoring-gate',type=Path)
     parser.add_argument('--preparations-only',action='store_true')
-    parser.add_argument('--aggregate-rate',type=int,choices=(700,800),default=700,
+    parser.add_argument('--aggregate-rate',type=int,choices=(600,700,800),default=700,
                         help='Total messages/s across all three producers')
     parser.add_argument('--targeted-only',action='store_true',
                         help='Compare redistribution within three with scaling plus redistribution, twice each')
