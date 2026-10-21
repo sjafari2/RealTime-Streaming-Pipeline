@@ -97,7 +97,9 @@ def build_series(acknowledged, completed, start, end):
             if start <= acknowledged[k][0] < end))
 
 
-def window_metrics(series, left, right):
+def window_metrics(series, left, right, deadline_ms=1000):
+    if not math.isfinite(deadline_ms) or deadline_ms <= 0:
+        raise ValueError('Completion deadline must be positive and finite')
     if not math.isfinite(left) or not math.isfinite(right) or right <= left:
         raise ValueError('Window must have a positive finite duration')
     def count(values):
@@ -114,6 +116,9 @@ def window_metrics(series, left, right):
         completion_window_mean_seconds=sum(latencies)/len(latencies) if latencies else None,
         completion_window_min_seconds=min(latencies) if latencies else None,
         completion_window_max_seconds=max(latencies) if latencies else None,
+        completion_window_deadline_ms=deadline_ms,
+        completed_window_deadline_misses=sum(v > deadline_ms/1000 for v in latencies),
+        completed_window_deadline_miss_fraction=sum(v > deadline_ms/1000 for v in latencies)/len(latencies) if latencies else None,
         acknowledged_evaluation_messages_pending_at_end=
             bisect.bisect_left(series['evaluation_ack_times'], right)
             -bisect.bisect_left(series['evaluation_settled_times'], right))
@@ -212,12 +217,13 @@ def analyze(comparison_path, repository):
         start, end, cutoff = (manifest[k] for k in ('evaluation_start_epoch', 'producer_end_epoch', 'drain_end_epoch'))
         if not math.isclose(end-start, 600):
             raise ValueError('This comparison requires ten-minute evaluation')
+        deadline_ms = float(manifest['config']['SLO_THRESHOLD_MS'])
         boundary = post_action_boundary(directory, manifest, row)
         ack, done, hashes = load_messages(directory, manifest, row['intervention_cost']['event_file_sha256'])
         admitted = {key: value for key, value in ack.items() if start <= value[0] < end}
         full_latencies = [done[k][0]-v[0] for k, v in admitted.items() if k in done and done[k][0] <= cutoff]
         series = build_series(ack, done, start, end)
-        whole = window_metrics(series, start, end)
+        whole = window_metrics(series, start, end, deadline_ms)
         if (len(admitted) != row['admitted'] or len(full_latencies) != row['completed']
                 or len(admitted)-len(full_latencies) != row['unfinished']
                 or not math.isclose(p99(full_latencies), row['p99_seconds'], abs_tol=1e-12)
@@ -225,12 +231,12 @@ def analyze(comparison_path, repository):
             raise ValueError('Replayed outcomes differ from the original comparison')
         windows = {}
         for label, left, right in [('before', 30, 60), ('evaluation_end', 570, 600)]:
-            windows[label] = dict(window_metrics(series, start+left, start+right),
+            windows[label] = dict(window_metrics(series, start+left, start+right, deadline_ms),
                 start_after_evaluation_seconds=left, end_after_evaluation_seconds=right)
-        windows['post_action_to_evaluation_end'] = dict(window_metrics(series, boundary['epoch'], end),
+        windows['post_action_to_evaluation_end'] = dict(window_metrics(series, boundary['epoch'], end, deadline_ms),
             start_after_evaluation_seconds=boundary['after_evaluation_seconds'],
             end_after_evaluation_seconds=end-start)
-        rolling = [dict(window_metrics(series, start+t-30, start+t),
+        rolling = [dict(window_metrics(series, start+t-30, start+t, deadline_ms),
             end_after_evaluation_seconds=t) for t in range(30, 601, 2)]
         results.append(dict(arm=row['arm'], run_number=row['run_number'], run_id=row['run_id'],
             windows=windows, post_action_boundary=boundary, rolling=rolling, evidence_sha256=row['evidence_hashes'],
@@ -246,7 +252,7 @@ def analyze(comparison_path, repository):
         scope=f'Completion-window diagnostic for eight trials with {hot_count} high-input partitions at {aggregate_rate} messages/s; separate from whole-evaluation production-cohort outcomes.',
         definition='Throughput counts earliest distinct completions in [left,right), including warm-up records; p99 uses individual latencies of acknowledged evaluation-born messages whose earliest completion falls in that interval. Nearest rank; no averaging of percentiles. Completion precedes commit acknowledgment.',
         windows='Before: evaluation seconds [30,60). Evaluation end: [570,600). Post-action: [verified activation,600), using explicit active_verified or a native six-owner map confirmed unchanged for ten seconds; Keep 3 uses second 60 as its no-action reference. Activation is not backlog recovery. No window includes drain. Rolling traces use trailing 30-second windows at 2-second steps, plotted at the window end.',
-        limitations='Only completed evaluation records contribute to window p99. Pending records are reported alongside it. Post-action durations vary with activation time and exclude the preceding action transition; they do not measure total intervention cost. The interval includes previously queued messages and subsequent backlog recovery. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.',
+        limitations='Only completed evaluation records contribute to window latency and its deadline-miss fraction; these are separate from full-cohort deadline outcomes. Pending records are reported alongside it. Post-action durations vary with activation time and exclude the preceding action transition; they do not measure total intervention cost. The interval includes previously queued messages and subsequent backlog recovery. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.',
         runs=results)
 
 
