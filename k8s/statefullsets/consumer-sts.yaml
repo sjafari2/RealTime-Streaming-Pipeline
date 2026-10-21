@@ -134,14 +134,14 @@ spec:
         ports:
         - name: metrics
           containerPort: 8002
-        # Initial sizing for 700 aggregate messages/s; validate again after deployment.
+        # Resource headroom for the extended 700 messages/s calibration.
         resources:
           requests:
-            cpu: "1"
-            memory: "512Mi"
+            cpu: "1250m"
+            memory: "640Mi"
           limits:
-            cpu: "1200m"
-            memory: "600Mi"
+            cpu: "1500m"
+            memory: "768Mi"
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data

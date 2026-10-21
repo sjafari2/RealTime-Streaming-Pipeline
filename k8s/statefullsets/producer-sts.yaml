@@ -151,14 +151,14 @@ spec:
           containerPort: 8001
         - name: prod-exp-port
           containerPort: 9093
-        # Initial sizing for 700 aggregate messages/s; validate again after deployment.
+        # Resource headroom for the extended 700 messages/s calibration.
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "250m"
-          limits:
-            memory: "152Mi"
+            memory: "160Mi"
             cpu: "300m"
+          limits:
+            memory: "192Mi"
+            cpu: "360m"
         volumeMounts:
         - name: producer-data
           mountPath: /app/producer-data

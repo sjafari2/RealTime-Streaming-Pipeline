@@ -80,16 +80,16 @@ The [runtime guide](runtime-and-data-flow.md) covers execution and collection. T
 
 ## Client resource sizing and idle cleanup
 
-The client manifests use the following starting allocations for the next 700 aggregate-message/s calibration:
+The client manifests use the following allocations for the extended 700 aggregate-message/s calibration:
 
 | Role | CPU request / limit | Memory request / limit |
 |---|---|---|
-| Producer | 250m / 300m | 128 MiB / 152 MiB |
-| Consumer | 1 / 1.2 cores | 512 MiB / 600 MiB |
+| Producer | 300m / 360m | 160 MiB / 192 MiB |
+| Consumer | 1.25 / 1.5 cores | 640 MiB / 768 MiB |
 
 The bootstrap init containers explicitly request 100m CPU and 128 MiB, with limits of 120m and 152 MiB. Without these declarations, the namespace supplies a 1 GiB init-container request, which would prevent the intended pod memory reduction.
 
-These replace requests of 2 CPUs and 1 GiB per client. Across the twelve September 29–30 intervention trials, the largest sampled process usage was 1.055 cores and 275.71 MiB for consumers, and 0.25 cores and 32.94 MiB for producers. Those measurements exclude some container overhead and do not bound unobserved peaks. The lower allocations therefore require calibration of achieved input, processing capacity, container memory, CPU throttling and restarts before comparative trials. Limits remain within 20% of requests, as specified by the [Nautilus resource policy](https://nrp.ai/documentation/userdocs/start/policies/).
+These remain below the historical requests of 2 CPUs and 1 GiB per client. The October 20 short calibration used producer requests of 250m CPU and 128 MiB, and consumer requests of 1 CPU and 512 MiB. The current allocation adds modest headroom for a longer calibration; it is a new resource condition, not a change to that completed run. Across the twelve September 29–30 intervention trials, the largest sampled process usage was 1.055 cores and 275.71 MiB for consumers, and 0.25 cores and 32.94 MiB for producers. Those measurements exclude some container overhead and do not bound unobserved peaks. The lower allocations therefore require calibration of achieved input, processing capacity, container memory, CPU throttling and restarts before comparative trials. Limits remain within 20% of requests, as specified by the [Nautilus resource policy](https://nrp.ai/documentation/userdocs/start/policies/).
 
 Historical run records retain their original allocations. A new campaign records its deployed requests, limits and placement separately and holds them fixed within the comparison. Kafka brokers are sized separately: their JVM heap, off-heap memory and page cache are not represented by the Python process measurements. The active broker allocations have not been reduced.
 
@@ -103,7 +103,7 @@ kubectl --context nautilus -n kafkastreamingdata scale statefulset producer-work
 
 Check that the live StatefulSets retain their PVCs when scaled, that autoscaling is paused, and that no run is active before cleanup. Application data and configuration remain on the volumes; deleting PVCs is not part of idle cleanup. Scale the clients back to the declared starting count only when preparing the next campaign, then verify readiness, source, resource declarations and placement. An unreachable-node pod that remains Terminating requires a safe recovery check; do not force-delete it merely to clear the display.
 
-The [October 20 resource record](../experiment-records/resource-sizing-20261020/README.md) distinguishes completed cluster cleanup from pending deployment and calibration.
+The [October 20 resource record](../experiment-records/resource-sizing-20261020/README.md) preserves the short calibration and replacement-deployment evidence. Subsequent calibrations retain their own configuration, resource declarations and placement records.
 
 
 ## Producer workload identity
