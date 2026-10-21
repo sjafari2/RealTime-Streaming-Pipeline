@@ -117,6 +117,82 @@ def window_metrics(series, left, right):
             -bisect.bisect_left(series['evaluation_settled_times'], right))
 
 
+def stable_native_assignment(snapshots, decision, consumer_count, partition_count):
+    """Confirm the six-owner map using the original ten-second hold rule."""
+    first = previous = None
+    for snapshot in snapshots:
+        timestamp = snapshot['timestamp']
+        if timestamp < decision:
+            continue
+        owners = snapshot.get('owners', {})
+        if (not snapshot.get('valid') or len(owners) != partition_count
+                or len({owner.split('/')[0] for owner in owners.values()}) != consumer_count):
+            first = previous = None
+            continue
+        if (previous is None or owners != previous['owners']
+                or not 0 < timestamp - previous['timestamp'] <= 3):
+            first = timestamp
+        previous = snapshot
+        if timestamp - first >= 10:
+            return dict(first_epoch=first, confirmed_epoch=timestamp, owners=owners)
+    raise ValueError('No verified stable native assignment')
+
+
+def post_action_boundary(directory, manifest, row):
+    """Use verified activation, before backlog recovery, as the new window start."""
+    start, end = manifest['evaluation_start_epoch'], manifest['producer_end_epoch']
+    intervention = manifest['intervention']
+    scheduled = start + intervention['after_evaluation_start_seconds']
+    action = intervention['action']
+    hashes = {}
+    if action == 'none':
+        boundary, basis = scheduled, 'scheduled reference; no action'
+    else:
+        cost = row['intervention_cost']
+        journal = directory/'intervention-events.jsonl'
+        hashes[journal.name] = sha(journal)
+        decisions = [event['timestamp'] for event in map(json.loads, journal.read_text().splitlines())
+                     if event['event'] == 'decision']
+        if len(decisions) != 1 or decisions[0] != cost['decision_epoch']:
+            raise ValueError('Action decision does not match the comparison')
+        if action in ('redistribute', 'scale_redistribute'):
+            journal = directory/'explicit-handoff-events.jsonl'
+            hashes[journal.name] = sha(journal)
+            active = [event for event in map(json.loads, journal.read_text().splitlines())
+                      if event['event'] == 'active_verified']
+            if len(active) != 1:
+                raise ValueError('Expected one verified activation event')
+            expected = {part['partition']: part['owner'] for part in intervention['target_assignment']}
+            observed = {}
+            for pod, status in active[0]['statuses'].items():
+                if (status['run_id'] != manifest['run_id'] or status.get('failure')
+                        or status.get('evidence_dropped') or status.get('evidence_error')
+                        or status['explicit_assignment']['stage'] != 'active'):
+                    raise ValueError('Invalid active consumer status')
+                for _, partition in status['assignments']:
+                    if partition in observed:
+                        raise ValueError('Duplicate active partition owner')
+                    observed[partition] = pod
+            if observed != expected:
+                raise ValueError('Active assignment differs from the requested map')
+            boundary, basis = active[0]['timestamp'], 'explicit active_verified event'
+        elif action == 'scale':
+            lag = json.loads((directory/'lag-summary.json').read_text())
+            receipt = stable_native_assignment(lag['snapshots'], decisions[0],
+                intervention['target_consumers'], len(manifest['initial_assignment']))
+            if receipt != cost['native_stable_ownership']:
+                raise ValueError('Native assignment confirmation differs from the comparison')
+            boundary, basis = receipt['confirmed_epoch'], 'native six-owner map confirmed unchanged for ten seconds'
+        else:
+            raise ValueError('Unsupported action: ' + action)
+        if boundary != cost['transition_end_epoch'] or boundary < decisions[0]:
+            raise ValueError('Activation time differs from the comparison')
+    if not math.isfinite(boundary) or not scheduled <= boundary < end:
+        raise ValueError('Activation boundary must precede evaluation end')
+    return dict(epoch=boundary, after_evaluation_seconds=boundary-start,
+        basis=basis, evidence_sha256=hashes)
+
+
 def analyze(comparison_path, repository):
     source = json.loads(comparison_path.read_text())
     if sorted((r['arm'], r['run_number']) for r in source['runs']) != sorted((a, n) for a in ARMS for n in (1, 2)):
@@ -132,6 +208,7 @@ def analyze(comparison_path, repository):
         start, end, cutoff = (manifest[k] for k in ('evaluation_start_epoch', 'producer_end_epoch', 'drain_end_epoch'))
         if not math.isclose(end-start, 600):
             raise ValueError('This comparison requires ten-minute evaluation')
+        boundary = post_action_boundary(directory, manifest, row)
         ack, done, hashes = load_messages(directory, manifest, row['intervention_cost']['event_file_sha256'])
         admitted = {key: value for key, value in ack.items() if start <= value[0] < end}
         full_latencies = [done[k][0]-v[0] for k, v in admitted.items() if k in done and done[k][0] <= cutoff]
@@ -146,20 +223,26 @@ def analyze(comparison_path, repository):
         for label, left, right in [('before', 30, 60), ('evaluation_end', 570, 600)]:
             windows[label] = dict(window_metrics(series, start+left, start+right),
                 start_after_evaluation_seconds=left, end_after_evaluation_seconds=right)
+        windows['post_action_to_evaluation_end'] = dict(window_metrics(series, boundary['epoch'], end),
+            start_after_evaluation_seconds=boundary['after_evaluation_seconds'],
+            end_after_evaluation_seconds=end-start)
         rolling = [dict(window_metrics(series, start+t-30, start+t),
             end_after_evaluation_seconds=t) for t in range(30, 601, 2)]
         results.append(dict(arm=row['arm'], run_number=row['run_number'], run_id=row['run_id'],
-            windows=windows, rolling=rolling, evidence_sha256=row['evidence_hashes'],
+            windows=windows, post_action_boundary=boundary, rolling=rolling, evidence_sha256=row['evidence_hashes'],
             event_file_sha256=hashes, whole_run_replay_matches=True,
             whole_run_unfinished=row['unfinished'], whole_run_unfinished_percent=row['unfinished_percent']))
         print('  before:', windows['before']['completion_throughput_per_second'], windows['before']['completion_window_p99_seconds'],
               'end:', windows['evaluation_end']['completion_throughput_per_second'], windows['evaluation_end']['completion_window_p99_seconds'], flush=True)
-    return dict(schema_version=1, comparison_sha256=sha(comparison_path), analysis_script_sha256=sha(__file__),
+        print('  activation to end:', boundary['after_evaluation_seconds'],
+              windows['post_action_to_evaluation_end']['completion_throughput_per_second'],
+              windows['post_action_to_evaluation_end']['completion_window_p99_seconds'], flush=True)
+    return dict(schema_version=2, comparison_sha256=sha(comparison_path), analysis_script_sha256=sha(__file__),
         analysis_source_revision=subprocess.check_output(['git','-C',str(repository),'rev-parse','HEAD'],text=True).strip(),
         scope='Retrospective completion-window diagnostic for the eight twelve-high-input-partition trials; not a replacement for whole-evaluation production-cohort outcomes.',
         definition='Throughput counts earliest distinct completions in [left,right), including warm-up records; p99 uses individual latencies of acknowledged evaluation-born messages whose earliest completion falls in that interval. Nearest rank; no averaging of percentiles. Completion precedes commit acknowledgment.',
-        windows='Before: evaluation seconds [30,60). Evaluation end: [570,600), before drain. The same windows apply to Keep 3. Rolling traces use trailing 30-second windows at 2-second steps, plotted at the window end.',
-        limitations='Only completed evaluation records contribute to window p99. Pending records are reported alongside it. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.',
+        windows='Before: evaluation seconds [30,60). Evaluation end: [570,600). Post-action: [verified activation,600), using explicit active_verified or a native six-owner map confirmed unchanged for ten seconds; Keep 3 uses second 60 as its no-action reference. Activation is not backlog recovery. No window includes drain. Rolling traces use trailing 30-second windows at 2-second steps, plotted at the window end.',
+        limitations='Only completed evaluation records contribute to window p99. Pending records are reported alongside it. Post-action durations vary with activation time and exclude the preceding action transition; they do not measure total intervention cost. The interval includes previously queued messages and subsequent backlog recovery. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.',
         runs=results)
 
 
@@ -176,7 +259,19 @@ def write_outputs(data, output):
         text=['---' if v is None else f'{v:.3f}' for v in values]
         lines.append('| '+LABELS[r['arm']]+' | '+str(r['run_number'])+' | '+' | '.join(text)+f" | {b['acknowledged_evaluation_messages_pending_at_end']:,} / {e['acknowledged_evaluation_messages_pending_at_end']:,} |")
         latex.append(' & '.join([LABELS[r['arm']],str(r['run_number']),*text])+r' \\')
-    lines += ['', data['limitations'], '', 'All event and summary hashes were checked against the published comparison. Admission, completion, unfinished, whole-run p99 and throughput were replayed and matched before calculating windows.', '',
+    lines += ['', '## From verified activation to evaluation end', '',
+        '| Response | Run | Start (evaluation s) | Duration (s) | Throughput (msg/s) | Completion p99 (s) | Evaluation completions for p99 |',
+        '|---|---:|---:|---:|---:|---:|---:|']
+    post_latex = []
+    for r in data['runs']:
+        window = r['windows']['post_action_to_evaluation_end']
+        values = [window['start_after_evaluation_seconds'], window['duration_seconds'],
+            window['completion_throughput_per_second'], window['completion_window_p99_seconds']]
+        formatted = ['---' if value is None else f'{value:.3f}' for value in values]
+        lines.append('| ' + LABELS[r['arm']] + ' | ' + str(r['run_number']) + ' | '
+            + ' | '.join(formatted) + f" | {window['evaluation_completions_for_latency']:,} |")
+        post_latex.append(' & '.join([LABELS[r['arm']], str(r['run_number']), *formatted]) + r' \\')
+    lines += ['', data['limitations'], '', 'All original event and summary hashes were checked against the published comparison. Activation boundaries were checked against the retained handoff journals or lag snapshots and the original transition summary; journal hashes are retained. Admission, completion, unfinished, whole-run p99 and throughput were replayed and matched before calculating windows.', '',
         '![Completion throughput, p99 and pending work](figures/twelve-partition-action-windows.png)', '',
         'Reproduce from the retained raw evidence at the repository root:', '', '```bash',
         'python3 experiments/four-condition-20260929/analyze_action_windows.py \\',
@@ -185,6 +280,7 @@ def write_outputs(data, output):
         'The output directory contains the numerical record, table rows and PNG/PDF plots. No cluster access or new performance trial is required.', '']
     (output/'ACTION_WINDOWS.md').write_text('\n'.join(lines))
     (output/'action-window-table-rows.tex').write_text('\n'.join(latex)+'\n')
+    (output/'post-action-table-rows.tex').write_text('\n'.join(post_latex)+'\n')
 
 
 def plot(data, output):

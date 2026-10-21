@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import os
 from pathlib import Path
 
@@ -51,3 +52,54 @@ def test_clock_order_does_not_make_pending_count_negative():
     series = m.build_series({'m': (100, 120)}, {'m': (110, 100, 'x')}, 100, 700)
     assert m.window_metrics(series, 100, 115)['acknowledged_evaluation_messages_pending_at_end'] == 0
     assert m.window_metrics(series, 100, 121)['acknowledged_evaluation_messages_pending_at_end'] == 0
+
+
+def test_post_action_window_counts_queued_work_but_excludes_drain():
+    ack = {'warm': (90, 91), 'queued': (140, 141), 'new': (500, 501), 'drain': (600, 601)}
+    done = {'warm': (200, 90, 'x'), 'queued': (220, 140, 'x'),
+            'new': (501, 500, 'x'), 'drain': (700, 600, 'x')}
+    window = m.window_metrics(m.build_series(ack, done, 100, 700), 200, 700)
+    assert window['distinct_completions'] == 3
+    assert window['completion_throughput_per_second'] == 3/500
+    assert window['evaluation_completions_for_latency'] == 2
+    assert window['completion_window_p99_seconds'] == 80
+    assert window['acknowledged_evaluation_messages_pending_at_end'] == 1
+
+
+def test_keep_three_uses_scheduled_reference_without_inventing_an_action(tmp_path):
+    manifest = dict(evaluation_start_epoch=100, producer_end_epoch=700,
+        intervention=dict(action='none', after_evaluation_start_seconds=60))
+    boundary = m.post_action_boundary(tmp_path, manifest, {})
+    assert boundary['epoch'] == 160
+    assert boundary['basis'] == 'scheduled reference; no action'
+    assert boundary['evidence_sha256'] == {}
+
+
+def test_native_activation_requires_continuous_valid_unchanged_ownership():
+    owners = {str(n): f'consumer-{n}/id' for n in range(6)}
+    snapshots = [dict(timestamp=t, valid=t != 168, owners=owners) for t in range(160, 181, 2)]
+    assert m.stable_native_assignment(snapshots, 160, 6, 6)['confirmed_epoch'] == 180
+    # A missing observation resets the hold, even if ownership on either side agrees.
+    snapshots = [s for s in snapshots if s['timestamp'] != 172]
+    with pytest.raises(ValueError, match='No verified stable'):
+        m.stable_native_assignment(snapshots, 160, 6, 6)
+
+
+def test_explicit_activation_uses_verified_map_not_request_or_recovery(tmp_path):
+    manifest = dict(run_id='test', evaluation_start_epoch=100, producer_end_epoch=700,
+        intervention=dict(action='redistribute', after_evaluation_start_seconds=60,
+            target_assignment=[dict(partition=0, owner='c0')]))
+    row = dict(intervention_cost=dict(decision_epoch=167, transition_end_epoch=193))
+    (tmp_path/'intervention-events.jsonl').write_text(json.dumps(dict(event='decision', timestamp=167))+'\n')
+    active = dict(event='active_verified', timestamp=193, statuses={'c0': dict(run_id='test',
+        explicit_assignment=dict(stage='active'), assignments=[['topic', 0]])})
+    path = tmp_path/'explicit-handoff-events.jsonl'
+    path.write_text(json.dumps(active)+'\n')
+    boundary = m.post_action_boundary(tmp_path, manifest, row)
+    assert boundary['epoch'] == 193
+    assert boundary['after_evaluation_seconds'] == 93
+    assert boundary['evidence_sha256'][path.name] == m.sha(path)
+    active['statuses']['c0']['assignments'] = []
+    path.write_text(json.dumps(active)+'\n')
+    with pytest.raises(ValueError, match='differs from the requested map'):
+        m.post_action_boundary(tmp_path, manifest, row)

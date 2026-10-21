@@ -1,12 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "comparison_sha256": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074",
-  "analysis_script_sha256": "7a9b4b1c8093e9b65cf690da53742a224b315064cf140b1c94b6a8f4848a3778",
-  "analysis_source_revision": "bcf7ac9ec3cef64f4d2047f1fd6142d8d56c4213",
+  "analysis_script_sha256": "f69f3100b819cb4fec0c9a28a497474e189062ea488d1defaa270cdcff62cef9",
+  "analysis_source_revision": "73fff38b7a52c5000a92a896f6d784fd1f37129a",
   "scope": "Retrospective completion-window diagnostic for the eight twelve-high-input-partition trials; not a replacement for whole-evaluation production-cohort outcomes.",
   "definition": "Throughput counts earliest distinct completions in [left,right), including warm-up records; p99 uses individual latencies of acknowledged evaluation-born messages whose earliest completion falls in that interval. Nearest rank; no averaging of percentiles. Completion precedes commit acknowledgment.",
-  "windows": "Before: evaluation seconds [30,60). Evaluation end: [570,600), before drain. The same windows apply to Keep 3. Rolling traces use trailing 30-second windows at 2-second steps, plotted at the window end.",
-  "limitations": "Only completed evaluation records contribute to window p99. Pending records are reported alongside it. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.",
+  "windows": "Before: evaluation seconds [30,60). Evaluation end: [570,600). Post-action: [verified activation,600), using explicit active_verified or a native six-owner map confirmed unchanged for ten seconds; Keep 3 uses second 60 as its no-action reference. Activation is not backlog recovery. No window includes drain. Rolling traces use trailing 30-second windows at 2-second steps, plotted at the window end.",
+  "limitations": "Only completed evaluation records contribute to window p99. Pending records are reported alongside it. Post-action durations vary with activation time and exclude the preceding action transition; they do not measure total intervention cost. The interval includes previously queued messages and subsequent backlog recovery. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.",
   "runs": [
     {
       "arm": "keep3",
@@ -40,7 +40,27 @@
           "acknowledged_evaluation_messages_pending_at_end": 182654,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790669375.878759,
+          "end_epoch": 1790669915.878759,
+          "duration_seconds": 540.0,
+          "distinct_completions": 228766,
+          "completion_throughput_per_second": 423.64074074074074,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 228766,
+          "completion_window_p99_seconds": 309.9041006565094,
+          "completion_window_mean_seconds": 135.44466435696455,
+          "acknowledged_evaluation_messages_pending_at_end": 182654,
+          "start_after_evaluation_seconds": 60.0,
+          "end_after_evaluation_seconds": 600.0
         }
+      },
+      "post_action_boundary": {
+        "epoch": 1790669375.878759,
+        "after_evaluation_seconds": 60.0,
+        "basis": "scheduled reference; no action",
+        "evidence_sha256": {}
       },
       "rolling": [
         {
@@ -3815,7 +3835,27 @@
           "acknowledged_evaluation_messages_pending_at_end": 183386,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790677351.8841028,
+          "end_epoch": 1790677891.8841028,
+          "duration_seconds": 540.0,
+          "distinct_completions": 228490,
+          "completion_throughput_per_second": 423.1296296296296,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 228490,
+          "completion_window_p99_seconds": 310.8867847919464,
+          "completion_window_mean_seconds": 136.3636401630699,
+          "acknowledged_evaluation_messages_pending_at_end": 183386,
+          "start_after_evaluation_seconds": 60.0,
+          "end_after_evaluation_seconds": 600.0
         }
+      },
+      "post_action_boundary": {
+        "epoch": 1790677351.8841028,
+        "after_evaluation_seconds": 60.0,
+        "basis": "scheduled reference; no action",
+        "evidence_sha256": {}
       },
       "rolling": [
         {
@@ -7590,6 +7630,29 @@
           "acknowledged_evaluation_messages_pending_at_end": 54,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790671186.871548,
+          "end_epoch": 1790671694.319938,
+          "duration_seconds": 507.44839000701904,
+          "distinct_completions": 399461,
+          "completion_throughput_per_second": 787.1953244239767,
+          "acknowledged_input_per_second": 700.0002502620742,
+          "evaluation_completions_for_latency": 399461,
+          "completion_window_p99_seconds": 80.0312430858612,
+          "completion_window_mean_seconds": 10.401636130901204,
+          "acknowledged_evaluation_messages_pending_at_end": 54,
+          "start_after_evaluation_seconds": 92.55160999298096,
+          "end_after_evaluation_seconds": 600.0
+        }
+      },
+      "post_action_boundary": {
+        "epoch": 1790671186.871548,
+        "after_evaluation_seconds": 92.55160999298096,
+        "basis": "explicit active_verified event",
+        "evidence_sha256": {
+          "intervention-events.jsonl": "7ea96cf6ec7a9464c367952cbd3264b506f2ef780af325542a39a636521a9d7f",
+          "explicit-handoff-events.jsonl": "e2f01d2414e6e0aa492f2a9d24a218722b9aee9efd5581591a219b9bac33df2c"
         }
       },
       "rolling": [
@@ -11365,6 +11428,29 @@
           "acknowledged_evaluation_messages_pending_at_end": 72,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790676362.94357,
+          "end_epoch": 1790676869.8211572,
+          "duration_seconds": 506.8775873184204,
+          "distinct_completions": 400567,
+          "completion_throughput_per_second": 790.2637836467682,
+          "acknowledged_input_per_second": 700.0013590601023,
+          "evaluation_completions_for_latency": 400567,
+          "completion_window_p99_seconds": 84.59187436103821,
+          "completion_window_mean_seconds": 11.606853809106633,
+          "acknowledged_evaluation_messages_pending_at_end": 72,
+          "start_after_evaluation_seconds": 93.12241268157959,
+          "end_after_evaluation_seconds": 600.0
+        }
+      },
+      "post_action_boundary": {
+        "epoch": 1790676362.94357,
+        "after_evaluation_seconds": 93.12241268157959,
+        "basis": "explicit active_verified event",
+        "evidence_sha256": {
+          "intervention-events.jsonl": "7c2fc856a3d780841a7e187eb64b1ac40aab66aa65e0f15093d35a13547bf726",
+          "explicit-handoff-events.jsonl": "0aa6b2d0d469ffe9a632e71c76e362b9dd40ba03f7106a261bc4607588355f90"
         }
       },
       "rolling": [
@@ -15140,6 +15226,29 @@
           "acknowledged_evaluation_messages_pending_at_end": 65,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790672253.78371,
+          "end_epoch": 1790672713.955016,
+          "duration_seconds": 460.1713058948517,
+          "distinct_completions": 373051,
+          "completion_throughput_per_second": 810.6785347568836,
+          "acknowledged_input_per_second": 699.9980135084816,
+          "evaluation_completions_for_latency": 373051,
+          "completion_window_p99_seconds": 94.96520805358887,
+          "completion_window_mean_seconds": 8.998494531807218,
+          "acknowledged_evaluation_messages_pending_at_end": 65,
+          "start_after_evaluation_seconds": 139.82869410514832,
+          "end_after_evaluation_seconds": 600.0
+        }
+      },
+      "post_action_boundary": {
+        "epoch": 1790672253.78371,
+        "after_evaluation_seconds": 139.82869410514832,
+        "basis": "explicit active_verified event",
+        "evidence_sha256": {
+          "intervention-events.jsonl": "631f8091f02bd1f3a48f61d4e7bd9113dc62a8e9e43f4f4a1a1849bca479066a",
+          "explicit-handoff-events.jsonl": "486f8c29a2d393ed45c9fbdf8c749b27ac7700e268ce1792565c29a2c551fafe"
         }
       },
       "rolling": [
@@ -18918,6 +19027,29 @@
           "acknowledged_evaluation_messages_pending_at_end": 77,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790675377.1341472,
+          "end_epoch": 1790675832.906698,
+          "duration_seconds": 455.7725508213043,
+          "distinct_completions": 372204,
+          "completion_throughput_per_second": 816.6441777357733,
+          "acknowledged_input_per_second": 700.0004704651182,
+          "evaluation_completions_for_latency": 372204,
+          "completion_window_p99_seconds": 99.00842618942261,
+          "completion_window_mean_seconds": 10.003491081474271,
+          "acknowledged_evaluation_messages_pending_at_end": 77,
+          "start_after_evaluation_seconds": 144.22744917869568,
+          "end_after_evaluation_seconds": 600.0
+        }
+      },
+      "post_action_boundary": {
+        "epoch": 1790675377.1341472,
+        "after_evaluation_seconds": 144.22744917869568,
+        "basis": "explicit active_verified event",
+        "evidence_sha256": {
+          "intervention-events.jsonl": "06ac006fe3d77876450d30b941937fd340229eadc49cacdae4614a188c533aae",
+          "explicit-handoff-events.jsonl": "15c7829c6817d45093549cd79de7121b10efe15f911ff1295e7ed330f1435fd8"
         }
       },
       "rolling": [
@@ -22696,6 +22828,28 @@
           "acknowledged_evaluation_messages_pending_at_end": 70,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790673260.208,
+          "end_epoch": 1790673762.2080681,
+          "duration_seconds": 502.0000681877136,
+          "distinct_completions": 380205,
+          "completion_throughput_per_second": 757.3803752110834,
+          "acknowledged_input_per_second": 700.0038889807475,
+          "evaluation_completions_for_latency": 380205,
+          "completion_window_p99_seconds": 66.09005284309387,
+          "completion_window_mean_seconds": 5.830400404045494,
+          "acknowledged_evaluation_messages_pending_at_end": 70,
+          "start_after_evaluation_seconds": 97.99993181228638,
+          "end_after_evaluation_seconds": 600.0
+        }
+      },
+      "post_action_boundary": {
+        "epoch": 1790673260.208,
+        "after_evaluation_seconds": 97.99993181228638,
+        "basis": "native six-owner map confirmed unchanged for ten seconds",
+        "evidence_sha256": {
+          "intervention-events.jsonl": "ae5f4b8a07bdcb5a70cfc47f9b36a0f59322537bb1e212efcb2f9f2e3220e750"
         }
       },
       "rolling": [
@@ -26474,6 +26628,28 @@
           "acknowledged_evaluation_messages_pending_at_end": 78,
           "start_after_evaluation_seconds": 570,
           "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790674299.987,
+          "end_epoch": 1790674799.986891,
+          "duration_seconds": 499.99989104270935,
+          "distinct_completions": 376948,
+          "completion_throughput_per_second": 753.896164284967,
+          "acknowledged_input_per_second": 699.9981525398043,
+          "evaluation_completions_for_latency": 376948,
+          "completion_window_p99_seconds": 57.1718475818634,
+          "completion_window_mean_seconds": 3.808030857003901,
+          "acknowledged_evaluation_messages_pending_at_end": 78,
+          "start_after_evaluation_seconds": 100.00010895729065,
+          "end_after_evaluation_seconds": 600.0
+        }
+      },
+      "post_action_boundary": {
+        "epoch": 1790674299.987,
+        "after_evaluation_seconds": 100.00010895729065,
+        "basis": "native six-owner map confirmed unchanged for ten seconds",
+        "evidence_sha256": {
+          "intervention-events.jsonl": "a028315c8af48c87e9c98c1b5bc7d8d105fb05b4695c7a5fd90be45b8da7d313"
         }
       },
       "rolling": [
