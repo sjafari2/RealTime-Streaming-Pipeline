@@ -1,6 +1,6 @@
 """Compare observed completions before an action and at evaluation end.
 
-These retrospective window statistics supplement the production-cohort results.
+These completion-window statistics supplement the production-cohort results.
 They never replace whole-run p99 or the unfinished count at drain end.
 """
 import argparse
@@ -112,6 +112,8 @@ def window_metrics(series, left, right):
         evaluation_completions_for_latency=len(latencies),
         completion_window_p99_seconds=p99(latencies),
         completion_window_mean_seconds=sum(latencies)/len(latencies) if latencies else None,
+        completion_window_min_seconds=min(latencies) if latencies else None,
+        completion_window_max_seconds=max(latencies) if latencies else None,
         acknowledged_evaluation_messages_pending_at_end=
             bisect.bisect_left(series['evaluation_ack_times'], right)
             -bisect.bisect_left(series['evaluation_settled_times'], right))
@@ -196,7 +198,9 @@ def post_action_boundary(directory, manifest, row):
 def analyze(comparison_path, repository):
     source = json.loads(comparison_path.read_text())
     if sorted((r['arm'], r['run_number']) for r in source['runs']) != sorted((a, n) for a in ARMS for n in (1, 2)):
-        raise ValueError('Expected the eight twelve-partition trials')
+        raise ValueError('Expected two trials for each of the four responses')
+    hot_count = len(source['hot_partitions'])
+    aggregate_rate = source['cost_protocol']['aggregate_input_rate']
     results = []
     for row in source['runs']:
         print('Analyzing', row['run_id'], flush=True)
@@ -237,9 +241,9 @@ def analyze(comparison_path, repository):
         print('  activation to end:', boundary['after_evaluation_seconds'],
               windows['post_action_to_evaluation_end']['completion_throughput_per_second'],
               windows['post_action_to_evaluation_end']['completion_window_p99_seconds'], flush=True)
-    return dict(schema_version=2, comparison_sha256=sha(comparison_path), analysis_script_sha256=sha(__file__),
+    return dict(schema_version=3, hot_partition_count=hot_count, aggregate_input_rate=aggregate_rate, comparison_sha256=sha(comparison_path), analysis_script_sha256=sha(__file__),
         analysis_source_revision=subprocess.check_output(['git','-C',str(repository),'rev-parse','HEAD'],text=True).strip(),
-        scope='Retrospective completion-window diagnostic for the eight twelve-high-input-partition trials; not a replacement for whole-evaluation production-cohort outcomes.',
+        scope=f'Completion-window diagnostic for eight trials with {hot_count} high-input partitions at {aggregate_rate} messages/s; separate from whole-evaluation production-cohort outcomes.',
         definition='Throughput counts earliest distinct completions in [left,right), including warm-up records; p99 uses individual latencies of acknowledged evaluation-born messages whose earliest completion falls in that interval. Nearest rank; no averaging of percentiles. Completion precedes commit acknowledgment.',
         windows='Before: evaluation seconds [30,60). Evaluation end: [570,600). Post-action: [verified activation,600), using explicit active_verified or a native six-owner map confirmed unchanged for ten seconds; Keep 3 uses second 60 as its no-action reference. Activation is not backlog recovery. No window includes drain. Rolling traces use trailing 30-second windows at 2-second steps, plotted at the window end.',
         limitations='Only completed evaluation records contribute to window p99. Pending records are reported alongside it. Post-action durations vary with activation time and exclude the preceding action transition; they do not measure total intervention cost. The interval includes previously queued messages and subsequent backlog recovery. Latency uses original unadjusted producer and consumer clocks, so small differences require caution. Later recovery must not be inferred from p99 alone.',
@@ -271,11 +275,11 @@ def write_outputs(data, output):
         lines.append('| ' + LABELS[r['arm']] + ' | ' + str(r['run_number']) + ' | '
             + ' | '.join(formatted) + f" | {window['evaluation_completions_for_latency']:,} |")
         post_latex.append(' & '.join([LABELS[r['arm']], str(r['run_number']), *formatted]) + r' \\')
-    lines += ['', data['limitations'], '', 'All original event and summary hashes were checked against the published comparison. Activation boundaries were checked against the retained handoff journals or lag snapshots and the original transition summary; journal hashes are retained. Admission, completion, unfinished, whole-run p99 and throughput were replayed and matched before calculating windows.', '',
-        '![Completion throughput, p99 and pending work](figures/twelve-partition-action-windows.png)', '',
+    lines += ['', data['limitations'], '', 'All event and summary hashes were checked against the source comparison. Activation boundaries were checked against the retained handoff journals or lag snapshots and the original transition summary; journal hashes are retained. Admission, completion, unfinished, whole-run p99 and throughput were replayed and matched before calculating windows.', '',
+        '![Completion throughput, p99 and pending work](figures/action-windows.png)', '',
         'Reproduce from the retained raw evidence at the repository root:', '', '```bash',
         'python3 experiments/four-condition-20260929/analyze_action_windows.py \\',
-        '  experiment-records/four-condition-20260929/comparison.json \\',
+        '  /path/to/comparison.json \\',
         '  --output /path/to/analysis-output', '```', '',
         'The output directory contains the numerical record, table rows and PNG/PDF plots. No cluster access or new performance trial is required.', '']
     (output/'ACTION_WINDOWS.md').write_text('\n'.join(lines))
@@ -298,7 +302,7 @@ def plot(data, output):
             axes[i,col].plot(x,[p[key] for p in points],color=COLORS[r['arm']],lw=1.5)
     for col in range(2):
         axes[0,col].set_title(f'Run {col+1}',fontsize=12)
-        axes[0,col].axhline(700,color='#777777',ls='--',lw=.8)
+        axes[0,col].axhline(data.get('aggregate_input_rate', 700),color='#777777',ls='--',lw=.8)
         axes[1,col].set_yscale('log')
         axes[2,col].set_yscale('symlog',linthresh=10)
         axes[2,col].set_xlabel('Minutes since evaluation began')
@@ -312,15 +316,15 @@ def plot(data, output):
     axes[0,0].set_ylabel('Completion throughput\n(messages/s)')
     axes[1,0].set_ylabel('Completed-message p99\n(seconds; logarithmic)')
     axes[2,0].set_ylabel('Pending evaluation messages\n(linear below 10; log above)')
-    fig.suptitle('Twelve high-input partitions: performance around intervention',fontsize=14,y=.985)
+    fig.suptitle(f"{data.get('hot_partition_count', 12)} high-input partitions: performance around intervention",fontsize=14,y=.985)
     handles=[Line2D([0],[0],color=COLORS[a],lw=2,label=LABELS[a]) for a in ARMS]
     fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.52,.952),ncol=4,frameon=False,fontsize=10)
     fig.subplots_adjust(left=.12,right=.98,bottom=.17,top=.885,hspace=.22,wspace=.1)
     fig.text(.52,.035,'Top two rows: trailing 30-second windows, plotted every 2 seconds at window end.\n'
         'P99 excludes warm-up records; throughput includes their completions. Pending count is instantaneous.\n'
-        'Dotted: scheduled action at minute 1. Shaded: table windows. Dashed: 700 messages/s target input.',ha='center',fontsize=9)
+        f"Dotted: scheduled action at minute 1. Shaded: table windows. Dashed: {data.get('aggregate_input_rate', 700)} messages/s target input.",ha='center',fontsize=9)
     for suffix in ('png','pdf'):
-        fig.savefig(output/('twelve-partition-action-windows.'+suffix),dpi=180)
+        fig.savefig(output/('action-windows.'+suffix),dpi=180)
     plt.close(fig)
 
 

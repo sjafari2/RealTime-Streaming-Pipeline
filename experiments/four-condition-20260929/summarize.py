@@ -222,7 +222,7 @@ def campaign_design(campaign):
             {(arm,n) for arm,n,_ in order}!={(arm,n) for arm in arms for n in (1,2)} or
             any(r.get('validation',{}).get('status')!='passed' for r in campaign['runs'])):
         raise ValueError('All planned verified trials in order and restoration are required')
-    if protocol['aggregate_input_rate'] not in (700,800):
+    if protocol['aggregate_input_rate'] not in (600,700,800):
         raise ValueError('Unreviewed aggregate rate')
     return arms,protocol['aggregate_input_rate']
 
