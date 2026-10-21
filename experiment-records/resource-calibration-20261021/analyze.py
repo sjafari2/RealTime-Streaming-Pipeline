@@ -17,7 +17,11 @@ outcome = load(run/'outcome-summary.json')
 lag = load(run/'lag-summary.json')
 audit = load(run/'measurement-audit.json')
 execution = load(run/'execution-summary.json')
-assert load(run/'runner-status.json')['status'] in ('complete', 'interrupted_or_failed')
+runner_status = load(run/'runner-status.json')
+post_validation = load(run/'post-run-validation.json') if (run/'post-run-validation.json').exists() else None
+assert runner_status['status'] in ('complete', 'interrupted_or_failed') or (
+    post_validation and post_validation['status'] == 'complete'
+    and not post_validation['validity_failures'] and not post_validation['measurement_issues'])
 assert not outcome['validity_failures'] and not audit['issues']
 before = {r['pod']: r for r in load(work/'cgroup-before.json')['pods']}
 after = load(work/'cgroup-after.json')['pods']
@@ -104,5 +108,8 @@ print('Cohorts:',json.dumps(dict(cohorts),indent=2))
 
 if (work/'early-stop-decision.json').exists():
     record['early_stop']=load(work/'early-stop-decision.json')
-record['runner_status']=load(run/'runner-status.json')
+record['runner_status']=runner_status
+if post_validation:
+    record['post_run_validation']=post_validation
+    record['source_sha256']['post-run-validation.json']=hashlib.sha256((run/'post-run-validation.json').read_bytes()).hexdigest()
 a.output.write_text(json.dumps(record,indent=2,allow_nan=False)+'\n')

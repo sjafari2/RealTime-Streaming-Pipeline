@@ -43,4 +43,35 @@ The summaries preserve actual phase boundaries, runner interruption status, sour
 
 Raw producer and consumer events, Prometheus exports and run manifests remain in separate result storage. Verified local compressed copies are described in [the first backup record](early-stop-backup-check.json) and [the retest backup record](retest-backup-check.json). Each archived file was checked by size and SHA-256. These copies are on the same computer and do not replace an independent off-site backup. Kernel clock diagnostics report synchronization status, not an independently established cross-node timing-error bound. Missing peak-memory counters remain unavailable; container peaks cover the container's lifetime and can include earlier runs and evidence transfers.
 
-The next calibration lowers aggregate input to 600 messages/s with the higher consumer allocation. Acceptance requires sustained-input evidence, achieved input rate and measurement coverage; successful drain alone is insufficient.
+## Balanced input at 600 messages/s
+
+Run `run-20261021-055708` completed the full one-minute warm-up, twenty-minute evaluation and two-minute drain. Each producer targeted 200 messages/s, with the higher consumer allocation retained. No scaling or reassignment was applied.
+
+| Metric | Result |
+|---|---:|
+| Acknowledged evaluation messages | 720,000 |
+| Achieved aggregate input | 600.00 messages/s |
+| Distinct completions during evaluation | 599.99 messages/s |
+| Unfinished evaluation messages after drain | 0 / 720,000 |
+| Mean completion latency | 0.130 s |
+| Completion p99 | 0.321 s |
+| One-second deadline misses | 208 / 720,000 (0.0289%) |
+| Processing backlog at first / last valid observation | 86 / 79 offsets |
+| Maximum observed processing backlog | 142 offsets |
+| Final ten-minute net backlog growth | +0.015 offsets/s |
+| Valid lag coverage | 99.83% |
+
+Backlog fluctuated around a low level throughout continuing input. This supports 600 messages/s as a sustainable setting over this observation on the recorded placement; it is one calibration, not an infinite-horizon guarantee. The final ten-minute endpoint increase was nine offsets amid repeated rises and falls, rather than the sustained accumulation observed at 700 messages/s.
+
+Consumer container CPU use averaged approximately 0.94, 0.68 and 0.78 cores over the recorded counter interval, with zero CPU throttling in that interval. No out-of-memory event or restart occurred during the experiment. Process CPU and RSS, container counters, requests, limits and coverage are retained separately in the summary. Mean lag skew was 3.78 despite low absolute backlog: a relative skew ratio alone does not establish processing overload.
+
+The six client pods were recreated after the earlier cleanup and Kubernetes changed several node assignments. Source, workload-generation scheme, application work and resources match the higher-allocation 700 check, but placement does not. The two rates therefore do not form a comparison that changes only input rate. [Saved starting conditions](balanced600-starting-conditions.json) preserve both placements.
+
+[Summary](balanced600-summary.json) · [Configuration](balanced600-config.yaml) · [Lag, growth and skew](balanced600-lag.pdf) · [Throughput, CPU and memory](balanced600-overview.pdf) · [Verified backup](balanced600-backup-check.json)
+
+### Local analysis recovery
+
+The scheduled experiment finished, but its first local outcome analysis encountered file-read timeouts. The original failed `runner-status.json` remains unchanged. Closed producer and consumer evidence was recovered from the retained PVCs through two temporary idle role pods, with no new experiment traffic. Every recovered file matched size and SHA-256 calculated on its PVC source, and an independent local read verified those values. The active local evidence now uses lossless gzip; the original local directories were preserved separately.
+
+The recovered message analysis and measurement audit passed. [Post-run validation](balanced600-post-run-validation.json) records this recovery separately from the original runner failure. The [producer](balanced600-producer-recovery.json) and [consumer](balanced600-consumer-recovery.json) verification records, [installation record](balanced600-recovery-installation.json), and [analysis provenance](analysis-provenance.json) preserve the chain of evidence. Both client StatefulSets were returned to zero replicas after collection and recovery; their storage was retained.
+
