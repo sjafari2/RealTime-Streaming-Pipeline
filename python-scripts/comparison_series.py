@@ -65,6 +65,9 @@ def resource_line(series, name, pod, start, end, divisor):
     return x, y
 
 def throughput_bins(directory, start, end, width=10):
+    if not (math.isfinite(start) and math.isfinite(end) and math.isfinite(width)
+            and end > start and width > 0):
+        raise ValueError('Throughput bins need finite boundaries, end > start and width > 0')
     admitted, completed = {}, {}
     for path in event_paths(directory):
         with open_events(path) as stream:
@@ -79,7 +82,8 @@ def throughput_bins(directory, start, end, width=10):
                 if start <= timestamp < end:
                     identity = event['message_id']
                     target[identity] = min(target.get(identity, timestamp), timestamp)
-    edges = np.arange(start, end + width, width)
+    # Early-stopped runs can end within a bin; divide by its observed duration.
+    edges = np.append(np.arange(start, end, width), end)
     x = ((edges[:-1]+edges[1:])/2-start)/60
     return x, [np.histogram(list(values.values()), bins=edges)[0]/np.diff(edges)
                for values in (admitted, completed)]
