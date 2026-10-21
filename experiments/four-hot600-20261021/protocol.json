@@ -65,7 +65,7 @@
   "technical_checks": [
     "Previously passed nonempty redistribution monitoring gate",
     "Empty-topic native assignment capture and matching restart",
-    "Low-load native 3-to-6 technical trial: 300 aggregate msg/s, 20 warm-up + 100 evaluation + 60 drain; all acknowledgments completed; valid offsets and six active partition owners"
+    "Low-load native 3-to-6 technical trial: 300 aggregate msg/s, 20 warm-up + 220 evaluation + 60 drain; all acknowledgments completed; valid offsets and six active partition owners. The longer check allows image startup and three unchanged readiness observations before production ends."
   ],
   "processing_interruption": "For explicit actions, retain the verified global last-completion to first-post-resume-processing gap and per-process released-to-resumed intervals. For native scaling, record each moved partition's last old-owner completion to first new-owner processing start, and owner callbacks; a group need not have a global processing pause. Record any observed global no-processing interval separately without treating unaffected consumers as paused.",
   "transition_and_accumulation": "Explicit release_requested to active_verified; also retain scheduled and actual decision times. Native: actual scale decision to first complete fresh six-owner snapshot followed by 10 seconds of valid unchanged ownership. Count distinct acknowledged-but-unfinished records at each endpoint (including warm-up), and report the net change. This is observed accumulation, not causal excess over a no-action counterfactual or exact Kafka offset lag.",

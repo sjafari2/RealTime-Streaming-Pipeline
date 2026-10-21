@@ -41,7 +41,7 @@ def prepared(arm,number,seed,reference=None,hot=None,gate=False,aggregate_rate=7
                 CONSUMER_ASSIGNMENT_MODE='cooperative' if native else 'explicit',
                 CONSUMER_STATIC_MEMBERSHIP='true' if native else 'false')
     if gate and native:
-        data.update(TARGET_RATE='100',EXP_DURATION_SEC='120')
+        data.update(TARGET_RATE='100',EXP_DURATION_SEC='240' if aggregate_rate == 600 else '120')
     data['CONSUMER_GROUP_ID']=data['EXP_ID']+'-'+str(time.time_ns())
     if hot is None:hot=list(map(int,data['SKEW_PARTITION'].split(',')))[:hot_count]
     if len(hot)!=hot_count:raise ValueError('Hot set differs from the protocol')
@@ -96,6 +96,7 @@ def campaign_protocol(aggregate_rate=700,targeted_only=False,hot_count=12,deadli
         protocol['study_purpose'] = ('Compare four scheduled responses after a separate balanced calibration at 600 aggregate messages/s. '
             'This deployment uses revised client resources and placement. Keep historical 700 messages/s results separate and retain every valid outcome.')
         protocol['calibration_reference'] = 'run-20261021-055708'
+        protocol['technical_checks'][-1] = ('Low-load native 3-to-6 technical trial: 300 aggregate msg/s, 20 warm-up + 220 evaluation + 60 drain; all acknowledgments completed; valid offsets and six active partition owners. The longer check allows image startup and three unchanged readiness observations before production ends.')
         protocol['slo_rationale'] = ('One second is the primary experimental completion deadline and 0.5 seconds is a prespecified sensitivity threshold. '
             'The 600 messages/s calibration recorded completion p99 of 0.321 seconds. This is context, not a validated application SLA.')
         protocol['performance_windows'] = dict(before=[30, 60], evaluation_end=[570, 600],

@@ -191,3 +191,13 @@ def test_recalibrated_600_block_has_four_responses_twice(monkeypatch):
         assert config['data']['DRAIN_SECONDS'] == '120'
         assert config['data']['APP_CPU_ITERATIONS'] == '2000'
         assert plan['after_evaluation_start_seconds'] == 60
+
+
+def test_600_native_gate_allows_startup_without_changing_performance_duration():
+    config, plan = module.prepared('kafka_scale6', 0, 81, gate=True, aggregate_rate=600, hot_count=4, deadline_ms=1000)
+    assert config['data']['EXP_DURATION_SEC'] == '240'
+    assert config['data']['WARMUP_SECONDS'] == '20'
+    assert float(config['data']['TARGET_RATE']) * 3 == 300
+    assert plan['after_evaluation_start_seconds'] == 20
+    performance, _ = module.prepared('kafka_scale6', 1, 81, aggregate_rate=600, hot_count=4, deadline_ms=1000)
+    assert performance['data']['EXP_DURATION_SEC'] == '660'
