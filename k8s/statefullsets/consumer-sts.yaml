@@ -134,14 +134,14 @@ spec:
         ports:
         - name: metrics
           containerPort: 8002
-        # Resource headroom for the extended 700 messages/s calibration.
+        # Resource allocation for the 700 messages/s capacity check.
         resources:
           requests:
-            cpu: "1250m"
-            memory: "640Mi"
-          limits:
-            cpu: "1500m"
+            cpu: "2"
             memory: "768Mi"
+          limits:
+            cpu: "2400m"
+            memory: "920Mi"
         volumeMounts:
         - name: consumer-merge-data
           mountPath: /app/consumer-merge-data
