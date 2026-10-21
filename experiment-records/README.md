@@ -18,4 +18,4 @@ Run 1 and Run 2 columns refer to separate trials of each response. P99 is a whol
 
 Earlier campaigns, supplementary trials and superseded reports are preserved on [archive/pre-cleanup-20261008](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008/experiment-records). They use different designs or deployment stages and are not pooled into these 24 trials. This selection follows the main proposal, not the direction of the outcomes.
 
-The separate [October 20 resource and deployment calibration](resource-sizing-20261020/README.md) records the replacement producers, reduced allocations and a short balanced test. It is not pooled with the 24 main-proposal trials.
+The separate [October 20 resource and deployment calibration](resource-sizing-20261020/README.md) records the replacement producers, reduced allocations and a short balanced test. It is not pooled with the 24 main-proposal trials. The [October 21 capacity recalibration](resource-calibration-20261021/README.md) records subsequent early-stopped checks at 700 messages/s and a lower-rate check; these also remain separate from the historical performance comparisons.

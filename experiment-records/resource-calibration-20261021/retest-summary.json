@@ -1,0 +1,730 @@
+{
+  "run_id": "run-20261021-054139",
+  "code_revision": "fe9d109a3e2ab691c762ffc2025366ba05801c1f",
+  "purpose": "Separate deployment/resource calibration; not added to the 24 main-proposal trials.",
+  "outcome": {
+    "run_id": "run-20261021-054139",
+    "validity_failures": [],
+    "completion_deadline_outcomes": [
+      {
+        "threshold_ms": 1000.0,
+        "primary": true,
+        "admitted_evaluation_cohort": 101926,
+        "completed_by_drain": 101926,
+        "incomplete_by_drain": 0,
+        "late_completions": 34341,
+        "unfinished_deadline_misses": 0,
+        "deadline_misses": 34341,
+        "deadline_censored": 0,
+        "deadline_miss_fraction": 0.33692090340050623,
+        "observed_completion_deadline_miss_fraction": 0.31920551146206844
+      }
+    ],
+    "useful_throughput_per_second": 681.8546036180359,
+    "evaluation_seconds": 145.60875511169434,
+    "admitted_messages_per_second": 699.9991169611612,
+    "observed_completion_deadline_miss_fraction": 0.31920551146206844,
+    "valid_completion_attempts_in_evaluation": 99284,
+    "admitted_evaluation_cohort": 101926,
+    "completed_by_drain": 101926,
+    "incomplete_by_drain": 0,
+    "deadline_misses": 34341,
+    "deadline_censored": 0,
+    "deadline_miss_fraction": 0.33692090340050623,
+    "duplicate_completion_attempts": 0,
+    "invalid_clock_observations": 0,
+    "failed_or_cancelled_sends_whole_run": 0,
+    "unresolved_sends_whole_run": 0,
+    "completed_attempts_per_second": 681.8546036180359,
+    "admitted_cohort_valid_completion_count": 101926,
+    "admitted_cohort_completion_latency_sum_seconds": 326544.04428601265,
+    "admitted_cohort_completion_mean_seconds": 3.203736478288294,
+    "admitted_cohort_completion_min_seconds": 0.01797771453857422,
+    "admitted_cohort_completion_max_seconds": 16.184476613998413,
+    "admitted_cohort_completion_p50_seconds": 0.11940169334411621,
+    "admitted_cohort_completion_p95_seconds": 13.824368000030518,
+    "admitted_cohort_completion_p99_seconds": 15.732318639755249,
+    "incomplete_fraction": 0.0,
+    "notes": [
+      "Minimum, maximum, mean and p50/p95/p99 exclude unfinished messages; always report incomplete/deadline results alongside them.",
+      "Percentiles use nearest rank among valid cohort completions by the drain bound.",
+      "Start/processing diagnostic counts may be lower for older evidence without those fields.",
+      "Clock uncertainty still needs a Nautilus measurement.",
+      "Histograms and final counters remain available in the Prometheus export and final.prom files."
+    ]
+  },
+  "lag": {
+    "coverage_fraction": 0.9889515221082669,
+    "first_valid_processing_backlog": 839.0,
+    "first_valid_relative_evaluation_seconds": 0.0003960132598876953,
+    "last_valid_processing_backlog": 3416.0,
+    "last_valid_relative_evaluation_seconds": 144.0003960132599,
+    "peak_processing_backlog": 3416.0,
+    "peak_partition_lag": 188.0,
+    "equal_weight_mean_valid_rolling_backlog": 1976.7310734463276,
+    "equal_weight_mean_valid_rolling_skew": 3.533216730382025,
+    "parameters": {
+      "window_samples": 15,
+      "hot_k": 1.0,
+      "minimum_lag": 10.0,
+      "persistence": 0.8,
+      "max_gap": 3.0
+    }
+  },
+  "ownership_events_during_production": [],
+  "resources": [
+    {
+      "pod": "consumer-sts-0",
+      "node": "k8s-chase-ci-01.calit2.optiputer.net",
+      "process_evaluation_metrics": {
+        "consumer_cpu_percent": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 91.10347222222222,
+          "observed_integral": 13118.9,
+          "peak_sampled": 101.5
+        },
+        "consumer_memory_bytes": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 34287672.88888889,
+          "observed_integral": 4937424896.0,
+          "peak_sampled": 34324480.0
+        }
+      },
+      "counter_interval_start_relative_evaluation_seconds": 3.469912052154541,
+      "counter_interval_end_relative_evaluation_seconds": 125.95739150047302,
+      "container_cpu_mean_cores_over_counter_interval": 0.9154731120686751,
+      "throttled_cpu_periods": 0,
+      "cpu_periods": 1225,
+      "throttled_period_fraction": 0.0,
+      "cumulative_throttled_seconds": 0.0,
+      "container_peak_memory_bytes_since_start": 85401600,
+      "container_memory_limit_bytes": 964689920,
+      "memory_event_counts": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "restart_counts": {
+        "consumer-container": 0
+      }
+    },
+    {
+      "pod": "consumer-sts-1",
+      "node": "k8s-chase-ci-07.calit2.optiputer.net",
+      "process_evaluation_metrics": {
+        "consumer_cpu_percent": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 101.58611111111112,
+          "observed_integral": 14628.400000000001,
+          "peak_sampled": 102.7
+        },
+        "consumer_memory_bytes": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 37926314.666666664,
+          "observed_integral": 5461389312.0,
+          "peak_sampled": 40882176.0
+        }
+      },
+      "counter_interval_start_relative_evaluation_seconds": 3.487187385559082,
+      "counter_interval_end_relative_evaluation_seconds": 126.0144054889679,
+      "container_cpu_mean_cores_over_counter_interval": 1.0164353025210418,
+      "throttled_cpu_periods": 0,
+      "cpu_periods": 1225,
+      "throttled_period_fraction": 0.0,
+      "cumulative_throttled_seconds": 0.0,
+      "container_peak_memory_bytes_since_start": 66060288,
+      "container_memory_limit_bytes": 964689920,
+      "memory_event_counts": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "restart_counts": {
+        "consumer-container": 0
+      }
+    },
+    {
+      "pod": "consumer-sts-2",
+      "node": "edex.calit2.optiputer.net",
+      "process_evaluation_metrics": {
+        "consumer_cpu_percent": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 42.469444444444456,
+          "observed_integral": 6115.600000000001,
+          "peak_sampled": 46.9
+        },
+        "consumer_memory_bytes": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 33710620.44444445,
+          "observed_integral": 4854329344.0,
+          "peak_sampled": 33742848.0
+        }
+      },
+      "counter_interval_start_relative_evaluation_seconds": 3.4134483337402344,
+      "counter_interval_end_relative_evaluation_seconds": 125.96336197853088,
+      "container_cpu_mean_cores_over_counter_interval": 0.42504558714729224,
+      "throttled_cpu_periods": 0,
+      "cpu_periods": 1226,
+      "throttled_period_fraction": 0.0,
+      "cumulative_throttled_seconds": 0.0,
+      "container_peak_memory_bytes_since_start": 58138624,
+      "container_memory_limit_bytes": 964689920,
+      "memory_event_counts": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "restart_counts": {
+        "consumer-container": 0
+      }
+    },
+    {
+      "pod": "producer-workers-0",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "process_evaluation_metrics": {
+        "producer_cpu_percent": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 6.458333333333333,
+          "observed_integral": 930.0,
+          "peak_sampled": 7.5
+        },
+        "producer_memory_bytes": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 32843434.666666668,
+          "observed_integral": 4729454592.0,
+          "peak_sampled": 32862208.0
+        }
+      },
+      "counter_interval_start_relative_evaluation_seconds": 3.3754940032958984,
+      "counter_interval_end_relative_evaluation_seconds": 125.98339581489563,
+      "container_cpu_mean_cores_over_counter_interval": 0.0649116646024118,
+      "throttled_cpu_periods": 0,
+      "cpu_periods": 1226,
+      "throttled_period_fraction": 0.0,
+      "cumulative_throttled_seconds": 0.0,
+      "container_peak_memory_bytes_since_start": 155160576,
+      "container_memory_limit_bytes": 201326592,
+      "memory_event_counts": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "restart_counts": {
+        "producer-container": 0
+      }
+    },
+    {
+      "pod": "producer-workers-1",
+      "node": "unseenu.crbs.ucsd.edu",
+      "process_evaluation_metrics": {
+        "producer_cpu_percent": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 6.729166666666667,
+          "observed_integral": 969.0,
+          "peak_sampled": 8.0
+        },
+        "producer_memory_bytes": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 31811356.444444444,
+          "observed_integral": 4580835328.0,
+          "peak_sampled": 31834112.0
+        }
+      },
+      "counter_interval_start_relative_evaluation_seconds": 3.3862602710723877,
+      "counter_interval_end_relative_evaluation_seconds": 125.9423041343689,
+      "container_cpu_mean_cores_over_counter_interval": 0.06741266068620448,
+      "throttled_cpu_periods": 1,
+      "cpu_periods": 1225,
+      "throttled_period_fraction": 0.0008163265306122449,
+      "cumulative_throttled_seconds": 0.139075,
+      "container_peak_memory_bytes_since_start": null,
+      "container_memory_limit_bytes": 201326592,
+      "memory_event_counts": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0
+      },
+      "restart_counts": {
+        "producer-container": 0
+      }
+    },
+    {
+      "pod": "producer-workers-2",
+      "node": "k8s-gen4-05.calit2.optiputer.net",
+      "process_evaluation_metrics": {
+        "producer_cpu_percent": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 6.784722222222222,
+          "observed_integral": 977.0,
+          "peak_sampled": 7.5
+        },
+        "producer_memory_bytes": {
+          "covered_seconds": 144.0,
+          "requested_window_seconds": 145.60875511169434,
+          "covered_fraction": 0.9889515221082669,
+          "time_weighted_mean": 32709376.0,
+          "observed_integral": 4710150144.0,
+          "peak_sampled": 32731136.0
+        }
+      },
+      "counter_interval_start_relative_evaluation_seconds": 3.4907493591308594,
+      "counter_interval_end_relative_evaluation_seconds": 125.92682409286499,
+      "container_cpu_mean_cores_over_counter_interval": 0.06793316445408988,
+      "throttled_cpu_periods": 0,
+      "cpu_periods": 1224,
+      "throttled_period_fraction": 0.0,
+      "cumulative_throttled_seconds": 0.0,
+      "container_peak_memory_bytes_since_start": 107421696,
+      "container_memory_limit_bytes": 201326592,
+      "memory_event_counts": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "restart_counts": {
+        "producer-container": 0
+      }
+    }
+  ],
+  "producer_workloads": {
+    "producer-workers-0": {
+      "producer_workload_id": "0",
+      "workload_seed": "71",
+      "workload_rng": "sha256-workload-id-v1",
+      "workload_rng_seed_hex": "b17d81b19254175b"
+    },
+    "producer-workers-1": {
+      "producer_workload_id": "1",
+      "workload_seed": "71",
+      "workload_rng": "sha256-workload-id-v1",
+      "workload_rng_seed_hex": "d69cdf01233fa903"
+    },
+    "producer-workers-2": {
+      "producer_workload_id": "2",
+      "workload_seed": "71",
+      "workload_rng": "sha256-workload-id-v1",
+      "workload_rng_seed_hex": "31c4a1127c8bf2a1"
+    }
+  },
+  "source_sha256": {
+    "manifest.json": "be1ae2729650b12ea544651bbffdf1f7cf622a3dfbcf561524816cd41ef5222c",
+    "pipeline-configmap.yaml": "4d3fca78a2e14d5dd5d57f4078b2323266eabde3dfb7adb75b3bfd220445fa0e",
+    "outcome-summary.json": "af22fdfdb7cba83441e8a2a2b35509b6e213da0288236903930f4070be3d5297",
+    "lag-summary.json": "94d3d3ca2d07a64a8324bc148c8b490fb18748455aea8cc3280c9c061309ed7c",
+    "measurement-audit.json": "a604b692661c019bcf19186c7d173d158c6df039de236028fc790ceba28460b2",
+    "execution-summary.json": "41a1cab280937d0f81c2fc774184c154a7ef90ec4870f29e89289b13633f7bf4",
+    "prometheus.json": "a019d8f2874b191606610a084d41883de9155c6a08c6108d14212ec1e323470a",
+    "runner-status.json": "9ffe1c30c949f08d7cfa65f8ab0c989a39d97c8b18f757219b04dad2fb62aa7a",
+    "stability-summary.json": "bfe263ab2b5ad457b76543ce4886e43669c5c7280222dd53428a00ab85796199"
+  },
+  "diagnostic_sha256": {
+    "cgroup-before.json": "8d0592e9da2a5c0f120ef3476f4ec19568f76bc020b05bd2a1501689f1c05144",
+    "cgroup-after.json": "8d9e19107b8e266e7362e9f3408c0a0e48c0546530766fba9d2444ac80d69140",
+    "cgroup-evaluation-start.json": "f2a213c4456c16e776d98f144a4a792d729f0ab043c36eba1036911e607f5cf9",
+    "cgroup-early-stop.json": "9bf529c5ab89d495bfda836c75da9701f0eb6bd55ff30759f1d7da82ca4de576",
+    "clocks-before.json": "5a63b5e8af3558a8a09df8a96376b6d653ebea05ad954b702f2b5fa7efe37f05",
+    "clocks-after.json": "c1ecfc0422fb61d37901ba8494e41168c3e15b54e2bc04ad45d3bacfc3e614fa",
+    "pods-running.json": "bdbb4d04b1c728a8c74903f38a72bf260a30df819771516be54e679464600f04",
+    "node-hardware.json": "57f02f23d95011828cbad7c4e3a197da63f4c54688df5da687bc355e6318e197"
+  },
+  "limitations": [
+    "Finite calibration observation. Status and actual phase boundaries are reported explicitly; no infinite-horizon stability claim or isolated resource-effect estimate.",
+    "Cgroup counter intervals are timed separately and include a small amount of preparation/drain. They also include diagnostic processes; inspect the recorded boundaries before interpreting the averages.",
+    "Container memory peaks are since container startup, include more than application RSS, and were captured before the final evidence transfer. Reused producer containers can include earlier runs and transfers; unavailable kernel peak counters remain null.",
+    "Kernel clock diagnostics are not an independently verified bound on cross-node clock error.",
+    "All messages completing during drain does not establish stability under continuing input."
+  ],
+  "per_consumer_cohort": {
+    "consumer-sts-0": {
+      "partitions": 20,
+      "admitted_messages": 33831,
+      "completed_cohort_messages": 33831,
+      "incomplete_messages": 0,
+      "valid_completion_count": 33831,
+      "completion_latency_sum_seconds": 4392.830731868744,
+      "admission_messages_per_second": 232.34179822531095,
+      "completion_mean_seconds": 0.1298463164514423
+    },
+    "consumer-sts-1": {
+      "partitions": 20,
+      "admitted_messages": 34302,
+      "completed_cohort_messages": 34302,
+      "incomplete_messages": 0,
+      "valid_completion_count": 34302,
+      "completion_latency_sum_seconds": 319432.1731584072,
+      "admission_messages_per_second": 235.5764938288734,
+      "completion_mean_seconds": 9.312348351653174
+    },
+    "consumer-sts-2": {
+      "partitions": 20,
+      "admitted_messages": 33793,
+      "completed_cohort_messages": 33793,
+      "incomplete_messages": 0,
+      "valid_completion_count": 33793,
+      "completion_latency_sum_seconds": 2719.0403957366943,
+      "admission_messages_per_second": 232.08082490697683,
+      "completion_mean_seconds": 0.08046164577683823
+    }
+  },
+  "diagnostic_cohort_latencies": {
+    "start_seconds": {
+      "observation_count": 101926,
+      "mean": 3.2006797645875293,
+      "p50": 0.11628389358520508,
+      "p95": 13.819931507110596,
+      "p99": 15.728733777999878
+    },
+    "processing_seconds": {
+      "observation_count": 101926,
+      "mean": 0.0030559187310285935,
+      "p50": 0.003534862073138356,
+      "p95": 0.00435389400809072,
+      "p99": 0.004404379986226559
+    }
+  },
+  "correctness": {
+    "conflicting_message_identities": 0,
+    "conflicting_offset_identities": 0,
+    "within_epoch_ordering_violations": 0,
+    "within_epoch_ordering_comparisons": 144767,
+    "events_missing_partition_metadata": 0,
+    "application_effects_checked": false,
+    "permanent_message_loss_established": false
+  },
+  "stability": {
+    "run_id": "run-20261021-054139",
+    "windows": {
+      "evaluation_minutes_0_2": {
+        "start": 1792583016.216604,
+        "end": 1792583161.825359,
+        "covered_seconds": 144.0,
+        "coverage_fraction": 0.9889515221082669,
+        "covered_interval_growth_offsets_per_second": 17.895833333333332,
+        "time_weighted_mean_backlog": 2005.1458333333333,
+        "peak_observed_backlog": 3416.0,
+        "segments": [
+          {
+            "start": 1792583016.217,
+            "end": 1792583160.217,
+            "growth_offsets_per_second": 17.895833333333332,
+            "first": 839.0,
+            "last": 3416.0
+          }
+        ]
+      },
+      "final_ten_minutes": {
+        "start": 1792583016.216604,
+        "end": 1792583161.825359,
+        "covered_seconds": 144.0,
+        "coverage_fraction": 0.9889515221082669,
+        "covered_interval_growth_offsets_per_second": 17.895833333333332,
+        "time_weighted_mean_backlog": 2005.1458333333333,
+        "peak_observed_backlog": 3416.0,
+        "segments": [
+          {
+            "start": 1792583016.217,
+            "end": 1792583160.217,
+            "growth_offsets_per_second": 17.895833333333332,
+            "first": 839.0,
+            "last": 3416.0
+          }
+        ]
+      }
+    },
+    "interpretation": "Continuous-production interval only. Growth summarizes covered, same-owner segments; it is not extrapolated over missing data. Inspect segment direction and coverage, input/completion throughput and resource traces. No automatic stable/unstable threshold or infinite-horizon guarantee."
+  },
+  "timings_seconds": {
+    "warmup": 60.0,
+    "evaluation": 145.60875511169434,
+    "drain": 120.0
+  },
+  "deployed_pods": [
+    {
+      "pod": "consumer-sts-0",
+      "uid": "0259e31a-136c-439e-a34d-b45d6ecaed94",
+      "node": "k8s-chase-ci-01.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          }
+        }
+      ],
+      "image_ids": [
+        "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476"
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "uid": "dfa5ee1e-b9d8-48e3-b541-916872aca621",
+      "node": "k8s-chase-ci-07.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          }
+        }
+      ],
+      "image_ids": [
+        "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476"
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "uid": "b9a27af6-52ea-4bdd-9a36-fe8db7c47824",
+      "node": "edex.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          }
+        }
+      ],
+      "image_ids": [
+        "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476"
+      ]
+    },
+    {
+      "pod": "producer-workers-0",
+      "uid": "bb6c4ecb-48a4-4153-bfee-41f58f6932d3",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          }
+        }
+      ],
+      "image_ids": [
+        "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7"
+      ]
+    },
+    {
+      "pod": "producer-workers-1",
+      "uid": "bd5ee41d-bde2-485a-90c5-048707ba4484",
+      "node": "unseenu.crbs.ucsd.edu",
+      "containers": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          }
+        }
+      ],
+      "image_ids": [
+        "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7"
+      ]
+    },
+    {
+      "pod": "producer-workers-2",
+      "uid": "78cd10c2-797e-431d-90a9-e5ce6d336133",
+      "node": "k8s-gen4-05.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          }
+        }
+      ],
+      "image_ids": [
+        "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7"
+      ]
+    }
+  ],
+  "node_hardware": {
+    "rows": [
+      {
+        "pod": "consumer-sts-0",
+        "node": "k8s-chase-ci-01.calit2.optiputer.net",
+        "observed_epoch": 1792582907.7342029,
+        "result": {
+          "architecture": "x86_64",
+          "models": {
+            "Intel(R) Xeon(R) Gold 6136 CPU @ 3.00GHz": 48
+          },
+          "visible_logical_cpus": 48,
+          "process_affinity_cpus": 45
+        }
+      },
+      {
+        "pod": "consumer-sts-1",
+        "node": "k8s-chase-ci-07.calit2.optiputer.net",
+        "observed_epoch": 1792582907.6698601,
+        "result": {
+          "architecture": "x86_64",
+          "models": {
+            "Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz": 72
+          },
+          "visible_logical_cpus": 72,
+          "process_affinity_cpus": 68
+        }
+      },
+      {
+        "pod": "consumer-sts-2",
+        "node": "edex.calit2.optiputer.net",
+        "observed_epoch": 1792582907.7519512,
+        "result": {
+          "architecture": "x86_64",
+          "models": {
+            "Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz": 40
+          },
+          "visible_logical_cpus": 40,
+          "process_affinity_cpus": 40
+        }
+      },
+      {
+        "pod": "producer-workers-0",
+        "node": "k8s-gen4-03.calit2.optiputer.net",
+        "observed_epoch": 1792582907.6677492,
+        "result": {
+          "architecture": "x86_64",
+          "models": {
+            "AMD EPYC 7252 8-Core Processor": 16
+          },
+          "visible_logical_cpus": 16,
+          "process_affinity_cpus": 14
+        }
+      },
+      {
+        "pod": "producer-workers-1",
+        "node": "unseenu.crbs.ucsd.edu",
+        "observed_epoch": 1792582907.6497102,
+        "result": {
+          "architecture": "x86_64",
+          "models": {
+            "Intel(R) Core(TM) i9-9820X CPU @ 3.30GHz": 20
+          },
+          "visible_logical_cpus": 20,
+          "process_affinity_cpus": 17
+        }
+      },
+      {
+        "pod": "producer-workers-2",
+        "node": "k8s-gen4-05.calit2.optiputer.net",
+        "observed_epoch": 1792582907.786497,
+        "result": {
+          "architecture": "x86_64",
+          "models": {
+            "AMD EPYC 7252 8-Core Processor": 16
+          },
+          "visible_logical_cpus": 16,
+          "process_affinity_cpus": 15
+        }
+      }
+    ],
+    "note": "Visible host CPU counts are not exclusive allocations; other workloads may share these nodes."
+  },
+  "early_stop": {
+    "run_id": "run-20261021-054139",
+    "decision": "Stopped early after sustained backlog growth despite higher consumer requests and limits, following the requested early-stop rule.",
+    "planned_evaluation_seconds": 300,
+    "actual_evaluation_seconds": 145.60875511169434,
+    "count_as_completed_5_minute_trial": false,
+    "recorded_epoch": 1792583190.62479
+  },
+  "runner_status": {
+    "run_id": "run-20261021-054139",
+    "status": "interrupted_or_failed",
+    "issues": [
+      "The command did not complete its scheduled run."
+    ]
+  }
+}

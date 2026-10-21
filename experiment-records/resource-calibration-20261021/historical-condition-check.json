@@ -1,0 +1,248 @@
+{
+  "runs": [
+    {
+      "run_id": "run-20260923-021003",
+      "config": {
+        "TARGET_RATE": "233.33333333333334",
+        "PRODUCER_POD_COUNT": "3",
+        "CONSUMER_POD_COUNT": "3",
+        "NUM_PARTITIONS": "60",
+        "APP_CPU_ITERATIONS": "2000",
+        "APP_DELAY_MS": "0",
+        "POLL_MAX_MSG": "25",
+        "WORKLOAD_SEED": "71",
+        "SLO_THRESHOLD_MS": "99"
+      },
+      "evaluation_seconds": 1200.0,
+      "initial_consumer_resources": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "edex.calit2.optiputer.net",
+          "cpu_request_cores": 2.0,
+          "memory_request_gib": 1.0
+        },
+        {
+          "pod": "consumer-sts-1",
+          "node": "k8s-usra-01.calit2.optiputer.net",
+          "cpu_request_cores": 2.0,
+          "memory_request_gib": 1.0
+        },
+        {
+          "pod": "consumer-sts-2",
+          "node": "unseenu.crbs.ucsd.edu",
+          "cpu_request_cores": 2.0,
+          "memory_request_gib": 1.0
+        }
+      ],
+      "consumer_cpu": [
+        {
+          "pod": "consumer-sts-1",
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 36.289565943238735,
+            "observed_integral": 43474.9,
+            "peak_sampled": 40.0
+          }
+        },
+        {
+          "pod": "consumer-sts-0",
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 41.445242070116876,
+            "observed_integral": 49651.400000000016,
+            "peak_sampled": 49.8
+          }
+        },
+        {
+          "pod": "consumer-sts-2",
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 82.01944908180313,
+            "observed_integral": 98259.30000000015,
+            "peak_sampled": 95.1
+          }
+        }
+      ],
+      "outcome": {
+        "admitted_messages_per_second": 700.0,
+        "useful_throughput_per_second": 699.9966666666667,
+        "admitted_cohort_completion_p99_seconds": 0.24790263175964355,
+        "incomplete_fraction": 0.0
+      },
+      "evidence_sha256": {
+        "manifest.json": "068c9a7acde6ec468ddb2916298a52ded2ad3243ebd8c6c62892802f12ced00c",
+        "measurement-audit.json": "6c2369c7ed4c15dc4566fde7505efa6c9c6659d9ce8c0a6bb21504a7202dbe51",
+        "outcome-summary.json": "b30f6acb69a563bc45bc9825ab338c49009d01f0b1851355e6503f668468c05a"
+      }
+    },
+    {
+      "run_id": "run-20260926-221810",
+      "config": {
+        "TARGET_RATE": "233.33333333333334",
+        "PRODUCER_POD_COUNT": "3",
+        "CONSUMER_POD_COUNT": "3",
+        "NUM_PARTITIONS": "60",
+        "APP_CPU_ITERATIONS": "2000",
+        "APP_DELAY_MS": "0",
+        "POLL_MAX_MSG": "25",
+        "WORKLOAD_SEED": "71",
+        "SLO_THRESHOLD_MS": "99"
+      },
+      "evaluation_seconds": 1200.0,
+      "initial_consumer_resources": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "edex.calit2.optiputer.net",
+          "cpu_request_cores": 2.0,
+          "memory_request_gib": 1.0
+        },
+        {
+          "pod": "consumer-sts-1",
+          "node": "k8s-usra-01.calit2.optiputer.net",
+          "cpu_request_cores": 2.0,
+          "memory_request_gib": 1.0
+        },
+        {
+          "pod": "consumer-sts-2",
+          "node": "unseenu.crbs.ucsd.edu",
+          "cpu_request_cores": 2.0,
+          "memory_request_gib": 1.0
+        }
+      ],
+      "consumer_cpu": [
+        {
+          "pod": "consumer-sts-1",
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 36.54824707846414,
+            "observed_integral": 43784.80000000003,
+            "peak_sampled": 41.3
+          }
+        },
+        {
+          "pod": "consumer-sts-0",
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 42.014858096828064,
+            "observed_integral": 50333.80000000002,
+            "peak_sampled": 57.3
+          }
+        },
+        {
+          "pod": "consumer-sts-2",
+          "evaluation": {
+            "covered_seconds": 1198.0,
+            "requested_window_seconds": 1200.0,
+            "covered_fraction": 0.9983333333333333,
+            "time_weighted_mean": 79.7722036727879,
+            "observed_integral": 95567.0999999999,
+            "peak_sampled": 100.6
+          }
+        }
+      ],
+      "outcome": {
+        "admitted_messages_per_second": 700.0,
+        "useful_throughput_per_second": 699.9566666666667,
+        "admitted_cohort_completion_p99_seconds": 0.3945944309234619,
+        "incomplete_fraction": 0.0
+      },
+      "evidence_sha256": {
+        "manifest.json": "a67e66194784f3c6cd876a4136639f652ccae8aca502f887c88606e7e531210d",
+        "measurement-audit.json": "9f06bd2088a6c9326598befdcfa71277abb06929ad7927da4c068a4e5cb1f25c",
+        "outcome-summary.json": "8c0f861cd8b162d71658c57c3f3a8aa0a7add7c942ba09acd49bef69f22f2002"
+      }
+    },
+    {
+      "run_id": "run-20261021-052534",
+      "config": {
+        "TARGET_RATE": "233.33333333333334",
+        "PRODUCER_POD_COUNT": "3",
+        "CONSUMER_POD_COUNT": "3",
+        "NUM_PARTITIONS": "60",
+        "APP_CPU_ITERATIONS": "2000",
+        "APP_DELAY_MS": "0",
+        "POLL_MAX_MSG": "25",
+        "WORKLOAD_SEED": "71",
+        "SLO_THRESHOLD_MS": "1000"
+      },
+      "evaluation_seconds": 452.1265358924866,
+      "initial_consumer_resources": [
+        {
+          "pod": "consumer-sts-0",
+          "node": "k8s-chase-ci-01.calit2.optiputer.net",
+          "cpu_request_cores": 1.25,
+          "memory_request_gib": 0.625
+        },
+        {
+          "pod": "consumer-sts-1",
+          "node": "k8s-chase-ci-07.calit2.optiputer.net",
+          "cpu_request_cores": 1.25,
+          "memory_request_gib": 0.625
+        },
+        {
+          "pod": "consumer-sts-2",
+          "node": "edex.calit2.optiputer.net",
+          "cpu_request_cores": 1.25,
+          "memory_request_gib": 0.625
+        }
+      ],
+      "consumer_cpu": [
+        {
+          "pod": "consumer-sts-2",
+          "evaluation": {
+            "covered_seconds": 452.0,
+            "requested_window_seconds": 452.1265358924866,
+            "covered_fraction": 0.9997201316834086,
+            "time_weighted_mean": 43.89712389380531,
+            "observed_integral": 19841.5,
+            "peak_sampled": 58.3
+          }
+        },
+        {
+          "pod": "consumer-sts-0",
+          "evaluation": {
+            "covered_seconds": 452.0,
+            "requested_window_seconds": 452.1265358924866,
+            "covered_fraction": 0.9997201316834086,
+            "time_weighted_mean": 92.17831858407082,
+            "observed_integral": 41664.60000000001,
+            "peak_sampled": 102.7
+          }
+        },
+        {
+          "pod": "consumer-sts-1",
+          "evaluation": {
+            "covered_seconds": 452.0,
+            "requested_window_seconds": 452.1265358924866,
+            "covered_fraction": 0.9997201316834086,
+            "time_weighted_mean": 101.97101769911501,
+            "observed_integral": 46090.89999999999,
+            "peak_sampled": 103.3
+          }
+        }
+      ],
+      "outcome": {
+        "admitted_messages_per_second": 699.9987279562358,
+        "useful_throughput_per_second": 680.1370315347381,
+        "admitted_cohort_completion_p99_seconds": 47.12071776390076,
+        "incomplete_fraction": 0.0
+      },
+      "evidence_sha256": {
+        "manifest.json": "b1ad1c470e8ae654886ea9198d90f330d90577e2bd8e919c1706c700bd507d0a",
+        "measurement-audit.json": "d267d839ceee77d64a8254af8a4c5ad1b5cf026c62419742bd0982df6b886c99",
+        "outcome-summary.json": "b19064dd17183bca8bf4bdbe0194d91e37608bf435ea7240d96674d0c4f0b17d"
+      }
+    }
+  ],
+  "interpretation": "Different placement and resource declarations prevent attributing the difference solely to CPU/RAM allocation. Equal iteration counts are equal logical work, not equal execution time across machines."
+}

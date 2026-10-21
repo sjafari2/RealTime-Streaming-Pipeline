@@ -1,0 +1,120 @@
+{
+  "configuration_differences": {
+    "CONSUMER_GROUP_ID": {
+      "old": "stability-fixed3-rate700-run1-1790150964230330000",
+      "new": "resource-calibration-balanced700-long-20261021"
+    },
+    "EXP_ID": {
+      "old": "stability-fixed3-rate700-run1",
+      "new": "resource-calibration-balanced700-long-20261021"
+    },
+    "RUN_ID": {
+      "old": "run-20260923-021003",
+      "new": "run-20261021-052534"
+    },
+    "SEPARATE_BROKER_NODES": {
+      "old": null,
+      "new": "false"
+    },
+    "SLO_THRESHOLD_MS": {
+      "old": "99",
+      "new": "1000"
+    },
+    "TOPIC_TITLE": {
+      "old": "stability-fixed3-rate700-run1-balanced-R233.33333333333334-20260923-021003",
+      "new": "resource-calibration-balanced700-long-20261021-balanced-R233.33333333333334-20261021-052534"
+    }
+  },
+  "runtime": {
+    "run-20260923-021003": {
+      "producer": {
+        "event": "started",
+        "timestamp": 1790151014.4020002,
+        "python_version": "3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]",
+        "packages": {
+          "confluent-kafka": "2.12.2",
+          "prometheus-client": "0.23.1",
+          "psutil": "7.1.3",
+          "PyYAML": "6.0.3"
+        },
+        "config_sha256": "a6e896cb0f43ad03b0ef92400a71a2361bd5f2f0f4ba29aa7d4a81e21806a564",
+        "pid": 4176,
+        "outcomes_enabled": true,
+        "source_sha256": {
+          "launch.py": "731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981",
+          "producer.py": "886f182bfa36210f80a68b41ab370d2ffce4e2a9c44aa821d440d5bbf13d96cc",
+          "delete-empty-dirs.py": "cd2a8d203fadaee8107eb32d39ada9167c02e10d67757ec1d216da3fafa3f75a",
+          "pipeline_runtime.py": "083db9167a28260c491f547e9741dacb21880c27fc5ce4904a1e9fab4d474f19",
+          "render_configmap.py": "eff2905015594f38ea5d810eb5890ca6a064418bd6a37c4d5b16e109afa3ae55"
+        }
+      },
+      "consumer": {
+        "event": "started",
+        "timestamp": 1790151011.6793082,
+        "python_version": "3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]",
+        "packages": {
+          "confluent-kafka": "2.12.2",
+          "prometheus-client": "0.23.1",
+          "psutil": "7.1.3",
+          "PyYAML": "6.0.3"
+        },
+        "config_sha256": "a6e896cb0f43ad03b0ef92400a71a2361bd5f2f0f4ba29aa7d4a81e21806a564",
+        "pid": 12291,
+        "outcomes_enabled": true,
+        "source_sha256": {
+          "consumer.py": "66102d1d323f19738d429f068e718924c39d85cffc58a46e6d5a90843d514f47",
+          "launch.py": "731afdb2e8c4c2ea6398d53a60f878edebd6688855fa7ded0620e49e20cfc981",
+          "explicit_assignment.py": "67d30841f6c3084b2ee5122a2cc2708ba4105a2fe455004d1ac4c9040cd05d33",
+          "supervise.py": "35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf",
+          "delete-empty-dirs.py": "65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323",
+          "pipeline_runtime.py": "083db9167a28260c491f547e9741dacb21880c27fc5ce4904a1e9fab4d474f19",
+          "consumer1.py": "5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68"
+        }
+      }
+    },
+    "run-20261021-052534": {
+      "producer": {
+        "event": "started",
+        "timestamp": 1792581946.8880677,
+        "python_version": "3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]",
+        "packages": {
+          "confluent-kafka": "2.12.2",
+          "prometheus-client": "0.23.1",
+          "psutil": "7.1.3",
+          "PyYAML": "6.0.3"
+        },
+        "config_sha256": "ba9850e381a92e30797ca91ce292445aa09d97648453147e1b0ba31ea5226f14",
+        "pid": 60,
+        "outcomes_enabled": true,
+        "source_sha256": {
+          "launch.py": "efba77598ba085d02c0662e19e3c4e4513729e7cbec89e4a887cbd46a3fbfc07",
+          "producer.py": "b7285d4d3e97a50c87ca75b33f3488cf044ff21ef289943d7f54fc1f1c858773",
+          "pipeline_runtime.py": "56515ce11977ca85bc7b8c46768d78c5bf608f7bbc3d556e0aa4e92bee4f9d37"
+        }
+      },
+      "consumer": {
+        "event": "started",
+        "timestamp": 1792581944.2692442,
+        "python_version": "3.10.18 (main, Jul 22 2025, 01:42:24) [GCC 10.2.1 20210110]",
+        "packages": {
+          "confluent-kafka": "2.12.2",
+          "prometheus-client": "0.23.1",
+          "psutil": "7.1.3",
+          "PyYAML": "6.0.3"
+        },
+        "config_sha256": "ba9850e381a92e30797ca91ce292445aa09d97648453147e1b0ba31ea5226f14",
+        "pid": 1078,
+        "outcomes_enabled": true,
+        "source_sha256": {
+          "consumer.py": "f3c0a5d7f041c3beb45a0ceab6da460862456cd1322564dcec4b9501ba7115c1",
+          "launch.py": "efba77598ba085d02c0662e19e3c4e4513729e7cbec89e4a887cbd46a3fbfc07",
+          "explicit_assignment.py": "addf1b654e8b82239e70414974a79c920a85f05009dfd99a249bd449af1ab4ca",
+          "supervise.py": "35cfde0d94a774187bbff76c6b5fdc29f96775d9c7b36b055cd474f4d6fa00cf",
+          "delete-empty-dirs.py": "65a0f0d6d1427f6482e1ef336d780fa52e94c80908657768103d42e944ba1323",
+          "pipeline_runtime.py": "56515ce11977ca85bc7b8c46768d78c5bf608f7bbc3d556e0aa4e92bee4f9d37",
+          "consumer1.py": "5b30a22b19fb4ef7e6f690a21a173cc6d3cbc4d1bd7ec322850381586ef14e68"
+        }
+      }
+    }
+  }
+}
