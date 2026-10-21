@@ -1,0 +1,45 @@
+{
+  "verified": true,
+  "archive": "producer-and-config.tar.gz",
+  "archive_bytes": 520126976,
+  "archive_sha256": "5917ceff386a710d20569c0c0dafbbda8926bb9fb944e3f7e9b1ddc158f94cad",
+  "regular_files": 544,
+  "uncompressed_file_bytes": 6962049143,
+  "roots": {
+    "producer": {
+      "files": 447,
+      "bytes": 6959983717
+    },
+    "config": {
+      "files": 97,
+      "bytes": 2065426
+    }
+  },
+  "verification": "Every archived file SHA-256 and recorded metadata matched the manifest generated while reading the source. Gzip stream passed CRC validation.",
+  "maintenance_date": "2026-10-20",
+  "timezone": "America/Denver",
+  "scope": "Producer evidence and shared configuration backup; no performance trial",
+  "source_claims": [
+    {
+      "name": "producer-data-ucsd-20260915",
+      "uid": "007272ce-5960-4bbe-aa3a-c11da3133139",
+      "phase": "Bound"
+    },
+    {
+      "name": "pipeline-config-recovery-ucsd-20260915",
+      "uid": "f6ae55bb-f268-4274-b506-2d1411fc07c3",
+      "phase": "Bound"
+    }
+  ],
+  "source_manifest_sha256": "e2fb7233c317a4e8f59eed975a9e1953a8fdc4c12242f937da33023dce84e18d",
+  "helper_node": "k8s-gen4-03.calit2.optiputer.net",
+  "helper_removed": true,
+  "pvcs_retained": true,
+  "backup_location": "Independent local storage; raw archive excluded from Git",
+  "limitations": [
+    "The backup covers the two mounted PVCs, not the unreachable container writable layer or node-local logs.",
+    "Read-only file backup, not an atomic volume snapshot. Source membership and metadata were unchanged across transfer.",
+    "File permissions, ownership and symlinks are retained; extended ACLs and xattrs are not copied."
+  ],
+  "remaining_blocker": "API server cannot reach producer node 67.58.51.142:10250; administrator node recovery or confirmed process termination is required. PVC deletion does not repair connectivity."
+}
