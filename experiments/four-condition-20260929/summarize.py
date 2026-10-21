@@ -148,6 +148,13 @@ def diagnostic_lines(lag,start,keys):
     return [(np.array(x),np.array(y)) for y in ys]
 
 
+def sampled_mean(snapshots, key, start, end):
+    """Give each valid observation in the evaluation interval equal weight."""
+    values = [row[key] for row in snapshots if row.get('valid') and start <= row['timestamp'] < end
+              and row.get(key) is not None and math.isfinite(row[key])]
+    return sum(values)/len(values) if values else None
+
+
 def lag_metric_coverage(lag):
     fields=['total_lag','processing_backlog','mean_partition_lag','max_partition_lag','skew',
             'population_stddev','growth_offsets_per_second','processing_backlog_growth_offsets_per_second',
@@ -185,7 +192,10 @@ def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,
         useful_throughput=o['useful_throughput_per_second'],admitted_rate=o['admitted_messages_per_second'],deadline_miss_fraction=o['deadline_miss_fraction'],
         observed_completion_deadline_miss_fraction=o['observed_completion_deadline_miss_fraction'],
         deadline_threshold_ms=deadline_ms,deadline_censored=o['deadline_censored'],
-        mean_lag=lag['time_weighted_mean_lag'],peak_lag=lag['peak_sampled_lag'],lag_coverage=lag['covered_fraction'],
+        mean_lag=sampled_mean(lag['snapshots'],'total_lag',start,finish),
+        mean_skew=sampled_mean(lag['snapshots'],'skew',start,finish),
+        mean_lag_definition='Arithmetic mean of valid total-lag samples during evaluation; equal weight per observation.',
+        time_weighted_mean_lag=lag['time_weighted_mean_lag'],peak_lag=lag['peak_sampled_lag'],lag_coverage=lag['covered_fraction'],
         growth_windows={'whole_evaluation':window(lag['snapshots'],start,finish),'last_two_minutes':window(lag['snapshots'],finish-120,finish)},
         process_resources=audit['process_resources'],requested_resources_evaluation_and_drain=resource_integral(resources,start,m['drain_end_epoch'],15),
         initial_ownership=initial,config=cfg,
@@ -320,7 +330,7 @@ def main():
     lines=['# Responses to concentrated ownership','',f"{len(runs)} performance trials used a common verified starting map, all {len(campaign['hot_partitions'])} hot partitions on Consumer 2, and {aggregate_rate:,} aggregate messages/s. Every trial lasted thirteen minutes: one warm-up, ten evaluation and two drain. The second run reversed condition order.",'',
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
-    lines+=['','P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
+    lines+=['','Mean lag in the table is the arithmetic mean of valid evaluation samples. P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
         f'The growth figure uses a {growth_seconds}-second window ({a.growth_window_samples} intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery hseries. Earlier figures retain their original window settings.','',
         '| Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |','|---|---:|---:|---:|---:|']
     for s,_,_ in runs:
@@ -357,7 +367,7 @@ def main():
                 role='Primary' if outcome['primary'] else 'Sensitivity'
                 lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {outcome['threshold_ms']:g} | {role} | {outcome['late_completions']} | {outcome['unfinished_deadline_misses']} | {rate} | {outcome['deadline_censored']} |")
     lines+=['','## Defined lag diagnostics','',
-            'The table counts snapshots for which each diagnostic is defined. Window metrics need a full valid history and therefore have fewer observations. Missing values remain unavailable, never zero. Mean/max here refer to partitions at one time; time-weighted total-lag mean and peak total lag are separate run summaries. Per-partition values, hot IDs, persistence scores and persistent hot sets remain in each raw lag-summary.json.','',
+            'The table counts snapshots for which each diagnostic is defined. Window metrics need a full valid history and therefore have fewer observations. Missing values remain unavailable, never zero. Mean/max here refer to partitions at one time; the reported total-lag mean gives every valid evaluation observation equal weight. The integrated lag diagnostic and peak remain separate summaries. Per-partition values, hot IDs, persistence scores and persistent hot sets remain in each raw lag-summary.json.','',
             '| Field | '+ ' | '.join(LABELS[s['arm']]+' / '+str(s['run_number']) for s,_,_ in runs)+' |',
             '|---|'+ '---:|'*len(runs)]
     for field in runs[0][0]['lag_metric_coverage']:

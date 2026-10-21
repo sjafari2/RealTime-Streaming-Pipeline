@@ -90,3 +90,12 @@ def test_public_preparation_paths_are_relative(monkeypatch,tmp_path):
     assert m.portable_preparations(rows)==[dict(directory='results/check',validation={'status':'passed'})]
     assert rows==original
     with pytest.raises(ValueError):m.portable_preparations([dict(directory=str(tmp_path/'outside'))])
+
+
+def test_full_evaluation_signal_mean_gives_samples_equal_weight():
+    rows = [dict(timestamp=0, valid=True, total_lag=10),
+            dict(timestamp=1, valid=False, total_lag=999),
+            dict(timestamp=8, valid=True, total_lag=30),
+            dict(timestamp=10, valid=True, total_lag=90)]
+    assert m.sampled_mean(rows, 'total_lag', 0, 10) == 20
+    assert m.sampled_mean(rows, 'skew', 0, 10) is None
