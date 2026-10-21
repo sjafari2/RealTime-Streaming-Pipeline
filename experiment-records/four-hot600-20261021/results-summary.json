@@ -1,0 +1,1031 @@
+{
+  "campaign": "four-condition-20261021-071240",
+  "performance_trials": 8,
+  "status": "complete",
+  "runtime_campaign_revision": "1e81d0bd1b713410d86faa018defa40e8a4f0593",
+  "analysis_environment": {
+    "revision": "9acb7fc793e2bb91db7e84933c64d25af8d9959c",
+    "script_sha256": "90c2441ec3da03153d3487ef408f74ac33658651eee08a6222577016bfea4376",
+    "python": "3.14.0 (main, Oct  7 2025, 09:34:52) [Clang 17.0.0 (clang-1700.3.19.1)]",
+    "numpy": "2.5.4",
+    "matplotlib": "3.11.2"
+  },
+  "comparison_sha256": "e935699886459e089dc7963bc8d0847aa0e2519d0463d59a3d2358a9c10e08d3",
+  "configuration": {
+    "aggregate_target_messages_per_second": 600,
+    "partitions": 60,
+    "high_input_partitions": [
+      2,
+      5,
+      8,
+      11
+    ],
+    "high_input_fraction": 0.8,
+    "warmup_seconds": 60,
+    "evaluation_seconds": 600,
+    "drain_seconds": 120,
+    "scheduled_action_evaluation_second": 60,
+    "consumer_request": {
+      "cpu_cores": 2,
+      "memory_mib": 768
+    },
+    "consumer_limit": {
+      "cpu_cores": 2.4,
+      "memory_mib": 920
+    },
+    "seeds": [
+      81,
+      82
+    ],
+    "producer_random_sequence": "workload seed and logical producer ID, independent of pod name"
+  },
+  "runs": [
+    {
+      "arm": "keep3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261021-081142",
+      "admitted": 360000,
+      "completed": 263087,
+      "unfinished": 96913,
+      "unfinished_percent": 26.92027777777778,
+      "p99_seconds": 309.29474663734436,
+      "mean_completion_seconds": 166.90335588151757,
+      "useful_throughput": 392.245,
+      "mean_lag": 84169.24666666667,
+      "mean_skew": 14.114878637587678,
+      "lag_coverage": 0.9966666666666667,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 0,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 4
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792592017.643859,
+          "end": 1792592617.643859,
+          "covered_seconds": 598.0,
+          "coverage_fraction": 0.9966666666666667,
+          "covered_interval_growth_offsets_per_second": 208.18729096989966,
+          "time_weighted_mean_backlog": 84192.58862876255,
+          "peak_observed_backlog": 139438.0,
+          "segments": [
+            {
+              "start": 1792592017.644,
+              "end": 1792592615.644,
+              "growth_offsets_per_second": 208.18729096989966,
+              "first": 14942.0,
+              "last": 139438.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792592497.643859,
+          "end": 1792592617.643859,
+          "covered_seconds": 118.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": 157.26271186440678,
+          "time_weighted_mean_backlog": 130081.6186440678,
+          "peak_observed_backlog": 139438.0,
+          "segments": [
+            {
+              "start": 1792592497.644,
+              "end": 1792592615.644,
+              "growth_offsets_per_second": 157.26271186440678,
+              "first": 120881.0,
+              "last": 139438.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.00809788703918457,
+      "maximum_completion_seconds": 323.30104303359985,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 263087,
+          "incomplete_by_drain": 96913,
+          "late_completions": 211453,
+          "unfinished_deadline_misses": 96913,
+          "deadline_misses": 308366,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.8565722222222222,
+          "observed_completion_deadline_miss_fraction": 0.7805920619340803
+        }
+      ],
+      "recovery": null,
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "keep3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261021-102633",
+      "admitted": 360000,
+      "completed": 224763,
+      "unfinished": 135237,
+      "unfinished_percent": 37.56583333333333,
+      "p99_seconds": 378.349228143692,
+      "mean_completion_seconds": 172.24379497050722,
+      "useful_throughput": 347.08,
+      "mean_lag": 91634.8355704698,
+      "mean_skew": 14.114062460913548,
+      "lag_coverage": 0.9833333333333333,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 0,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 4
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792600108.5970612,
+          "end": 1792600708.5970612,
+          "covered_seconds": 590.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": 252.64237288135593,
+          "time_weighted_mean_backlog": 91608.39152542372,
+          "peak_observed_backlog": 166862.0,
+          "segments": [
+            {
+              "start": 1792600110.597,
+              "end": 1792600252.597,
+              "growth_offsets_per_second": 255.44366197183098,
+              "first": 15694.0,
+              "last": 51967.0
+            },
+            {
+              "start": 1792600256.597,
+              "end": 1792600594.597,
+              "growth_offsets_per_second": 252.57100591715977,
+              "first": 53037.0,
+              "last": 138406.0
+            },
+            {
+              "start": 1792600598.597,
+              "end": 1792600708.597,
+              "growth_offsets_per_second": 249.24545454545455,
+              "first": 139445.0,
+              "last": 166862.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792600588.5970612,
+          "end": 1792600708.5970612,
+          "covered_seconds": 114.0,
+          "coverage_fraction": 0.95,
+          "covered_interval_growth_offsets_per_second": 249.39473684210526,
+          "time_weighted_mean_backlog": 152505.62280701756,
+          "peak_observed_backlog": 166862.0,
+          "segments": [
+            {
+              "start": 1792600590.597,
+              "end": 1792600594.597,
+              "growth_offsets_per_second": 253.5,
+              "first": 137392.0,
+              "last": 138406.0
+            },
+            {
+              "start": 1792600598.597,
+              "end": 1792600708.597,
+              "growth_offsets_per_second": 249.24545454545455,
+              "first": 139445.0,
+              "last": 166862.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.008511781692504883,
+      "maximum_completion_seconds": 385.70851373672485,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 224763,
+          "incomplete_by_drain": 135237,
+          "late_completions": 173271,
+          "unfinished_deadline_misses": 135237,
+          "deadline_misses": 308508,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.8569666666666667,
+          "observed_completion_deadline_miss_fraction": 0.7527083093234989
+        }
+      ],
+      "recovery": null,
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "redistribute3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261021-083131",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 91.81760144233704,
+      "mean_completion_seconds": 17.481471585111485,
+      "useful_throughput": 617.5783333333334,
+      "mean_lag": 9867.642611683848,
+      "mean_skew": 23.05602999731001,
+      "lag_coverage": 0.9633333333333334,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 1,
+        "consumer-sts-2": 1
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792593215.488819,
+          "end": 1792593815.488819,
+          "covered_seconds": 578.0,
+          "coverage_fraction": 0.9633333333333334,
+          "covered_interval_growth_offsets_per_second": -34.13321799307958,
+          "time_weighted_mean_backlog": 9770.136678200692,
+          "peak_observed_backlog": 47803.0,
+          "segments": [
+            {
+              "start": 1792593215.489,
+              "end": 1792593325.489,
+              "growth_offsets_per_second": 254.74545454545455,
+              "first": 9976.0,
+              "last": 37998.0
+            },
+            {
+              "start": 1792593345.489,
+              "end": 1792593813.489,
+              "growth_offsets_per_second": -102.03205128205128,
+              "first": 47803.0,
+              "last": 52.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792593695.488819,
+          "end": 1792593815.488819,
+          "covered_seconds": 118.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": 0.1016949152542373,
+          "time_weighted_mean_backlog": 46.220338983050844,
+          "peak_observed_backlog": 62.0,
+          "segments": [
+            {
+              "start": 1792593695.489,
+              "end": 1792593813.489,
+              "growth_offsets_per_second": 0.1016949152542373,
+              "first": 40.0,
+              "last": 52.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.008808135986328125,
+      "maximum_completion_seconds": 112.85536527633667,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 360000,
+          "incomplete_by_drain": 0,
+          "late_completions": 139523,
+          "unfinished_deadline_misses": 0,
+          "deadline_misses": 139523,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.3875638888888889,
+          "observed_completion_deadline_miss_fraction": 0.4051496841156452
+        }
+      ],
+      "recovery": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792593553.489,
+          "confirmed_epoch": 1792593583.489,
+          "onset_after_anchor_seconds": 269.19020414352417,
+          "confirmation_after_anchor_seconds": 299.19020414352417
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792593551.489,
+          "confirmed_epoch": 1792593581.489,
+          "onset_after_anchor_seconds": 267.19020414352417,
+          "confirmation_after_anchor_seconds": 297.19020414352417
+        }
+      ],
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "redistribute3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261021-100744",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 83.29212641716003,
+      "mean_completion_seconds": 12.829437656831079,
+      "useful_throughput": 625.16,
+      "mean_lag": 7534.577319587629,
+      "mean_skew": 22.124709447581083,
+      "lag_coverage": 0.9633333333333334,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 1,
+        "consumer-sts-2": 1
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792598978.902731,
+          "end": 1792599578.902731,
+          "covered_seconds": 578.0,
+          "coverage_fraction": 0.9633333333333334,
+          "covered_interval_growth_offsets_per_second": -42.482698961937714,
+          "time_weighted_mean_backlog": 7426.178200692041,
+          "peak_observed_backlog": 43761.0,
+          "segments": [
+            {
+              "start": 1792598978.903,
+              "end": 1792599054.903,
+              "growth_offsets_per_second": 252.03947368421052,
+              "first": 14913.0,
+              "last": 34068.0
+            },
+            {
+              "start": 1792599074.903,
+              "end": 1792599576.903,
+              "growth_offsets_per_second": -87.07171314741036,
+              "first": 43761.0,
+              "last": 51.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792599458.902731,
+          "end": 1792599578.902731,
+          "covered_seconds": 118.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": 0.0,
+          "time_weighted_mean_backlog": 53.898305084745765,
+          "peak_observed_backlog": 154.0,
+          "segments": [
+            {
+              "start": 1792599458.903,
+              "end": 1792599576.903,
+              "growth_offsets_per_second": 0.0,
+              "first": 51.0,
+              "last": 51.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.008343696594238281,
+      "maximum_completion_seconds": 119.69620108604431,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 360000,
+          "incomplete_by_drain": 0,
+          "late_completions": 112764,
+          "unfinished_deadline_misses": 0,
+          "deadline_misses": 112764,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.3132333333333333,
+          "observed_completion_deadline_miss_fraction": 0.3410007038198221
+        }
+      ],
+      "recovery": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792599256.903,
+          "confirmed_epoch": 1792599286.903,
+          "onset_after_anchor_seconds": 209.00537610054016,
+          "confirmation_after_anchor_seconds": 239.00537610054016
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792599256.903,
+          "confirmed_epoch": 1792599286.903,
+          "onset_after_anchor_seconds": 209.00537610054016,
+          "confirmation_after_anchor_seconds": 239.00537610054016
+        }
+      ],
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261021-084932",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 114.08268666267395,
+      "mean_completion_seconds": 21.871727921069994,
+      "useful_throughput": 625.9083333333333,
+      "mean_lag": 12338.892733564015,
+      "mean_skew": 24.401243335866173,
+      "lag_coverage": 0.9566666666666667,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4100.333349466324,
+        "consumer_container_requested_cpu_seconds_observed": 8200.666698932648,
+        "consumer_container_requested_gib_seconds_observed": 3075.250012099743,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 1,
+        "consumer-sts-1": 1,
+        "consumer-sts-2": 1,
+        "consumer-sts-3": 1,
+        "consumer-sts-4": 0,
+        "consumer-sts-5": 0
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792594287.562113,
+          "end": 1792594887.562113,
+          "covered_seconds": 574.0,
+          "coverage_fraction": 0.9566666666666667,
+          "covered_interval_growth_offsets_per_second": -46.23867595818815,
+          "time_weighted_mean_backlog": 12209.008710801394,
+          "peak_observed_backlog": 59797.0,
+          "segments": [
+            {
+              "start": 1792594289.562,
+              "end": 1792594417.562,
+              "growth_offsets_per_second": 259.4921875,
+              "first": 15428.0,
+              "last": 48643.0
+            },
+            {
+              "start": 1792594441.562,
+              "end": 1792594887.562,
+              "growth_offsets_per_second": -133.98206278026905,
+              "first": 59797.0,
+              "last": 41.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792594767.562113,
+          "end": 1792594887.562113,
+          "covered_seconds": 118.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": 0.1016949152542373,
+          "time_weighted_mean_backlog": 40.79661016949152,
+          "peak_observed_backlog": 54.0,
+          "segments": [
+            {
+              "start": 1792594769.562,
+              "end": 1792594887.562,
+              "growth_offsets_per_second": 0.1016949152542373,
+              "first": 29.0,
+              "last": 41.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.007635354995727539,
+      "maximum_completion_seconds": 150.31291341781616,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 360000,
+          "incomplete_by_drain": 0,
+          "late_completions": 132296,
+          "unfinished_deadline_misses": 0,
+          "deadline_misses": 132296,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.36748888888888886,
+          "observed_completion_deadline_miss_fraction": 0.39380899759016896
+        }
+      ],
+      "recovery": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792594683.562,
+          "confirmed_epoch": 1792594713.562,
+          "onset_after_anchor_seconds": 326.93509101867676,
+          "confirmation_after_anchor_seconds": 356.93509101867676
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792594619.562,
+          "confirmed_epoch": 1792594649.562,
+          "onset_after_anchor_seconds": 262.93509101867676,
+          "confirmation_after_anchor_seconds": 292.93509101867676
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792594619.562,
+          "confirmed_epoch": 1792594649.562,
+          "onset_after_anchor_seconds": 262.93509101867676,
+          "confirmation_after_anchor_seconds": 292.93509101867676
+        }
+      ],
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261021-094855",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 109.42453336715698,
+      "mean_completion_seconds": 19.251465190843742,
+      "useful_throughput": 625.4766666666667,
+      "mean_lag": 10949.982578397212,
+      "mean_skew": 24.82215813505309,
+      "lag_coverage": 0.9433333333333334,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4095.1599690914154,
+        "consumer_container_requested_cpu_seconds_observed": 8190.319938182831,
+        "consumer_container_requested_gib_seconds_observed": 3071.3699768185616,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 1,
+        "consumer-sts-1": 1,
+        "consumer-sts-2": 1,
+        "consumer-sts-3": 1,
+        "consumer-sts-4": 0,
+        "consumer-sts-5": 0
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792597852.382852,
+          "end": 1792598452.382852,
+          "covered_seconds": 566.0,
+          "coverage_fraction": 0.9433333333333334,
+          "covered_interval_growth_offsets_per_second": -46.37455830388693,
+          "time_weighted_mean_backlog": 10892.537102473498,
+          "peak_observed_backlog": 58112.0,
+          "segments": [
+            {
+              "start": 1792597852.383,
+              "end": 1792597976.383,
+              "growth_offsets_per_second": 255.33870967741936,
+              "first": 15000.0,
+              "last": 46662.0
+            },
+            {
+              "start": 1792598000.383,
+              "end": 1792598160.383,
+              "growth_offsets_per_second": -361.9875,
+              "first": 58112.0,
+              "last": 194.0
+            },
+            {
+              "start": 1792598164.383,
+              "end": 1792598280.383,
+              "growth_offsets_per_second": 0.1206896551724138,
+              "first": 24.0,
+              "last": 38.0
+            },
+            {
+              "start": 1792598284.383,
+              "end": 1792598450.383,
+              "growth_offsets_per_second": -0.03614457831325301,
+              "first": 45.0,
+              "last": 39.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792598332.382852,
+          "end": 1792598452.382852,
+          "covered_seconds": 118.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": -0.059322033898305086,
+          "time_weighted_mean_backlog": 40.58474576271186,
+          "peak_observed_backlog": 59.0,
+          "segments": [
+            {
+              "start": 1792598332.383,
+              "end": 1792598450.383,
+              "growth_offsets_per_second": -0.059322033898305086,
+              "first": 46.0,
+              "last": 39.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.007348060607910156,
+      "maximum_completion_seconds": 146.98909854888916,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 360000,
+          "incomplete_by_drain": 0,
+          "late_completions": 120356,
+          "unfinished_deadline_misses": 0,
+          "deadline_misses": 120356,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.33432222222222224,
+          "observed_completion_deadline_miss_fraction": 0.3615882287109031
+        }
+      ],
+      "recovery": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792598164.383,
+          "confirmed_epoch": 1792598194.383,
+          "onset_after_anchor_seconds": 243.03717803955078,
+          "confirmation_after_anchor_seconds": 273.0371780395508
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792598164.383,
+          "confirmed_epoch": 1792598194.383,
+          "onset_after_anchor_seconds": 243.03717803955078,
+          "confirmation_after_anchor_seconds": 273.0371780395508
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792598164.383,
+          "confirmed_epoch": 1792598194.383,
+          "onset_after_anchor_seconds": 243.03717803955078,
+          "confirmation_after_anchor_seconds": 273.0371780395508
+        }
+      ],
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261021-091003",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 75.59332227706909,
+      "mean_completion_seconds": 15.455944975497324,
+      "useful_throughput": 625.6733333333333,
+      "mean_lag": 9887.017123287671,
+      "mean_skew": 19.52170837329769,
+      "lag_coverage": 0.94,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4109.553410768509,
+        "consumer_container_requested_cpu_seconds_observed": 8219.106821537018,
+        "consumer_container_requested_gib_seconds_observed": 3082.1650580763817,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 0,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 3,
+        "consumer-sts-4": 0,
+        "consumer-sts-5": 1
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792595523.749408,
+          "end": 1792596123.749408,
+          "covered_seconds": 564.0,
+          "coverage_fraction": 0.94,
+          "covered_interval_growth_offsets_per_second": -21.820921985815602,
+          "time_weighted_mean_backlog": 9680.171985815603,
+          "peak_observed_backlog": 35389.0,
+          "segments": [
+            {
+              "start": 1792595525.749,
+              "end": 1792595599.749,
+              "growth_offsets_per_second": 254.5810810810811,
+              "first": 15263.0,
+              "last": 34102.0
+            },
+            {
+              "start": 1792595609.749,
+              "end": 1792595733.749,
+              "growth_offsets_per_second": -144.92741935483872,
+              "first": 32444.0,
+              "last": 14473.0
+            },
+            {
+              "start": 1792595741.749,
+              "end": 1792595753.749,
+              "growth_offsets_per_second": -81.16666666666667,
+              "first": 13839.0,
+              "last": 12865.0
+            },
+            {
+              "start": 1792595757.749,
+              "end": 1792595857.749,
+              "growth_offsets_per_second": -78.17,
+              "first": 12563.0,
+              "last": 4746.0
+            },
+            {
+              "start": 1792595861.749,
+              "end": 1792595997.749,
+              "growth_offsets_per_second": -32.279411764705884,
+              "first": 4424.0,
+              "last": 34.0
+            },
+            {
+              "start": 1792596005.749,
+              "end": 1792596123.749,
+              "growth_offsets_per_second": 0.05084745762711865,
+              "first": 20.0,
+              "last": 26.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792596003.749408,
+          "end": 1792596123.749408,
+          "covered_seconds": 118.0,
+          "coverage_fraction": 0.9833333333333333,
+          "covered_interval_growth_offsets_per_second": 0.05084745762711865,
+          "time_weighted_mean_backlog": 38.08474576271186,
+          "peak_observed_backlog": 233.0,
+          "segments": [
+            {
+              "start": 1792596005.749,
+              "end": 1792596123.749,
+              "growth_offsets_per_second": 0.05084745762711865,
+              "first": 20.0,
+              "last": 26.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.00712275505065918,
+      "maximum_completion_seconds": 87.66008067131042,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 360000,
+          "incomplete_by_drain": 0,
+          "late_completions": 159660,
+          "unfinished_deadline_misses": 0,
+          "deadline_misses": 159660,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.4435,
+          "observed_completion_deadline_miss_fraction": 0.46640153008492186
+        }
+      ],
+      "recovery": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792596029.749,
+          "confirmed_epoch": 1792596059.749,
+          "onset_after_anchor_seconds": 437.48786211013794,
+          "confirmation_after_anchor_seconds": 467.48786211013794
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792595919.749,
+          "confirmed_epoch": 1792595949.749,
+          "onset_after_anchor_seconds": 327.48786211013794,
+          "confirmation_after_anchor_seconds": 357.48786211013794
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": 1792595917.749,
+          "confirmed_epoch": 1792595947.749,
+          "onset_after_anchor_seconds": 325.48786211013794,
+          "confirmation_after_anchor_seconds": 355.48786211013794
+        }
+      ],
+      "initial_ownership_verified": true
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261021-092942",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 90.28109192848206,
+      "mean_completion_seconds": 35.65174043098953,
+      "useful_throughput": 597.3966666666666,
+      "mean_lag": 21412.3265993266,
+      "mean_skew": 19.133524350986875,
+      "lag_coverage": 0.9733333333333334,
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4106.539581298828,
+        "consumer_container_requested_cpu_seconds_observed": 8213.079162597656,
+        "consumer_container_requested_gib_seconds_observed": 3079.904685974121,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 0,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 1,
+        "consumer-sts-4": 0,
+        "consumer-sts-5": 3
+      },
+      "growth_windows": {
+        "whole_evaluation": {
+          "start": 1792596704.172398,
+          "end": 1792597304.172398,
+          "covered_seconds": 584.0,
+          "coverage_fraction": 0.9733333333333334,
+          "covered_interval_growth_offsets_per_second": 2.0034246575342465,
+          "time_weighted_mean_backlog": 21309.890410958906,
+          "peak_observed_backlog": 35135.0,
+          "segments": [
+            {
+              "start": 1792596706.172,
+              "end": 1792596782.172,
+              "growth_offsets_per_second": 248.96052631578948,
+              "first": 15016.0,
+              "last": 33937.0
+            },
+            {
+              "start": 1792596792.172,
+              "end": 1792597216.172,
+              "growth_offsets_per_second": -40.929245283018865,
+              "first": 34458.0,
+              "last": 17104.0
+            },
+            {
+              "start": 1792597220.172,
+              "end": 1792597304.172,
+              "growth_offsets_per_second": -4.726190476190476,
+              "first": 17065.0,
+              "last": 16668.0
+            }
+          ]
+        },
+        "last_two_minutes": {
+          "start": 1792597184.172398,
+          "end": 1792597304.172398,
+          "covered_seconds": 114.0,
+          "coverage_fraction": 0.95,
+          "covered_interval_growth_offsets_per_second": -6.605263157894737,
+          "time_weighted_mean_backlog": 17041.570175438595,
+          "peak_observed_backlog": 17474.0,
+          "segments": [
+            {
+              "start": 1792597186.172,
+              "end": 1792597216.172,
+              "growth_offsets_per_second": -11.866666666666667,
+              "first": 17460.0,
+              "last": 17104.0
+            },
+            {
+              "start": 1792597220.172,
+              "end": 1792597304.172,
+              "growth_offsets_per_second": -4.726190476190476,
+              "first": 17065.0,
+              "last": 16668.0
+            }
+          ]
+        }
+      },
+      "minimum_completion_seconds": 0.007140636444091797,
+      "maximum_completion_seconds": 100.66392683982849,
+      "completion_deadline_outcomes": [
+        {
+          "threshold_ms": 1000.0,
+          "primary": true,
+          "admitted_evaluation_cohort": 360000,
+          "completed_by_drain": 360000,
+          "incomplete_by_drain": 0,
+          "late_completions": 240283,
+          "unfinished_deadline_misses": 0,
+          "deadline_misses": 240283,
+          "deadline_censored": 0,
+          "deadline_miss_fraction": 0.6674527777777778,
+          "observed_completion_deadline_miss_fraction": 0.6660342932389981
+        }
+      ],
+      "recovery": [
+        {
+          "threshold_offsets": 50,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 100,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        },
+        {
+          "threshold_offsets": 200,
+          "hold_seconds": 30,
+          "first_low_epoch": null,
+          "confirmed_epoch": null,
+          "onset_after_anchor_seconds": null,
+          "confirmation_after_anchor_seconds": null,
+          "unconfirmed_low_start_epoch": null,
+          "observed_low_duration_seconds": 0
+        }
+      ],
+      "initial_ownership_verified": true
+    }
+  ]
+}

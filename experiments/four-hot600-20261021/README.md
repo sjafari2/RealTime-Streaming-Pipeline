@@ -28,3 +28,25 @@ python3 experiments/four-condition-20260929/run.py --aggregate-rate 600 --hot-pa
 Execution adds `--execute --monitoring-gate /path/to/passed-monitoring-gap-verification.json`. Empty-topic capture, matching restart and native scaling validation precede performance trials. Technical checks are not counted among the eight trials. Every valid performance outcome is retained.
 
 [Prespecified protocol](protocol.json)
+
+## Completed results and offline analysis
+
+The [eight completed trials](../../experiment-records/four-hot600-20261021/README.md) report all valid outcomes. From the repository root, with the retained raw campaign and run directories restored:
+
+```bash
+python3 experiments/four-condition-20260929/summarize.py \
+  results/four-condition-20261021-071240 results/four-hot600-20261021-analysis
+python3 experiments/four-condition-20260929/analyze_action_windows.py \
+  results/four-hot600-20261021-analysis/comparison.json \
+  --output results/four-hot600-20261021-analysis
+python3 experiments/four-hot600-20261021/analyze_signal_windows.py \
+  results/four-hot600-20261021-analysis/comparison.json \
+  results/four-hot600-20261021-analysis/action-window-performance.json \
+  --campaign results/four-condition-20261021-071240 \
+  --output results/four-hot600-20261021-analysis/signal-window-performance.json
+python3 experiments/four-hot600-20261021/plot_resources.py \
+  results/four-hot600-20261021-analysis/comparison.json \
+  --repository . --output results/four-hot600-20261021-analysis/figures
+```
+
+Analysis does not start cluster workloads. Large event files must be available locally before replay; a cloud placeholder is not a readable local copy.

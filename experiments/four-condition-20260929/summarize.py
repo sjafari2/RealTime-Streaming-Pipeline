@@ -290,12 +290,14 @@ def main():
         else:note+='\nDotted line: scheduled intervention. Shading: recorded transition interval; definitions differ by coordination mechanism.'
         fig.text(.07,.015,note,fontsize=9,color='#555');fig.tight_layout(rect=(0,.06,1,.942));figures.append((fig,'four-condition-'+metric))
     fig,axes=plt.subplots(1,2,figsize=(12,4.7),sharex=True,sharey=True)
+    # Set the shared range from both runs before fixing either axis.
+    lag_ceiling=max(1,1.05*max(v for _,data,_ in runs for v in data['lag'][0][1] if math.isfinite(v)))
     for number,ax in enumerate(axes,1):
         for i,arm in enumerate(arms):
             _,data,_=next(r for r in runs if r[0]['arm']==arm and r[0]['run_number']==number)
             x,y=data['lag'][0];ax.plot(x,y,lw=1.5,label=LABELS[arm],color=COLORS[i])
         ax.axvline(1,color='#777',ls=':',lw=.8);ax.grid(axis='y',alpha=.2)
-        ax.set(title='Run '+str(number),xlabel='Evaluation time (minutes)',ylabel='Total lag (offsets)',xlim=(0,10),ylim=(0,None))
+        ax.set(title='Run '+str(number),xlabel='Evaluation time (minutes)',ylabel='Total lag (offsets)',xlim=(0,10),ylim=(0,lag_ceiling))
     h,l=axes[0].get_legend_handles_labels();fig.legend(h,l,loc='upper center',bbox_to_anchor=(.5,.93),ncol=2,frameon=False,fontsize=9)
     fig.suptitle(f'Responses from the same concentrated ownership - {aggregate_rate:,} messages/s',fontweight='bold')
     fig.text(.07,.025,'Each curve is a separate 13-minute trial; the 10-minute evaluation is shown. Dotted line: scheduled response.\nMissing observations and ownership changes break curves. Warm-up work remains queued.',fontsize=9)
@@ -331,7 +333,7 @@ def main():
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
     lines+=['','Mean lag in the table is the arithmetic mean of valid evaluation samples. P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',
-        f'The growth figure uses a {growth_seconds}-second window ({a.growth_window_samples} intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery hseries. Earlier figures retain their original window settings.','',
+        f'The growth figure uses a {growth_seconds}-second window ({a.growth_window_samples} intervals at the 2-second export step), recomputed from saved observations. It restarts after missing observations, ownership changes or offset resets. This display setting does not change the 15-snapshot skew mean, whole-run results, or the separate 30-second recovery criterion. Earlier figures retain their original window settings.','',
         '| Condition | Run | Observed requested CPU (core-min) | Observed requested memory (GiB-min) | Request coverage |','|---|---:|---:|---:|---:|']
     for s,_,_ in runs:
         resource=s['requested_resources_evaluation_and_drain'];lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {resource['consumer_container_requested_cpu_seconds_observed']/60:.2f} | {resource['consumer_container_requested_gib_seconds_observed']/60:.2f} | {resource['covered_fraction']*100:.1f}% |")

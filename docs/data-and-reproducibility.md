@@ -1,6 +1,6 @@
 # Data and reproducibility
 
-I publish the configurations, analysis code, compact summaries and available evidence hashes for the [24 current trials](../experiment-records/README.md). These are synthetic Kafka experiments. Earlier campaigns and superseded reports are preserved on the [archive branch](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008).
+I publish the configurations, analysis code, compact summaries and available evidence hashes for the [32 reported trials](../experiment-records/README.md). These are synthetic Kafka experiments. Earlier campaigns and superseded reports are preserved on the [archive branch](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008).
 
 ## Public results
 

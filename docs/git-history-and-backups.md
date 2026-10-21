@@ -2,7 +2,7 @@
 
 The project continues the existing history of `sjafari2/RealTime-Streaming-Pipeline`. `development` is the working branch; reviewed changes are merged into `main`. Corrections use new commits rather than rewriting published history.
 
-The [archive/pre-cleanup-20261008 branch](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008) preserves the repository before the current cleanup, including earlier campaigns, technical preparations and legacy source. The active branch keeps the 24 main-proposal trials. Original run IDs, execution revisions and numerical outcomes remain unchanged; archiving an earlier campaign does not invalidate or conceal its unfavorable results.
+The [archive/pre-cleanup-20261008 branch](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008) preserves the repository before the current cleanup, including earlier campaigns, technical preparations and legacy source. The active branch keeps the original 24 main-proposal trials and eight additional four-partition trials at a recalibrated rate. Original run IDs, execution revisions and numerical outcomes remain unchanged; archiving an earlier campaign does not invalidate or conceal its unfavorable results.
 
 Before the cleanup, the repository was preserved in a complete Git mirror and verified bundle, and local uncommitted files were copied separately with checksum verification. These backups are outside the runtime tree.
 

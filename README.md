@@ -6,15 +6,16 @@ The implementation uses Python producers and consumers on Kubernetes, with Prome
 
 ## Research and results
 
-The current result set contains **24 performance trials** used in the main proposal:
+The current result set contains **32 performance trials** used in the main proposal:
 
 | Experiment | Trials | Main observation |
 |---|---:|---|
 | Balanced input, 600–1,500 messages/s | 12 | Backlog remained bounded at 600–800 messages/s over the observed interval and grew at higher rates. |
 | 80% of input across 12 of 60 partitions | 8 | Redistribution and both scaling responses completed all evaluation messages; keeping the starting assignment left about 35% unfinished. |
-| 80% of input across 4 of 60 partitions | 4 | Redistribution within three consumers recorded lower whole-cohort p99 than targeted scaling to six in both runs. |
+| 80% of input across 4 of 60 partitions, 700 messages/s | 4 | Redistribution within three consumers recorded lower whole-cohort p99 than targeted scaling to six in both runs. |
+| Four high-input partitions, revised deployment at 600 messages/s | 8 | All interventions finished the evaluation set; the best p99 differed by run, and Kafka scaling did not confirm recovery during input in Run 2. |
 
-The skew comparisons use **700 messages/s in total across three producers**. Each condition has two runs. These are scheduled interventions on a synthetic workload; the adaptive controller and hot-key splitting remain research work.
+The historical skew comparisons use **700 messages/s in total across three producers**. The additional eight-trial block uses **600 messages/s** after recalibration and is reported separately. Each condition has two runs. These are scheduled interventions on a synthetic workload; the adaptive controller and hot-key splitting remain research work.
 
 [Results, tables and plots](experiment-records/README.md) · [Research questions](docs/research-questions.md) · [Methodology](docs/experiment-methodology.md) · [Metric definitions](docs/metric-definitions.md)
 
