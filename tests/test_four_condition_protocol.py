@@ -201,3 +201,13 @@ def test_600_native_gate_allows_startup_without_changing_performance_duration():
     assert plan['after_evaluation_start_seconds'] == 20
     performance, _ = module.prepared('kafka_scale6', 1, 81, aggregate_rate=600, hot_count=4, deadline_ms=1000)
     assert performance['data']['EXP_DURATION_SEC'] == '660'
+
+
+def test_resume_can_retry_technical_gate_before_any_performance_trial():
+    state, protocol = resume_state()
+    state.update(runs=[], technical=[], preparations=[{'validation': {'status': 'passed'}}]*2)
+    assert module.validate_resume_state(state, protocol) == 0
+    state['preparations'].pop()
+    import pytest
+    with pytest.raises(ValueError, match='validation'):
+        module.validate_resume_state(state, protocol)

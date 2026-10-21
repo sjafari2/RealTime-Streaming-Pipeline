@@ -150,7 +150,9 @@ def native_fixture(monkeypatch):
         TOPIC_COUNT=1, NUM_PARTITIONS=2), intervention=dict(target_consumers=2),
         initial_consumer_incarnations={'consumer-sts-0':'i0'})
     rows = [dict(run_id='r', config_sha256='hash', pod=f'consumer-sts-{i}', incarnation=f'i{i}',
-        phase='running', timestamp=runner.time.time(), assignment_epoch=1, assignments=[['t_0',i]]) for i in range(2)]
+        phase='running', timestamp=runner.time.time()+60, assignment_epoch=1, assignments=[['t_0',i]],
+        _status_observation=dict(source='live_http', request_started_monotonic=runner.time.monotonic(),
+                                 received_monotonic=runner.time.monotonic())) for i in range(2)]
     monkeypatch.setattr(runner, 'read_control', lambda: control)
     monkeypatch.setattr(runner, 'pods', lambda role: [r['pod'] for r in rows])
     monkeypatch.setattr(runner, 'status', lambda role, name: next(r for r in rows if r['pod']==name))
@@ -179,7 +181,9 @@ def test_native_scale_rejects_sharing_and_marks_the_run_failed(monkeypatch):
 def test_native_timeout_does_not_accept_missing_or_unassigned_consumers(monkeypatch):
     control, rows = native_fixture(monkeypatch)
     rows[1]['assignments'] = []
-    clock = iter([0,1,11])
+    for row in rows:
+        row['_status_observation'].update(request_started_monotonic=0, received_monotonic=0)
+    clock = iter([0,1,1,1,11])
     monkeypatch.setattr(runner.time, 'monotonic', lambda: next(clock))
     with pytest.raises(RuntimeError, match='readiness timed out'):
         runner.wait_for_scaled_placement(control)
@@ -206,3 +210,29 @@ def test_stale_observation_cannot_capture_a_baseline(monkeypatch):
         runner.verify_node_placement(control, 'before_production')
     assert 'initial_node_placement' not in control
     assert records[-1]['valid'] is False
+
+
+def test_readiness_age_ignores_remote_wall_clock_offset(monkeypatch):
+    monkeypatch.setattr(runner.time, 'monotonic', lambda: 102)
+    receipt = dict(source='live_http', request_started_monotonic=100, received_monotonic=101)
+    for remote_time in (-1000000, 100000000000):
+        assert runner.status_observation_fresh(dict(timestamp=remote_time, _status_observation=receipt))
+
+
+def test_readiness_rejects_stale_missing_and_saved_status(monkeypatch):
+    monkeypatch.setattr(runner.time, 'monotonic', lambda: 120)
+    assert not runner.status_observation_fresh({})
+    receipt = dict(source='live_http', request_started_monotonic=100, received_monotonic=119)
+    assert not runner.status_observation_fresh(dict(_status_observation=receipt))
+    receipt.update(source='final_file', request_started_monotonic=118)
+    assert not runner.status_observation_fresh(dict(_status_observation=receipt))
+
+
+def test_live_status_records_local_request_timing(monkeypatch):
+    clock = iter([100., 101.])
+    monkeypatch.setattr(runner.time, 'monotonic', lambda: next(clock))
+    monkeypatch.setattr(runner, 'remote', lambda *args, **kwargs: json.dumps(dict(
+        phase='running', timestamp=99999999999, _status_source='live_http')).encode())
+    result = runner.status('consumer', 'consumer-sts-0')
+    assert result['_status_observation'] == dict(source='live_http', request_started_monotonic=100, received_monotonic=101)
+    assert result['timestamp'] == 99999999999

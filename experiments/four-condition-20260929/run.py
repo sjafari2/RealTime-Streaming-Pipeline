@@ -119,8 +119,14 @@ def validate_resume_state(state, protocol):
         raise ValueError('Completed trials must form an unrepeated prefix of the planned order')
     if any(x.get('validation',{}).get('status')!='passed' for x in state['runs']):
         raise ValueError('A completed trial lacks validation')
-    if not state.get('technical') or any(x['validation']['status']!='passed' for x in state['technical']):
+    technical = state.get('technical', [])
+    if any(x['validation']['status'] != 'passed' for x in technical):
         raise ValueError('Native scaling validation is missing')
+    if not technical:
+        prepared_count = sum(row.get('validation', {}).get('status') == 'passed'
+                             for row in state.get('preparations', []))
+        if completed or prepared_count < 2:
+            raise ValueError('Native scaling validation is missing')
     if not state.get('reference') or len(state.get('hot_partitions',[]))!=protocol['hot_partition_count']:
         raise ValueError('Frozen starting conditions are missing')
     return len(completed)
@@ -246,11 +252,11 @@ def main():
                     config,plan=prepared('kafka_scale6',0,81,reference,hot,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
                     plan.update(action='none',target_consumers=None,prepare_only=True)
                     run_one(config,plan,'verify-native-restart',preparation=True)
-                    if not args.preparations_only:
-                        # Native rebalance correctness is checked before counting any performance trial.
-                        config,plan=prepared('kafka_scale6',0,81,reference,hot,gate=True,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
-                        directory,m,checked=run_one(config,plan,'native-scale-technical',technical=True)
-                        state['technical'].append(dict(directory=str(directory),validation=checked));save()
+                if not args.preparations_only and not state['technical']:
+                    # A resumed preparation still needs its live scaling check.
+                    config,plan=prepared('kafka_scale6',0,81,reference,hot,gate=True,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
+                    directory,m,checked=run_one(config,plan,'native-scale-technical',technical=True)
+                    state['technical'].append(dict(directory=str(directory),validation=checked));save()
                 if not args.preparations_only:
                     for arm,number,seed in order[len(state['runs']):]:
                         if shutil.disk_usage(ROOT).free<4*1024**3:raise RuntimeError('Less than 4 GiB free; preserve evidence before continuing')

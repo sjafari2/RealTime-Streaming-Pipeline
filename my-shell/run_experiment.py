@@ -76,18 +76,42 @@ def publish(control):
 
 def status(role, pod):
     port = ROLES[role][2]
-    code = f'''import urllib.request,sys
+    code = f'''import urllib.request,json
 from pathlib import Path
 try:
-    sys.stdout.buffer.write(urllib.request.urlopen('http://localhost:{port}/status',timeout=2).read())
+    row=json.loads(urllib.request.urlopen('http://localhost:{port}/status',timeout=2).read())
+    row['_status_source']='live_http'
 except Exception:
     p=Path('/tmp/pipeline-{role}-final.json')
-    print(p.read_text() if p.exists() else '{{}}')
+    row=json.loads(p.read_text()) if p.exists() else {{}}
+    row['_status_source']='final_file'
+print(json.dumps(row))
 '''
+    began = time.monotonic()
     try:
-        return json.loads(remote(role, pod, code, timeout=10))
+        row = json.loads(remote(role, pod, code, timeout=10))
+        row['_status_observation'] = dict(source=row.pop('_status_source', 'unknown'),
+            request_started_monotonic=began, received_monotonic=time.monotonic())
+        return row
     except (subprocess.SubprocessError, ValueError):
         return {}
+
+
+def status_observation_fresh(row, max_age=10):
+    """Bound a live response's age with the coordinator's monotonic clock.
+
+    /status creates a new snapshot for each HTTP request. Including the entire
+    request duration gives a conservative age bound without comparing host clocks.
+    A saved final-status file is useful for collection but cannot prove readiness.
+    """
+    receipt = row.get('_status_observation', {})
+    began, received = (receipt.get(key) for key in
+                       ('request_started_monotonic', 'received_monotonic'))
+    now = time.monotonic()
+    return bool(receipt.get('source') == 'live_http' and
+                isinstance(began, (int, float)) and isinstance(received, (int, float)) and
+                math.isfinite(began) and math.isfinite(received) and
+                began <= received <= now and 0 <= now-began <= max_age)
 
 
 def force_stop_role(role, grace=60):
@@ -470,7 +494,7 @@ def wait_for_scaled_placement(control):
                 if matching and (row.get('failure') or row.get('evidence_error') or row.get('evidence_dropped')):
                     raise RuntimeError(name + ': consumer failed during scale-up')
                 ready = ready and bool(matching and row.get('pod') == name and row.get('incarnation') and
-                    row.get('phase') in ('ready', 'running') and 0 <= time.time()-row.get('timestamp', 0) <= 10)
+                    row.get('phase') in ('ready', 'running') and status_observation_fresh(row))
                 initial = control.get('initial_consumer_incarnations', {}).get(name)
                 if initial and matching and row.get('incarnation') != initial:
                     raise PlacementMismatch(name + ': original consumer process restarted during scale-up')
@@ -478,6 +502,11 @@ def wait_for_scaled_placement(control):
             assignment = [(r.get('incarnation'), r.get('assignment_epoch'), r.get('assignments')) for r in rows]
             stable = stable + 1 if ready and assignment == previous else (1 if ready else 0)
             previous = assignment
+            journal(control, 'scale-readiness.jsonl', dict(timestamp=time.time(), ready=ready,
+                unchanged_observations=stable, observed_consumers=present,
+                statuses=[dict(pod=row.get('pod'), phase=row.get('phase'),
+                    incarnation=row.get('incarnation'), assignment_epoch=row.get('assignment_epoch'),
+                    assignments=row.get('assignments'), observation=row.get('_status_observation')) for row in rows]))
             if stable >= 3:
                 verify_node_placement(control, 'after_scaling', consumers=names)
                 if time.time() >= control['producer_end_epoch']:
