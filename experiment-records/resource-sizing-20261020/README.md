@@ -1,62 +1,58 @@
-# Client resource sizing — October 20, 2026
+# Client resource calibration and producer recovery
 
-This is a deployment-maintenance record, not a performance trial. No new comparative trials have started.
+The October 20 deployment calibration tested smaller client allocations and a replacement producer deployment on Nautilus. It is a separate technical calibration and is **not included in the 24 main-proposal trials**. The September measurements and their resource-cost calculations are unchanged.
 
-The next 700 aggregate-message/s calibration uses smaller client allocations:
+## Calibration result
+
+Run `run-20261020-225743` used balanced input at **700 aggregate messages/s**, three producers, three fixed consumers, 60 partitions and 2,000 SHA-256 iterations per message. There was no scaling or reassignment. Timing was one minute warm-up, five minutes evaluation and two minutes drain: eight minutes total. The run used source revision `8f6b34e02af5493d407e6131aa5ca7c34d83571e`, a fresh topic, seed 71 and distinct logical producer IDs 0, 1 and 2.
+
+| Measurement | Result |
+|---|---:|
+| Acknowledged evaluation messages | 210,000 |
+| Achieved evaluation input | 700.00 messages/s |
+| Distinct completions during evaluation | 696.05 messages/s |
+| Evaluation messages completed by drain cutoff | 210,000 |
+| Unfinished at drain cutoff | 0 (0%) |
+| Completion latency: minimum / mean / maximum | 0.026 / 2.932 / 13.601 s |
+| Completion p99 | 13.217 s |
+| One-second completion-target violations | 33.27% |
+| Peak observed processing backlog | 3,225 offsets |
+| Processing backlog at last valid evaluation observation | 1,897 offsets |
+| Evaluation lag coverage | 99.33% |
+
+Latency uses one completion per acknowledged evaluation message, through the drain cutoff; completion is before commit acknowledgment. Throughput counts distinct completions during evaluation, including warm-up messages that finish then. It is not the count completed through drain divided by evaluation time. No delivery failures, unresolved sends, duplicate completion attempts, invalid clock observations or within-ownership ordering violations were recorded. The run and measurement checks passed.
+
+![Calibration overview](calibration-overview.png)
+
+[PDF plot](calibration-overview.pdf) · [Machine-readable summary](calibration-summary.json) · [Configuration](calibration-config.yaml)
+
+Backlog increased from about 608 offsets to a peak of 3,225, then decreased to 1,897 while production continued. The dominant backlog was associated with consumer 2, which averaged approximately one CPU core during evaluation. Clearing the remaining work during drain does not establish stability under continuous input. This short observation shows that the revised deployment can deliver the requested rate and preserve complete evidence, but does not establish a sustained low-backlog operating point. A longer balanced calibration is needed before accepting the revised conditions for comparative trials; the full trace and per-consumer rates should guide whether the target rate needs adjustment.
+
+## Resource allocations and observations
 
 | Container | Previous CPU request / limit | Revised CPU request / limit | Previous RAM request / limit | Revised RAM request / limit |
-|---|---|---|---|---|
+|---|---:|---:|---:|---:|
 | Producer | 2 / 4 cores | 0.25 / 0.30 cores | 1 / 2 GiB | 128 / 152 MiB |
 | Consumer | 2 / 4 cores | 1 / 1.2 cores | 1 / 2 GiB | 512 / 600 MiB |
 | Bootstrap init, each role | 0.1 / 0.1 cores | 0.1 / 0.12 cores | 1 / 1 GiB, inherited | 128 / 152 MiB |
 
-The init-container declaration matters: a pod's effective request includes the largest regular init-container request. Leaving the namespace's 1 GiB default would defeat the smaller application memory request.
+Explicit init-container memory requests avoid the namespace's inherited 1 GiB request. Broker allocations and JVM settings were unchanged.
 
-## Evidence and limits
+Across the three producers, mean process CPU during observed evaluation intervals was approximately 0.06–0.09 cores. Consumer means were 0.92, 0.73 and 1.00 cores for consumers 0, 1 and 2. Container memory peaks captured since startup were 47.7–71.8 MiB for producers and 76.7–103.0 MiB for consumers, below their 152 and 600 MiB limits. All clients had zero container restarts and zero recorded out-of-memory events. Near-evaluation cgroup counter intervals recorded at most 0.182 seconds of cumulative throttling per producer and 0.027 seconds per consumer. These counters include diagnostic work and use separately recorded boundaries; they are not exact application-only evaluation measurements.
 
-The twelve September 29–30 intervention trials provide the following maximum sampled process values:
+Process RSS and container memory are different measures. The plots show process RSS; container peaks also include memory charged outside that process. Neither the short run nor historical sampled peaks guarantees future memory bounds. The busiest consumer remained near one core despite little quota throttling, so the evidence does not establish that raising its CPU limit alone would solve the backlog. Historical consumer RSS reached approximately 275.7 MiB in the skew trials; the short balanced result is not a basis for lowering consumer memory further. [Historical sizing evidence](sizing-evidence.json) identifies those observations and source hashes.
 
-| Role | CPU, cores | Resident memory, MiB |
-|---|---:|---:|
-| Producer | 0.250 | 32.94 |
-| Consumer | 1.055 | 275.71 |
+## Deployment and retained evidence
 
-[sizing-evidence.json](sizing-evidence.json) identifies source hashes, peak runs and processes. CPU percent is divided by 100 to obtain cores; memory bytes are divided by 1,048,576. Observed process means retain their original coverage. These are process measurements, not a guarantee of container peaks or memory bounds. The proposed limits require fresh calibration, including achieved input, processing capacity, container memory, CPU throttling and restarts. The existing 24-trial results and their resource-cost calculations are unchanged.
+The active producer StatefulSet is `producer-workers`. All six calibration clients ran on separate nodes under required producer–consumer anti-affinity. Other workloads may share those machines; identical processing capacity is not guaranteed. Source hashes, distinct workload IDs, partition readiness and monitoring were checked before traffic. Prometheus scraped active clients every two seconds. Initial ownership remained unchanged during production. Read-only kernel clock diagnostics reported synchronized status before and after the run; those diagnostics are not an independent bound on cross-node clock error.
 
-## Initial cleanup and blockers
+The replacement uses new producer and configuration claims, `producer-data-20261020` and `pipeline-config-20261020`. Consumers share the new configuration claim. The retired `producer-sts-1` remains Terminating on an unreachable node and was not force-deleted. All 17 original PVC identities and backing volumes were preserved; the two new claims bring the total to 19. Replacement clients were scaled to zero after collection and terminated normally. Brokers, Prometheus and Grafana remain available. Temporary source-copy resources were removed.
 
-- The managed run was already stopped. Its last run ID was `run-20260930-012528`.
-- `consumer-sts` and `producer-sts` were scaled from three desired replicas to zero. Three consumers and two reachable producers terminated normally.
-- The old `pip-kafka-controller` cluster was scaled from three to zero. The active `pip-kafka` service selects the replacement `pip-kafka-recovery-ucsd` brokers; the old cluster returned no consumer groups before shutdown. All three old broker pods terminated.
-- All 17 PVC identities and backing volume names were verified unchanged. No PVC, topic or evidence file was deleted.
-- The three active replacement brokers, Prometheus and Grafana remain running. Broker resource declarations and JVM heap are unchanged; Python process measurements are not a basis for sizing Kafka.
-- `producer-sts-1` remains Terminating on an unreachable node since October 5. It was not force-deleted. A safe node/pod recovery check is required before restoring three producers.
-- The revised client resource templates were saved in the repository. At the initial cleanup, server-side dry runs were rejected by the Nautilus utilization admission webhook and the templates were not deployed.
-- Hard producer–consumer separation was also undeployed at the initial cleanup. The existing live locality exclusions were retained for the later update.
+The earlier utilization-admission rejection and storage inspections are retained in the linked verification records. Later server dry runs and deployment succeeded. No PVC deletion was used to resolve the old pod's node-reachability problem.
 
-The initial cleanup released unused reservations while retaining evidence. No performance result is inferred from these maintenance checks.
+- [Deployment and test verification](replacement-verification.json): 370 automated tests, accepted dry runs, actual nodes, image digests and allocations.
+- [Original template verification](deployment-check.json) and [storage inspection](storage-check.json).
+- [Original producer/config backup](backup-check.json): 544 regular files, 6,962,049,143 uncompressed bytes, with every archived file verified. This is a file-copy backup, not an atomic storage snapshot.
+- [Calibration backup](calibration-backup-check.json): all 33 local run files, including raw message evidence, monitoring exports, configurations and analyses, verified against a separate compressed archive. The archive contains 450,495,057 uncompressed bytes and is kept outside Git.
 
-
-## Corrected templates applied
-
-On October 20, both server-side validations passed and the corrected client templates were applied. The consumer StatefulSet retained its existing UCSD locality and excluded-node rules. The producer StatefulSet was absent at the recheck and was recreated from the reviewed manifest with zero desired replicas, preserving its existing PVC references. Both templates now require producer and consumer pods to use separate nodes within this namespace. Broker separation remains a preference.
-
-[Deployment verification](deployment-check.json) records the accepted resources, init-container settings, affinity rules, and zero desired replicas for both clients. All 17 PVC identities and backing-volume names were unchanged. No experiment was started, and these settings still require workload calibration and checks of actual placement, achieved rate, throttling, memory and restarts.
-
-The old `producer-sts-1` pod remains Terminating on `k8s-gpu-01.calit2.optiputer.net`, with a deletion timestamp of October 5. It was not force-deleted. The current account cannot inspect node health at cluster scope, so administrator confirmation that the old process has stopped, or safe node recovery, is needed before reusing that producer identity. Removing the utilization block does not establish that this separate node issue is resolved.
-
-
-## Producer storage inspection
-
-A later October 20 check found that the producer StatefulSet was absent again, while the old `producer-sts-1` pod still had its October 5 deletion request pending. The consumer StatefulSet remained at zero desired replicas. The check did not recreate either workload.
-
-Both PVCs mounted successfully in a temporary inspection job on another UCSD node, with read-only mounts and no service-account token. The producer volume contained approximately 6.96 GB, principally producer evidence in 47 run directories, including the reported September 29–30 experiments. This directory count includes preparations and is not a performance-trial count. The shared configuration volume contained approximately 2.07 MB, including pipeline settings, run control and saved run configurations. It remains referenced by the consumer template; the producer deployment manifest also requires both claims.
-
-Both PVCs were retained. The inspection did not establish that all volume contents have verified independent backups, and deleting these shared volumes is not a remedy for the old pod's unresolved termination. The temporary job was removed after successful inspection, and both claims remained Bound with their original identities and no deletion request. [Storage verification](storage-check.json) records the sizes and cleanup result. No performance experiment was run.
-
-
-## Verified independent backup
-
-On October 20, the two producer-mounted PVCs were copied through a temporary read-only helper on another UCSD node to independent local storage. The compressed archive preserves 544 regular files containing 6,962,049,143 bytes; its compressed size is 520,126,976 bytes. Every archived file checksum and recorded metadata matched the manifest generated while reading the source, and gzip integrity validation passed. Source membership and metadata remained unchanged during transfer. The helper was removed and both original PVC identities remained unchanged. [Backup verification](backup-check.json) records the archive hash, counts, scope and limitations; raw files remain outside Git.
-
-The producer log request returned `no route to host` for the kubelet endpoint at `67.58.51.142:10250`, matching `k8s-gpu-01.calit2.optiputer.net`. This is a node-reachability failure; the specific host, routing or firewall cause is not established. Read-only storage access succeeded from another node. No PVC deletion was requested because it would not repair connectivity, and the old pod still references both claims. The shared configuration claim also remains required by the consumer template. Administrator node recovery or confirmation that the old container has stopped is still needed before reusing its identity.
+A complete repository mirror passed Git integrity checks and contained every pre-migration local ref. Existing consumer source was separately backed up before replacement. Small summaries and evidence hashes are versioned here; they do not replace the raw backups. The proposal's 24-trial tables remain associated with their original workload generator, resources and placement.

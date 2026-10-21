@@ -17,3 +17,5 @@ The retrospective [node-placement review](node-placement-review.json) records ob
 Run 1 and Run 2 columns refer to separate trials of each response. P99 is a whole-cohort percentile among completed evaluation messages, not an average of dashboard values. Every table reports unfinished work alongside it. See [methodology](../docs/experiment-methodology.md), [metric definitions](../docs/metric-definitions.md) and [data availability](../docs/data-and-reproducibility.md).
 
 Earlier campaigns, supplementary trials and superseded reports are preserved on [archive/pre-cleanup-20261008](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008/experiment-records). They use different designs or deployment stages and are not pooled into these 24 trials. This selection follows the main proposal, not the direction of the outcomes.
+
+The separate [October 20 resource and deployment calibration](resource-sizing-20261020/README.md) records the replacement producers, reduced allocations and a short balanced test. It is not pooled with the 24 main-proposal trials.

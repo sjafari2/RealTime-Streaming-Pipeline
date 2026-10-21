@@ -118,7 +118,7 @@ For standalone troubleshooting inside the producer application directory, provid
 PRODUCER_WORKLOAD_ID=0 PIPELINE_STANDALONE=true bash run.sh
 ```
 
-Use different IDs for simultaneous producers. In managed runs, preflight checks the pod environments and the start barrier checks the running applications again. The manifest's `producer_workloads` map and each producer's status/configuration event retain the actual ID, seed, RNG scheme and derived seed. These changes are local until source and deployment updates are applied; they do not establish that a live calibration has passed. See [experimental methodology](experiment-methodology.md#reproducible-producer-streams) for the distinction from historical hostname-seeded runs.
+Use different IDs for simultaneous producers. In managed runs, preflight checks the pod environments and the start barrier checks the running applications again. The manifest's `producer_workloads` map and each producer's status/configuration event retain the actual ID, seed, RNG scheme and derived seed. The October 20 replacement passed the deployed source and workload-ID checks and completed a separate [resource calibration](../experiment-records/resource-sizing-20261020/README.md). Its short duration does not establish sustained stability; later source changes still require synchronization and deployment checks. See [experimental methodology](experiment-methodology.md#reproducible-producer-streams) for the distinction from historical hostname-seeded runs.
 
 
 ## Replacement producer deployment

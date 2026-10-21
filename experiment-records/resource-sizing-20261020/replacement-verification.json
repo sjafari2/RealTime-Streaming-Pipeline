@@ -1,0 +1,208 @@
+{
+  "code_revision": "8f6b34e02af5493d407e6131aa5ca7c34d83571e",
+  "automated_tests_passed": 370,
+  "server_dry_run_passed": true,
+  "deployed": true,
+  "workload": "balanced",
+  "target_total_messages_per_second": 700,
+  "warmup_seconds": 60,
+  "evaluation_seconds": 300,
+  "drain_seconds": 120,
+  "action": "none",
+  "original_pvc_identities_preserved": 17,
+  "new_claims": [
+    "producer-data-20261020",
+    "pipeline-config-20261020"
+  ],
+  "retired_pod_preserved": {
+    "name": "producer-sts-1",
+    "uid": "d0675b0b-21b8-4dde-9518-4acdfdf628b4",
+    "original_volumes_retained": true
+  },
+  "client_pods": [
+    {
+      "pod": "consumer-sts-0",
+      "uid": "b82c90de-e18f-427c-b6cb-1dba74a1ff44",
+      "node": "k8s-chase-ci-04.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "consumer-container",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "restartCount": 0
+        }
+      ],
+      "resource_declarations": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "1200m",
+              "ephemeral-storage": "50Gi",
+              "memory": "600Mi"
+            },
+            "requests": {
+              "cpu": "1",
+              "ephemeral-storage": "0",
+              "memory": "512Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "uid": "926e2d68-018b-4433-8d55-815601265102",
+      "node": "k8s-ravi-01.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "consumer-container",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "restartCount": 0
+        }
+      ],
+      "resource_declarations": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "1200m",
+              "ephemeral-storage": "50Gi",
+              "memory": "600Mi"
+            },
+            "requests": {
+              "cpu": "1",
+              "ephemeral-storage": "0",
+              "memory": "512Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "uid": "8cca0189-6917-44b3-bf93-30c0a44452c1",
+      "node": "k8s-chase-ci-07.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "consumer-container",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "restartCount": 0
+        }
+      ],
+      "resource_declarations": [
+        {
+          "name": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "1200m",
+              "ephemeral-storage": "50Gi",
+              "memory": "600Mi"
+            },
+            "requests": {
+              "cpu": "1",
+              "ephemeral-storage": "0",
+              "memory": "512Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "producer-workers-0",
+      "uid": "4a636e51-633c-4402-b6aa-ac67a7987f23",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "producer-container",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "restartCount": 0
+        }
+      ],
+      "resource_declarations": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "300m",
+              "ephemeral-storage": "50Gi",
+              "memory": "152Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "ephemeral-storage": "0",
+              "memory": "128Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "producer-workers-1",
+      "uid": "1d694681-c55d-4bd2-91e6-398e7bb4b196",
+      "node": "k8s-chase-ci-01.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "producer-container",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "restartCount": 0
+        }
+      ],
+      "resource_declarations": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "300m",
+              "ephemeral-storage": "50Gi",
+              "memory": "152Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "ephemeral-storage": "0",
+              "memory": "128Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "producer-workers-2",
+      "uid": "34336bb8-dbc8-4496-8802-ac322417fbf8",
+      "node": "edex.calit2.optiputer.net",
+      "containers": [
+        {
+          "name": "producer-container",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "restartCount": 0
+        }
+      ],
+      "resource_declarations": [
+        {
+          "name": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "300m",
+              "ephemeral-storage": "50Gi",
+              "memory": "152Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "ephemeral-storage": "0",
+              "memory": "128Mi"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "pods.deployed.json": "23da94d564db5c74e8378f196782a148389523b600d72e186f45d27d892ef287",
+    "statefulsets.deployed.json": "ab1a296ffc06528a8bb5421969b38ef8951559ac5f1f4c418c47991e6fdba324",
+    "pvc.before.json": "9addb919deac8cea9a1344ba34129ab775ddeb9a94e2c69b0bf6da9576ca5e76",
+    "pvc.deployed.json": "5b2190472ec2f573f6d26ff58b93074fb3bf983a63675e653d60cdeb9f8df97a",
+    "prometheus-targets.json": "549b8fba2db703228f6c8dd8c9516c06eaea195c3a0d31093fbeab08cdefc192",
+    "source-configmap.yaml": "c2cd6a9faec762b9fc90e8bfc0b0cbaf82baaff99644479744be9a499f40dd98",
+    "seed-job.log": "a0e1f74d5a59359f5bcdf2b9500c63673b297bd6f61ff174400bf381a07b259c",
+    "calibration-config.yaml": "f95f46a0500d4358357350a893ed3c8d31fa1699b3fb56a3a4039f39a0e026d3"
+  }
+}
