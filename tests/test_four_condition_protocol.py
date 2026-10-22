@@ -212,3 +212,24 @@ def test_resume_can_retry_technical_gate_before_any_performance_trial():
     import pytest
     with pytest.raises(ValueError, match='validation'):
         module.validate_resume_state(state, protocol)
+
+
+def test_twelve_hot_600_comparison_preserves_rate_timing_and_target_counts(monkeypatch):
+    monkeypatch.setattr(module.r, 'validate_intervention', lambda *args: None)
+    protocol = module.campaign_protocol(600, False, 12, 1000)
+    assert protocol['hot_partition_count'] == 12
+    assert protocol['performance_trials'] == 8
+    assert protocol['order'] == [list(row) for row in module.ORDER]
+    assert 'three consumers receive four each' in protocol['assignment_limit']
+    hot = list(range(40, 52))
+    for arm in protocol['conditions']:
+        cfg, plan = module.prepared(arm, 1, 81, reference(), hot, aggregate_rate=600, hot_count=12, deadline_ms=1000)
+        assert float(cfg['data']['TARGET_RATE'])*3 == 600
+        assert cfg['data']['SKEW_PARTITION'] == ','.join(map(str, hot))
+        assert cfg['data']['SKEW_FRACTION'] == '0.8'
+        assert (cfg['data']['WARMUP_SECONDS'], cfg['data']['EXP_DURATION_SEC'], cfg['data']['DRAIN_SECONDS']) == ('60', '660', '120')
+        assert cfg['data']['SLO_THRESHOLD_MS'] == '1000'
+        assert plan['after_evaluation_start_seconds'] == 60
+        if 'target_assignment' in plan:
+            count = 6 if arm == 'scale_redistribute6' else 3
+            assert [sum(x['partition'] in hot and x['owner'] == f'consumer-sts-{i}' for x in plan['target_assignment']) for i in range(count)] == [12//count]*count

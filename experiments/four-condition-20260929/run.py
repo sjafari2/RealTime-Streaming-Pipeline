@@ -84,6 +84,10 @@ def campaign_protocol(aggregate_rate=700,targeted_only=False,hot_count=12,deadli
     protocol['lag_analysis_parameters']=dict(window_samples=15,growth_window_samples=5,export_step_seconds=2,hot_k=1.0,minimum_lag=10.0,persistence=0.8,max_gap_seconds=3.0)
     protocol['outcomes']=[text.replace('30-second growth','10-second growth') for text in protocol['outcomes']]
     protocol['assignment_limit']='The implemented target balances hot and cold partition counts separately. With four hot partitions, three consumers receive hot counts 2,1,1, while six receive 1,1,1,1,0,0. This is not an optimal load- or capacity-weighted three-consumer assignment; a different assignment may reduce any observed disadvantage.'
+    if hot_count == 12:
+        protocol['assignment_limit'] = ('The target balances hot and cold partition counts separately. '
+            'With twelve hot partitions, three consumers receive four each and six consumers receive two each. '
+            'Assignments do not use measured machine capacity; equal partition counts need not imply equal processing capacity.')
     protocol['primary_outcomes']=['Unfinished evaluation messages after fixed drain',
         'Confirmed recovery while input continues','Final-two-minute processing backlog growth',
         'Whole-evaluation-cohort completion p99 reported with unfinished work']
