@@ -11,6 +11,8 @@ This index contains the **32 performance trials reported in the proposal**. One 
 
 The balanced trials established 700 messages/s as the reference rate for the historical skew comparisons. The additional block uses 600 messages/s after changes to resources and placement, with separate balanced recalibration. Those comparisons evaluate scheduled actions, including their transition and resource costs. The results do not demonstrate a complete adaptive controller or hot-key splitting.
 
+The [combined four-partition tables](four-hot-rate-comparison-20261021/README.md) place the 700 and 600 messages/s configurations side by side and report per-run percentage changes in throughput, mean total backlog, p99, SLO violations and requested resources. These reuse the trials above; they do not add trials or pool the two configurations.
+
 [Detailed intervention metrics and plots](result-metric-audit-20260930/README.md) include throughput, CPU, memory, lag, growth, skew, completion latency and unfinished work. Missing observations remain gaps. The first twelve-partition baseline lacks full-window resource-request coverage.
 
 The retrospective [node-placement review](node-placement-review.json) records observed co-location in the six scaling trials. Original producers and consumers sometimes shared nodes; the stricter [placement requirement](../docs/node-placement.md) applies to subsequent trials and does not change these results.

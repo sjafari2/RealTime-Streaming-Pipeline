@@ -1,0 +1,1665 @@
+{
+  "percentage_changes": {
+    "within_600_versus_keep3": [
+      {
+        "rate": 600,
+        "arm": "redistribute3",
+        "run_number": 1,
+        "reference_run_id": "run-20261021-081142",
+        "compared_run_id": "run-20261021-083131",
+        "reference_values": {
+          "throughput_increase_percent": 392.245,
+          "mean_total_backlog_reduction_percent": 84169.24666666667,
+          "p99_reduction_percent": 309.29474663734436,
+          "slo_violation_rate_reduction_percent": 85.65722222222222,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 617.5783333333334,
+          "mean_total_backlog_reduction_percent": 9867.642611683848,
+          "p99_reduction_percent": 91.81760144233704,
+          "slo_violation_rate_reduction_percent": 38.756388888888885,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "changes": {
+          "throughput_increase_percent": 57.447088766799666,
+          "mean_total_backlog_reduction_percent": 88.27642755225978,
+          "p99_reduction_percent": 70.31388265058527,
+          "slo_violation_rate_reduction_percent": 54.75409091793518,
+          "requested_cpu_reduction_percent": 0.0,
+          "requested_memory_reduction_percent": 0.0
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "redistribute3",
+        "run_number": 2,
+        "reference_run_id": "run-20261021-102633",
+        "compared_run_id": "run-20261021-100744",
+        "reference_values": {
+          "throughput_increase_percent": 347.08,
+          "mean_total_backlog_reduction_percent": 91634.8355704698,
+          "p99_reduction_percent": 378.349228143692,
+          "slo_violation_rate_reduction_percent": 85.69666666666666,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.16,
+          "mean_total_backlog_reduction_percent": 7534.577319587629,
+          "p99_reduction_percent": 83.29212641716003,
+          "slo_violation_rate_reduction_percent": 31.32333333333333,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "changes": {
+          "throughput_increase_percent": 80.11985709346548,
+          "mean_total_backlog_reduction_percent": 91.77760589334683,
+          "p99_reduction_percent": 77.98538487158568,
+          "slo_violation_rate_reduction_percent": 63.44859776731884,
+          "requested_cpu_reduction_percent": 0.0,
+          "requested_memory_reduction_percent": 0.0
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "scale_redistribute6",
+        "run_number": 1,
+        "reference_run_id": "run-20261021-081142",
+        "compared_run_id": "run-20261021-084932",
+        "reference_values": {
+          "throughput_increase_percent": 392.245,
+          "mean_total_backlog_reduction_percent": 84169.24666666667,
+          "p99_reduction_percent": 309.29474663734436,
+          "slo_violation_rate_reduction_percent": 85.65722222222222,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.9083333333333,
+          "mean_total_backlog_reduction_percent": 12338.892733564015,
+          "p99_reduction_percent": 114.08268666267395,
+          "slo_violation_rate_reduction_percent": 36.748888888888885,
+          "requested_cpu_reduction_percent": 136.67777831554412,
+          "requested_memory_reduction_percent": 51.25416686832905
+        },
+        "changes": {
+          "throughput_increase_percent": 59.5707614713593,
+          "mean_total_backlog_reduction_percent": 85.34037879365914,
+          "p99_reduction_percent": 63.11522006015877,
+          "slo_violation_rate_reduction_percent": 57.09773451028972,
+          "requested_cpu_reduction_percent": -89.83024766047794,
+          "requested_memory_reduction_percent": -89.83024766047798
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "scale_redistribute6",
+        "run_number": 2,
+        "reference_run_id": "run-20261021-102633",
+        "compared_run_id": "run-20261021-094855",
+        "reference_values": {
+          "throughput_increase_percent": 347.08,
+          "mean_total_backlog_reduction_percent": 91634.8355704698,
+          "p99_reduction_percent": 378.349228143692,
+          "slo_violation_rate_reduction_percent": 85.69666666666666,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.4766666666667,
+          "mean_total_backlog_reduction_percent": 10949.982578397212,
+          "p99_reduction_percent": 109.42453336715698,
+          "slo_violation_rate_reduction_percent": 33.43222222222222,
+          "requested_cpu_reduction_percent": 136.50533230304717,
+          "requested_memory_reduction_percent": 51.189499613642695
+        },
+        "changes": {
+          "throughput_increase_percent": 80.21109446429259,
+          "mean_total_backlog_reduction_percent": 88.05041498658404,
+          "p99_reduction_percent": 71.07843092371817,
+          "slo_violation_rate_reduction_percent": 60.98772155017049,
+          "requested_cpu_reduction_percent": -89.59073930978774,
+          "requested_memory_reduction_percent": -89.59073930978776
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "kafka_scale6",
+        "run_number": 1,
+        "reference_run_id": "run-20261021-081142",
+        "compared_run_id": "run-20261021-091003",
+        "reference_values": {
+          "throughput_increase_percent": 392.245,
+          "mean_total_backlog_reduction_percent": 84169.24666666667,
+          "p99_reduction_percent": 309.29474663734436,
+          "slo_violation_rate_reduction_percent": 85.65722222222222,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.6733333333333,
+          "mean_total_backlog_reduction_percent": 9887.017123287671,
+          "p99_reduction_percent": 75.59332227706909,
+          "slo_violation_rate_reduction_percent": 44.35,
+          "requested_cpu_reduction_percent": 136.98511369228362,
+          "requested_memory_reduction_percent": 51.369417634606364
+        },
+        "changes": {
+          "throughput_increase_percent": 59.51084993647677,
+          "mean_total_backlog_reduction_percent": 88.25340903614953,
+          "p99_reduction_percent": 75.5594548245903,
+          "slo_violation_rate_reduction_percent": 48.2238638501002,
+          "requested_cpu_reduction_percent": -90.25710235039392,
+          "requested_memory_reduction_percent": -90.25710235039395
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "kafka_scale6",
+        "run_number": 2,
+        "reference_run_id": "run-20261021-102633",
+        "compared_run_id": "run-20261021-092942",
+        "reference_values": {
+          "throughput_increase_percent": 347.08,
+          "mean_total_backlog_reduction_percent": 91634.8355704698,
+          "p99_reduction_percent": 378.349228143692,
+          "slo_violation_rate_reduction_percent": 85.69666666666666,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 597.3966666666666,
+          "mean_total_backlog_reduction_percent": 21412.3265993266,
+          "p99_reduction_percent": 90.28109192848206,
+          "slo_violation_rate_reduction_percent": 66.74527777777777,
+          "requested_cpu_reduction_percent": 136.88465270996093,
+          "requested_memory_reduction_percent": 51.33174476623535
+        },
+        "changes": {
+          "throughput_increase_percent": 72.12074065537244,
+          "mean_total_backlog_reduction_percent": 76.63298409821458,
+          "p99_reduction_percent": 76.13815881918636,
+          "slo_violation_rate_reduction_percent": 22.11449946192643,
+          "requested_cpu_reduction_percent": -90.11757320827907,
+          "requested_memory_reduction_percent": -90.11757320827908
+        }
+      }
+    ],
+    "configuration_600_relative_to_700": [
+      {
+        "rate": 600,
+        "arm": "redistribute3",
+        "run_number": 1,
+        "reference_run_id": "run-20260930-003405",
+        "compared_run_id": "run-20261021-083131",
+        "reference_values": {
+          "throughput_increase_percent": 730.87,
+          "mean_total_backlog_reduction_percent": 7432.773195876289,
+          "p99_reduction_percent": 84.4961884021759,
+          "slo_violation_rate_reduction_percent": 26.63214285714286,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 36.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 617.5783333333334,
+          "mean_total_backlog_reduction_percent": 9867.642611683848,
+          "p99_reduction_percent": 91.81760144233704,
+          "slo_violation_rate_reduction_percent": 38.756388888888885,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "changes": {
+          "throughput_increase_percent": -15.500932678406095,
+          "mean_total_backlog_reduction_percent": -32.75855931078898,
+          "p99_reduction_percent": -8.66478497859981,
+          "slo_violation_rate_reduction_percent": -45.52486105523517,
+          "requested_cpu_reduction_percent": 0.0,
+          "requested_memory_reduction_percent": 25.0
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "redistribute3",
+        "run_number": 2,
+        "reference_run_id": "run-20260930-012528",
+        "compared_run_id": "run-20261021-100744",
+        "reference_values": {
+          "throughput_increase_percent": 731.3816666666667,
+          "mean_total_backlog_reduction_percent": 7133.484641638225,
+          "p99_reduction_percent": 79.28092813491821,
+          "slo_violation_rate_reduction_percent": 25.820952380952384,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 36.0
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.16,
+          "mean_total_backlog_reduction_percent": 7534.577319587629,
+          "p99_reduction_percent": 83.29212641716003,
+          "slo_violation_rate_reduction_percent": 31.32333333333333,
+          "requested_cpu_reduction_percent": 72.0,
+          "requested_memory_reduction_percent": 27.0
+        },
+        "changes": {
+          "throughput_increase_percent": -14.52342484202275,
+          "mean_total_backlog_reduction_percent": -5.622675285627191,
+          "p99_reduction_percent": -5.059474424183921,
+          "slo_violation_rate_reduction_percent": -21.309752139274096,
+          "requested_cpu_reduction_percent": 0.0,
+          "requested_memory_reduction_percent": 25.0
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "scale_redistribute6",
+        "run_number": 1,
+        "reference_run_id": "run-20260930-005056",
+        "compared_run_id": "run-20261021-084932",
+        "reference_values": {
+          "throughput_increase_percent": 730.8916666666667,
+          "mean_total_backlog_reduction_percent": 12835.307958477508,
+          "p99_reduction_percent": 110.19018840789795,
+          "slo_violation_rate_reduction_percent": 35.232142857142854,
+          "requested_cpu_reduction_percent": 136.83054919242858,
+          "requested_memory_reduction_percent": 68.41527459621429
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.9083333333333,
+          "mean_total_backlog_reduction_percent": 12338.892733564015,
+          "p99_reduction_percent": 114.08268666267395,
+          "slo_violation_rate_reduction_percent": 36.748888888888885,
+          "requested_cpu_reduction_percent": 136.67777831554412,
+          "requested_memory_reduction_percent": 51.25416686832905
+        },
+        "changes": {
+          "throughput_increase_percent": -14.36373379547813,
+          "mean_total_backlog_reduction_percent": 3.8675754919118956,
+          "p99_reduction_percent": -3.5325270888610296,
+          "slo_violation_rate_reduction_percent": -4.305006476319196,
+          "requested_cpu_reduction_percent": 0.11164968480073448,
+          "requested_memory_reduction_percent": 25.08373726360054
+        }
+      },
+      {
+        "rate": 600,
+        "arm": "scale_redistribute6",
+        "run_number": 2,
+        "reference_run_id": "run-20260930-010811",
+        "compared_run_id": "run-20261021-094855",
+        "reference_values": {
+          "throughput_increase_percent": 731.1333333333333,
+          "mean_total_backlog_reduction_percent": 12901.104529616725,
+          "p99_reduction_percent": 112.938711643219,
+          "slo_violation_rate_reduction_percent": 34.71738095238096,
+          "requested_cpu_reduction_percent": 136.84574420452117,
+          "requested_memory_reduction_percent": 68.42287210226058
+        },
+        "compared_values": {
+          "throughput_increase_percent": 625.4766666666667,
+          "mean_total_backlog_reduction_percent": 10949.982578397212,
+          "p99_reduction_percent": 109.42453336715698,
+          "slo_violation_rate_reduction_percent": 33.43222222222222,
+          "requested_cpu_reduction_percent": 136.50533230304717,
+          "requested_memory_reduction_percent": 51.189499613642695
+        },
+        "changes": {
+          "throughput_increase_percent": -14.45108051427008,
+          "mean_total_backlog_reduction_percent": 15.123681439371131,
+          "p99_reduction_percent": 3.111579922359605,
+          "slo_violation_rate_reduction_percent": 3.701773275816754,
+          "requested_cpu_reduction_percent": 0.24875592840157346,
+          "requested_memory_reduction_percent": 25.18656694630117
+        }
+      }
+    ]
+  },
+  "definition": "Twelve distinct trials shown together, not pooled. Historical 700 and revised 600 messages/s are different deployment configurations.",
+  "source_sha256": {
+    "experiment-records/four-hot-partitions-20260930/comparison.json": "7a6e62f797f3eb49c9d6e34cab5d70e72ecf5ba1557e95728617d7cd93500409",
+    "results/four-hot600-20261021-analysis/comparison.json": "e935699886459e089dc7963bc8d0847aa0e2519d0463d59a3d2358a9c10e08d3",
+    "experiment-records/result-metric-audit-20260930/metrics.json": "9bbba829838745b836f23875dc2e4c072651e8c8d534f5cd07213627a5fffc50",
+    "historical-completion-windows.json": "e71f2efd13fb5837f84a39269448f0573b6ac3288b58ae87dc948cef0dea162e",
+    "experiment-records/four-hot600-20261021/completion-windows.json": "2fe6b14b02ff06743df1d54733f6f75d8fedc8c661c486cdc8af4a1b04b0ef53",
+    "experiment-records/four-hot600-20261021/results-summary.json": "0eb0a8ade7d2c2bf04145e4dd4042ba728bcf42c55c44e2d0674d05ed0206b21",
+    "raw/run-20261021-081142/lag-summary.json": "780be6ecd21982fab5d0b2b80c1e2cc8e99036c37a2ce698df820f3dc9687f96",
+    "raw/run-20261021-081142/manifest.json": "26166db97c5646792e887c1e20dde416b14a655601ab10a15b34cc971a54f46d",
+    "raw/run-20261021-102633/lag-summary.json": "8736a4feed1634a77ada32c040db04e0bc038290b9dcd8bb69db4a9613e1a8e4",
+    "raw/run-20261021-102633/manifest.json": "8fd746a0af2fb6de009702387c3184311fb8318ae84df3957f4447d42cc212f1",
+    "raw/run-20261021-083131/lag-summary.json": "65da0f9929a8b21476e7279925063f287ad61c8340ed2911aaf2d3e655eb9c9d",
+    "raw/run-20261021-083131/manifest.json": "8f4a15058cc16bd8656038274a4109a594a7e6a0940c5580e481758040bcb0f6",
+    "raw/run-20261021-100744/lag-summary.json": "a99de6126ccb55064fc0016b88020acab15a716fb43d36355e7819ab8250558a",
+    "raw/run-20261021-100744/manifest.json": "51e176a98dbda4b1338c6b7faf95bf6bfb69af39394525ec729cd144be06fcc8",
+    "raw/run-20261021-084932/lag-summary.json": "f939811be533cf4cc015c25bd3cefe50920ca5a5fba6e91f1d209ae84d38b726",
+    "raw/run-20261021-084932/manifest.json": "2943806500d3639496127e4cdda926bee75f22edc588968f181375d0d6ce295f",
+    "raw/run-20261021-094855/lag-summary.json": "8738f2cda425d2ef5d68ae11592d7c4b80345fa0058c1dd82b6bd205b5a3a167",
+    "raw/run-20261021-094855/manifest.json": "de51df51467dd8feeb4df53fe82c0d5e033285567626370deed365c94461f5db",
+    "raw/run-20261021-091003/lag-summary.json": "ef26b7be62ae10577e0cd9443f573457ddc6fa493a7ac48c897099af6bfedf1b",
+    "raw/run-20261021-091003/manifest.json": "c78130665c779e7c8055c5fb99f19b91a509b6f1a5a297179df81403d74fe590",
+    "raw/run-20261021-092942/lag-summary.json": "87930e1ebe8376a0d5b755cd8fc3b3d768945f56cbb2f7a6b46bd3407160d959",
+    "raw/run-20261021-092942/manifest.json": "4831c7bd5405b19e0a88f0a13b674d229dea286eac798cf52453b1c68f4b1d4c"
+  },
+  "runs": [
+    {
+      "run_id": "run-20261021-081142",
+      "arm": "keep3",
+      "run_number": 1,
+      "admitted": 360000,
+      "completed": 263087,
+      "unfinished": 96913,
+      "unfinished_percent": 26.92027777777778,
+      "p99_seconds": 309.29474663734436,
+      "mean_completion_seconds": 166.90335588151757,
+      "useful_throughput": 392.245,
+      "rate": 600,
+      "minimum_completion_seconds": 0.00809788703918457,
+      "maximum_completion_seconds": 323.30104303359985,
+      "slo_violation_percent": 85.65722222222222,
+      "resources": {
+        "actual_cpu_core_minutes": 15.88236666666666,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9944444444444445,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 2.9669216156005858,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9944444444444445,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 72.0,
+        "requested_memory_gib_minutes": 27.0,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 84169.24666666667,
+        "max_total_backlog": 139438.0,
+        "max_partition_lag": 32783.0,
+        "mean_skew": 14.114878637587676,
+        "lag_coverage_percent": 99.66666666666667
+      },
+      "intervention": {
+        "decision_to_active_seconds": null,
+        "global_gap_seconds": null,
+        "extra_pending_during_pause": null,
+        "net_pending_during_transfer": null,
+        "recovery_minutes": null,
+        "recovery_status": "not_applicable"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792592047.643859,
+          "end_epoch": 1792592077.643859,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10274,
+          "completion_throughput_per_second": 342.46666666666664,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 2789,
+          "completion_window_p99_seconds": 59.56571674346924,
+          "completion_window_mean_seconds": 4.361855071947625,
+          "completion_window_min_seconds": 0.011435270309448242,
+          "completion_window_max_seconds": 59.62673282623291,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 201,
+          "completed_window_deadline_miss_fraction": 0.0720688418788096,
+          "acknowledged_evaluation_messages_pending_at_end": 30686,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792592587.643859,
+          "end_epoch": 1792592617.643859,
+          "duration_seconds": 30.0,
+          "distinct_completions": 13305,
+          "completion_throughput_per_second": 443.5,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 13305,
+          "completion_window_p99_seconds": 272.39304423332214,
+          "completion_window_mean_seconds": 217.1306632375771,
+          "completion_window_min_seconds": 0.008943557739257812,
+          "completion_window_max_seconds": 272.47952103614807,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 10781,
+          "completed_window_deadline_miss_fraction": 0.8102968808718527,
+          "acknowledged_evaluation_messages_pending_at_end": 140043,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792592077.643859,
+          "end_epoch": 1792592617.643859,
+          "duration_seconds": 540.0,
+          "distinct_completions": 214643,
+          "completion_throughput_per_second": 397.48703703703706,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 214643,
+          "completion_window_p99_seconds": 270.644775390625,
+          "completion_window_mean_seconds": 146.1604897883517,
+          "completion_window_min_seconds": 0.00809788703918457,
+          "completion_window_max_seconds": 272.47952103614807,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 168123,
+          "completed_window_deadline_miss_fraction": 0.783268031102808,
+          "acknowledged_evaluation_messages_pending_at_end": 140043,
+          "start_after_evaluation_seconds": 60.0,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-102633",
+      "arm": "keep3",
+      "run_number": 2,
+      "admitted": 360000,
+      "completed": 224763,
+      "unfinished": 135237,
+      "unfinished_percent": 37.56583333333333,
+      "p99_seconds": 378.349228143692,
+      "mean_completion_seconds": 172.24379497050722,
+      "useful_throughput": 347.08,
+      "rate": 600,
+      "minimum_completion_seconds": 0.008511781692504883,
+      "maximum_completion_seconds": 385.70851373672485,
+      "slo_violation_percent": 85.69666666666666,
+      "resources": {
+        "actual_cpu_core_minutes": 16.028899999999986,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9861111111111112,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 2.9851672490437826,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9861111111111112,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 72.0,
+        "requested_memory_gib_minutes": 27.0,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 91634.8355704698,
+        "max_total_backlog": 166862.0,
+        "max_partition_lag": 39095.0,
+        "mean_skew": 14.114062460913548,
+        "lag_coverage_percent": 98.33333333333333
+      },
+      "intervention": {
+        "decision_to_active_seconds": null,
+        "global_gap_seconds": null,
+        "extra_pending_during_pause": null,
+        "net_pending_during_transfer": null,
+        "recovery_minutes": null,
+        "recovery_status": "not_applicable"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792600138.5970612,
+          "end_epoch": 1792600168.5970612,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10267,
+          "completion_throughput_per_second": 342.23333333333335,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 2613,
+          "completion_window_p99_seconds": 0.2284832000732422,
+          "completion_window_mean_seconds": 0.08255578328310371,
+          "completion_window_min_seconds": 0.008511781692504883,
+          "completion_window_max_seconds": 0.4531393051147461,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 30723,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792600678.5970612,
+          "end_epoch": 1792600708.5970612,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10371,
+          "completion_throughput_per_second": 345.7,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 10371,
+          "completion_window_p99_seconds": 324.8904638290405,
+          "completion_window_mean_seconds": 239.21709208878818,
+          "completion_window_min_seconds": 0.012871026992797852,
+          "completion_window_max_seconds": 325.1240887641907,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 7813,
+          "completed_window_deadline_miss_fraction": 0.7533506894224279,
+          "acknowledged_evaluation_messages_pending_at_end": 167208,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792600168.5970612,
+          "end_epoch": 1792600708.5970612,
+          "duration_seconds": 540.0,
+          "distinct_completions": 187544,
+          "completion_throughput_per_second": 347.3037037037037,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 187515,
+          "completion_window_p99_seconds": 321.1290066242218,
+          "completion_window_mean_seconds": 146.1249112140006,
+          "completion_window_min_seconds": 0.009807825088500977,
+          "completion_window_max_seconds": 325.1240887641907,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 141301,
+          "completed_window_deadline_miss_fraction": 0.753545049729355,
+          "acknowledged_evaluation_messages_pending_at_end": 167208,
+          "start_after_evaluation_seconds": 60.0,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-083131",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 91.81760144233704,
+      "mean_completion_seconds": 17.481471585111485,
+      "useful_throughput": 617.5783333333334,
+      "rate": 600,
+      "minimum_completion_seconds": 0.008808135986328125,
+      "maximum_completion_seconds": 112.85536527633667,
+      "slo_violation_percent": 38.756388888888885,
+      "resources": {
+        "actual_cpu_core_minutes": 20.19260000000001,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 2.57771422068278,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 72.0,
+        "requested_memory_gib_minutes": 27.0,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 9867.642611683848,
+        "max_total_backlog": 47803.0,
+        "max_partition_lag": 11745.0,
+        "mean_skew": 23.056029997310006,
+        "lag_coverage_percent": 96.33333333333334
+      },
+      "intervention": {
+        "decision_to_active_seconds": 62.64016795158386,
+        "global_gap_seconds": 16.332725048065186,
+        "extra_pending_during_pause": 9800,
+        "net_pending_during_transfer": 8061,
+        "recovery_minutes": 4.98650340239207,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792593245.488819,
+          "end_epoch": 1792593275.488819,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10398,
+          "completion_throughput_per_second": 346.6,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 7682,
+          "completion_window_p99_seconds": 49.85407876968384,
+          "completion_window_mean_seconds": 30.046613224935047,
+          "completion_window_min_seconds": 0.009537935256958008,
+          "completion_window_max_seconds": 49.993114948272705,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 5105,
+          "completed_window_deadline_miss_fraction": 0.6645404842488936,
+          "acknowledged_evaluation_messages_pending_at_end": 25786,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792593785.488819,
+          "end_epoch": 1792593815.488819,
+          "duration_seconds": 30.0,
+          "distinct_completions": 18005,
+          "completion_throughput_per_second": 600.1666666666666,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 18005,
+          "completion_window_p99_seconds": 0.39858269691467285,
+          "completion_window_mean_seconds": 0.1106275229545409,
+          "completion_window_min_seconds": 0.016172409057617188,
+          "completion_window_max_seconds": 0.7641515731811523,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 61,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792593346.938964,
+          "end_epoch": 1792593815.488819,
+          "duration_seconds": 468.5498549938202,
+          "distinct_completions": 327721,
+          "completion_throughput_per_second": 699.4367760594491,
+          "acknowledged_input_per_second": 600.0001856871942,
+          "evaluation_completions_for_latency": 327721,
+          "completion_window_p99_seconds": 91.90729475021362,
+          "completion_window_mean_seconds": 15.002487893028471,
+          "completion_window_min_seconds": 0.008857965469360352,
+          "completion_window_max_seconds": 112.85536527633667,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 116791,
+          "completed_window_deadline_miss_fraction": 0.3563732565200277,
+          "acknowledged_evaluation_messages_pending_at_end": 61,
+          "start_after_evaluation_seconds": 131.4501450061798,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-100744",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 83.29212641716003,
+      "mean_completion_seconds": 12.829437656831079,
+      "useful_throughput": 625.16,
+      "rate": 600,
+      "minimum_completion_seconds": 0.008343696594238281,
+      "maximum_completion_seconds": 119.69620108604431,
+      "slo_violation_percent": 31.32333333333333,
+      "resources": {
+        "actual_cpu_core_minutes": 20.253650000000015,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 2.5005093892415364,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 72.0,
+        "requested_memory_gib_minutes": 27.0,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 7534.577319587629,
+        "max_total_backlog": 43761.0,
+        "max_partition_lag": 10792.0,
+        "mean_skew": 22.124709447581083,
+        "lag_coverage_percent": 96.33333333333334
+      },
+      "intervention": {
+        "decision_to_active_seconds": 28.534564971923828,
+        "global_gap_seconds": 16.155635595321655,
+        "extra_pending_during_pause": 9674,
+        "net_pending_during_transfer": 7904,
+        "recovery_minutes": 3.9834229350090027,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792599008.902731,
+          "end_epoch": 1792599038.902731,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10416,
+          "completion_throughput_per_second": 347.2,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 3005,
+          "completion_window_p99_seconds": 59.133567094802856,
+          "completion_window_mean_seconds": 7.770769882519511,
+          "completion_window_min_seconds": 0.010026693344116211,
+          "completion_window_max_seconds": 59.22833251953125,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 393,
+          "completed_window_deadline_miss_fraction": 0.1307820299500832,
+          "acknowledged_evaluation_messages_pending_at_end": 30334,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792599548.902731,
+          "end_epoch": 1792599578.902731,
+          "duration_seconds": 30.0,
+          "distinct_completions": 18012,
+          "completion_throughput_per_second": 600.4,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 18012,
+          "completion_window_p99_seconds": 0.4491274356842041,
+          "completion_window_mean_seconds": 0.11476878420448346,
+          "completion_window_min_seconds": 0.027302026748657227,
+          "completion_window_max_seconds": 0.7219045162200928,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 54,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792599076.432189,
+          "end_epoch": 1792599578.902731,
+          "duration_seconds": 502.4705419540405,
+          "distinct_completions": 343996,
+          "completion_throughput_per_second": 684.609288063427,
+          "acknowledged_input_per_second": 600.0013430191809,
+          "evaluation_completions_for_latency": 343996,
+          "completion_window_p99_seconds": 82.67599844932556,
+          "completion_window_mean_seconds": 11.664091038062676,
+          "completion_window_min_seconds": 0.008864879608154297,
+          "completion_window_max_seconds": 119.69620108604431,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 103585,
+          "completed_window_deadline_miss_fraction": 0.30112268747311016,
+          "acknowledged_evaluation_messages_pending_at_end": 54,
+          "start_after_evaluation_seconds": 97.52945804595947,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20260930-003405",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "admitted": 420000,
+      "completed": 420000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 84.4961884021759,
+      "mean_completion_seconds": 10.749022205154668,
+      "useful_throughput": 730.87,
+      "rate": 700,
+      "minimum_completion_seconds": 0.009135246276855469,
+      "maximum_completion_seconds": 98.78379797935486,
+      "slo_violation_percent": 26.63214285714286,
+      "resources": {
+        "actual_cpu_core_minutes": 16.780966666666657,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 2.750834019978841,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 72.0,
+        "requested_memory_gib_minutes": 36.0,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 7432.773195876289,
+        "max_total_backlog": 50879.0,
+        "max_partition_lag": 13509.0,
+        "mean_skew": 20.51456847933917,
+        "lag_coverage_percent": 96.33333333333334
+      },
+      "intervention": {
+        "decision_to_active_seconds": 27.259577989578247,
+        "global_gap_seconds": 15.079905986785889,
+        "extra_pending_during_pause": 10557,
+        "net_pending_during_transfer": 7023,
+        "recovery_minutes": 3.014205050468445,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1790750187.782849,
+          "end_epoch": 1790750217.782849,
+          "duration_seconds": 30.0,
+          "distinct_completions": 11659,
+          "completion_throughput_per_second": 388.6333333333333,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 2990,
+          "completion_window_p99_seconds": 0.47626757621765137,
+          "completion_window_mean_seconds": 0.07936323119645135,
+          "completion_window_min_seconds": 0.010256528854370117,
+          "completion_window_max_seconds": 0.7799336910247803,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 36048,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1790750727.782849,
+          "end_epoch": 1790750757.782849,
+          "duration_seconds": 30.0,
+          "distinct_completions": 20991,
+          "completion_throughput_per_second": 699.7,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 20991,
+          "completion_window_p99_seconds": 0.29299187660217285,
+          "completion_window_mean_seconds": 0.08987790155612942,
+          "completion_window_min_seconds": 0.018108129501342773,
+          "completion_window_max_seconds": 1.374053955078125,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 44,
+          "completed_window_deadline_miss_fraction": 0.0020961364394264208,
+          "acknowledged_evaluation_messages_pending_at_end": 64,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790750252.190275,
+          "end_epoch": 1790750757.782849,
+          "duration_seconds": 505.59257411956787,
+          "distinct_completions": 402764,
+          "completion_throughput_per_second": 796.6177127924947,
+          "acknowledged_input_per_second": 700.000391849708,
+          "evaluation_completions_for_latency": 402764,
+          "completion_window_p99_seconds": 83.2110846042633,
+          "completion_window_mean_seconds": 9.512123327840172,
+          "completion_window_min_seconds": 0.009135246276855469,
+          "completion_window_max_seconds": 98.78379797935486,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 102181,
+          "completed_window_deadline_miss_fraction": 0.2536994368910826,
+          "acknowledged_evaluation_messages_pending_at_end": 64,
+          "start_after_evaluation_seconds": 94.40742588043213,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20260930-012528",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "admitted": 420000,
+      "completed": 420000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 79.28092813491821,
+      "mean_completion_seconds": 9.934549133922372,
+      "useful_throughput": 731.3816666666667,
+      "rate": 700,
+      "minimum_completion_seconds": 0.009162425994873047,
+      "maximum_completion_seconds": 90.89284110069275,
+      "slo_violation_percent": 25.820952380952384,
+      "resources": {
+        "actual_cpu_core_minutes": 16.97849999999998,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 2.721367835998535,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 72.0,
+        "requested_memory_gib_minutes": 36.0,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 7133.484641638225,
+        "max_total_backlog": 50157.0,
+        "max_partition_lag": 12258.0,
+        "mean_skew": 20.837616820215597,
+        "lag_coverage_percent": 97.0
+      },
+      "intervention": {
+        "decision_to_active_seconds": 21.92039179801941,
+        "global_gap_seconds": 12.307153463363647,
+        "extra_pending_during_pause": 8614,
+        "net_pending_during_transfer": 6019,
+        "recovery_minutes": 2.89082057873408,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1790753264.991061,
+          "end_epoch": 1790753294.991061,
+          "duration_seconds": 30.0,
+          "distinct_completions": 11526,
+          "completion_throughput_per_second": 384.2,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 2932,
+          "completion_window_p99_seconds": 0.19011521339416504,
+          "completion_window_mean_seconds": 0.07395105122869369,
+          "completion_window_min_seconds": 0.009162425994873047,
+          "completion_window_max_seconds": 0.8320913314819336,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 36107,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1790753804.991061,
+          "end_epoch": 1790753834.991061,
+          "duration_seconds": 30.0,
+          "distinct_completions": 21009,
+          "completion_throughput_per_second": 700.3,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 21009,
+          "completion_window_p99_seconds": 0.3057231903076172,
+          "completion_window_mean_seconds": 0.08814042199769566,
+          "completion_window_min_seconds": 0.021645069122314453,
+          "completion_window_max_seconds": 0.7323212623596191,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 42,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790753323.462157,
+          "end_epoch": 1790753834.991061,
+          "duration_seconds": 511.52890396118164,
+          "distinct_completions": 405848,
+          "completion_throughput_per_second": 793.4018915787377,
+          "acknowledged_input_per_second": 699.9995449468732,
+          "evaluation_completions_for_latency": 405848,
+          "completion_window_p99_seconds": 75.8842945098877,
+          "completion_window_mean_seconds": 9.111906957005164,
+          "completion_window_min_seconds": 0.00961613655090332,
+          "completion_window_max_seconds": 90.89284110069275,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 101465,
+          "completed_window_deadline_miss_fraction": 0.2500073919299836,
+          "acknowledged_evaluation_messages_pending_at_end": 42,
+          "start_after_evaluation_seconds": 88.47109603881836,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-084932",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 114.08268666267395,
+      "mean_completion_seconds": 21.871727921069994,
+      "useful_throughput": 625.9083333333333,
+      "rate": 600,
+      "minimum_completion_seconds": 0.007635354995727539,
+      "maximum_completion_seconds": 150.31291341781616,
+      "slo_violation_percent": 36.748888888888885,
+      "resources": {
+        "actual_cpu_core_minutes": 22.332449999999948,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.875,
+          0.8805555555555555,
+          0.8861111111111111,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 3.938675371805827,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.875,
+          0.8805555555555555,
+          0.8861111111111111,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 136.67777831554412,
+        "requested_memory_gib_minutes": 51.25416686832905,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 12338.892733564015,
+        "max_total_backlog": 59797.0,
+        "max_partition_lag": 14033.0,
+        "mean_skew": 24.401243335866173,
+        "lag_coverage_percent": 95.66666666666667
+      },
+      "intervention": {
+        "decision_to_active_seconds": 88.72754406929016,
+        "global_gap_seconds": 20.601155281066895,
+        "extra_pending_during_pause": 12344,
+        "net_pending_during_transfer": 3724,
+        "recovery_minutes": 4.882251516977946,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792594317.562113,
+          "end_epoch": 1792594347.562113,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10236,
+          "completion_throughput_per_second": 341.2,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 2584,
+          "completion_window_p99_seconds": 0.35245609283447266,
+          "completion_window_mean_seconds": 0.08707145031760721,
+          "completion_window_min_seconds": 0.009627580642700195,
+          "completion_window_max_seconds": 0.8463568687438965,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 30887,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792594857.562113,
+          "end_epoch": 1792594887.562113,
+          "duration_seconds": 30.0,
+          "distinct_completions": 18014,
+          "completion_throughput_per_second": 600.4666666666667,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 18014,
+          "completion_window_p99_seconds": 0.3269064426422119,
+          "completion_window_mean_seconds": 0.11996780162356836,
+          "completion_window_min_seconds": 0.008022785186767578,
+          "completion_window_max_seconds": 1.2962274551391602,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 34,
+          "completed_window_deadline_miss_fraction": 0.0018874208948595538,
+          "acknowledged_evaluation_messages_pending_at_end": 57,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792594445.354453,
+          "end_epoch": 1792594887.562113,
+          "duration_seconds": 442.2076599597931,
+          "distinct_completions": 318524,
+          "completion_throughput_per_second": 720.304121436886,
+          "acknowledged_input_per_second": 600.0009136524776,
+          "evaluation_completions_for_latency": 318524,
+          "completion_window_p99_seconds": 106.88087248802185,
+          "completion_window_mean_seconds": 16.796695632032375,
+          "completion_window_min_seconds": 0.007635354995727539,
+          "completion_window_max_seconds": 150.31291341781616,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 102252,
+          "completed_window_deadline_miss_fraction": 0.3210181964310382,
+          "acknowledged_evaluation_messages_pending_at_end": 57,
+          "start_after_evaluation_seconds": 157.7923400402069,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-094855",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 109.42453336715698,
+      "mean_completion_seconds": 19.251465190843742,
+      "useful_throughput": 625.4766666666667,
+      "rate": 600,
+      "minimum_completion_seconds": 0.007348060607910156,
+      "maximum_completion_seconds": 146.98909854888916,
+      "slo_violation_percent": 33.43222222222222,
+      "resources": {
+        "actual_cpu_core_minutes": 20.767566666666628,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.8861111111111111,
+          0.8694444444444445,
+          0.8777777777777778,
+          0.9972222222222222,
+          0.9916666666666667,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 3.8403050104777017,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.8861111111111111,
+          0.8694444444444445,
+          0.8777777777777778,
+          0.9972222222222222,
+          0.9916666666666667,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 136.50533230304717,
+        "requested_memory_gib_minutes": 51.189499613642695,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 10949.982578397212,
+        "max_total_backlog": 58112.0,
+        "max_partition_lag": 13730.0,
+        "mean_skew": 24.82215813505309,
+        "lag_coverage_percent": 94.33333333333334
+      },
+      "intervention": {
+        "decision_to_active_seconds": 82.82927513122559,
+        "global_gap_seconds": 20.751174211502075,
+        "extra_pending_during_pause": 12451,
+        "net_pending_during_transfer": 2139,
+        "recovery_minutes": 4.550619633992513,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792597882.382852,
+          "end_epoch": 1792597912.382852,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10402,
+          "completion_throughput_per_second": 346.73333333333335,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 2916,
+          "completion_window_p99_seconds": 59.322097301483154,
+          "completion_window_mean_seconds": 6.237471538643124,
+          "completion_window_min_seconds": 0.009337663650512695,
+          "completion_window_max_seconds": 59.38681936264038,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 304,
+          "completed_window_deadline_miss_fraction": 0.10425240054869685,
+          "acknowledged_evaluation_messages_pending_at_end": 30423,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792598422.382852,
+          "end_epoch": 1792598452.382852,
+          "duration_seconds": 30.0,
+          "distinct_completions": 18011,
+          "completion_throughput_per_second": 600.3666666666667,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 18011,
+          "completion_window_p99_seconds": 0.22221088409423828,
+          "completion_window_mean_seconds": 0.11158531578249924,
+          "completion_window_min_seconds": 0.008610963821411133,
+          "completion_window_max_seconds": 0.5480611324310303,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 61,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792598004.175097,
+          "end_epoch": 1792598452.382852,
+          "duration_seconds": 448.20775508880615,
+          "distinct_completions": 317900,
+          "completion_throughput_per_second": 709.2692984239251,
+          "acknowledged_input_per_second": 600.0007740756655,
+          "evaluation_completions_for_latency": 317900,
+          "completion_window_p99_seconds": 103.48516321182251,
+          "completion_window_mean_seconds": 14.076869163087945,
+          "completion_window_min_seconds": 0.007348060607910156,
+          "completion_window_max_seconds": 146.98909854888916,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 89250,
+          "completed_window_deadline_miss_fraction": 0.2807486631016043,
+          "acknowledged_evaluation_messages_pending_at_end": 61,
+          "start_after_evaluation_seconds": 151.79224491119385,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20260930-005056",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "admitted": 420000,
+      "completed": 420000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 110.19018840789795,
+      "mean_completion_seconds": 19.330424566324552,
+      "useful_throughput": 730.8916666666667,
+      "rate": 700,
+      "minimum_completion_seconds": 0.0076596736907958984,
+      "maximum_completion_seconds": 114.27205324172974,
+      "slo_violation_percent": 35.232142857142854,
+      "resources": {
+        "actual_cpu_core_minutes": 21.69410000000003,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.8777777777777778,
+          0.8777777777777778,
+          0.8722222222222222
+        ],
+        "actual_rss_gib_minutes": 4.0939985911051435,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.8777777777777778,
+          0.8777777777777778,
+          0.8722222222222222
+        ],
+        "requested_cpu_core_minutes": 136.83054919242858,
+        "requested_memory_gib_minutes": 68.41527459621429,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 12835.307958477508,
+        "max_total_backlog": 66598.0,
+        "max_partition_lag": 15839.0,
+        "mean_skew": 22.972244659210975,
+        "lag_coverage_percent": 95.66666666666667
+      },
+      "intervention": {
+        "decision_to_active_seconds": 78.51645994186401,
+        "global_gap_seconds": 19.880964279174805,
+        "extra_pending_during_pause": 13918,
+        "net_pending_during_transfer": 4678,
+        "recovery_minutes": 4.842412583033243,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1790751198.416835,
+          "end_epoch": 1790751228.416835,
+          "duration_seconds": 30.0,
+          "distinct_completions": 11672,
+          "completion_throughput_per_second": 389.06666666666666,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 2977,
+          "completion_window_p99_seconds": 0.1730949878692627,
+          "completion_window_mean_seconds": 0.07116037156704412,
+          "completion_window_min_seconds": 0.011240720748901367,
+          "completion_window_max_seconds": 0.4313168525695801,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 36057,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1790751738.416835,
+          "end_epoch": 1790751768.416835,
+          "duration_seconds": 30.0,
+          "distinct_completions": 21014,
+          "completion_throughput_per_second": 700.4666666666667,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 21014,
+          "completion_window_p99_seconds": 0.6004502773284912,
+          "completion_window_mean_seconds": 0.11595729681249009,
+          "completion_window_min_seconds": 0.010564804077148438,
+          "completion_window_max_seconds": 1.0709686279296875,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 8,
+          "completed_window_deadline_miss_fraction": 0.0003806985818977824,
+          "acknowledged_evaluation_messages_pending_at_end": 67,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790751314.388705,
+          "end_epoch": 1790751768.416835,
+          "duration_seconds": 454.0281300544739,
+          "distinct_completions": 378216,
+          "completion_throughput_per_second": 833.0232753521725,
+          "acknowledged_input_per_second": 699.9984779838826,
+          "evaluation_completions_for_latency": 378216,
+          "completion_window_p99_seconds": 103.43103075027466,
+          "completion_window_mean_seconds": 15.036345935416035,
+          "completion_window_min_seconds": 0.0076596736907958984,
+          "completion_window_max_seconds": 111.16758108139038,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 118303,
+          "completed_window_deadline_miss_fraction": 0.31279216109313196,
+          "acknowledged_evaluation_messages_pending_at_end": 67,
+          "start_after_evaluation_seconds": 145.97186994552612,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20260930-010811",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "admitted": 420000,
+      "completed": 420000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 112.938711643219,
+      "mean_completion_seconds": 20.02254526091133,
+      "useful_throughput": 731.1333333333333,
+      "rate": 700,
+      "minimum_completion_seconds": 0.0077972412109375,
+      "maximum_completion_seconds": 123.40341591835022,
+      "slo_violation_percent": 34.71738095238096,
+      "resources": {
+        "actual_cpu_core_minutes": 21.676666666666712,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.8888888888888888,
+          0.8805555555555555,
+          0.8833333333333333
+        ],
+        "actual_rss_gib_minutes": 4.011528778076172,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.8888888888888888,
+          0.8805555555555555,
+          0.8833333333333333
+        ],
+        "requested_cpu_core_minutes": 136.84574420452117,
+        "requested_memory_gib_minutes": 68.42287210226058,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 12901.104529616725,
+        "max_total_backlog": 70217.0,
+        "max_partition_lag": 16277.0,
+        "mean_skew": 22.665730250533375,
+        "lag_coverage_percent": 95.0
+      },
+      "intervention": {
+        "decision_to_active_seconds": 81.26466703414917,
+        "global_gap_seconds": 21.73151159286499,
+        "extra_pending_during_pause": 15305,
+        "net_pending_during_transfer": 5523,
+        "recovery_minutes": 4.4466101169586185,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1790752233.474112,
+          "end_epoch": 1790752263.474112,
+          "duration_seconds": 30.0,
+          "distinct_completions": 11575,
+          "completion_throughput_per_second": 385.8333333333333,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 2932,
+          "completion_window_p99_seconds": 0.1591801643371582,
+          "completion_window_mean_seconds": 0.07149804801277379,
+          "completion_window_min_seconds": 0.010869503021240234,
+          "completion_window_max_seconds": 0.36572790145874023,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 0,
+          "completed_window_deadline_miss_fraction": 0.0,
+          "acknowledged_evaluation_messages_pending_at_end": 36106,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1790752773.474112,
+          "end_epoch": 1790752803.474112,
+          "duration_seconds": 30.0,
+          "distinct_completions": 21011,
+          "completion_throughput_per_second": 700.3666666666667,
+          "acknowledged_input_per_second": 700.0,
+          "evaluation_completions_for_latency": 21011,
+          "completion_window_p99_seconds": 0.8326222896575928,
+          "completion_window_mean_seconds": 0.12655734340703492,
+          "completion_window_min_seconds": 0.01000666618347168,
+          "completion_window_max_seconds": 1.387359619140625,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 90,
+          "completed_window_deadline_miss_fraction": 0.004283470563038409,
+          "acknowledged_evaluation_messages_pending_at_end": 76,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1790752351.94206,
+          "end_epoch": 1790752803.474112,
+          "duration_seconds": 451.5320520401001,
+          "distinct_completions": 377891,
+          "completion_throughput_per_second": 836.908472593746,
+          "acknowledged_input_per_second": 699.9990334505201,
+          "evaluation_completions_for_latency": 377891,
+          "completion_window_p99_seconds": 106.95052528381348,
+          "completion_window_mean_seconds": 15.646952179155841,
+          "completion_window_min_seconds": 0.0077972412109375,
+          "completion_window_max_seconds": 123.40341591835022,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 115823,
+          "completed_window_deadline_miss_fraction": 0.3064984347338254,
+          "acknowledged_evaluation_messages_pending_at_end": 76,
+          "start_after_evaluation_seconds": 148.4679479598999,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-091003",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 75.59332227706909,
+      "mean_completion_seconds": 15.455944975497324,
+      "useful_throughput": 625.6733333333333,
+      "rate": 600,
+      "minimum_completion_seconds": 0.00712275505065918,
+      "maximum_completion_seconds": 87.66008067131042,
+      "slo_violation_percent": 44.35,
+      "resources": {
+        "actual_cpu_core_minutes": 17.713183333333333,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.8888888888888888,
+          0.8666666666666667,
+          0.8888888888888888,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9861111111111112
+        ],
+        "actual_rss_gib_minutes": 3.3954457600911456,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.8888888888888888,
+          0.8666666666666667,
+          0.8888888888888888,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9861111111111112
+        ],
+        "requested_cpu_core_minutes": 136.98511369228362,
+        "requested_memory_gib_minutes": 51.369417634606364,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 9887.017123287671,
+        "max_total_backlog": 35389.0,
+        "max_partition_lag": 10348.0,
+        "mean_skew": 19.52170837329769,
+        "lag_coverage_percent": 94.0
+      },
+      "intervention": {
+        "decision_to_active_seconds": 27.48786211013794,
+        "global_gap_seconds": 0.3293910026550293,
+        "extra_pending_during_pause": null,
+        "net_pending_during_transfer": -8694,
+        "recovery_minutes": 5.958131035168965,
+        "recovery_status": "observed"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792595553.749408,
+          "end_epoch": 1792595583.749408,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10346,
+          "completion_throughput_per_second": 344.8666666666667,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 2689,
+          "completion_window_p99_seconds": 59.7773699760437,
+          "completion_window_mean_seconds": 2.391430800534749,
+          "completion_window_min_seconds": 0.009734153747558594,
+          "completion_window_max_seconds": 59.811291456222534,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 104,
+          "completed_window_deadline_miss_fraction": 0.03867608776496839,
+          "acknowledged_evaluation_messages_pending_at_end": 30784,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792596093.749408,
+          "end_epoch": 1792596123.749408,
+          "duration_seconds": 30.0,
+          "distinct_completions": 18010,
+          "completion_throughput_per_second": 600.3333333333334,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 18010,
+          "completion_window_p99_seconds": 0.5188982486724854,
+          "completion_window_mean_seconds": 0.0929790235770404,
+          "completion_window_min_seconds": 0.007815122604370117,
+          "completion_window_max_seconds": 1.1064412593841553,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 7,
+          "completed_window_deadline_miss_fraction": 0.0003886729594669628,
+          "acknowledged_evaluation_messages_pending_at_end": 37,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792595619.749,
+          "end_epoch": 1792596123.749408,
+          "duration_seconds": 504.00040793418884,
+          "distinct_completions": 326620,
+          "completion_throughput_per_second": 648.0550310241996,
+          "acknowledged_input_per_second": 599.999514364454,
+          "evaluation_completions_for_latency": 326620,
+          "completion_window_p99_seconds": 73.47647285461426,
+          "completion_window_mean_seconds": 13.069180244732586,
+          "completion_window_min_seconds": 0.00712275505065918,
+          "completion_window_max_seconds": 87.66008067131042,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 134301,
+          "completed_window_deadline_miss_fraction": 0.4111842508113404,
+          "acknowledged_evaluation_messages_pending_at_end": 37,
+          "start_after_evaluation_seconds": 95.99959206581116,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    },
+    {
+      "run_id": "run-20261021-092942",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 90.28109192848206,
+      "mean_completion_seconds": 35.65174043098953,
+      "useful_throughput": 597.3966666666666,
+      "rate": 600,
+      "minimum_completion_seconds": 0.007140636444091797,
+      "maximum_completion_seconds": 100.66392683982849,
+      "slo_violation_percent": 66.74527777777777,
+      "resources": {
+        "actual_cpu_core_minutes": 19.733199999999993,
+        "actual_cpu_core_minutes_process_coverage": [
+          0.8805555555555555,
+          0.8805555555555555,
+          0.8888888888888888,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "actual_rss_gib_minutes": 3.7199005762736004,
+        "actual_rss_gib_minutes_process_coverage": [
+          0.8805555555555555,
+          0.8805555555555555,
+          0.8888888888888888,
+          0.9972222222222222,
+          0.9972222222222222,
+          0.9972222222222222
+        ],
+        "requested_cpu_core_minutes": 136.88465270996093,
+        "requested_memory_gib_minutes": 51.33174476623535,
+        "requested_coverage": 1.0
+      },
+      "diagnostics": {
+        "mean_total_backlog": 21412.3265993266,
+        "max_total_backlog": 35135.0,
+        "max_partition_lag": 11848.0,
+        "mean_skew": 19.133524350986878,
+        "lag_coverage_percent": 97.33333333333334
+      },
+      "intervention": {
+        "decision_to_active_seconds": 29.065398931503296,
+        "global_gap_seconds": 0.12079334259033203,
+        "extra_pending_during_pause": null,
+        "net_pending_during_transfer": -2886,
+        "recovery_minutes": null,
+        "recovery_status": "not_observed_during_evaluation"
+      },
+      "completion_windows": {
+        "before": {
+          "start_epoch": 1792596734.172398,
+          "end_epoch": 1792596764.172398,
+          "duration_seconds": 30.0,
+          "distinct_completions": 10454,
+          "completion_throughput_per_second": 348.46666666666664,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 3208,
+          "completion_window_p99_seconds": 58.78281331062317,
+          "completion_window_mean_seconds": 10.762192264385057,
+          "completion_window_min_seconds": 0.010091304779052734,
+          "completion_window_max_seconds": 59.02670764923096,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 589,
+          "completed_window_deadline_miss_fraction": 0.18360349127182046,
+          "acknowledged_evaluation_messages_pending_at_end": 30136,
+          "start_after_evaluation_seconds": 30,
+          "end_after_evaluation_seconds": 60
+        },
+        "evaluation_end": {
+          "start_epoch": 1792597274.172398,
+          "end_epoch": 1792597304.172398,
+          "duration_seconds": 30.0,
+          "distinct_completions": 18235,
+          "completion_throughput_per_second": 607.8333333333334,
+          "acknowledged_input_per_second": 600.0,
+          "evaluation_completions_for_latency": 18235,
+          "completion_window_p99_seconds": 44.73306107521057,
+          "completion_window_mean_seconds": 28.051593371852313,
+          "completion_window_min_seconds": 0.007814645767211914,
+          "completion_window_max_seconds": 44.775707483291626,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 11558,
+          "completed_window_deadline_miss_fraction": 0.6338360296133808,
+          "acknowledged_evaluation_messages_pending_at_end": 16745,
+          "start_after_evaluation_seconds": 570,
+          "end_after_evaluation_seconds": 600
+        },
+        "post_action_to_evaluation_end": {
+          "start_epoch": 1792596802.172,
+          "end_epoch": 1792597304.172398,
+          "duration_seconds": 502.0003981590271,
+          "distinct_completions": 313926,
+          "completion_throughput_per_second": 625.35010161596,
+          "acknowledged_input_per_second": 599.999524113094,
+          "evaluation_completions_for_latency": 313926,
+          "completion_window_p99_seconds": 91.25378513336182,
+          "completion_window_mean_seconds": 35.05947472806162,
+          "completion_window_min_seconds": 0.007140636444091797,
+          "completion_window_max_seconds": 100.66392683982849,
+          "completion_window_deadline_ms": 1000.0,
+          "completed_window_deadline_misses": 202654,
+          "completed_window_deadline_miss_fraction": 0.6455470397482209,
+          "acknowledged_evaluation_messages_pending_at_end": 16745,
+          "start_after_evaluation_seconds": 97.9996018409729,
+          "end_after_evaluation_seconds": 600.0
+        }
+      }
+    }
+  ]
+}
