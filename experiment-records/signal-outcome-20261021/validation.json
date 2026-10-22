@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "trial_count": 20,
+  "groups": {
+    "12hot-700": 8,
+    "4hot-700": 4,
+    "4hot-600": 8
+  },
+  "unit_tests_passed": 9,
+  "checks": [
+    "Unique trial IDs and expected groups",
+    "Hash verification of manifest, lag and monitoring inputs",
+    "Completion-window source comparison hashes match",
+    "Complete 15-observation pre-action signal and process-resource windows",
+    "Admitted equals completed plus unfinished for every cohort",
+    "Recorded action recovery times replay identically",
+    "Six redistribution trials confirm recovery and full completion",
+    "Incomplete request history remains unavailable"
+  ],
+  "limitations": [
+    "Original message outcomes are reused, not replayed anew from all message event files",
+    "No new cluster validation or live experiment",
+    "No fitted predictive model; no application-sufficiency threshold supplied"
+  ]
+}
