@@ -41,3 +41,5 @@ The original client pods, nodes, resource declarations and initial partition own
 The [experiment protocol and analysis commands](../../experiments/four-hot600-20261021/README.md) describe reproduction from the retained raw files. Historical execution revisions remain unchanged.
 
 The [runtime-state reconstruction](runtime-states.json) retains all eight trial traces, persistent-hot partition identifiers and source hashes. Backlog, skew and persistence use 15 observations; growth spans 15 two-second intervals, matching the historical proposal figure. Missing observations and ownership transitions remain gaps. These signals were reconstructed after the runs and did not trigger the scheduled interventions.
+
+The [monitoring-gap audit](MONITORING_GAPS.md) explains the missing Run 2 runtime-state values. Isolated missing observations can suppress roughly 30 seconds of rolling signals. Separate completion logs confirm continued processing around two checked gaps; the underlying cause of every absent monitoring sample is not established.

@@ -1,0 +1,186 @@
+{
+  "scope": "Figure 15, Run 2; four hot partitions at 600 messages/s",
+  "sources": {
+    "run-20261021-102633/manifest.json": "8fd746a0af2fb6de009702387c3184311fb8318ae84df3957f4447d42cc212f1",
+    "run-20261021-102633/lag-summary.json": "8736a4feed1634a77ada32c040db04e0bc038290b9dcd8bb69db4a9613e1a8e4",
+    "run-20261021-102633/outcome-summary.json": "c852b219ae77a6e3f823ab928996c565151c6c1dd37bc4f486a97daba6f9ce11",
+    "run-20261021-100744/manifest.json": "51e176a98dbda4b1338c6b7faf95bf6bfb69af39394525ec729cd144be06fcc8",
+    "run-20261021-100744/lag-summary.json": "a99de6126ccb55064fc0016b88020acab15a716fb43d36355e7819ab8250558a",
+    "run-20261021-100744/outcome-summary.json": "4158c7d214998b15a6023656961d85bf673a9492419e7bf12aae892d9208ac4d",
+    "run-20261021-094855/manifest.json": "de51df51467dd8feeb4df53fe82c0d5e033285567626370deed365c94461f5db",
+    "run-20261021-094855/lag-summary.json": "8738f2cda425d2ef5d68ae11592d7c4b80345fa0058c1dd82b6bd205b5a3a167",
+    "run-20261021-094855/outcome-summary.json": "dd3321d0c2c86a3e13010b23f38b5e115054c80d473d4253dc81a58e24f8e548",
+    "run-20261021-092942/manifest.json": "4831c7bd5405b19e0a88f0a13b674d229dea286eac798cf52453b1c68f4b1d4c",
+    "run-20261021-092942/lag-summary.json": "87930e1ebe8376a0d5b755cd8fc3b3d768945f56cbb2f7a6b46bd3407160d959",
+    "run-20261021-092942/outcome-summary.json": "74d7940d4a74a10198a8b5e55ecce7a13a9a35d54660f59ccaeb0ae162acef91",
+    "run-20261021-094855/consumer/consumer-sts-0/b086128f73874f60a40dfb6237b1c01f/events.jsonl": "45236a6771e84a5d76f7481e6a275d142a9d241486d5750768935e0421a6dfa6",
+    "run-20261021-094855/consumer/consumer-sts-4/ecfb0d29bc1d4f7791f95d20dfa4fb3a/events.jsonl": "4c46a7d10a1c8bc72383ba0db7a1e7764417e8e07a51228367fd2c94135d5576"
+  },
+  "runs": [
+    {
+      "arm": "keep3",
+      "run_id": "run-20261021-102633",
+      "lag_covered_fraction": 0.9833333333333333,
+      "invalid_snapshots": [
+        {
+          "seconds": 146.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 488.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        }
+      ],
+      "event_outcome_validity_failures": []
+    },
+    {
+      "arm": "redistribute3",
+      "run_id": "run-20261021-100744",
+      "lag_covered_fraction": 0.9633333333333334,
+      "invalid_snapshots": [
+        {
+          "seconds": 78.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 86.0,
+          "reasons": [
+            "Invalid/stale observation",
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 88.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 90.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 92.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 94.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        }
+      ],
+      "event_outcome_validity_failures": []
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_id": "run-20261021-094855",
+      "lag_covered_fraction": 0.9433333333333334,
+      "invalid_snapshots": [
+        {
+          "seconds": 136.0,
+          "reasons": [
+            "Invalid/stale observation",
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 138.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 140.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 142.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 144.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 146.0,
+          "reasons": [
+            "Invalid/stale observation"
+          ]
+        },
+        {
+          "seconds": 310.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 430.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        }
+      ],
+      "event_outcome_validity_failures": []
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_id": "run-20261021-092942",
+      "lag_covered_fraction": 0.9733333333333334,
+      "invalid_snapshots": [
+        {
+          "seconds": 82.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 86.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        },
+        {
+          "seconds": 514.0,
+          "reasons": [
+            "Missing or unexpected partition ownership"
+          ]
+        }
+      ],
+      "event_outcome_validity_failures": []
+    }
+  ],
+  "completion_checks": [
+    {
+      "run_id": "run-20261021-094855",
+      "pod": "consumer-sts-0",
+      "left_seconds": 308,
+      "right_seconds": 312,
+      "completed_attempts": 580
+    },
+    {
+      "run_id": "run-20261021-094855",
+      "pod": "consumer-sts-4",
+      "left_seconds": 428,
+      "right_seconds": 432,
+      "completed_attempts": 70
+    }
+  ],
+  "interpretation": "Monitoring incompleteness and invalid/stale lag observations break rolling windows. Actual ownership transitions also reset windows. The underlying cause of isolated absent consumer series is not established; up/scrape-error diagnostics are not included in this exported query. This is not evidence of Kafka message loss."
+}

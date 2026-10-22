@@ -112,3 +112,7 @@ python3 experiments/signal-outcome-20261021/build_report.py /path/to/analysis/an
 ```
 
 The analysis requires no cluster access. The report builder uses Matplotlib and ReportLab. The input hashes in `analysis.json` identify the exact evidence and summaries used.
+
+## Partition rates and capacity
+
+The [capacity diagnostic](CAPACITY_CHECK.md) uses saved producer counters and fifteen existing calibration records to examine the offered load of each assignment. The original hot owner sustained about 292 messages/s in selected backlogged intervals; historical redistribution reduced its estimated assigned input from about 580–603 to 182–233 messages/s. Capacity remains unmeasured for some consumers and conditions. The separate [assignment CSV](assignment-capacity.csv) retains all twenty trial checks; [capacity-analysis.json](capacity-analysis.json) records the method, windows, conditions and source hashes. This adds no performance trials and changes no recorded outcomes.
