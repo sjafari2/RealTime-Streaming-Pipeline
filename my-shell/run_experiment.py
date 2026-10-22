@@ -114,6 +114,25 @@ def status_observation_fresh(row, max_age=10):
                 began <= received <= now and 0 <= now-began <= max_age)
 
 
+def container_never_started(role, pod):
+    """Confirm that a pending pod has no application process to stop."""
+    row = json.loads(kubectl('get', 'pod', pod, '-o', 'json'))
+    if row.get('status', {}).get('phase') != 'Pending':
+        return False
+    container = ROLES[role][0]
+    if not any(item.get('name') == container for item in row.get('spec', {}).get('containers', [])):
+        return False
+    states = [item for item in row['status'].get('containerStatuses', [])
+              if item.get('name') == container]
+    if not states:
+        return True
+    state = states[0]
+    return not (state.get('containerID') or state.get('restartCount') or state.get('started')
+                or state.get('ready') or state.get('lastState')
+                or state.get('state', {}).get('running')
+                or state.get('state', {}).get('terminated'))
+
+
 def force_stop_role(role, grace=60):
     # Match Python's script argument, not arbitrary text in a shell command.
     code = f'''import os,signal,time,json
@@ -148,7 +167,15 @@ print(json.dumps({{'forced_pids':pids}}))
 '''
     forced = []
     for pod in pods(role):
-        result = json.loads(remote(role, pod, code, timeout=grace + 15))
+        try:
+            result = json.loads(remote(role, pod, code, timeout=grace + 15))
+        except subprocess.CalledProcessError:
+            # A failed scale-up may leave new pods waiting for a node or image.
+            # Only skip pods whose application never started; keep real stop failures visible.
+            if container_never_started(role, pod):
+                print(f'[STOP] {pod}: application container has not started.')
+                continue
+            raise
         if result['forced_pids']:
             forced.append(pod)
     return forced

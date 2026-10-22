@@ -1,0 +1,34 @@
+{
+  "status": "failed_technical_preparation",
+  "performance_trials_completed": 0,
+  "campaign": "four-condition-20261021-202427",
+  "execution_revision": "e00eb64",
+  "preparations": [
+    {
+      "label": "capture-initial-attempt1",
+      "run_id": "run-20261021-202548",
+      "valid": true
+    },
+    {
+      "label": "verify-native-restart-attempt1",
+      "run_id": "run-20261021-202822",
+      "valid": true
+    }
+  ],
+  "technical_run": "run-20261021-203056",
+  "reason": "consumer-sts-3: pod/container is not continuously ready; consumer-sts-3: Unschedulable: 0/535 nodes are available: 1 Insufficient memory, 11 Insufficient cpu, 21 node(s) were unschedulable, 219 node(s) had untolerated taint(s), 279 node(s) didn't match Pod's node affinity/selector, 5 node(s) didn't match pod anti-affinity rules. no new claims to deallocate, preemption: 0/535 nodes are available: 16 No preemption victims found for incoming pod, 519 Preemption is not helpful for scheduling.; consumer-sts-4: pod/container is not continuously ready",
+  "restoration": "verified",
+  "original_config_sha256": "0c8fcdc67b2c071f388ccf0f5931bdc32d5efe5a610ec90f7af95ffe261b9200",
+  "client_statefulsets_verified_after_cleanup": {
+    "consumer-sts": "0/0",
+    "producer-workers": "0/0"
+  },
+  "evidence_sha256": {
+    "campaign-status.json": "f6ec97b893fef692d86ae75ae019ed3c1ff7c89cbc3fe7761b92c29ff66f8c10",
+    "protocol.json": "361f23e33c8b21ca2c7720507c2023d265fe4129ef57c0956faaead045818473",
+    "original-config.yaml": "0c8fcdc67b2c071f388ccf0f5931bdc32d5efe5a610ec90f7af95ffe261b9200",
+    "cleanup-receipt.json": "937232d43b75d3e4ae2648af958b6eeef5eb01ed999126d9058e982ad19b48a5",
+    "pods-before-cleanup.json": "bccdc6db37804a15857180a73fe3a1f743c00488966f3d0b749cf85fe3749f73",
+    "events-before-cleanup.json": "828c215b12bee9a73620a4a2050a954f22b0d63e18965ea2627d9e5ae27634d0"
+  }
+}

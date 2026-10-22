@@ -114,3 +114,54 @@ def test_launcher_preserves_pod_identity_and_rejects_shared_override(tmp_path):
     config.write_text('data: {WORKLOAD_SEED: "81", PRODUCER_WORKLOAD_ID: "0"}')
     result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=10)
     assert result.returncode != 0 and 'not the shared YAML' in result.stderr
+
+
+@pytest.mark.parametrize('container_status', [None, {
+    'name': 'consumer-container', 'restartCount': 0,
+    'state': {'waiting': {'reason': 'ContainerCreating'}}, 'lastState': {},
+}])
+def test_stop_continues_past_consumers_that_never_started(monkeypatch, container_status):
+    sys.path.insert(0, str(ROOT / 'my-shell'))
+    import run_experiment as runner
+    checked = []
+    row = {'spec': {'containers': [{'name': 'consumer-container'}]},
+           'status': {'phase': 'Pending'}}
+    if container_status is not None:
+        row['status']['containerStatuses'] = [container_status]
+    monkeypatch.setattr(runner, 'pods', lambda role: ['consumer-sts-3', 'consumer-sts-5'])
+    def execute(role, pod, code, **kwargs):
+        checked.append(pod)
+        if pod == 'consumer-sts-3':
+            raise subprocess.CalledProcessError(1, ['kubectl', 'exec'], stderr=b'container not found')
+        return b'{"forced_pids": []}'
+    monkeypatch.setattr(runner, 'remote', execute)
+    def read_pod(*args, **kwargs):
+        assert args == ('get', 'pod', 'consumer-sts-3', '-o', 'json')
+        return json.dumps(row).encode()
+    monkeypatch.setattr(runner, 'kubectl', read_pod)
+    assert runner.force_stop_role('consumer') == []
+    assert checked == ['consumer-sts-3', 'consumer-sts-5']
+
+
+@pytest.mark.parametrize('phase,container_status', [
+    ('Running', {}),
+    ('Pending', {'containerID': 'containerd://old'}),
+    ('Pending', {'restartCount': 1}),
+    ('Pending', {'lastState': {'terminated': {'exitCode': 1}}}),
+    ('Pending', {'state': {'running': {'startedAt': '2026-10-21T20:00:00Z'}}}),
+    ('Pending', {'state': {'terminated': {'exitCode': 0}}}),
+])
+def test_stop_does_not_hide_failures_for_started_consumers(monkeypatch, phase, container_status):
+    sys.path.insert(0, str(ROOT / 'my-shell'))
+    import run_experiment as runner
+    row = {'spec': {'containers': [{'name': 'consumer-container'}]}, 'status': {
+        'phase': phase, 'containerStatuses': [dict(name='consumer-container', **container_status)]}}
+    failure = subprocess.CalledProcessError(1, ['kubectl', 'exec'], stderr=b'cannot exec')
+    monkeypatch.setattr(runner, 'pods', lambda role: ['consumer-sts-3'])
+    def execute(*args, **kwargs):
+        raise failure
+    monkeypatch.setattr(runner, 'remote', execute)
+    monkeypatch.setattr(runner, 'kubectl', lambda *args, **kwargs: json.dumps(row).encode())
+    with pytest.raises(subprocess.CalledProcessError) as caught:
+        runner.force_stop_role('consumer')
+    assert caught.value is failure
