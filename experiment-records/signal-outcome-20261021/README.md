@@ -116,3 +116,13 @@ The analysis requires no cluster access. The report builder uses Matplotlib and 
 ## Partition rates and capacity
 
 The [capacity diagnostic](CAPACITY_CHECK.md) uses saved producer counters and fifteen existing calibration records to examine the offered load of each assignment. The original hot owner sustained about 292 messages/s in selected backlogged intervals; historical redistribution reduced its estimated assigned input from about 580–603 to 182–233 messages/s. Capacity remains unmeasured for some consumers and conditions. The separate [assignment CSV](assignment-capacity.csv) retains all twenty trial checks; [capacity-analysis.json](capacity-analysis.json) records the method, windows, conditions and source hashes. This adds no performance trials and changes no recorded outcomes.
+
+## Backlog and skew by interval
+
+[Interval means](WINDOW_SIGNALS.md) add before-action, activation-to-end and final-30-second backlog and skew for all twenty trials. [Window records](window-signals.json) preserve valid/expected sample counts, exact activation offsets and source hashes. These are equal-weight means of raw signals. A millisecond export-rounding correction aligns observations to the intended two-second query grid; completion-event statistics and recorded trial outcomes are unchanged.
+
+```bash
+python3 experiments/signal-outcome-20261021/build_window_tables.py --output /path/to/analysis
+```
+
+Use `--evidence-root /path/to/retained/evidence` when raw files are stored outside the checkout.

@@ -31,3 +31,42 @@ def test_resource_totals_require_every_pod_and_fresh_scrapes():
     assert result['cpu_percent']['total'] == dict(samples=2, mean=1.5, minimum=1.5, maximum=1.5)
     assert result['memory_bytes']['total']['mean'] is None
     assert m.process_window(series, 'consumer', ['c0', 'c1', 'missing'], 0, 6)['cpu_percent']['total']['mean'] is None
+
+
+def test_export_rounding_keeps_nominal_before_grid():
+    origin = 1_790_000_000.0004
+    rows = [dict(timestamp=round(origin+s, 3), valid=True, total_lag=s, skew=2)
+            for s in range(28, 64, 2)]
+    result = m.signal_window(rows, origin+30, origin+60, origin)
+    assert result['fields']['total_lag']['mean'] == 44
+    assert result['expected_observations'] == result['valid_observations'] == 15
+    assert result['selected_timestamps'][0] == round(origin+30, 3)
+    assert result['selected_timestamps'][-1] == round(origin+58, 3)
+
+
+def test_missing_grid_points_reduce_coverage_and_activation_is_not_rounded():
+    rows = [dict(timestamp=t, valid=True, total_lag=t, skew=1) for t in (60, 64, 66)]
+    result = m.signal_window(rows, 60.1, 68, 0)
+    assert result['expected_observations'] == 3
+    assert result['valid_observations'] == 2
+    assert result['valid_grid_fraction'] == 2/3
+    assert result['fields']['total_lag']['mean'] == 65
+
+
+def test_ambiguous_or_off_grid_observations_are_rejected():
+    import pytest
+    with pytest.raises(ValueError, match='Duplicate'):
+        m.signal_window([dict(timestamp=0, valid=False), dict(timestamp=.0004, valid=False)], 0, 2, 0)
+    with pytest.raises(ValueError, match='two-second'):
+        m.signal_window([dict(timestamp=.01, valid=False)], 0, 2, 0)
+
+
+def test_process_samples_use_the_same_nominal_grid():
+    origin = 1_790_000_000.0004
+    values = [[round(origin+s, 3), s*100] for s in range(28, 64, 2)]
+    series = [dict(metric={'__name__':'consumer_cpu_percent','pod':'c0'}, values=values),
+              dict(metric={'__name__':'consumer_cpu_percent_scrape_timestamp_seconds','pod':'c0'},
+                   values=[[t,t] for t,_ in values])]
+    result = m.process_window(series, 'consumer', ['c0'], origin+30, origin+60, origin)
+    assert result['cpu_percent']['total']['mean'] == 44
+    assert result['cpu_percent']['total']['samples'] == 15

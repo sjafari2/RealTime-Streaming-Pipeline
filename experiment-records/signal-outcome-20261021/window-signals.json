@@ -1,0 +1,758 @@
+{
+  "schema_version": 1,
+  "definition": "Arithmetic means of valid raw total lag B=sum(partition lag) and skew=max(partition lag)/mean(partition lag), not time-weighted means or means of rolling means.",
+  "intervals": "Before uses nominal seconds 30,32,...,58; activation-to-end uses query samples at or after the unrounded verified activation and before second 600 (Keep 3 starts at 60); final uses 570,572,...,598. All exclude drain.",
+  "coverage": "Valid samples / expected two-second query samples, including completely absent grid points in the denominator. No zero fill, interpolation or requirement for a new rolling window after a gap.",
+  "correction": "Exported timestamps have millisecond precision. Samples within 1 ms of the nominal two-second query grid are assigned to that grid before interval selection. This prevents an unintended one-sample shift in windows when export rounding precedes a boundary; completion-event intervals and original outcomes are unchanged.",
+  "limitations": "Skew is a relative concentration measure: a large ratio can coexist with a very small total backlog. Read backlog and skew together. Post-activation means include recovery and may exceed final-window means. Rates and deployments are separate comparison blocks.",
+  "source_sha256": {
+    "experiment-records/four-condition-20260929/comparison.json": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074",
+    "experiment-records/four-condition-20260929/action-window-performance.json": "6eb8d63954adbed862bfa5246d70eb7087cb5ffa6e6df461f1e0dcd3b1a9b282",
+    "results/run-20260929-020644/manifest.json": "669bf57219df5fa56c5d40f359a2a2f1d77e56f1ef345f2e0575b49e2723c5e7",
+    "results/run-20260929-020644/lag-summary.json": "a240405039594c7fefe08d8125b064265757e5d89533e8fc06f70031179177c4",
+    "results/run-20260929-041940/manifest.json": "11d50fccaff96e65c98edd8edc807726306c54927ec2c0d96f41817fe5373e72",
+    "results/run-20260929-041940/lag-summary.json": "8927618fdbca3b3b2d136150cb8a77f5e20783b36d76cf64f240cf5be689db43",
+    "results/run-20260929-023622/manifest.json": "04bbd8fc040c6947b11f0b96a05cd07835fa06851b34ea7666009ba3469f9b7c",
+    "results/run-20260929-023622/lag-summary.json": "d6794306306279de2947f30425316c52d725c190bb94f29a62f449a25eb9d099",
+    "results/run-20260929-040237/manifest.json": "1db91b94b678c25e6ed774fdfe064a7966ffba9b74faacc1277f3f926130f7b4",
+    "results/run-20260929-040237/lag-summary.json": "e5c2ab593099221bcaa54ef05d889b890086771ed663750e57636db43838e825",
+    "results/run-20260929-025321/manifest.json": "33b01f4af4cd0b865e832bd001ad45c15cbfa314d7f06a53a5c8e683bd70eeb3",
+    "results/run-20260929-025321/lag-summary.json": "b31c93a6e6a3c8077e492de98da1da0e2de625b14c713661004602a742ffdd83",
+    "results/run-20260929-034520/manifest.json": "beee83b33c9bc85d35dfb3c8091570976ab756c3e1e31df266d23375c2638ba5",
+    "results/run-20260929-034520/lag-summary.json": "96dd3bb4b74fb7e5dbb279199b09ab333edb52688b6d2969af42c859ac92d99e",
+    "results/run-20260929-031044/manifest.json": "c2c57768525957ce49ba5defb1240dde6e64d69e260df59c10bb9259b854d716",
+    "results/run-20260929-031044/lag-summary.json": "8f87b28b74899ad77279de47d3e9b2f0f3e5a6687d02638332eaff9fbe57eb6a",
+    "results/run-20260929-032802/manifest.json": "4d5ca4ea209a8785d1fbf1dd0a7ee8150a7612256c0b97e535399173bc41ae5b",
+    "results/run-20260929-032802/lag-summary.json": "378b68a9bf6ad4cac5c397bdabe461fab781404389806c9b291e373efcb6ce2b",
+    "experiment-records/four-hot-partitions-20260930/comparison.json": "7a6e62f797f3eb49c9d6e34cab5d70e72ecf5ba1557e95728617d7cd93500409",
+    "experiment-records/four-hot-rate-comparison-20261021/historical-completion-windows.json": "e71f2efd13fb5837f84a39269448f0573b6ac3288b58ae87dc948cef0dea162e",
+    "results/run-20260930-003405/manifest.json": "0ae55ecbdff87744e295c5b18801ace6a167d7284ce217a0e31fbace2685a1dc",
+    "results/run-20260930-003405/lag-summary.json": "6c01a1d7ed17973efe3cd85e5d5a07850bdcab921f09615616ac990380e3ab77",
+    "results/run-20260930-012528/manifest.json": "1f7e99e61106532adfc10bc626c09533e7aecc61cc6f51162e0ae9e424dc5604",
+    "results/run-20260930-012528/lag-summary.json": "a23727e25cf7514c544f664573b1ed6463c68ed3d52503bc65fb958728687f60",
+    "results/run-20260930-005056/manifest.json": "c75a6e174e939e40d8235a37b46b63a49c5beab9d4d0d4dd18c1d63a9bb8ff1d",
+    "results/run-20260930-005056/lag-summary.json": "0ec4f1467e99aa5347ef91f7ceb5ff78fa8e5477344db8ce3659055f4f0e3b9a",
+    "results/run-20260930-010811/manifest.json": "36c7a18a053b20b100b40f00e023df13eb508a78131fc5839c337da2767a9bd6",
+    "results/run-20260930-010811/lag-summary.json": "2eb82a09283d14868eb46cb3fceedf94763b8254ff7f29e01f9025919ea0bd8a",
+    "results/four-hot600-20261021-analysis/comparison.json": "e935699886459e089dc7963bc8d0847aa0e2519d0463d59a3d2358a9c10e08d3",
+    "experiment-records/four-hot600-20261021/completion-windows.json": "2fe6b14b02ff06743df1d54733f6f75d8fedc8c661c486cdc8af4a1b04b0ef53",
+    "results/run-20261021-081142/manifest.json": "26166db97c5646792e887c1e20dde416b14a655601ab10a15b34cc971a54f46d",
+    "results/run-20261021-081142/lag-summary.json": "780be6ecd21982fab5d0b2b80c1e2cc8e99036c37a2ce698df820f3dc9687f96",
+    "results/run-20261021-102633/manifest.json": "8fd746a0af2fb6de009702387c3184311fb8318ae84df3957f4447d42cc212f1",
+    "results/run-20261021-102633/lag-summary.json": "8736a4feed1634a77ada32c040db04e0bc038290b9dcd8bb69db4a9613e1a8e4",
+    "results/run-20261021-083131/manifest.json": "8f4a15058cc16bd8656038274a4109a594a7e6a0940c5580e481758040bcb0f6",
+    "results/run-20261021-083131/lag-summary.json": "65da0f9929a8b21476e7279925063f287ad61c8340ed2911aaf2d3e655eb9c9d",
+    "results/run-20261021-100744/manifest.json": "51e176a98dbda4b1338c6b7faf95bf6bfb69af39394525ec729cd144be06fcc8",
+    "results/run-20261021-100744/lag-summary.json": "a99de6126ccb55064fc0016b88020acab15a716fb43d36355e7819ab8250558a",
+    "results/run-20261021-084932/manifest.json": "2943806500d3639496127e4cdda926bee75f22edc588968f181375d0d6ce295f",
+    "results/run-20261021-084932/lag-summary.json": "f939811be533cf4cc015c25bd3cefe50920ca5a5fba6e91f1d209ae84d38b726",
+    "results/run-20261021-094855/manifest.json": "de51df51467dd8feeb4df53fe82c0d5e033285567626370deed365c94461f5db",
+    "results/run-20261021-094855/lag-summary.json": "8738f2cda425d2ef5d68ae11592d7c4b80345fa0058c1dd82b6bd205b5a3a167",
+    "results/run-20261021-091003/manifest.json": "c78130665c779e7c8055c5fb99f19b91a509b6f1a5a297179df81403d74fe590",
+    "results/run-20261021-091003/lag-summary.json": "ef26b7be62ae10577e0cd9443f573457ddc6fa493a7ac48c897099af6bfedf1b",
+    "results/run-20261021-092942/manifest.json": "4831c7bd5405b19e0a88f0a13b674d229dea286eac798cf52453b1c68f4b1d4c",
+    "results/run-20261021-092942/lag-summary.json": "87930e1ebe8376a0d5b755cd8fc3b3d768945f56cbb2f7a6b46bd3407160d959"
+  },
+  "runs": [
+    {
+      "group": "12hot-700",
+      "arm": "keep3",
+      "run_number": 1,
+      "run_id": "run-20260929-020644",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 27888.0,
+          "mean_skew": 4.916586220145771,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 60.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 107288.7074074074,
+          "mean_skew": 4.890695593578399,
+          "valid_samples": 270,
+          "expected_samples": 270,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 177266.26666666666,
+          "mean_skew": 4.905292300858083,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "keep3",
+      "run_number": 2,
+      "run_id": "run-20260929-041940",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 28233.133333333335,
+          "mean_skew": 4.952796940232732,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 60.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 107855.05185185185,
+          "mean_skew": 4.895284986116692,
+          "valid_samples": 270,
+          "expected_samples": 270,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 178040.4,
+          "mean_skew": 4.864496978623137,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "run_id": "run-20260929-023622",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 28022.8,
+          "mean_skew": 4.911176923161169,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 92.55160999298096,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 5224.778656126482,
+          "mean_skew": 10.622612679956763,
+          "valid_samples": 253,
+          "expected_samples": 253,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 47.93333333333333,
+          "mean_skew": 8.599318556359304,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "run_id": "run-20260929-040237",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 29396.333333333332,
+          "mean_skew": 4.938992750185811,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 93.12241268157959,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 6054.830039525692,
+          "mean_skew": 11.048334954200596,
+          "valid_samples": 253,
+          "expected_samples": 253,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 49.8,
+          "mean_skew": 8.759554408351663,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "run_id": "run-20260929-025321",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 28167.733333333334,
+          "mean_skew": 4.92561123842374,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 139.82869410514832,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 2815.3,
+          "mean_skew": 10.045935290290307,
+          "valid_samples": 230,
+          "expected_samples": 230,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 37.733333333333334,
+          "mean_skew": 12.630353423666117,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "run_id": "run-20260929-034520",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 29522.866666666665,
+          "mean_skew": 4.941928509493551,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 144.22744917869568,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 3045.911894273128,
+          "mean_skew": 10.45095974777305,
+          "valid_samples": 227,
+          "expected_samples": 227,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 44.06666666666667,
+          "mean_skew": 10.341648033480556,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "run_id": "run-20260929-031044",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 28166.533333333333,
+          "mean_skew": 4.926437186850084,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 97.99993181228638,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 3104.0996015936257,
+          "mean_skew": 11.221210329119872,
+          "valid_samples": 251,
+          "expected_samples": 251,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 60.06666666666667,
+          "mean_skew": 10.550229589500889,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "12hot-700",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "run_id": "run-20260929-032802",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 29172.066666666666,
+          "mean_skew": 4.946049599902744,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 100.00010895729065,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 1512.9277108433735,
+          "mean_skew": 9.577185802661237,
+          "valid_samples": 249,
+          "expected_samples": 249,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 54.666666666666664,
+          "mean_skew": 8.430862229222305,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-700",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "run_id": "run-20260930-003405",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 31136.466666666667,
+          "mean_skew": 14.218318768950667,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 94.40742588043213,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 4062.3214285714284,
+          "mean_skew": 21.483064402509186,
+          "valid_samples": 252,
+          "expected_samples": 252,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 46.53333333333333,
+          "mean_skew": 20.305094611829542,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-700",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "run_id": "run-20260930-012528",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 31738.933333333334,
+          "mean_skew": 14.062875043257879,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 88.47109603881836,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 3856.878431372549,
+          "mean_skew": 21.82441947925198,
+          "valid_samples": 255,
+          "expected_samples": 255,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 43.86666666666667,
+          "mean_skew": 19.901836579941758,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-700",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "run_id": "run-20260930-005056",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 31301.866666666665,
+          "mean_skew": 14.20281930596264,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 145.97186994552612,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 6317.885462555066,
+          "mean_skew": 25.36837409656431,
+          "valid_samples": 227,
+          "expected_samples": 227,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 51.8,
+          "mean_skew": 24.58929222148478,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-700",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "run_id": "run-20260930-010811",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 31503.2,
+          "mean_skew": 14.044462562429874,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 148.4679479598999,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 6325.822222222222,
+          "mean_skew": 25.005801521510122,
+          "valid_samples": 225,
+          "expected_samples": 225,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 48.666666666666664,
+          "mean_skew": 21.916484380926438,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "keep3",
+      "run_number": 1,
+      "run_id": "run-20261021-081142",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 25912.266666666666,
+          "mean_skew": 14.098949093682485,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 60.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 91067.07777777778,
+          "mean_skew": 14.110757561526466,
+          "valid_samples": 270,
+          "expected_samples": 270,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 137214.06666666668,
+          "mean_skew": 14.09906089868324,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "keep3",
+      "run_number": 2,
+      "run_id": "run-20261021-102633",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 26217.6,
+          "mean_skew": 14.326400583063803,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 60.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 98810.68656716419,
+          "mean_skew": 14.098205024285091,
+          "valid_samples": 268,
+          "expected_samples": 270,
+          "sample_coverage_fraction": 0.9925925925925926
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 162725.73333333334,
+          "mean_skew": 14.045514865522978,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "run_id": "run-20261021-083131",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 21244.266666666666,
+          "mean_skew": 14.246755758856933,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 131.4501450061798,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 6328.41452991453,
+          "mean_skew": 25.209050082011768,
+          "valid_samples": 234,
+          "expected_samples": 234,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 46.06666666666667,
+          "mean_skew": 18.75023913085019,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "run_id": "run-20261021-100744",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 25790.533333333333,
+          "mean_skew": 14.334344537571932,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 97.52945804595947,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 4781.601593625498,
+          "mean_skew": 23.376862078943702,
+          "valid_samples": 251,
+          "expected_samples": 251,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 52.666666666666664,
+          "mean_skew": 19.789818354907876,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "run_id": "run-20261021-084932",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 26486.866666666665,
+          "mean_skew": 14.154771744737676,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 157.7923400402069,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 6128.529411764706,
+          "mean_skew": 27.501142705671853,
+          "valid_samples": 221,
+          "expected_samples": 221,
+          "sample_coverage_fraction": 1.0
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 40.4,
+          "mean_skew": 19.810660897435906,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "run_id": "run-20261021-094855",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 26244.933333333334,
+          "mean_skew": 14.336944179553784,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 151.79224491119385,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 4929.995495495496,
+          "mean_skew": 27.92089894480909,
+          "valid_samples": 222,
+          "expected_samples": 224,
+          "sample_coverage_fraction": 0.9910714285714286
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 38.333333333333336,
+          "mean_skew": 22.390486992918127,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "run_id": "run-20261021-091003",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 26176.133333333335,
+          "mean_skew": 14.148132726092113,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 95.99959206581116,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 7023.243902439024,
+          "mean_skew": 20.392076716376245,
+          "valid_samples": 246,
+          "expected_samples": 252,
+          "sample_coverage_fraction": 0.9761904761904762
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 47.2,
+          "mean_skew": 21.59820252428797,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    },
+    {
+      "group": "4hot-600",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "run_id": "run-20261021-092942",
+      "windows": {
+        "before": {
+          "start_seconds": 30.0,
+          "end_seconds": 60.0,
+          "mean_backlog_offsets": 25348.333333333332,
+          "mean_skew": 14.361647160833206,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        },
+        "post_action_to_evaluation_end": {
+          "start_seconds": 97.9996018409729,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 20628.744,
+          "mean_skew": 19.94836904367748,
+          "valid_samples": 250,
+          "expected_samples": 251,
+          "sample_coverage_fraction": 0.9960159362549801
+        },
+        "evaluation_end": {
+          "start_seconds": 570.0,
+          "end_seconds": 600.0,
+          "mean_backlog_offsets": 16799.8,
+          "mean_skew": 19.42807161930985,
+          "valid_samples": 15,
+          "expected_samples": 15,
+          "sample_coverage_fraction": 1.0
+        }
+      }
+    }
+  ]
+}

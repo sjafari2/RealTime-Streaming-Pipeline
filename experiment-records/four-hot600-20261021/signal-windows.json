@@ -1,7 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "comparison_sha256": "e935699886459e089dc7963bc8d0847aa0e2519d0463d59a3d2358a9c10e08d3",
   "completion_windows_sha256": "cacbd68fb01098dbf23cba7e80eb5b87fc7e22b86c851e76eda8af0401e26554",
+  "grid": "Signal and process observations use the nominal two-second query grid, allowing at most 1 ms export rounding. Before uses seconds 30,32,...,58; final uses 570,572,...,598. Activation timestamps remain unrounded. Expected signal counts include completely missing grid points.",
   "definition": "Arithmetic means of valid sampled values in the same half-open intervals as completion-window metrics. Process CPU is in cores, memory is process RSS. These are not requested resources or full-container memory.",
   "missing_data": "An aggregate process observation requires fresh values for every expected pod. Missing values remain absent. Valid sample counts, timestamps and completeness relative to the export grid are retained; a missing entire export interval remains a separate coverage limitation. No zero fill or interpolation.",
   "growth": "Trailing ten-second growth uses five contiguous two-second intervals with unchanged ownership; undefined windows remain absent. Fifteen-observation backlog/skew means are retained separately from raw signal averages.",
@@ -16,7 +17,9 @@
           "end_epoch": 1792592077.643859,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -244,7 +247,9 @@
           "end_epoch": 1792592617.643859,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -472,7 +477,9 @@
           "end_epoch": 1792592617.643859,
           "signals": {
             "observations": 270,
+            "expected_observations": 270,
             "valid_observations": 270,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -707,66 +714,68 @@
           "end_epoch": 1792600168.5970612,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 26744.666666666668,
-                "minimum": 23029.0,
-                "maximum": 30427.0
+                "mean": 26217.6,
+                "minimum": 22521.0,
+                "maximum": 29901.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 26744.666666666668,
-                "minimum": 23029.0,
-                "maximum": 30427.0
+                "mean": 26217.6,
+                "minimum": 22521.0,
+                "maximum": 29901.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 445.74444444444447,
-                "minimum": 383.81666666666666,
-                "maximum": 507.1166666666667
+                "mean": 436.96,
+                "minimum": 375.35,
+                "maximum": 498.35
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 6390.0,
-                "minimum": 5447.0,
-                "maximum": 7252.0
+                "mean": 6260.933333333333,
+                "minimum": 5316.0,
+                "maximum": 7113.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 14.335578944869207,
-                "minimum": 14.191671370880195,
+                "mean": 14.326400583063803,
+                "minimum": 14.162781404022912,
                 "maximum": 14.424379232505643
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 1549.8612526951026,
-                "minimum": 1333.577912880317,
-                "maximum": 1763.4545934204134
+                "mean": 1519.221757011544,
+                "minimum": 1303.8621581670357,
+                "maximum": 1733.7195642606102
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 23178.43111111111,
-                "minimum": 19709.8,
-                "maximum": 26744.666666666668
+                "mean": 22676.84,
+                "minimum": 19220.8,
+                "maximum": 26217.6
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 14.275752343258674,
-                "minimum": 14.19410404882778,
-                "maximum": 14.335578944869207
+                "mean": 14.266183592066653,
+                "minimum": 14.192047676988887,
+                "maximum": 14.326400583063803
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 260.1066666666667,
+                "mean": 256.8466666666667,
                 "minimum": 211.4,
                 "maximum": 267.7
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 260.1066666666667,
+                "mean": 256.8466666666667,
                 "minimum": 211.4,
                 "maximum": 267.7
               }
@@ -777,20 +786,20 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 1.4032,
+                "mean": 1.4028,
                 "minimum": 1.332,
                 "maximum": 1.4500000000000002
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.1364,
+                  "mean": 0.13673333333333335,
                   "minimum": 0.11800000000000001,
                   "maximum": 0.159
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.24053333333333332,
+                  "mean": 0.23979999999999999,
                   "minimum": 0.193,
                   "maximum": 0.26899999999999996
                 },
@@ -813,28 +822,28 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 144.42864583333332,
-                "minimum": 137.95703125,
-                "maximum": 151.0546875
+                "mean": 143.49453125,
+                "minimum": 137.04296875,
+                "maximum": 150.07421875
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 32.309375,
+                  "mean": 32.3078125,
                   "minimum": 32.2890625,
                   "maximum": 32.3125
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 32.384375,
+                  "mean": 32.384114583333336,
                   "minimum": 32.3828125,
                   "maximum": 32.38671875
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 79.73489583333334,
-                  "minimum": 73.28515625,
-                  "maximum": 86.35546875
+                  "mean": 78.80260416666667,
+                  "minimum": 72.37109375,
+                  "maximum": 85.375
                 }
               },
               "expected_pods": [
@@ -851,20 +860,20 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.18166666666666667,
+                "mean": 0.17966666666666667,
                 "minimum": 0.16499999999999998,
                 "maximum": 0.21000000000000002
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.06733333333333333,
+                  "mean": 0.06633333333333334,
                   "minimum": 0.06,
                   "maximum": 0.09
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 0.05433333333333333,
+                  "mean": 0.05333333333333334,
                   "minimum": 0.045,
                   "maximum": 0.07
                 },
@@ -887,26 +896,26 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 93.39166666666667,
-                "minimum": 93.1171875,
+                "mean": 93.37109375,
+                "minimum": 93.11328125,
                 "maximum": 93.421875
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 31.402604166666666,
-                  "minimum": 31.1875,
+                  "mean": 31.386979166666666,
+                  "minimum": 31.18359375,
                   "maximum": 31.41796875
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.65234375,
+                  "mean": 31.6484375,
                   "minimum": 31.59765625,
                   "maximum": 31.65625
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 30.33671875,
+                  "mean": 30.335677083333334,
                   "minimum": 30.33203125,
                   "maximum": 30.34765625
                 }
@@ -935,68 +944,70 @@
           "end_epoch": 1792600708.5970612,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 163238.0,
-                "minimum": 159686.0,
-                "maximum": 166862.0
+                "mean": 162725.73333333334,
+                "minimum": 159178.0,
+                "maximum": 166345.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 163238.0,
-                "minimum": 159686.0,
-                "maximum": 166862.0
+                "mean": 162725.73333333334,
+                "minimum": 159178.0,
+                "maximum": 166345.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 2720.633333333333,
-                "minimum": 2661.4333333333334,
-                "maximum": 2781.0333333333333
+                "mean": 2712.0955555555556,
+                "minimum": 2652.9666666666667,
+                "maximum": 2772.4166666666665
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 38214.53333333333,
-                "minimum": 37388.0,
-                "maximum": 39095.0
+                "mean": 38092.666666666664,
+                "minimum": 37267.0,
+                "maximum": 38969.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 14.04621029081925,
+                "mean": 14.045514865522978,
                 "minimum": 14.022595085112213,
-                "maximum": 14.057724347065239
+                "maximum": 14.057125840633297
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 9459.718846437425,
-                "minimum": 9252.032267501498,
-                "maximum": 9671.445503761173
+                "mean": 9429.871471143064,
+                "minimum": 9223.734874345762,
+                "maximum": 9640.876881438511
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 159753.36,
-                "minimum": 156301.26666666666,
-                "maximum": 163238.0
+                "mean": 159258.13333333333,
+                "minimum": 155809.6,
+                "maximum": 162725.73333333334
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 14.042868336412628,
-                "minimum": 14.03664757830019,
-                "maximum": 14.04621029081925
+                "mean": 14.04211831884641,
+                "minimum": 14.034960027325992,
+                "maximum": 14.045514865522978
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 249.63333333333333,
+                "mean": 248.38666666666666,
                 "minimum": 228.0,
-                "maximum": 266.7
+                "maximum": 259.9
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 249.63333333333333,
+                "mean": 248.38666666666666,
                 "minimum": 228.0,
-                "maximum": 266.7
+                "maximum": 259.9
               }
             }
           },
@@ -1005,28 +1016,28 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 1.3594,
+                "mean": 1.3606666666666667,
                 "minimum": 1.1709999999999998,
                 "maximum": 1.406
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.13293333333333335,
+                  "mean": 0.13513333333333333,
                   "minimum": 0.11800000000000001,
                   "maximum": 0.177
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.24026666666666668,
+                  "mean": 0.23893333333333333,
                   "minimum": 0.213,
                   "maximum": 0.268
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 0.9862,
+                  "mean": 0.9866,
                   "minimum": 0.8059999999999999,
-                  "maximum": 1.004
+                  "maximum": 1.0070000000000001
                 }
               },
               "expected_pods": [
@@ -1041,7 +1052,7 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 308.6828125,
+                "mean": 308.57578125,
                 "minimum": 307.93359375,
                 "maximum": 309.5390625
               },
@@ -1060,7 +1071,7 @@
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 243.675,
+                  "mean": 243.56796875,
                   "minimum": 242.92578125,
                   "maximum": 244.53125
                 }
@@ -1079,26 +1090,26 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.198,
-                "minimum": 0.19,
+                "mean": 0.196,
+                "minimum": 0.18,
                 "maximum": 0.21000000000000002
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.07866666666666666,
-                  "minimum": 0.075,
+                  "mean": 0.078,
+                  "minimum": 0.07,
                   "maximum": 0.085
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 0.05733333333333333,
+                  "mean": 0.056666666666666664,
                   "minimum": 0.05,
                   "maximum": 0.07
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 0.062,
+                  "mean": 0.06133333333333333,
                   "minimum": 0.055,
                   "maximum": 0.065
                 }
@@ -1115,7 +1126,7 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 94.11588541666667,
+                "mean": 94.115625,
                 "minimum": 94.11328125,
                 "maximum": 94.1171875
               },
@@ -1128,7 +1139,7 @@
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.830729166666668,
+                  "mean": 31.83046875,
                   "minimum": 31.828125,
                   "maximum": 31.83203125
                 },
@@ -1163,66 +1174,68 @@
           "end_epoch": 1792600708.5970612,
           "signals": {
             "observations": 270,
+            "expected_observations": 270,
             "valid_observations": 268,
+            "valid_grid_fraction": 0.9925925925925926,
             "valid_observation_fraction": 0.9925925925925926,
             "fields": {
               "total_lag": {
                 "samples": 268,
-                "mean": 99319.7723880597,
-                "minimum": 30940.0,
-                "maximum": 166862.0
+                "mean": 98810.68656716419,
+                "minimum": 30427.0,
+                "maximum": 166345.0
               },
               "processing_backlog": {
                 "samples": 268,
-                "mean": 99319.7723880597,
-                "minimum": 30940.0,
-                "maximum": 166862.0
+                "mean": 98810.68656716419,
+                "minimum": 30427.0,
+                "maximum": 166345.0
               },
               "mean_partition_lag": {
                 "samples": 268,
-                "mean": 1655.329539800995,
-                "minimum": 515.6666666666666,
-                "maximum": 2781.0333333333333
+                "mean": 1646.844776119403,
+                "minimum": 507.1166666666667,
+                "maximum": 2772.4166666666665
               },
               "max_partition_lag": {
                 "samples": 268,
-                "mean": 23313.0,
-                "minimum": 7390.0,
-                "maximum": 39095.0
+                "mean": 23194.182835820895,
+                "minimum": 7252.0,
+                "maximum": 38969.0
               },
               "skew": {
                 "samples": 268,
-                "mean": 14.097299306061066,
+                "mean": 14.098205024285091,
                 "minimum": 14.022005930212009,
                 "maximum": 14.330963154492567
               },
               "population_stddev": {
                 "samples": 268,
-                "mean": 5754.017916309951,
-                "minimum": 1793.665694108638,
-                "maximum": 9671.445503761173
+                "mean": 5724.510487540022,
+                "minimum": 1763.4545934204134,
+                "maximum": 9640.876881438511
               },
               "window_mean_backlog": {
                 "samples": 240,
-                "mean": 95767.28111111111,
-                "minimum": 27272.066666666666,
-                "maximum": 163238.0
+                "mean": 95198.55888888889,
+                "minimum": 26744.666666666668,
+                "maximum": 162725.73333333334
               },
               "window_mean_skew": {
                 "samples": 240,
-                "mean": 14.107935372827793,
+                "mean": 14.109141075553001,
                 "minimum": 14.032990795365857,
                 "maximum": 14.347342561331317
               },
               "window_growth_offsets_per_second": {
                 "samples": 258,
-                "mean": 252.52093023255813,
+                "mean": 252.49728682170542,
                 "minimum": 202.8,
                 "maximum": 277.0
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 258,
-                "mean": 252.52093023255813,
+                "mean": 252.49728682170542,
                 "minimum": 202.8,
                 "maximum": 277.0
               }
@@ -1233,26 +1246,26 @@
               "unit": "cores",
               "total": {
                 "samples": 268,
-                "mean": 1.3939440298507462,
+                "mean": 1.394108208955224,
                 "minimum": 1.1709999999999998,
                 "maximum": 1.4660000000000002
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 270,
-                  "mean": 0.1417962962962963,
+                  "mean": 0.14188148148148147,
                   "minimum": 0.109,
                   "maximum": 0.20600000000000002
                 },
                 "consumer-sts-1": {
                   "samples": 270,
-                  "mean": 0.2394740740740741,
+                  "mean": 0.23945185185185186,
                   "minimum": 0.18100000000000002,
                   "maximum": 0.293
                 },
                 "consumer-sts-2": {
                   "samples": 268,
-                  "mean": 1.012742537313433,
+                  "mean": 1.0128432835820895,
                   "minimum": 0.8059999999999999,
                   "maximum": 1.042
                 }
@@ -1269,27 +1282,27 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 268,
-                "mean": 257.0162954757463,
-                "minimum": 152.0078125,
+                "mean": 256.42493586753733,
+                "minimum": 151.0546875,
                 "maximum": 309.5390625
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 270,
-                  "mean": 32.35257523148148,
+                  "mean": 32.352097800925925,
                   "minimum": 32.3125,
                   "maximum": 32.44140625
                 },
                 "consumer-sts-1": {
                   "samples": 270,
-                  "mean": 32.49632523148148,
+                  "mean": 32.49565972222222,
                   "minimum": 32.38671875,
                   "maximum": 32.56640625
                 },
                 "consumer-sts-2": {
                   "samples": 268,
-                  "mean": 192.16737115205223,
-                  "minimum": 87.30859375,
+                  "mean": 191.5771630130597,
+                  "minimum": 86.35546875,
                   "maximum": 244.53125
                 }
               },
@@ -1307,14 +1320,14 @@
               "unit": "cores",
               "total": {
                 "samples": 270,
-                "mean": 0.18511111111111112,
+                "mean": 0.18507407407407409,
                 "minimum": 0.155,
                 "maximum": 0.27
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 270,
-                  "mean": 0.06855555555555556,
+                  "mean": 0.06853703703703704,
                   "minimum": 0.05,
                   "maximum": 0.12
                 },
@@ -1326,7 +1339,7 @@
                 },
                 "producer-workers-2": {
                   "samples": 270,
-                  "mean": 0.06118518518518518,
+                  "mean": 0.06116666666666667,
                   "minimum": 0.04,
                   "maximum": 0.08
                 }
@@ -1343,26 +1356,26 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 270,
-                "mean": 93.71666666666667,
+                "mean": 93.71409143518518,
                 "minimum": 93.421875,
                 "maximum": 94.1171875
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 270,
-                  "mean": 31.46433738425926,
+                  "mean": 31.46361400462963,
                   "minimum": 31.4140625,
                   "maximum": 31.61328125
                 },
                 "producer-workers-1": {
                   "samples": 270,
-                  "mean": 31.677473958333334,
+                  "mean": 31.676822916666666,
                   "minimum": 31.6171875,
                   "maximum": 31.83203125
                 },
                 "producer-workers-2": {
                   "samples": 270,
-                  "mean": 30.574855324074075,
+                  "mean": 30.57365451388889,
                   "minimum": 30.34765625,
                   "maximum": 30.671875
                 }
@@ -1398,7 +1411,9 @@
           "end_epoch": 1792593275.488819,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -1626,7 +1641,9 @@
           "end_epoch": 1792593815.488819,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -1854,7 +1871,9 @@
           "end_epoch": 1792593815.488819,
           "signals": {
             "observations": 234,
+            "expected_observations": 234,
             "valid_observations": 234,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -2089,7 +2108,9 @@
           "end_epoch": 1792599038.902731,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -2317,7 +2338,9 @@
           "end_epoch": 1792599578.902731,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -2545,7 +2568,9 @@
           "end_epoch": 1792599578.902731,
           "signals": {
             "observations": 251,
+            "expected_observations": 251,
             "valid_observations": 251,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -2780,66 +2805,68 @@
           "end_epoch": 1792594347.562113,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 26987.2,
-                "minimum": 23515.0,
-                "maximum": 30467.0
+                "mean": 26486.866666666665,
+                "minimum": 22962.0,
+                "maximum": 29905.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 26987.2,
-                "minimum": 23515.0,
-                "maximum": 30467.0
+                "mean": 26486.866666666665,
+                "minimum": 22962.0,
+                "maximum": 29905.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 449.7866666666667,
-                "minimum": 391.9166666666667,
-                "maximum": 507.78333333333336
+                "mean": 441.4477777777778,
+                "minimum": 382.7,
+                "maximum": 498.4166666666667
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 6367.2,
-                "minimum": 5524.0,
-                "maximum": 7152.0
+                "mean": 6249.666666666667,
+                "minimum": 5389.0,
+                "maximum": 7023.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 14.15498650688234,
+                "mean": 14.154771744737676,
                 "minimum": 14.056678872790956,
                 "maximum": 14.332164963830264
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 1558.6671607399132,
-                "minimum": 1358.0141910361451,
-                "maximum": 1759.9057275099203
+                "mean": 1529.7132607504245,
+                "minimum": 1325.5972276675898,
+                "maximum": 1727.5787902115749
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 23411.715555555555,
-                "minimum": 19721.2,
-                "maximum": 26987.2
+                "mean": 22891.373333333333,
+                "minimum": 19182.066666666666,
+                "maximum": 26486.866666666665
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 14.156451154016553,
+                "mean": 14.158379350612286,
                 "minimum": 14.13634945436871,
-                "maximum": 14.176974380368774
+                "maximum": 14.183909455818329
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 251.01333333333332,
+                "mean": 252.02,
                 "minimum": 220.2,
                 "maximum": 273.9
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 251.01333333333332,
+                "mean": 252.02,
                 "minimum": 220.2,
                 "maximum": 273.9
               }
@@ -2850,26 +2877,26 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 1.3976666666666666,
-                "minimum": 1.361,
+                "mean": 1.3961333333333334,
+                "minimum": 1.36,
                 "maximum": 1.4329999999999998
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.13206666666666667,
-                  "minimum": 0.113,
+                  "mean": 0.1306,
+                  "minimum": 0.105,
                   "maximum": 0.145
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.24046666666666666,
+                  "mean": 0.2402,
                   "minimum": 0.201,
                   "maximum": 0.273
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 1.0251333333333335,
+                  "mean": 1.0253333333333334,
                   "minimum": 1.012,
                   "maximum": 1.033
                 }
@@ -2886,28 +2913,28 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 144.85286458333334,
-                "minimum": 138.41015625,
-                "maximum": 151.58203125
+                "mean": 143.90651041666666,
+                "minimum": 137.38671875,
+                "maximum": 150.58203125
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 32.16614583333333,
+                  "mean": 32.16432291666667,
                   "minimum": 32.15234375,
                   "maximum": 32.1796875
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 32.42578125,
-                  "minimum": 32.42578125,
+                  "mean": 32.42526041666667,
+                  "minimum": 32.41796875,
                   "maximum": 32.42578125
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 80.2609375,
-                  "minimum": 73.83203125,
-                  "maximum": 86.9765625
+                  "mean": 79.31692708333334,
+                  "minimum": 72.81640625,
+                  "maximum": 85.9765625
                 }
               },
               "expected_pods": [
@@ -2924,7 +2951,7 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.19866666666666666,
+                "mean": 0.19933333333333333,
                 "minimum": 0.18,
                 "maximum": 0.25
               },
@@ -2937,7 +2964,7 @@
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 0.050333333333333334,
+                  "mean": 0.051,
                   "minimum": 0.04,
                   "maximum": 0.06
                 },
@@ -2960,26 +2987,26 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 94.04895833333333,
+                "mean": 94.02005208333334,
                 "minimum": 93.66015625,
                 "maximum": 94.09375
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 31.803125,
+                  "mean": 31.795572916666668,
                   "minimum": 31.69921875,
                   "maximum": 31.8125
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.614583333333332,
+                  "mean": 31.610416666666666,
                   "minimum": 31.5703125,
                   "maximum": 31.6328125
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 30.63125,
+                  "mean": 30.6140625,
                   "minimum": 30.390625,
                   "maximum": 30.6484375
                 }
@@ -3008,66 +3035,68 @@
           "end_epoch": 1792594887.562113,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 40.2,
+                "mean": 40.4,
                 "minimum": 30.0,
                 "maximum": 48.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 40.2,
+                "mean": 40.4,
                 "minimum": 30.0,
                 "maximum": 48.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 0.67,
+                "mean": 0.6733333333333333,
                 "minimum": 0.5,
                 "maximum": 0.8
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 13.666666666666666,
+                "mean": 13.2,
                 "minimum": 10.0,
                 "maximum": 19.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 20.56010657371085,
-                "minimum": 15.348837209302326,
+                "mean": 19.810660897435906,
+                "minimum": 13.636363636363637,
                 "maximum": 30.0
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 2.390167961877756,
+                "mean": 2.373014097705881,
                 "minimum": 1.9857128582842878,
                 "maximum": 3.0044411571316663
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 41.50666666666667,
-                "minimum": 40.2,
+                "mean": 41.58222222222222,
+                "minimum": 40.4,
                 "maximum": 43.06666666666667
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 20.438263776005357,
+                "mean": 20.441247772497388,
                 "minimum": 19.810660897435906,
                 "maximum": 21.14334507482578
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": -0.08666666666666667,
+                "mean": -0.08,
                 "minimum": -1.8,
                 "maximum": 1.3
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": -0.08666666666666667,
+                "mean": -0.08,
                 "minimum": -1.8,
                 "maximum": 1.3
               }
@@ -3078,44 +3107,44 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 2.0429333333333335,
+                "mean": 2.0446666666666666,
                 "minimum": 1.932,
                 "maximum": 2.1479999999999997
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.289,
+                  "mean": 0.2909333333333333,
                   "minimum": 0.261,
-                  "maximum": 0.311
+                  "maximum": 0.325
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.6157333333333334,
+                  "mean": 0.6148666666666667,
                   "minimum": 0.57,
                   "maximum": 0.6779999999999999
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 0.5701333333333334,
+                  "mean": 0.5714,
                   "minimum": 0.526,
                   "maximum": 0.606
                 },
                 "consumer-sts-3": {
                   "samples": 15,
-                  "mean": 0.36766666666666664,
+                  "mean": 0.36606666666666665,
                   "minimum": 0.342,
                   "maximum": 0.39399999999999996
                 },
                 "consumer-sts-4": {
                   "samples": 15,
-                  "mean": 0.1334,
+                  "mean": 0.13373333333333334,
                   "minimum": 0.10800000000000001,
                   "maximum": 0.158
                 },
                 "consumer-sts-5": {
                   "samples": 15,
-                  "mean": 0.067,
+                  "mean": 0.06766666666666667,
                   "minimum": 0.057,
                   "maximum": 0.078
                 }
@@ -3194,26 +3223,26 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.19133333333333333,
+                "mean": 0.191,
                 "minimum": 0.175,
                 "maximum": 0.22000000000000003
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.07466666666666667,
+                  "mean": 0.07433333333333333,
                   "minimum": 0.065,
                   "maximum": 0.085
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 0.05333333333333334,
+                  "mean": 0.053,
                   "minimum": 0.045,
                   "maximum": 0.06
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 0.06333333333333334,
+                  "mean": 0.06366666666666666,
                   "minimum": 0.055,
                   "maximum": 0.085
                 }
@@ -3230,20 +3259,20 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 94.76692708333333,
+                "mean": 94.76484375,
                 "minimum": 94.74609375,
                 "maximum": 94.77734375
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 32.04296875,
+                  "mean": 32.04140625,
                   "minimum": 32.02734375,
                   "maximum": 32.05078125
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.766927083333332,
+                  "mean": 31.76640625,
                   "minimum": 31.76171875,
                   "maximum": 31.76953125
                 },
@@ -3277,67 +3306,69 @@
           "start_epoch": 1792594445.354453,
           "end_epoch": 1792594887.562113,
           "signals": {
-            "observations": 222,
-            "valid_observations": 222,
+            "observations": 221,
+            "expected_observations": 221,
+            "valid_observations": 221,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
-                "samples": 222,
-                "mean": 6101.108108108108,
+                "samples": 221,
+                "mean": 6128.529411764706,
                 "minimum": 22.0,
                 "maximum": 55368.0
               },
               "processing_backlog": {
-                "samples": 222,
-                "mean": 6101.108108108108,
+                "samples": 221,
+                "mean": 6128.529411764706,
                 "minimum": 22.0,
                 "maximum": 55368.0
               },
               "mean_partition_lag": {
-                "samples": 222,
-                "mean": 101.68513513513514,
+                "samples": 221,
+                "mean": 102.1421568627451,
                 "minimum": 0.36666666666666664,
                 "maximum": 922.8
               },
               "max_partition_lag": {
-                "samples": 222,
-                "mean": 2721.7162162162163,
+                "samples": 221,
+                "mean": 2733.9547511312217,
                 "minimum": 7.0,
                 "maximum": 13654.0
               },
               "skew": {
-                "samples": 222,
-                "mean": 27.489326967270124,
+                "samples": 221,
+                "mean": 27.501142705671853,
                 "minimum": 13.043478260869565,
                 "maximum": 50.7882419022655
               },
               "population_stddev": {
-                "samples": 222,
-                "mean": 442.9515421718068,
+                "samples": 221,
+                "mean": 444.94423807942434,
                 "minimum": 1.3092618785661891,
                 "maximum": 3253.484566840093
               },
               "window_mean_backlog": {
-                "samples": 210,
-                "mean": 5310.671428571429,
+                "samples": 209,
+                "mean": 5335.888995215311,
                 "minimum": 38.0,
                 "maximum": 45634.73333333333
               },
               "window_mean_skew": {
-                "samples": 210,
-                "mean": 27.99880054936821,
+                "samples": 209,
+                "mean": 28.034392386572314,
                 "minimum": 16.84061829578499,
                 "maximum": 50.30923514306532
               },
               "window_growth_offsets_per_second": {
-                "samples": 219,
-                "mean": -126.8337899543379,
+                "samples": 218,
+                "mean": -127.4165137614679,
                 "minimum": -1039.4,
                 "maximum": 7.9
               },
               "window_processing_backlog_growth_offsets_per_second": {
-                "samples": 219,
-                "mean": -126.8337899543379,
+                "samples": 218,
+                "mean": -127.4165137614679,
                 "minimum": -1039.4,
                 "maximum": 7.9
               }
@@ -3347,45 +3378,45 @@
             "cpu_percent": {
               "unit": "cores",
               "total": {
-                "samples": 222,
-                "mean": 2.4580315315315318,
+                "samples": 221,
+                "mean": 2.4599366515837104,
                 "minimum": 1.768,
                 "maximum": 5.2250000000000005
               },
               "per_pod": {
                 "consumer-sts-0": {
-                  "samples": 222,
-                  "mean": 0.34074774774774774,
+                  "samples": 221,
+                  "mean": 0.3409502262443439,
                   "minimum": 0.258,
                   "maximum": 1.032
                 },
                 "consumer-sts-1": {
-                  "samples": 222,
-                  "mean": 0.7861981981981983,
+                  "samples": 221,
+                  "mean": 0.7870361990950226,
                   "minimum": 0.518,
                   "maximum": 1.032
                 },
                 "consumer-sts-2": {
-                  "samples": 222,
-                  "mean": 0.6878108108108109,
+                  "samples": 221,
+                  "mean": 0.6883665158371041,
                   "minimum": 0.368,
                   "maximum": 1.0290000000000001
                 },
                 "consumer-sts-3": {
-                  "samples": 222,
-                  "mean": 0.43679729729729727,
+                  "samples": 221,
+                  "mean": 0.4370995475113122,
                   "minimum": 0.265,
                   "maximum": 1.054
                 },
                 "consumer-sts-4": {
-                  "samples": 222,
-                  "mean": 0.13883783783783785,
+                  "samples": 221,
+                  "mean": 0.13879638009049775,
                   "minimum": 0.098,
                   "maximum": 1.0390000000000001
                 },
                 "consumer-sts-5": {
-                  "samples": 222,
-                  "mean": 0.06763963963963965,
+                  "samples": 221,
+                  "mean": 0.06768778280542986,
                   "minimum": 0.052000000000000005,
                   "maximum": 0.084
                 }
@@ -3398,51 +3429,51 @@
                 "consumer-sts-4",
                 "consumer-sts-5"
               ],
-              "export_grid_samples": 222,
+              "export_grid_samples": 221,
               "fraction_of_export_grid": 1.0
             },
             "memory_bytes": {
               "unit": "MiB RSS",
               "total": {
-                "samples": 222,
-                "mean": 373.5510099943694,
+                "samples": 221,
+                "mean": 373.55032169117646,
                 "minimum": 372.37890625,
                 "maximum": 373.703125
               },
               "per_pod": {
                 "consumer-sts-0": {
-                  "samples": 222,
-                  "mean": 59.01903856981982,
+                  "samples": 221,
+                  "mean": 59.01898331447964,
                   "minimum": 58.953125,
                   "maximum": 59.03125
                 },
                 "consumer-sts-1": {
-                  "samples": 222,
-                  "mean": 63.08847128378378,
+                  "samples": 221,
+                  "mean": 63.088146917420815,
                   "minimum": 62.51953125,
                   "maximum": 63.16015625
                 },
                 "consumer-sts-2": {
-                  "samples": 222,
-                  "mean": 123.32221283783784,
+                  "samples": 221,
+                  "mean": 123.32216841063348,
                   "minimum": 123.3046875,
                   "maximum": 123.33203125
                 },
                 "consumer-sts-3": {
-                  "samples": 222,
-                  "mean": 58.74220509572072,
+                  "samples": 221,
+                  "mean": 58.742028421945705,
                   "minimum": 58.30078125,
                   "maximum": 58.78125
                 },
                 "consumer-sts-4": {
-                  "samples": 222,
-                  "mean": 36.54333826013514,
+                  "samples": 221,
+                  "mean": 36.5432869061086,
                   "minimum": 36.51171875,
                   "maximum": 36.5546875
                 },
                 "consumer-sts-5": {
-                  "samples": 222,
-                  "mean": 32.835743947072075,
+                  "samples": 221,
+                  "mean": 32.83570772058823,
                   "minimum": 32.7890625,
                   "maximum": 32.84375
                 }
@@ -3455,7 +3486,7 @@
                 "consumer-sts-4",
                 "consumer-sts-5"
               ],
-              "export_grid_samples": 222,
+              "export_grid_samples": 221,
               "fraction_of_export_grid": 1.0
             }
           },
@@ -3463,27 +3494,27 @@
             "cpu_percent": {
               "unit": "cores",
               "total": {
-                "samples": 222,
-                "mean": 0.19608108108108108,
+                "samples": 221,
+                "mean": 0.19608597285067875,
                 "minimum": 0.165,
                 "maximum": 0.255
               },
               "per_pod": {
                 "producer-workers-0": {
-                  "samples": 222,
-                  "mean": 0.07740990990990991,
+                  "samples": 221,
+                  "mean": 0.07742081447963801,
                   "minimum": 0.065,
                   "maximum": 0.095
                 },
                 "producer-workers-1": {
-                  "samples": 222,
-                  "mean": 0.05382882882882883,
+                  "samples": 221,
+                  "mean": 0.053800904977375566,
                   "minimum": 0.04,
                   "maximum": 0.1
                 },
                 "producer-workers-2": {
-                  "samples": 222,
-                  "mean": 0.06484234234234235,
+                  "samples": 221,
+                  "mean": 0.06486425339366515,
                   "minimum": 0.055,
                   "maximum": 0.1
                 }
@@ -3493,33 +3524,33 @@
                 "producer-workers-1",
                 "producer-workers-2"
               ],
-              "export_grid_samples": 222,
+              "export_grid_samples": 221,
               "fraction_of_export_grid": 1.0
             },
             "memory_bytes": {
               "unit": "MiB RSS",
               "total": {
-                "samples": 222,
-                "mean": 94.70161176801801,
+                "samples": 221,
+                "mean": 94.70126908936652,
                 "minimum": 94.5546875,
                 "maximum": 94.77734375
               },
               "per_pod": {
                 "producer-workers-0": {
-                  "samples": 222,
-                  "mean": 32.00146044481982,
+                  "samples": 221,
+                  "mean": 32.001237273755656,
                   "minimum": 31.890625,
                   "maximum": 32.05078125
                 },
                 "producer-workers-1": {
-                  "samples": 222,
-                  "mean": 31.744140625,
+                  "samples": 221,
+                  "mean": 31.744025735294116,
                   "minimum": 31.72265625,
                   "maximum": 31.76953125
                 },
                 "producer-workers-2": {
-                  "samples": 222,
-                  "mean": 30.9560106981982,
+                  "samples": 221,
+                  "mean": 30.956006080316744,
                   "minimum": 30.94140625,
                   "maximum": 30.95703125
                 }
@@ -3529,7 +3560,7 @@
                 "producer-workers-1",
                 "producer-workers-2"
               ],
-              "export_grid_samples": 222,
+              "export_grid_samples": 221,
               "fraction_of_export_grid": 1.0
             }
           },
@@ -3555,7 +3586,9 @@
           "end_epoch": 1792597912.382852,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -3783,7 +3816,9 @@
           "end_epoch": 1792598452.382852,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
@@ -4053,7 +4088,9 @@
           "end_epoch": 1792598452.382852,
           "signals": {
             "observations": 224,
+            "expected_observations": 224,
             "valid_observations": 222,
+            "valid_grid_fraction": 0.9910714285714286,
             "valid_observation_fraction": 0.9910714285714286,
             "fields": {
               "total_lag": {
@@ -4330,66 +4367,68 @@
           "end_epoch": 1792595583.749408,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 26676.666666666668,
-                "minimum": 23127.0,
-                "maximum": 30094.0
+                "mean": 26176.133333333335,
+                "minimum": 22586.0,
+                "maximum": 29533.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 26676.666666666668,
-                "minimum": 23127.0,
-                "maximum": 30094.0
+                "mean": 26176.133333333335,
+                "minimum": 22586.0,
+                "maximum": 29533.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 444.6111111111111,
-                "minimum": 385.45,
-                "maximum": 501.56666666666666
+                "mean": 436.2688888888889,
+                "minimum": 376.43333333333334,
+                "maximum": 492.21666666666664
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 6297.266666666666,
-                "minimum": 5430.0,
-                "maximum": 7161.0
+                "mean": 6174.066666666667,
+                "minimum": 5313.0,
+                "maximum": 7021.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 14.159013500615714,
+                "mean": 14.148132726092113,
                 "minimum": 14.074379824163122,
-                "maximum": 14.277264571010832
+                "maximum": 14.264043612230386
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 1540.6759536002787,
-                "minimum": 1335.3441557016927,
-                "maximum": 1738.8251720310725
+                "mean": 1511.6316273843656,
+                "minimum": 1303.1602787923757,
+                "maximum": 1706.4261200109297
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 23095.30222222222,
-                "minimum": 19436.266666666666,
-                "maximum": 26676.666666666668
+                "mean": 22577.65777777778,
+                "minimum": 18912.0,
+                "maximum": 26176.133333333335
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 14.15493648637809,
+                "mean": 14.157770113433358,
                 "minimum": 14.138905083026966,
-                "maximum": 14.192766670589707
+                "maximum": 14.201517906444723
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 251.70666666666668,
+                "mean": 252.11333333333334,
                 "minimum": 224.4,
                 "maximum": 270.8
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 251.70666666666668,
+                "mean": 252.11333333333334,
                 "minimum": 224.4,
                 "maximum": 270.8
               }
@@ -4407,14 +4446,14 @@
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.13233333333333333,
-                  "minimum": 0.122,
+                  "mean": 0.12986666666666669,
+                  "minimum": 0.105,
                   "maximum": 0.153
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.24053333333333335,
-                  "minimum": 0.20800000000000002,
+                  "mean": 0.243,
+                  "minimum": 0.214,
                   "maximum": 0.275
                 },
                 "consumer-sts-2": {
@@ -4436,28 +4475,28 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 143.18619791666666,
-                "minimum": 137.19140625,
-                "maximum": 149.23828125
+                "mean": 142.32526041666668,
+                "minimum": 136.32421875,
+                "maximum": 148.30078125
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 32.07005208333333,
+                  "mean": 32.06848958333333,
                   "minimum": 32.0546875,
                   "maximum": 32.078125
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 32.03151041666667,
+                  "mean": 32.029947916666664,
                   "minimum": 32.0234375,
                   "maximum": 32.046875
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 79.08463541666667,
-                  "minimum": 73.11328125,
-                  "maximum": 85.11328125
+                  "mean": 78.22682291666666,
+                  "minimum": 72.24609375,
+                  "maximum": 84.17578125
                 }
               },
               "expected_pods": [
@@ -4474,26 +4513,26 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.187,
+                "mean": 0.18733333333333332,
                 "minimum": 0.16999999999999998,
                 "maximum": 0.22
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.06833333333333334,
+                  "mean": 0.06866666666666667,
                   "minimum": 0.06,
                   "maximum": 0.075
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 0.057666666666666665,
+                  "mean": 0.05733333333333333,
                   "minimum": 0.05,
                   "maximum": 0.095
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 0.061,
+                  "mean": 0.06133333333333333,
                   "minimum": 0.055,
                   "maximum": 0.075
                 }
@@ -4510,20 +4549,20 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 93.5125,
+                "mean": 93.50234375,
                 "minimum": 93.421875,
                 "maximum": 93.57421875
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 31.473958333333332,
+                  "mean": 31.466145833333332,
                   "minimum": 31.4140625,
                   "maximum": 31.53125
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.464322916666667,
+                  "mean": 31.461979166666666,
                   "minimum": 31.43359375,
                   "maximum": 31.46875
                 },
@@ -4558,66 +4597,68 @@
           "end_epoch": 1792596123.749408,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 46.93333333333333,
-                "minimum": 26.0,
+                "mean": 47.2,
+                "minimum": 27.0,
                 "maximum": 233.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 46.93333333333333,
-                "minimum": 26.0,
+                "mean": 47.2,
+                "minimum": 27.0,
                 "maximum": 233.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 0.7822222222222223,
-                "minimum": 0.43333333333333335,
+                "mean": 0.7866666666666666,
+                "minimum": 0.45,
                 "maximum": 3.8833333333333333
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 18.066666666666666,
+                "mean": 17.933333333333334,
                 "minimum": 7.0,
                 "maximum": 98.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 22.04948457557002,
-                "minimum": 15.555555555555555,
+                "mean": 21.59820252428797,
+                "minimum": 14.0,
                 "maximum": 27.857142857142858
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 3.1058753344141836,
+                "mean": 3.094305170426599,
                 "minimum": 1.4767644813352376,
                 "maximum": 16.80584389100675
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 48.44444444444444,
-                "minimum": 46.93333333333333,
+                "mean": 47.73777777777778,
+                "minimum": 36.333333333333336,
                 "maximum": 49.333333333333336
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 21.30446071939507,
+                "mean": 21.263418629544837,
                 "minimum": 20.444191723418086,
-                "maximum": 22.04948457557002
+                "maximum": 21.851488067896092
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": -0.2000000000000001,
+                "mean": -0.17333333333333342,
                 "minimum": -17.6,
                 "maximum": 20.3
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": -0.2000000000000001,
+                "mean": -0.17333333333333342,
                 "minimum": -17.6,
                 "maximum": 20.3
               }
@@ -4628,45 +4669,45 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 1.6115333333333333,
+                "mean": 1.6085333333333334,
                 "minimum": 1.44,
                 "maximum": 1.7510000000000001
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.0906,
+                  "mean": 0.0896,
                   "minimum": 0.07,
                   "maximum": 0.11599999999999999
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.13353333333333334,
+                  "mean": 0.13373333333333334,
                   "minimum": 0.09300000000000001,
                   "maximum": 0.14400000000000002
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 0.115,
+                  "mean": 0.11513333333333334,
                   "minimum": 0.084,
                   "maximum": 0.141
                 },
                 "consumer-sts-3": {
                   "samples": 15,
-                  "mean": 0.8945333333333333,
+                  "mean": 0.89,
                   "minimum": 0.737,
                   "maximum": 1.012
                 },
                 "consumer-sts-4": {
                   "samples": 15,
-                  "mean": 0.138,
+                  "mean": 0.13793333333333332,
                   "minimum": 0.11699999999999999,
                   "maximum": 0.166
                 },
                 "consumer-sts-5": {
                   "samples": 15,
-                  "mean": 0.23986666666666667,
-                  "minimum": 0.223,
+                  "mean": 0.24213333333333334,
+                  "minimum": 0.22399999999999998,
                   "maximum": 0.258
                 }
               },
@@ -4744,14 +4785,14 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.188,
+                "mean": 0.18766666666666668,
                 "minimum": 0.17500000000000002,
                 "maximum": 0.20500000000000002
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.07100000000000001,
+                  "mean": 0.07133333333333333,
                   "minimum": 0.065,
                   "maximum": 0.075
                 },
@@ -4763,7 +4804,7 @@
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 0.062,
+                  "mean": 0.06133333333333334,
                   "minimum": 0.055,
                   "maximum": 0.07
                 }
@@ -4780,20 +4821,20 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 94.03463541666666,
+                "mean": 94.03177083333334,
                 "minimum": 94.0,
                 "maximum": 94.04296875
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 31.595052083333332,
+                  "mean": 31.592447916666668,
                   "minimum": 31.5625,
                   "maximum": 31.6015625
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.591927083333335,
+                  "mean": 31.591666666666665,
                   "minimum": 31.58984375,
                   "maximum": 31.59375
                 },
@@ -4827,67 +4868,69 @@
           "start_epoch": 1792595619.749,
           "end_epoch": 1792596123.749408,
           "signals": {
-            "observations": 253,
-            "valid_observations": 247,
-            "valid_observation_fraction": 0.9762845849802372,
+            "observations": 252,
+            "expected_observations": 252,
+            "valid_observations": 246,
+            "valid_grid_fraction": 0.9761904761904762,
+            "valid_observation_fraction": 0.9761904761904762,
             "fields": {
               "total_lag": {
-                "samples": 247,
-                "mean": 6994.914979757085,
+                "samples": 246,
+                "mean": 7023.243902439024,
                 "minimum": 20.0,
                 "maximum": 25201.0
               },
               "processing_backlog": {
-                "samples": 247,
-                "mean": 6994.914979757085,
+                "samples": 246,
+                "mean": 7023.243902439024,
                 "minimum": 20.0,
                 "maximum": 25201.0
               },
               "mean_partition_lag": {
-                "samples": 247,
-                "mean": 116.58191632928475,
+                "samples": 246,
+                "mean": 117.0540650406504,
                 "minimum": 0.3333333333333333,
                 "maximum": 420.01666666666665
               },
               "max_partition_lag": {
-                "samples": 247,
-                "mean": 2416.97975708502,
+                "samples": 246,
+                "mean": 2426.768292682927,
                 "minimum": 6.0,
                 "maximum": 10348.0
               },
               "skew": {
-                "samples": 247,
-                "mean": 20.393603655861487,
+                "samples": 246,
+                "mean": 20.392076716376245,
                 "minimum": 14.0,
                 "maximum": 37.02127659574468
               },
               "population_stddev": {
-                "samples": 247,
-                "mean": 493.164299895552,
+                "samples": 246,
+                "mean": 495.16209573483684,
                 "minimum": 1.1205157542647741,
                 "maximum": 1738.207504154783
               },
               "window_mean_backlog": {
-                "samples": 187,
-                "mean": 7078.645276292335,
+                "samples": 186,
+                "mean": 7116.45017921147,
                 "minimum": 30.4,
                 "maximum": 25149.266666666666
               },
               "window_mean_skew": {
-                "samples": 187,
-                "mean": 20.440498601582764,
+                "samples": 186,
+                "mean": 20.431848139357026,
                 "minimum": 18.378503683503684,
                 "maximum": 25.3432799225601
               },
               "window_growth_offsets_per_second": {
-                "samples": 225,
-                "mean": -57.888444444444445,
+                "samples": 224,
+                "mean": -58.144642857142856,
                 "minimum": -724.3,
                 "maximum": 20.3
               },
               "window_processing_backlog_growth_offsets_per_second": {
-                "samples": 225,
-                "mean": -57.888444444444445,
+                "samples": 224,
+                "mean": -58.144642857142856,
                 "minimum": -724.3,
                 "maximum": 20.3
               }
@@ -4897,45 +4940,45 @@
             "cpu_percent": {
               "unit": "cores",
               "total": {
-                "samples": 247,
-                "mean": 1.7346963562753037,
+                "samples": 246,
+                "mean": 1.7351463414634147,
                 "minimum": 1.44,
                 "maximum": 2.61
               },
               "per_pod": {
                 "consumer-sts-0": {
-                  "samples": 253,
-                  "mean": 0.09134387351778657,
+                  "samples": 252,
+                  "mean": 0.09129761904761906,
                   "minimum": 0.07,
                   "maximum": 0.142
                 },
                 "consumer-sts-1": {
-                  "samples": 251,
-                  "mean": 0.143003984063745,
+                  "samples": 250,
+                  "mean": 0.14304,
                   "minimum": 0.092,
                   "maximum": 0.196
                 },
                 "consumer-sts-2": {
-                  "samples": 253,
-                  "mean": 0.12295652173913044,
+                  "samples": 252,
+                  "mean": 0.12296825396825396,
                   "minimum": 0.084,
                   "maximum": 0.158
                 },
                 "consumer-sts-3": {
-                  "samples": 252,
-                  "mean": 0.9903015873015873,
+                  "samples": 251,
+                  "mean": 0.9906254980079682,
                   "minimum": 0.737,
                   "maximum": 1.078
                 },
                 "consumer-sts-4": {
-                  "samples": 250,
-                  "mean": 0.137704,
+                  "samples": 249,
+                  "mean": 0.137714859437751,
                   "minimum": 0.098,
                   "maximum": 0.183
                 },
                 "consumer-sts-5": {
-                  "samples": 253,
-                  "mean": 0.24925296442687747,
+                  "samples": 252,
+                  "mean": 0.24935714285714286,
                   "minimum": 0.201,
                   "maximum": 1.023
                 }
@@ -4948,51 +4991,51 @@
                 "consumer-sts-4",
                 "consumer-sts-5"
               ],
-              "export_grid_samples": 253,
-              "fraction_of_export_grid": 0.9762845849802372
+              "export_grid_samples": 252,
+              "fraction_of_export_grid": 0.9761904761904762
             },
             "memory_bytes": {
               "unit": "MiB RSS",
               "total": {
-                "samples": 247,
-                "mean": 310.00055351720647,
+                "samples": 246,
+                "mean": 309.9998570884146,
                 "minimum": 309.34765625,
                 "maximum": 310.171875
               },
               "per_pod": {
                 "consumer-sts-0": {
-                  "samples": 253,
-                  "mean": 32.33389945652174,
+                  "samples": 252,
+                  "mean": 32.333767361111114,
                   "minimum": 32.31640625,
                   "maximum": 32.3671875
                 },
                 "consumer-sts-1": {
-                  "samples": 251,
-                  "mean": 32.12142056772908,
+                  "samples": 250,
+                  "mean": 32.1213125,
                   "minimum": 32.1015625,
                   "maximum": 32.1484375
                 },
                 "consumer-sts-2": {
-                  "samples": 253,
-                  "mean": 71.80405447134387,
+                  "samples": 252,
+                  "mean": 71.80403645833333,
                   "minimum": 71.796875,
                   "maximum": 71.80859375
                 },
                 "consumer-sts-3": {
-                  "samples": 252,
-                  "mean": 92.48496403769842,
+                  "samples": 251,
+                  "mean": 92.4847485059761,
                   "minimum": 92.01953125,
                   "maximum": 92.5390625
                 },
                 "consumer-sts-4": {
-                  "samples": 250,
-                  "mean": 32.469609375,
+                  "samples": 249,
+                  "mean": 32.46945594879518,
                   "minimum": 32.39453125,
                   "maximum": 32.5078125
                 },
                 "consumer-sts-5": {
-                  "samples": 253,
-                  "mean": 48.78719429347826,
+                  "samples": 252,
+                  "mean": 48.78714037698413,
                   "minimum": 48.71875,
                   "maximum": 48.80078125
                 }
@@ -5005,35 +5048,35 @@
                 "consumer-sts-4",
                 "consumer-sts-5"
               ],
-              "export_grid_samples": 253,
-              "fraction_of_export_grid": 0.9762845849802372
+              "export_grid_samples": 252,
+              "fraction_of_export_grid": 0.9761904761904762
             }
           },
           "producer": {
             "cpu_percent": {
               "unit": "cores",
               "total": {
-                "samples": 253,
-                "mean": 0.1900790513833992,
+                "samples": 252,
+                "mean": 0.19005952380952382,
                 "minimum": 0.16,
                 "maximum": 0.235
               },
               "per_pod": {
                 "producer-workers-0": {
-                  "samples": 253,
-                  "mean": 0.07201581027667985,
+                  "samples": 252,
+                  "mean": 0.07202380952380953,
                   "minimum": 0.06,
                   "maximum": 0.105
                 },
                 "producer-workers-1": {
-                  "samples": 253,
-                  "mean": 0.056264822134387354,
+                  "samples": 252,
+                  "mean": 0.05626984126984127,
                   "minimum": 0.035,
                   "maximum": 0.09
                 },
                 "producer-workers-2": {
-                  "samples": 253,
-                  "mean": 0.061798418972332014,
+                  "samples": 252,
+                  "mean": 0.06176587301587302,
                   "minimum": 0.05,
                   "maximum": 0.095
                 }
@@ -5043,33 +5086,33 @@
                 "producer-workers-1",
                 "producer-workers-2"
               ],
-              "export_grid_samples": 253,
+              "export_grid_samples": 252,
               "fraction_of_export_grid": 1.0
             },
             "memory_bytes": {
               "unit": "MiB RSS",
               "total": {
-                "samples": 253,
-                "mean": 93.92104125494072,
+                "samples": 252,
+                "mean": 93.92055741567461,
                 "minimum": 93.8359375,
                 "maximum": 94.04296875
               },
               "per_pod": {
                 "producer-workers-0": {
-                  "samples": 253,
-                  "mean": 31.55686450098814,
+                  "samples": 252,
+                  "mean": 31.55668712797619,
                   "minimum": 31.53515625,
                   "maximum": 31.6015625
                 },
                 "producer-workers-1": {
-                  "samples": 253,
-                  "mean": 31.530771368577074,
+                  "samples": 252,
+                  "mean": 31.530521453373016,
                   "minimum": 31.46875,
                   "maximum": 31.59375
                 },
                 "producer-workers-2": {
-                  "samples": 253,
-                  "mean": 30.833405385375492,
+                  "samples": 252,
+                  "mean": 30.833348834325395,
                   "minimum": 30.83203125,
                   "maximum": 30.84765625
                 }
@@ -5079,7 +5122,7 @@
                 "producer-workers-1",
                 "producer-workers-2"
               ],
-              "export_grid_samples": 253,
+              "export_grid_samples": 252,
               "fraction_of_export_grid": 1.0
             }
           },
@@ -5105,66 +5148,68 @@
           "end_epoch": 1792596764.172398,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 25839.2,
-                "minimum": 22494.0,
-                "maximum": 29314.0
+                "mean": 25348.333333333332,
+                "minimum": 21951.0,
+                "maximum": 28808.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 25839.2,
-                "minimum": 22494.0,
-                "maximum": 29314.0
+                "mean": 25348.333333333332,
+                "minimum": 21951.0,
+                "maximum": 28808.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 430.6533333333333,
-                "minimum": 374.9,
-                "maximum": 488.56666666666666
+                "mean": 422.47222222222223,
+                "minimum": 365.85,
+                "maximum": 480.1333333333333
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 6184.6,
-                "minimum": 5360.0,
-                "maximum": 6977.0
+                "mean": 6067.0,
+                "minimum": 5213.0,
+                "maximum": 6868.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 14.363749786606531,
-                "minimum": 14.280548543358123,
+                "mean": 14.361647160833206,
+                "minimum": 14.249009156758234,
                 "maximum": 14.473888367155281
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 1497.8369293493208,
-                "minimum": 1304.1235588189743,
-                "maximum": 1699.3137768588301
+                "mean": 1469.3747167617216,
+                "minimum": 1272.3805880448401,
+                "maximum": 1670.048736481131
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 22438.964444444446,
-                "minimum": 18997.466666666667,
-                "maximum": 25839.2
+                "mean": 21949.613333333335,
+                "minimum": 18498.933333333334,
+                "maximum": 25348.333333333332
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 14.299758290625045,
-                "minimum": 14.182116959472818,
-                "maximum": 14.363749786606531
+                "mean": 14.286937323093609,
+                "minimum": 14.171435273634994,
+                "maximum": 14.361647160833206
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 242.33333333333334,
+                "mean": 241.61333333333334,
                 "minimum": 218.1,
                 "maximum": 257.1
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": 242.33333333333334,
+                "mean": 241.61333333333334,
                 "minimum": 218.1,
                 "maximum": 257.1
               }
@@ -5175,27 +5220,27 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 1.4080000000000001,
+                "mean": 1.4049333333333334,
                 "minimum": 1.3650000000000002,
                 "maximum": 1.4480000000000002
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 0.1382,
+                  "mean": 0.1376,
                   "minimum": 0.11900000000000001,
                   "maximum": 0.16899999999999998
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.23966666666666667,
+                  "mean": 0.23800000000000002,
                   "minimum": 0.19699999999999998,
                   "maximum": 0.278
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 1.0301333333333333,
-                  "minimum": 1.025,
+                  "mean": 1.0293333333333334,
+                  "minimum": 1.022,
                   "maximum": 1.036
                 }
               },
@@ -5211,28 +5256,28 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 142.58619791666666,
-                "minimum": 136.16015625,
-                "maximum": 149.05859375
+                "mean": 141.6609375,
+                "minimum": 135.1796875,
+                "maximum": 148.1640625
               },
               "per_pod": {
                 "consumer-sts-0": {
                   "samples": 15,
-                  "mean": 31.872135416666666,
+                  "mean": 31.871875,
                   "minimum": 31.87109375,
                   "maximum": 31.875
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 32.32890625,
+                  "mean": 32.328125,
                   "minimum": 32.3203125,
                   "maximum": 32.33203125
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 78.38515625,
-                  "minimum": 71.96875,
-                  "maximum": 84.8515625
+                  "mean": 77.4609375,
+                  "minimum": 70.98828125,
+                  "maximum": 83.95703125
                 }
               },
               "expected_pods": [
@@ -5249,26 +5294,26 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.18333333333333332,
+                "mean": 0.182,
                 "minimum": 0.16999999999999998,
                 "maximum": 0.2
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.06733333333333334,
+                  "mean": 0.06766666666666667,
                   "minimum": 0.06,
                   "maximum": 0.07
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 0.05366666666666667,
+                  "mean": 0.052333333333333336,
                   "minimum": 0.045,
                   "maximum": 0.065
                 },
                 "producer-workers-2": {
                   "samples": 15,
-                  "mean": 0.06233333333333333,
+                  "mean": 0.062,
                   "minimum": 0.055,
                   "maximum": 0.075
                 }
@@ -5285,22 +5330,22 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 93.84947916666667,
-                "minimum": 93.7890625,
-                "maximum": 93.87890625
+                "mean": 93.84322916666666,
+                "minimum": 93.78515625,
+                "maximum": 93.8671875
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 31.573697916666667,
+                  "mean": 31.569791666666667,
                   "minimum": 31.51953125,
                   "maximum": 31.578125
                 },
                 "producer-workers-1": {
                   "samples": 15,
-                  "mean": 31.47109375,
-                  "minimum": 31.46484375,
-                  "maximum": 31.49609375
+                  "mean": 31.46875,
+                  "minimum": 31.4609375,
+                  "maximum": 31.484375
                 },
                 "producer-workers-2": {
                   "samples": 15,
@@ -5333,66 +5378,68 @@
           "end_epoch": 1792597304.172398,
           "signals": {
             "observations": 15,
+            "expected_observations": 15,
             "valid_observations": 15,
+            "valid_grid_fraction": 1.0,
             "valid_observation_fraction": 1.0,
             "fields": {
               "total_lag": {
                 "samples": 15,
-                "mean": 16782.666666666668,
+                "mean": 16799.8,
                 "minimum": 16641.0,
                 "maximum": 16984.0
               },
               "processing_backlog": {
                 "samples": 15,
-                "mean": 16782.666666666668,
+                "mean": 16799.8,
                 "minimum": 16641.0,
                 "maximum": 16984.0
               },
               "mean_partition_lag": {
                 "samples": 15,
-                "mean": 279.7111111111111,
+                "mean": 279.99666666666667,
                 "minimum": 277.35,
                 "maximum": 283.06666666666666
               },
               "max_partition_lag": {
                 "samples": 15,
-                "mean": 5438.866666666667,
+                "mean": 5439.533333333334,
                 "minimum": 5416.0,
                 "maximum": 5460.0
               },
               "skew": {
                 "samples": 15,
-                "mean": 19.445560881321033,
+                "mean": 19.42807161930985,
                 "minimum": 19.20509494044109,
                 "maximum": 19.686316928069225
               },
               "population_stddev": {
                 "samples": 15,
-                "mean": 1167.4454094679663,
+                "mean": 1168.466710514479,
                 "minimum": 1159.0355304447457,
                 "maximum": 1179.4094124697422
               },
               "window_mean_backlog": {
                 "samples": 15,
-                "mean": 16895.2,
-                "minimum": 16782.666666666668,
-                "maximum": 16965.4
+                "mean": 16908.36,
+                "minimum": 16799.8,
+                "maximum": 16980.066666666666
               },
               "window_mean_skew": {
                 "samples": 15,
-                "mean": 19.374052313507047,
+                "mean": 19.368938822498514,
                 "minimum": 19.348684016881865,
-                "maximum": 19.445560881321033
+                "maximum": 19.42807161930985
               },
               "window_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": -9.973333333333333,
+                "mean": -10.413333333333334,
                 "minimum": -24.2,
                 "maximum": 2.1
               },
               "window_processing_backlog_growth_offsets_per_second": {
                 "samples": 15,
-                "mean": -9.973333333333333,
+                "mean": -10.413333333333334,
                 "minimum": -24.2,
                 "maximum": 2.1
               }
@@ -5403,7 +5450,7 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 1.8668666666666667,
+                "mean": 1.866,
                 "minimum": 1.835,
                 "maximum": 1.914
               },
@@ -5416,31 +5463,31 @@
                 },
                 "consumer-sts-1": {
                   "samples": 15,
-                  "mean": 0.14086666666666667,
+                  "mean": 0.1406,
                   "minimum": 0.11900000000000001,
                   "maximum": 0.159
                 },
                 "consumer-sts-2": {
                   "samples": 15,
-                  "mean": 0.1266,
+                  "mean": 0.1254,
                   "minimum": 0.105,
                   "maximum": 0.155
                 },
                 "consumer-sts-3": {
                   "samples": 15,
-                  "mean": 0.3738,
+                  "mean": 0.3742,
                   "minimum": 0.35600000000000004,
                   "maximum": 0.409
                 },
                 "consumer-sts-4": {
                   "samples": 15,
-                  "mean": 0.06893333333333333,
+                  "mean": 0.06920000000000001,
                   "minimum": 0.057,
                   "maximum": 0.079
                 },
                 "consumer-sts-5": {
                   "samples": 15,
-                  "mean": 1.0695333333333332,
+                  "mean": 1.0694666666666666,
                   "minimum": 1.064,
                   "maximum": 1.075
                 }
@@ -5460,7 +5507,7 @@
               "unit": "MiB RSS",
               "total": {
                 "samples": 15,
-                "mean": 341.2895833333333,
+                "mean": 341.2885416666667,
                 "minimum": 341.28125,
                 "maximum": 341.296875
               },
@@ -5491,7 +5538,7 @@
                 },
                 "consumer-sts-4": {
                   "samples": 15,
-                  "mean": 31.828645833333333,
+                  "mean": 31.827604166666667,
                   "minimum": 31.8203125,
                   "maximum": 31.8359375
                 },
@@ -5519,15 +5566,15 @@
               "unit": "cores",
               "total": {
                 "samples": 15,
-                "mean": 0.191,
+                "mean": 0.19033333333333333,
                 "minimum": 0.175,
                 "maximum": 0.215
               },
               "per_pod": {
                 "producer-workers-0": {
                   "samples": 15,
-                  "mean": 0.074,
-                  "minimum": 0.065,
+                  "mean": 0.07333333333333333,
+                  "minimum": 0.06,
                   "maximum": 0.095
                 },
                 "producer-workers-1": {
@@ -5602,67 +5649,69 @@
           "start_epoch": 1792596802.172,
           "end_epoch": 1792597304.172398,
           "signals": {
-            "observations": 252,
-            "valid_observations": 251,
-            "valid_observation_fraction": 0.996031746031746,
+            "observations": 251,
+            "expected_observations": 251,
+            "valid_observations": 250,
+            "valid_grid_fraction": 0.9960159362549801,
+            "valid_observation_fraction": 0.9960159362549801,
             "fields": {
               "total_lag": {
-                "samples": 251,
-                "mean": 20612.964143426296,
+                "samples": 250,
+                "mean": 20628.744,
                 "minimum": 16641.0,
                 "maximum": 29999.0
               },
               "processing_backlog": {
-                "samples": 251,
-                "mean": 20612.964143426296,
+                "samples": 250,
+                "mean": 20628.744,
                 "minimum": 16641.0,
                 "maximum": 29999.0
               },
               "mean_partition_lag": {
-                "samples": 251,
-                "mean": 343.5494023904383,
+                "samples": 250,
+                "mean": 343.8124,
                 "minimum": 277.35,
                 "maximum": 499.98333333333335
               },
               "max_partition_lag": {
-                "samples": 251,
-                "mean": 6898.9123505976095,
+                "samples": 250,
+                "mean": 6904.716,
                 "minimum": 5416.0,
                 "maximum": 11848.0
               },
               "skew": {
-                "samples": 251,
-                "mean": 19.94702586462503,
+                "samples": 250,
+                "mean": 19.94836904367748,
                 "minimum": 19.195966564946264,
                 "maximum": 28.027125059138935
               },
               "population_stddev": {
-                "samples": 251,
-                "mean": 1444.8216876514764,
+                "samples": 250,
+                "mean": 1445.9559891606275,
                 "minimum": 1159.0355304447457,
                 "maximum": 2046.9807601006469
               },
               "window_mean_backlog": {
-                "samples": 228,
-                "mean": 20894.98859649123,
-                "minimum": 16782.666666666668,
+                "samples": 227,
+                "mean": 20913.10455212922,
+                "minimum": 16799.8,
                 "maximum": 29100.0
               },
               "window_mean_skew": {
-                "samples": 228,
-                "mean": 19.94472284197636,
+                "samples": 227,
+                "mean": 19.946921793344885,
                 "minimum": 19.258497212867557,
                 "maximum": 26.227348277449952
               },
               "window_growth_offsets_per_second": {
-                "samples": 246,
-                "mean": -32.46747967479675,
+                "samples": 245,
+                "mean": -32.582857142857144,
                 "minimum": -445.9,
                 "maximum": 27.6
               },
               "window_processing_backlog_growth_offsets_per_second": {
-                "samples": 246,
-                "mean": -32.46747967479675,
+                "samples": 245,
+                "mean": -32.582857142857144,
                 "minimum": -445.9,
                 "maximum": 27.6
               }
@@ -5672,45 +5721,45 @@
             "cpu_percent": {
               "unit": "cores",
               "total": {
-                "samples": 251,
-                "mean": 1.8849681274900398,
+                "samples": 250,
+                "mean": 1.884976,
                 "minimum": 1.782,
                 "maximum": 2.5540000000000003
               },
               "per_pod": {
                 "consumer-sts-0": {
-                  "samples": 252,
-                  "mean": 0.08843253968253968,
+                  "samples": 251,
+                  "mean": 0.08841434262948207,
                   "minimum": 0.069,
                   "maximum": 0.12
                 },
                 "consumer-sts-1": {
-                  "samples": 252,
-                  "mean": 0.1418373015873016,
+                  "samples": 251,
+                  "mean": 0.14183266932270916,
                   "minimum": 0.10099999999999999,
                   "maximum": 0.18899999999999997
                 },
                 "consumer-sts-2": {
-                  "samples": 252,
-                  "mean": 0.12155555555555556,
+                  "samples": 251,
+                  "mean": 0.12154980079681275,
                   "minimum": 0.083,
                   "maximum": 0.162
                 },
                 "consumer-sts-3": {
-                  "samples": 251,
-                  "mean": 0.3942589641434263,
+                  "samples": 250,
+                  "mean": 0.3943,
                   "minimum": 0.326,
                   "maximum": 1.056
                 },
                 "consumer-sts-4": {
-                  "samples": 252,
-                  "mean": 0.06986111111111111,
+                  "samples": 251,
+                  "mean": 0.0698605577689243,
                   "minimum": 0.057,
                   "maximum": 0.09300000000000001
                 },
                 "consumer-sts-5": {
-                  "samples": 252,
-                  "mean": 1.0690436507936507,
+                  "samples": 251,
+                  "mean": 1.0690398406374502,
                   "minimum": 1.054,
                   "maximum": 1.0859999999999999
                 }
@@ -5723,51 +5772,51 @@
                 "consumer-sts-4",
                 "consumer-sts-5"
               ],
-              "export_grid_samples": 252,
-              "fraction_of_export_grid": 0.996031746031746
+              "export_grid_samples": 251,
+              "fraction_of_export_grid": 0.9960159362549801
             },
             "memory_bytes": {
               "unit": "MiB RSS",
               "total": {
-                "samples": 251,
-                "mean": 341.0794478336653,
+                "samples": 250,
+                "mean": 341.078578125,
                 "minimum": 336.671875,
                 "maximum": 341.296875
               },
               "per_pod": {
                 "consumer-sts-0": {
-                  "samples": 252,
-                  "mean": 32.41869729662698,
+                  "samples": 251,
+                  "mean": 32.41859125996016,
                   "minimum": 32.40234375,
                   "maximum": 32.4453125
                 },
                 "consumer-sts-1": {
-                  "samples": 252,
-                  "mean": 32.441871279761905,
+                  "samples": 251,
+                  "mean": 32.4417953187251,
                   "minimum": 32.421875,
                   "maximum": 32.4609375
                 },
                 "consumer-sts-2": {
-                  "samples": 252,
-                  "mean": 94.11977616567461,
+                  "samples": 251,
+                  "mean": 94.11975535358566,
                   "minimum": 94.109375,
                   "maximum": 94.125
                 },
                 "consumer-sts-3": {
-                  "samples": 251,
-                  "mean": 47.40005602589641,
+                  "samples": 250,
+                  "mean": 47.399890625,
                   "minimum": 47.203125,
                   "maximum": 47.44140625
                 },
                 "consumer-sts-4": {
-                  "samples": 252,
-                  "mean": 31.792100694444443,
+                  "samples": 251,
+                  "mean": 31.791926045816734,
                   "minimum": 31.70703125,
                   "maximum": 31.8359375
                 },
                 "consumer-sts-5": {
-                  "samples": 252,
-                  "mean": 102.90750558035714,
+                  "samples": 251,
+                  "mean": 102.90718376494024,
                   "minimum": 98.828125,
                   "maximum": 102.98828125
                 }
@@ -5780,35 +5829,35 @@
                 "consumer-sts-4",
                 "consumer-sts-5"
               ],
-              "export_grid_samples": 252,
-              "fraction_of_export_grid": 0.996031746031746
+              "export_grid_samples": 251,
+              "fraction_of_export_grid": 0.9960159362549801
             }
           },
           "producer": {
             "cpu_percent": {
               "unit": "cores",
               "total": {
-                "samples": 251,
-                "mean": 0.18645418326693228,
+                "samples": 250,
+                "mean": 0.18646,
                 "minimum": 0.16499999999999998,
                 "maximum": 0.25
               },
               "per_pod": {
                 "producer-workers-0": {
-                  "samples": 252,
-                  "mean": 0.07097222222222223,
+                  "samples": 251,
+                  "mean": 0.07097609561752988,
                   "minimum": 0.06,
                   "maximum": 0.11
                 },
                 "producer-workers-1": {
-                  "samples": 252,
-                  "mean": 0.0528968253968254,
+                  "samples": 251,
+                  "mean": 0.05290836653386454,
                   "minimum": 0.04,
                   "maximum": 0.09
                 },
                 "producer-workers-2": {
-                  "samples": 251,
-                  "mean": 0.06256972111553785,
+                  "samples": 250,
+                  "mean": 0.06256,
                   "minimum": 0.05,
                   "maximum": 0.1
                 }
@@ -5818,33 +5867,33 @@
                 "producer-workers-1",
                 "producer-workers-2"
               ],
-              "export_grid_samples": 252,
-              "fraction_of_export_grid": 0.996031746031746
+              "export_grid_samples": 251,
+              "fraction_of_export_grid": 0.9960159362549801
             },
             "memory_bytes": {
               "unit": "MiB RSS",
               "total": {
-                "samples": 251,
-                "mean": 93.9898842131474,
+                "samples": 250,
+                "mean": 93.989625,
                 "minimum": 93.89453125,
                 "maximum": 94.0546875
               },
               "per_pod": {
                 "producer-workers-0": {
-                  "samples": 252,
-                  "mean": 31.61518787202381,
+                  "samples": 251,
+                  "mean": 31.61507096613546,
                   "minimum": 31.58984375,
                   "maximum": 31.64453125
                 },
                 "producer-workers-1": {
-                  "samples": 252,
-                  "mean": 31.56564670138889,
+                  "samples": 251,
+                  "mean": 31.565565861553786,
                   "minimum": 31.5,
                   "maximum": 31.5859375
                 },
                 "producer-workers-2": {
-                  "samples": 251,
-                  "mean": 30.809247385458168,
+                  "samples": 250,
+                  "mean": 30.8091875,
                   "minimum": 30.8046875,
                   "maximum": 30.82421875
                 }
@@ -5854,8 +5903,8 @@
                 "producer-workers-1",
                 "producer-workers-2"
               ],
-              "export_grid_samples": 252,
-              "fraction_of_export_grid": 0.996031746031746
+              "export_grid_samples": 251,
+              "fraction_of_export_grid": 0.9960159362549801
             }
           },
           "requested_consumer_resources": {
@@ -5870,5 +5919,6 @@
         }
       }
     }
-  ]
+  ],
+  "storage": "Compact summary: per-sample timestamps remain in raw evidence and the default full analysis output."
 }

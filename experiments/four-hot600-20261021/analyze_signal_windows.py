@@ -19,23 +19,43 @@ def describe(values):
                 minimum=min(values) if values else None, maximum=max(values) if values else None)
 
 
-def signal_window(snapshots, left, right):
+def sample_time(timestamp, origin=None):
+    """Recover the nominal two-second query grid from millisecond exports.
+
+    This corrects timestamp serialization only. It does not interpolate signals
+    or round activation events. Off-grid observations require investigation.
+    """
+    if origin is None:
+        return timestamp
+    nominal = origin + 2 * round((timestamp - origin) / 2)
+    if abs(nominal - timestamp) > .001:
+        raise ValueError('Observation does not match the two-second query grid')
+    return nominal
+
+
+def signal_window(snapshots, left, right, origin=None):
     if not math.isfinite(left + right) or right <= left:
         raise ValueError('Window must have positive finite duration')
-    rows = [row for row in snapshots if left <= row['timestamp'] < right]
+    rows = [row for row in snapshots if left <= sample_time(row['timestamp'], origin) < right]
+    selected_grid = [sample_time(row['timestamp'], origin) for row in rows]
+    if len(set(selected_grid)) != len(selected_grid):
+        raise ValueError('Duplicate observation on the query grid')
+    expected = (math.ceil((right-origin)/2) - math.ceil((left-origin)/2)
+                if origin is not None else len(rows))
     valid = [row for row in rows if row.get('valid')]
     fields = ('total_lag', 'processing_backlog', 'mean_partition_lag', 'max_partition_lag',
               'skew', 'population_stddev', 'window_mean_backlog', 'window_mean_skew',
               'window_growth_offsets_per_second', 'window_processing_backlog_growth_offsets_per_second')
-    return dict(observations=len(rows), valid_observations=len(valid),
+    return dict(observations=len(rows), expected_observations=expected, valid_observations=len(valid),
+                valid_grid_fraction=len(valid)/expected if expected else None,
                 valid_observation_fraction=len(valid)/len(rows) if rows else None,
                 fields={key: describe([row.get(key) for row in valid]) for key in fields},
                 selected_timestamps=[row['timestamp'] for row in valid])
 
 
-def process_window(series, role, pods, left, right):
+def process_window(series, role, pods, left, right, origin=None):
     """Sum only complete, fresh per-pod observations; keep missing totals absent."""
-    grid = {float(t) for item in series for t, _ in item['values'] if left <= float(t) < right}
+    grid = {float(t) for item in series for t, _ in item['values'] if left <= sample_time(float(t), origin) < right}
     result = {}
     for suffix, divisor, unit in [('cpu_percent', 100, 'cores'), ('memory_bytes', 1024**2, 'MiB RSS')]:
         name = role + '_' + suffix
@@ -51,7 +71,7 @@ def process_window(series, role, pods, left, right):
             samples = {}
             for t, value in selected[0]['values'] if selected else []:
                 t, value = float(t), float(value)
-                if (left <= t < right and math.isfinite(value) and value >= 0
+                if (left <= sample_time(t, origin) < right and math.isfinite(value) and value >= 0
                         and t in fresh and 0 <= t-fresh[t] <= 10):
                     samples[t] = value/divisor
             values[pod] = samples
@@ -97,12 +117,13 @@ def analyze(comparison, windows, repository, campaign=None):
             left, right = window['start_epoch'], window['end_epoch']
             count = 3 if label == 'before' or row['arm'] in ('keep3', 'redistribute3') else 6
             summaries[label] = dict(start_epoch=left, end_epoch=right,
-                signals=signal_window(lag['snapshots'], left, right),
-                consumer=process_window(prom, 'consumer', [f'consumer-sts-{i}' for i in range(count)], left, right),
-                producer=process_window(prom, 'producer', manifest['producer_pods'], left, right),
+                signals=signal_window(lag['snapshots'], left, right, manifest['evaluation_start_epoch']),
+                consumer=process_window(prom, 'consumer', [f'consumer-sts-{i}' for i in range(count)], left, right, manifest['evaluation_start_epoch']),
+                producer=process_window(prom, 'producer', manifest['producer_pods'], left, right, manifest['evaluation_start_epoch']),
                 requested_consumer_resources=resource_integral(resources, left, right, 15) if resources else None)
         output.append(dict(run_id=row['run_id'], arm=row['arm'], run_number=row['run_number'], windows=summaries))
-    return dict(schema_version=1, comparison_sha256=sha(comparison), completion_windows_sha256=sha(windows),
+    return dict(schema_version=2, comparison_sha256=sha(comparison), completion_windows_sha256=sha(windows),
+        grid='Signal and process observations use the nominal two-second query grid, allowing at most 1 ms export rounding. Before uses seconds 30,32,...,58; final uses 570,572,...,598. Activation timestamps remain unrounded. Expected signal counts include completely missing grid points.',
         definition='Arithmetic means of valid sampled values in the same half-open intervals as completion-window metrics. Process CPU is in cores, memory is process RSS. These are not requested resources or full-container memory.',
         missing_data='An aggregate process observation requires fresh values for every expected pod. Missing values remain absent. Valid sample counts, timestamps and completeness relative to the export grid are retained; a missing entire export interval remains a separate coverage limitation. No zero fill or interpolation.',
         growth='Trailing ten-second growth uses five contiguous two-second intervals with unchanged ownership; undefined windows remain absent. Fifteen-observation backlog/skew means are retained separately from raw signal averages.',
@@ -133,7 +154,7 @@ def write_report(data, completion, output):
             fields = window['signals']['fields']
             signals.append(prefix+[number(fields[key]['mean']) for key in
                 ('total_lag', 'processing_backlog', 'skew', 'window_processing_backlog_growth_offsets_per_second')]
-                +[f"{window['signals']['valid_observations']}/{window['signals']['observations']}"])
+                +[f"{window['signals']['valid_observations']}/{window['signals']['expected_observations']}"])
             actual.append(prefix+[number(window[role][field]['total']['mean'])
                 for role in ('consumer', 'producer') for field in ('cpu_percent', 'memory_bytes')])
             cost = window['requested_consumer_resources']
@@ -146,7 +167,7 @@ def write_report(data, completion, output):
              '## Completion performance', '', completion['definition'], '']
     lines += table(['Response', 'Run', 'Window', 'Throughput (msg/s)', 'Min (s)', 'Mean (s)', 'Max (s)', 'p99 (s)', 'Pending at end', 'Completed-window misses (%)'], performance)
     lines += ['## Backlog and workload signals', '', data['definition'], '',
-              'B is fetched-offset lag; Q is processing backlog. Growth below is the mean of defined trailing ten-second Q-growth observations. All signal means are arithmetic; validity gaps remain missing.', '']
+              data.get('grid', ''), '', 'B is fetched-offset lag; Q is processing backlog. Growth below is the mean of defined trailing ten-second Q-growth observations. All signal means are arithmetic; validity gaps remain missing.', '']
     lines += table(['Response', 'Run', 'Window', 'Mean B (offsets)', 'Mean Q (offsets)', 'Mean skew', 'Mean Q growth (offsets/s)', 'Valid samples'], signals)
     lines += ['## Actual process resources', '', 'CPU is measured in cores and memory is process RSS in MiB. Complete per-pod counts and coverage are in the JSON record.', '']
     lines += table(['Response', 'Run', 'Window', 'Consumer CPU', 'Consumer RSS', 'Producer CPU', 'Producer RSS'], actual)
@@ -164,8 +185,17 @@ def main():
     parser.add_argument('--repository', type=Path, default=ROOT)
     parser.add_argument('--campaign', type=Path)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--compact', action='store_true', help='Omit timestamp arrays from the versioned summary')
     args = parser.parse_args()
     data = analyze(args.comparison, args.completion_windows, args.repository, args.campaign)
+    if args.compact:
+        for run in data['runs']:
+            for window in run['windows'].values():
+                window['signals'].pop('selected_timestamps', None)
+                for role in ('consumer', 'producer'):
+                    for field in window[role].values():
+                        field.pop('complete_timestamps', None)
+        data['storage'] = 'Compact summary: per-sample timestamps remain in raw evidence and the default full analysis output.'
     args.output.write_text(json.dumps(data, indent=2, allow_nan=False)+'\n')
     write_report(data, json.loads(args.completion_windows.read_text()), args.output.with_name('BEFORE_AFTER.md'))
 

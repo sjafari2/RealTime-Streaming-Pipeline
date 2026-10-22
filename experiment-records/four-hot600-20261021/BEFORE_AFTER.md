@@ -39,6 +39,8 @@ Throughput counts earliest distinct completions in [left,right), including warm-
 
 Arithmetic means of valid sampled values in the same half-open intervals as completion-window metrics. Process CPU is in cores, memory is process RSS. These are not requested resources or full-container memory.
 
+Signal and process observations use the nominal two-second query grid, allowing at most 1 ms export rounding. Before uses seconds 30,32,...,58; final uses 570,572,...,598. Activation timestamps remain unrounded. Expected signal counts include completely missing grid points.
+
 B is fetched-offset lag; Q is processing backlog. Growth below is the mean of defined trailing ten-second Q-growth observations. All signal means are arithmetic; validity gaps remain missing.
 
 | Response | Run | Window | Mean B (offsets) | Mean Q (offsets) | Mean skew | Mean Q growth (offsets/s) | Valid samples |
@@ -46,27 +48,27 @@ B is fetched-offset lag; Q is processing backlog. Growth below is the mean of de
 | Keep 3 | 1 | Before | 25,912.267 | 25,912.267 | 14.099 | 262.747 | 15/15 |
 | Keep 3 | 1 | Activation to end | 91,067.078 | 91,067.078 | 14.111 | 204.201 | 270/270 |
 | Keep 3 | 1 | Final 30 s | 137,214.067 | 137,214.067 | 14.099 | 160.433 | 15/15 |
-| Keep 3 | 2 | Before | 26,744.667 | 26,744.667 | 14.336 | 260.107 | 15/15 |
-| Keep 3 | 2 | Activation to end | 99,319.772 | 99,319.772 | 14.097 | 252.521 | 268/270 |
-| Keep 3 | 2 | Final 30 s | 163,238.000 | 163,238.000 | 14.046 | 249.633 | 15/15 |
+| Keep 3 | 2 | Before | 26,217.600 | 26,217.600 | 14.326 | 256.847 | 15/15 |
+| Keep 3 | 2 | Activation to end | 98,810.687 | 98,810.687 | 14.098 | 252.497 | 268/270 |
+| Keep 3 | 2 | Final 30 s | 162,725.733 | 162,725.733 | 14.046 | 248.387 | 15/15 |
 | Redistribute 3 | 1 | Before | 21,244.267 | 21,244.267 | 14.247 | 249.480 | 15/15 |
 | Redistribute 3 | 1 | Activation to end | 6,328.415 | 6,328.415 | 25.209 | -100.110 | 234/234 |
 | Redistribute 3 | 1 | Final 30 s | 46.067 | 46.067 | 18.750 | -0.067 | 15/15 |
 | Redistribute 3 | 2 | Before | 25,790.533 | 25,790.533 | 14.334 | 256.767 | 15/15 |
 | Redistribute 3 | 2 | Activation to end | 4,781.602 | 4,781.602 | 23.377 | -84.325 | 251/251 |
 | Redistribute 3 | 2 | Final 30 s | 52.667 | 52.667 | 19.790 | 0.253 | 15/15 |
-| Targeted Scale 6 | 1 | Before | 26,987.200 | 26,987.200 | 14.155 | 251.013 | 15/15 |
-| Targeted Scale 6 | 1 | Activation to end | 6,101.108 | 6,101.108 | 27.489 | -126.834 | 222/222 |
-| Targeted Scale 6 | 1 | Final 30 s | 40.200 | 40.200 | 20.560 | -0.087 | 15/15 |
+| Targeted Scale 6 | 1 | Before | 26,486.867 | 26,486.867 | 14.155 | 252.020 | 15/15 |
+| Targeted Scale 6 | 1 | Activation to end | 6,128.529 | 6,128.529 | 27.501 | -127.417 | 221/221 |
+| Targeted Scale 6 | 1 | Final 30 s | 40.400 | 40.400 | 19.811 | -0.080 | 15/15 |
 | Targeted Scale 6 | 2 | Before | 26,244.933 | 26,244.933 | 14.337 | 257.027 | 15/15 |
 | Targeted Scale 6 | 2 | Activation to end | 4,929.995 | 4,929.995 | 27.921 | -123.704 | 222/224 |
 | Targeted Scale 6 | 2 | Final 30 s | 38.333 | 38.333 | 22.390 | -0.060 | 15/15 |
-| Kafka Scale 6 | 1 | Before | 26,676.667 | 26,676.667 | 14.159 | 251.707 | 15/15 |
-| Kafka Scale 6 | 1 | Activation to end | 6,994.915 | 6,994.915 | 20.394 | -57.888 | 247/253 |
-| Kafka Scale 6 | 1 | Final 30 s | 46.933 | 46.933 | 22.049 | -0.200 | 15/15 |
-| Kafka Scale 6 | 2 | Before | 25,839.200 | 25,839.200 | 14.364 | 242.333 | 15/15 |
-| Kafka Scale 6 | 2 | Activation to end | 20,612.964 | 20,612.964 | 19.947 | -32.467 | 251/252 |
-| Kafka Scale 6 | 2 | Final 30 s | 16,782.667 | 16,782.667 | 19.446 | -9.973 | 15/15 |
+| Kafka Scale 6 | 1 | Before | 26,176.133 | 26,176.133 | 14.148 | 252.113 | 15/15 |
+| Kafka Scale 6 | 1 | Activation to end | 7,023.244 | 7,023.244 | 20.392 | -58.145 | 246/252 |
+| Kafka Scale 6 | 1 | Final 30 s | 47.200 | 47.200 | 21.598 | -0.173 | 15/15 |
+| Kafka Scale 6 | 2 | Before | 25,348.333 | 25,348.333 | 14.362 | 241.613 | 15/15 |
+| Kafka Scale 6 | 2 | Activation to end | 20,628.744 | 20,628.744 | 19.948 | -32.583 | 250/251 |
+| Kafka Scale 6 | 2 | Final 30 s | 16,799.800 | 16,799.800 | 19.428 | -10.413 | 15/15 |
 
 ## Actual process resources
 
@@ -77,27 +79,27 @@ CPU is measured in cores and memory is process RSS in MiB. Complete per-pod coun
 | Keep 3 | 1 | Before | 1.385 | 143.246 | 0.200 | 93.832 |
 | Keep 3 | 1 | Activation to end | 1.369 | 253.939 | 0.202 | 94.210 |
 | Keep 3 | 1 | Final 30 s | 1.346 | 308.986 | 0.204 | 94.282 |
-| Keep 3 | 2 | Before | 1.403 | 144.429 | 0.182 | 93.392 |
-| Keep 3 | 2 | Activation to end | 1.394 | 257.016 | 0.185 | 93.717 |
-| Keep 3 | 2 | Final 30 s | 1.359 | 308.683 | 0.198 | 94.116 |
+| Keep 3 | 2 | Before | 1.403 | 143.495 | 0.180 | 93.371 |
+| Keep 3 | 2 | Activation to end | 1.394 | 256.425 | 0.185 | 93.714 |
+| Keep 3 | 2 | Final 30 s | 1.361 | 308.576 | 0.196 | 94.116 |
 | Redistribute 3 | 1 | Before | 1.404 | 134.739 | 0.191 | 93.763 |
 | Redistribute 3 | 1 | Activation to end | 2.181 | 237.438 | 0.199 | 95.050 |
 | Redistribute 3 | 1 | Final 30 s | 1.836 | 237.556 | 0.205 | 95.223 |
 | Redistribute 3 | 2 | Before | 1.407 | 142.555 | 0.191 | 93.364 |
 | Redistribute 3 | 2 | Activation to end | 2.129 | 224.546 | 0.188 | 94.328 |
 | Redistribute 3 | 2 | Final 30 s | 1.892 | 224.723 | 0.178 | 94.617 |
-| Targeted Scale 6 | 1 | Before | 1.398 | 144.853 | 0.199 | 94.049 |
-| Targeted Scale 6 | 1 | Activation to end | 2.458 | 373.551 | 0.196 | 94.702 |
-| Targeted Scale 6 | 1 | Final 30 s | 2.043 | 373.703 | 0.191 | 94.767 |
+| Targeted Scale 6 | 1 | Before | 1.396 | 143.907 | 0.199 | 94.020 |
+| Targeted Scale 6 | 1 | Activation to end | 2.460 | 373.550 | 0.196 | 94.701 |
+| Targeted Scale 6 | 1 | Final 30 s | 2.045 | 373.703 | 0.191 | 94.765 |
 | Targeted Scale 6 | 2 | Before | 1.404 | 143.913 | 0.203 | 93.534 |
 | Targeted Scale 6 | 2 | Activation to end | 2.249 | 363.570 | 0.194 | 94.479 |
 | Targeted Scale 6 | 2 | Final 30 s | 1.943 | 363.698 | 0.195 | 94.578 |
-| Kafka Scale 6 | 1 | Before | 1.399 | 143.186 | 0.187 | 93.513 |
-| Kafka Scale 6 | 1 | Activation to end | 1.735 | 310.001 | 0.190 | 93.921 |
-| Kafka Scale 6 | 1 | Final 30 s | 1.612 | 310.172 | 0.188 | 94.035 |
-| Kafka Scale 6 | 2 | Before | 1.408 | 142.586 | 0.183 | 93.849 |
+| Kafka Scale 6 | 1 | Before | 1.399 | 142.325 | 0.187 | 93.502 |
+| Kafka Scale 6 | 1 | Activation to end | 1.735 | 310.000 | 0.190 | 93.921 |
+| Kafka Scale 6 | 1 | Final 30 s | 1.609 | 310.172 | 0.188 | 94.032 |
+| Kafka Scale 6 | 2 | Before | 1.405 | 141.661 | 0.182 | 93.843 |
 | Kafka Scale 6 | 2 | Activation to end | 1.885 | 341.079 | 0.186 | 93.990 |
-| Kafka Scale 6 | 2 | Final 30 s | 1.867 | 341.290 | 0.191 | 94.055 |
+| Kafka Scale 6 | 2 | Final 30 s | 1.866 | 341.289 | 0.190 | 94.055 |
 
 ## Requested consumer resources
 
