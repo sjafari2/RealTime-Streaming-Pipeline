@@ -19,7 +19,7 @@ Twelve distinct trials shown together, not pooled. Historical 700 and revised 60
 
 The [combined tables](tables.tex) include all twelve trials in outcomes, observed/requested resources, backlog/skew, intervention cost and completion-window performance. Blue denotes 700 messages/s and amber denotes 600 messages/s. The rate is also printed on every row. Missing interventions are not invented for the historical block.
 
-The newer deployment used different client resource settings, producer-consumer placement and producer seed initialization. Compare responses within each deployment; differences across rates cannot be attributed to rate alone. The separate 600 messages/s proposal subsection repeats eight of these trials for detail, so the total remains 32 reported trials.
+The newer deployment used different client resource settings, producer-consumer placement and producer seed initialization. Compare responses within each deployment; differences across rates cannot be attributed to rate alone. The proposal reports each trial once in each metric table and places the 600 messages/s plots after the historical 700 messages/s plots in the shared four-partition section.
 
 Latency follows distinct acknowledged evaluation messages through the drain cutoff; completion precedes commit acknowledgment. Window p99 uses only evaluation messages completed within each window. Throughput includes warm-up work completed during evaluation. Means of backlog and skew are arithmetic means of valid individual samples, matching the existing four-partition table. Resource integrals cover evaluation plus drain. Missing observations are not zero.
 
@@ -27,31 +27,22 @@ Historical message records were replayed to obtain the previously omitted minimu
 
 ## Relative changes
 
-Throughput increase = 100 × (response − reference) / reference. Each reduction = 100 × (reference − response) / reference. Positive is favorable for the named metric; negative is unfavorable. A zero or unavailable reference is not assigned a percentage. Values are calculated before rounding, without averaging run percentiles.
+Throughput and resource-request increases = 100 × (response − reference) / reference. Backlog, p99 and SLO-rate reductions = 100 × (reference − response) / reference. Positive request increases mean added resource cost; positive throughput increases and positive reductions mean performance improvements. A zero or unavailable reference is not assigned a percentage. Values are calculated before rounding, without averaging run percentiles.
 
 Backlog means the arithmetic mean of valid evaluation total-backlog samples. SLO is the full-cohort one-second violation rate; relative reduction differs from percentage-point decrease. Cost is requested consumer CPU and memory over evaluation plus drain, not actual use or a monetary bill.
 
 ### 600 messages/s: each intervention relative to Keep 3 with the same run number
 
-| Response | Run | Throughput increase (%) | Mean backlog reduction (%) | p99 reduction (%) | SLO-rate reduction (%) | CPU-request reduction (%) | Memory-request reduction (%) |
+| Response | Run | Throughput increase (%) | Mean backlog reduction (%) | p99 reduction (%) | SLO-rate reduction (%) | CPU-request increase (%) | Memory-request increase (%) |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Redistribute 3 | 1 | 57.4 | 88.3 | 70.3 | 54.8 | 0.0 | 0.0 |
 | Redistribute 3 | 2 | 80.1 | 91.8 | 78.0 | 63.4 | 0.0 | 0.0 |
-| Targeted scale 6 | 1 | 59.6 | 85.3 | 63.1 | 57.1 | -89.8 | -89.8 |
-| Targeted scale 6 | 2 | 80.2 | 88.1 | 71.1 | 61.0 | -89.6 | -89.6 |
-| Kafka scale 6 | 1 | 59.5 | 88.3 | 75.6 | 48.2 | -90.3 | -90.3 |
-| Kafka scale 6 | 2 | 72.1 | 76.6 | 76.1 | 22.1 | -90.1 | -90.1 |
+| Targeted scale 6 | 1 | 59.6 | 85.3 | 63.1 | 57.1 | 89.8 | 89.8 |
+| Targeted scale 6 | 2 | 80.2 | 88.1 | 71.1 | 61.0 | 89.6 | 89.6 |
+| Kafka scale 6 | 1 | 59.5 | 88.3 | 75.6 | 48.2 | 90.3 | 90.3 |
+| Kafka scale 6 | 2 | 72.1 | 76.6 | 76.1 | 22.1 | 90.1 | 90.1 |
 
-### 600 configuration relative to 700 for the same response and run number
-
-| Response | Run | Throughput increase (%) | Mean backlog reduction (%) | p99 reduction (%) | SLO-rate reduction (%) | CPU-request reduction (%) | Memory-request reduction (%) |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Redistribute 3 | 1 | -15.5 | -32.8 | -8.7 | -45.5 | 0.0 | 25.0 |
-| Redistribute 3 | 2 | -14.5 | -5.6 | -5.1 | -21.3 | 0.0 | 25.0 |
-| Targeted scale 6 | 1 | -14.4 | 3.9 | -3.5 | -4.3 | 0.1 | 25.1 |
-| Targeted scale 6 | 2 | -14.5 | 15.1 | 3.1 | 3.7 | 0.2 | 25.2 |
-
-The cross-configuration differences do not isolate the effect of input rate. Client resources, node placement and seed initialization changed, and 600 messages/s offers less work. There is no historical Keep 3 or native Kafka scaling baseline for these four-partition 700 trials. Two runs do not establish statistical significance.
+Every percentage uses the Keep 3 trial at 600 messages/s with the same run number. Historical 700 messages/s trials are not compared with that baseline. Two runs do not establish statistical significance.
 
 ## Reproduce the tables
 

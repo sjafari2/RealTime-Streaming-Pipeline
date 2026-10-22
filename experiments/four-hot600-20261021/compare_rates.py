@@ -105,15 +105,15 @@ def tables(rows):
 
 
 
-def percent_benefit(reference, value, higher_is_better=False):
-    """Return relative improvement; a zero reference has no defined percentage."""
+def percentage_change(reference, value, increase=False):
+    """Calculate an increase or reduction; a zero reference has no defined percentage."""
     if reference is None or value is None:
         return None
     if not math.isfinite(reference) or not math.isfinite(value) or min(reference,value)<0:
         raise ValueError('Percentage comparisons require finite, nonnegative measurements')
     if reference == 0:
         return None
-    return 100*(value-reference)/reference if higher_is_better else 100*(reference-value)/reference
+    return 100*(value-reference)/reference if increase else 100*(reference-value)/reference
 
 
 def percentage_comparisons(rows):
@@ -124,37 +124,33 @@ def percentage_comparisons(rows):
             'mean_total_backlog_reduction_percent':(reference['diagnostics']['mean_total_backlog'],value['diagnostics']['mean_total_backlog'],False),
             'p99_reduction_percent':(reference['p99_seconds'],value['p99_seconds'],False),
             'slo_violation_rate_reduction_percent':(reference['slo_violation_percent'],value['slo_violation_percent'],False),
-            'requested_cpu_reduction_percent':(reference['resources']['requested_cpu_core_minutes'],value['resources']['requested_cpu_core_minutes'],False),
-            'requested_memory_reduction_percent':(reference['resources']['requested_memory_gib_minutes'],value['resources']['requested_memory_gib_minutes'],False)}
+            'requested_cpu_increase_percent':(reference['resources']['requested_cpu_core_minutes'],value['resources']['requested_cpu_core_minutes'],True),
+            'requested_memory_increase_percent':(reference['resources']['requested_memory_gib_minutes'],value['resources']['requested_memory_gib_minutes'],True)}
         return dict(rate=value['rate'],arm=value['arm'],run_number=value['run_number'],reference_run_id=reference['run_id'],compared_run_id=value['run_id'],
                     reference_values={k:v[0] for k,v in measures.items()},compared_values={k:v[1] for k,v in measures.items()},
-                    changes={k:percent_benefit(*v) for k,v in measures.items()})
+                    changes={k:percentage_change(*v) for k,v in measures.items()})
     within=[compare(lookup[600,'keep3',n],lookup[600,arm,n]) for arm in ['redistribute3','scale_redistribute6','kafka_scale6'] for n in [1,2]]
-    across=[compare(lookup[700,arm,n],lookup[600,arm,n]) for arm in ['redistribute3','scale_redistribute6'] for n in [1,2]]
-    return dict(within_600_versus_keep3=within,configuration_600_relative_to_700=across)
+    return dict(within_600_versus_keep3=within)
 
 
 def percentage_tables(changes):
-    headers=[r'\shortstack{Rate\\(msg/s)}','Response','Run',r'\shortstack{Throughput\\increase}',r'\shortstack{Mean backlog\\reduction}',r'\shortstack{p99\\reduction}',r'\shortstack{SLO rate\\reduction}',r'\shortstack{CPU request\\reduction}',r'\shortstack{Memory request\\reduction}']
+    headers=[r'\shortstack{Rate\\(msg/s)}','Response','Run',r'\shortstack{Throughput\\increase}',r'\shortstack{Mean backlog\\reduction}',r'\shortstack{p99\\reduction}',r'\shortstack{SLO rate\\reduction}',r'\shortstack{CPU request\\increase}',r'\shortstack{Memory request\\increase}']
     cells=lambda r:[fmt(v,1) for v in r['changes'].values()]
-    formula=r'All entries are percentages calculated from unrounded measurements, separately for each run. Throughput increase is $100(T-T_0)/T_0$; reductions are $100(X_0-X)/X_0$. Positive values indicate improvement in the named metric; negative values indicate deterioration or higher requests. Backlog is the arithmetic mean of valid total-backlog samples during evaluation, not a sum over samples. SLO rate uses the one-second deadline and full acknowledged evaluation cohort; its reduction is relative percent, not percentage points. Cost uses requested consumer CPU and memory integrated over evaluation plus drain.'
+    formula=r'All entries are percentages calculated from unrounded measurements, separately for each run. Throughput and resource-request increases are $100(X-X_0)/X_0$; backlog, p99 and SLO-rate reductions are $100(X_0-X)/X_0$, where $X_0$ is the same-run Keep~3 measurement at 600 messages/s. Positive request increases represent additional resource cost; positive throughput increases and positive reductions indicate improvement in the named performance metric. Backlog is the arithmetic mean of valid total-backlog samples during evaluation, not a sum over samples. SLO rate uses the one-second deadline and full acknowledged evaluation cohort; its reduction is relative percent, not percentage points. Cost uses requested consumer CPU and memory integrated over evaluation plus drain.'
     first=tex_table(changes['within_600_versus_keep3'],headers,cells,
         r'Relative changes at 600 messages/s versus Keep 3 with the same run number. '+formula+r' All interventions completed the evaluation cohort; Keep 3 left 26.92\% and 37.57\% unfinished, so completed-message p99 must be interpreted with these outcomes. Two runs do not establish statistical significance.',
         'tab:four-partition-relative-improvement',font='footnotesize',spacing=2)
-    second=tex_table(changes['configuration_600_relative_to_700'],headers,cells,
-        r'Configuration differences: 600 relative to 700 messages/s for the same response and run number, with the same percentage formulas and sign convention as Table~\ref{tab:four-partition-relative-improvement}. The 700 value is the reference. These are not isolated effects of lowering the input rate: client resources, placement and seed initialization also changed, and offered work is lower. There is no four-partition Keep 3 or native Kafka scaling baseline at 700 messages/s.',
-        'tab:four-partition-rate-differences',font='footnotesize',spacing=2)
-    return first+'\n'+second
+    return first
 
 
 def percentage_markdown(changes):
     out=['','## Relative changes','',
-         'Throughput increase = 100 × (response − reference) / reference. Each reduction = 100 × (reference − response) / reference. Positive is favorable for the named metric; negative is unfavorable. A zero or unavailable reference is not assigned a percentage. Values are calculated before rounding, without averaging run percentiles.','',
+         'Throughput and resource-request increases = 100 × (response − reference) / reference. Backlog, p99 and SLO-rate reductions = 100 × (reference − response) / reference. Positive request increases mean added resource cost; positive throughput increases and positive reductions mean performance improvements. A zero or unavailable reference is not assigned a percentage. Values are calculated before rounding, without averaging run percentiles.','',
          'Backlog means the arithmetic mean of valid evaluation total-backlog samples. SLO is the full-cohort one-second violation rate; relative reduction differs from percentage-point decrease. Cost is requested consumer CPU and memory over evaluation plus drain, not actual use or a monetary bill.']
-    for key,title in [('within_600_versus_keep3','600 messages/s: each intervention relative to Keep 3 with the same run number'),('configuration_600_relative_to_700','600 configuration relative to 700 for the same response and run number')]:
-        out+=['','### '+title,'','| Response | Run | Throughput increase (%) | Mean backlog reduction (%) | p99 reduction (%) | SLO-rate reduction (%) | CPU-request reduction (%) | Memory-request reduction (%) |','|---|---:|---:|---:|---:|---:|---:|---:|']
+    for key,title in [('within_600_versus_keep3','600 messages/s: each intervention relative to Keep 3 with the same run number')]:
+        out+=['','### '+title,'','| Response | Run | Throughput increase (%) | Mean backlog reduction (%) | p99 reduction (%) | SLO-rate reduction (%) | CPU-request increase (%) | Memory-request increase (%) |','|---|---:|---:|---:|---:|---:|---:|---:|']
         for r in changes[key]:out.append('| '+' | '.join([LABELS[r['arm']],str(r['run_number'])]+[fmt(v,1) for v in r['changes'].values()])+' |')
-    out+=['','The cross-configuration differences do not isolate the effect of input rate. Client resources, node placement and seed initialization changed, and 600 messages/s offers less work. There is no historical Keep 3 or native Kafka scaling baseline for these four-partition 700 trials. Two runs do not establish statistical significance.','']
+    out+=['','Every percentage uses the Keep 3 trial at 600 messages/s with the same run number. Historical 700 messages/s trials are not compared with that baseline. Two runs do not establish statistical significance.','']
     return '\n'.join(out)
 
 def main():
@@ -221,7 +217,7 @@ def main():
     lines=['# Four high-input partitions at two aggregate rates','',record['definition'],'','| Rate (msg/s) | Response | Run | Min (s) | Mean (s) | Max (s) | p99 (s) | Unfinished (%) | SLO violations (%) |','|---:|---|---:|---:|---:|---:|---:|---:|---:|']
     for row in rows:lines.append('| '+' | '.join([str(row['rate']),LABELS[row['arm']],str(row['run_number'])]+[fmt(row[k],3 if k=='minimum_completion_seconds' else 2) for k in ['minimum_completion_seconds','mean_completion_seconds','maximum_completion_seconds','p99_seconds','unfinished_percent','slo_violation_percent']])+' |')
     lines+=['','The [combined tables](tables.tex) include all twelve trials in outcomes, observed/requested resources, backlog/skew, intervention cost and completion-window performance. Blue denotes 700 messages/s and amber denotes 600 messages/s. The rate is also printed on every row. Missing interventions are not invented for the historical block.','',
-            'The newer deployment used different client resource settings, producer-consumer placement and producer seed initialization. Compare responses within each deployment; differences across rates cannot be attributed to rate alone. The separate 600 messages/s proposal subsection repeats eight of these trials for detail, so the total remains 32 reported trials.','',
+            'The newer deployment used different client resource settings, producer-consumer placement and producer seed initialization. Compare responses within each deployment; differences across rates cannot be attributed to rate alone. The proposal reports each trial once in each metric table and places the 600 messages/s plots after the historical 700 messages/s plots in the shared four-partition section.','',
             'Latency follows distinct acknowledged evaluation messages through the drain cutoff; completion precedes commit acknowledgment. Window p99 uses only evaluation messages completed within each window. Throughput includes warm-up work completed during evaluation. Means of backlog and skew are arithmetic means of valid individual samples, matching the existing four-partition table. Resource integrals cover evaluation plus drain. Missing observations are not zero.','',
             'Historical message records were replayed to obtain the previously omitted minimum/maximum latency and completion-window values, with original counts, whole-run p99 and throughput verified. The [historical completion-window record](historical-completion-windows.json) and [combined numerical record](comparison.json) retain measurement definitions and source hashes.','']
     (a.output/'README.md').write_text('\n'.join(lines)+percentage_markdown(changes)+'\n## Reproduce the tables\n\nThe historical replay reads the separately retained raw message evidence and verifies its recorded hashes. The comparison builder reads the existing campaign analysis and checks the newer manifest and lag-summary hashes. The full newer analysis remains in local results storage; the committed records preserve the values used here and their hashes.\n\n```bash\npython3 experiments/four-condition-20260929/analyze_action_windows.py \\\n  experiment-records/four-hot-partitions-20260930/comparison.json \\\n  --output results/four-hot700-window-replay\npython3 experiments/four-hot600-20261021/compare_rates.py \\\n  --historical-windows results/four-hot700-window-replay/action-window-performance.json \\\n  --current-comparison results/four-hot600-20261021-analysis/comparison.json \\\n  --output results/four-hot-rate-comparison\n```\n\nUse `--current-raw-root` if the newer raw run directories are stored outside the repository. The published historical window file omits only the long rolling series; it retains interval metrics, replay checks, measurement definitions and source hashes.\n')
