@@ -1,6 +1,6 @@
 # Limitations and next steps
 
-The [24 current trials](../experiment-records/README.md) cover balanced-rate calibration and scheduled interventions under two skew patterns. Each condition was run twice. Earlier campaigns remain on the archive branch and are not pooled into this result set.
+The [32 reported trials](../experiment-records/README.md) cover balanced-rate calibration and scheduled interventions under two skew patterns. Each condition was run twice. Earlier campaigns remain on the archive branch and are not pooled into this result set.
 
 ## Limits of the evidence
 
@@ -10,12 +10,14 @@ The [24 current trials](../experiment-records/README.md) cover balanced-rate cal
 - Requested CPU and memory over time are consumer-container costs. Actual process CPU/RSS are reported separately; neither measures the entire cluster or a monetary cost.
 - The first twelve-partition baseline has insufficient resource-request coverage for a full-window requested-cost comparison. Its completed-message evidence remains usable. Missing measurements remain unavailable.
 - Recovery requires backlog at or below 100 offsets for 30 seconds of valid observations while input continues. It does not guarantee continued stability. Experimental latency deadlines are not validated application SLAs.
-- The four-partition block has no keep-three/no-action or native-scaling arm. It cannot establish that all possible three-consumer assignments behave alike.
+- The four-partition block at 700 messages/s has only the two targeted responses. The 600 messages/s block adds Keep 3 and native scaling, but deployment differences prevent a rate-only comparison. Neither block establishes how all possible three-consumer assignments behave.
+
+Only the original C2 and revised C1 have matching effective-capacity estimates (291.5 and 213.9 messages/s). The revised estimate uses one eligible minute. Other observed rates demonstrate throughput under available load, not capacity ceilings; added-consumer capacities remain unmeasured. See the [capacity evidence](../experiment-records/signal-outcome-20261021/CAPACITY_CHECK.md).
 
 ## Planned evaluation
 
-The next stage extends the evidence to hot-key splitting, selected combinations and execution order. Splitting will first be checked for routing correctness, output combination and application ordering constraints. Whole-partition redistribution and key splitting address different limits and will be evaluated separately before combination.
+The next stage extends the evidence to hot-key splitting, selected combinations and execution order. Splitting will first be checked for routing correctness with stateless processing. Original-key processing order across partitions will not be required. Partition redistribution and key splitting address different limits and will be evaluated separately before combination.
 
 Order comparisons will, where feasible, reach the same final capacity and assignment while changing the sequence of actions. Repeated workload schedules will measure recovery, tail latency, unfinished work, interruption and resource cost. Calibration and evaluation schedules will be separate when developing the heuristic decision policy.
 
-Policy comparisons will include explicitly configured CPU-based HPA, lag-based KEDA and suitable workload-aware assignment baselines with documented adaptations. Comparable information, permitted actions and resource budgets are needed to assess the policy itself. Larger deployments require fresh calibration and measurements of monitoring, decision and coordination overhead. Drug–target prediction and fire detection remain future application evaluations.
+Policy comparisons will include explicitly configured CPU-based HPA, lag-based KEDA and suitable workload-aware assignment baselines with documented adaptations. Comparable information, permitted actions and resource budgets are needed to assess the policy itself. Larger deployments require fresh calibration and measurements of monitoring, decision and coordination overhead.

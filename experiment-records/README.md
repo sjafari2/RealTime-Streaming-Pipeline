@@ -9,7 +9,7 @@ This index contains the **32 performance trials reported in the proposal**. One 
 | 80% of input across 4 of 60 partitions, 700 msg/s | 4 | 13 min | [Two-response comparison](four-hot-partitions-20260930/README.md) |
 | Four high-input partitions, revised deployment at 600 msg/s | 8 | 13 min | [Four-response comparison](four-hot600-20261021/README.md) |
 
-The balanced trials established 700 messages/s as the reference rate for the historical skew comparisons. The additional block uses 600 messages/s after changes to resources and placement, with separate balanced recalibration. Those comparisons evaluate scheduled actions, including their transition and resource costs. The results do not demonstrate a complete adaptive controller or hot-key splitting.
+The balanced trials established 700 messages/s as the reference rate for the original skew comparisons. The additional block uses 600 messages/s after changes to resources and placement, with separate balanced recalibration. Those comparisons evaluate scheduled actions, including their transition and resource costs. The results do not demonstrate a complete adaptive controller or hot-key splitting.
 
 The [combined four-partition tables](four-hot-rate-comparison-20261021/README.md) place the 700 and 600 messages/s configurations side by side and report per-run percentage changes in throughput, mean total backlog, p99, SLO violations and requested resources. These reuse the trials above; they do not add trials or pool the two configurations.
 
@@ -23,4 +23,4 @@ Run 1 and Run 2 columns refer to separate trials of each response. P99 is a whol
 
 Earlier campaigns, supplementary trials and superseded reports are preserved on [archive/pre-cleanup-20261008](https://github.com/sjafari2/RealTime-Streaming-Pipeline/tree/archive/pre-cleanup-20261008/experiment-records). They use different designs or deployment stages and are not pooled into these reported trials. This selection follows the main proposal, not the direction of the outcomes.
 
-The separate [October 20 resource and deployment calibration](resource-sizing-20261020/README.md) records the replacement producers, reduced allocations and a short balanced test. It is not pooled with the historical 24-trial set. The [October 21 capacity recalibration](resource-calibration-20261021/README.md) records subsequent early-stopped checks at 700 messages/s and a lower-rate check; these also remain separate from the historical performance comparisons.
+The separate [October 20 resource and deployment calibration](resource-sizing-20261020/README.md) records the replacement producers, reduced allocations and a short balanced test. It is not pooled with the original 24-trial set. The [October 21 capacity recalibration](resource-calibration-20261021/README.md) records subsequent early-stopped checks at 700 messages/s and a lower-rate check; these also remain separate from the original performance comparisons.

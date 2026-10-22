@@ -45,7 +45,7 @@ Identity matching, exact cohort quantiles, unfinished outcomes and deduplication
 
 Acknowledgment rate is measured at delivery callbacks, so it is a delivery-confirmation rate rather than exact broker arrival timing. Compare achieved rates and partition fractions with the configured target. Process CPU is process CPU time per elapsed time (100% is approximately one CPU core); RSS is resident bytes. These are not Kubernetes allocated resource cost.
 
-## Lag and proposal equations 1–17
+## Lag and runtime signals
 
 Since 29 September, the consumer initializes returned-record position from the verified absolute assignment offset while the client still reports `OFFSET_INVALID` and no record has been returned from that partition. The entire returned batch clears this fallback before processing. Fresh broker bounds must still validate the offset. `consumer_client_position_offset` retains the raw value, and `consumer_position_from_assignment` identifies this initialization. This prevents unresolved client initialization from hiding known backlog after handoff; it does not fill missing historical samples or bypass ownership and freshness checks. See the [monitoring handover check](../experiments/monitoring-gap-20260929/README.md).
 
@@ -53,19 +53,20 @@ AWS documents a related monitoring limitation in Amazon MSK: consumer-lag metric
 
 analyze_lag.py reads the exported run-scoped Prometheus series. A partition snapshot needs exactly one current owner, fresh valid lag and finite offsets. Every expected partition must be represented. Missing/stale data is not zero. Lag is high offset minus returned-record position. Processing backlog uses the completion frontier and is a separate metric. These are offset spans, not exact record counts when offsets have gaps.
 
-| Equations | Calculation and interpretation |
+| Analyzer convention | Calculation and interpretation |
 |---|---|
-| 1–2 | Per-partition lag L = H − R for valid H ≥ R; total B = sum of L over all partitions. The max(0, H−R) notation must never turn an invalid negative observation into valid zero. |
-| 3 | Completed attempt count / common evaluation duration. |
-| 4 | Completion time minus producer time. |
-| 5 | 100 × observed late valid completion attempts / observed valid completion attempts; distinct from the primary admitted-cohort deadline outcome. |
-| 6 | (Current B − previous B) / actual elapsed seconds. |
-| 7 | (Latest B − B from m intervals earlier) / elapsed time: m+1 consecutive valid snapshots. |
-| 8–10 | Mean L = B / partition count; max L; skew = max L / mean L, or zero when all lag is zero. |
-| 11 | Arithmetic mean of skew over the last m valid contiguous snapshots. |
-| 12–13 | Hot when L > minimum_lag AND L > mean L + k × population standard deviation. Both inequalities are strict. |
-| 14–16 | Persistence = count of hot observations / m. Persistently hot requires hot now AND persistence ≥ threshold. |
-| 17 | Ordered tuple of window mean B, window growth, window mean skew and persistent hot set. Other controller inputs are still needed. |
+| Partition and total lag | Per-partition lag L = H − R for valid H ≥ R; total B = sum of L over all partitions. The max(0, H−R) notation must never turn an invalid negative observation into valid zero. |
+| Attempt throughput (diagnostic) | Completed attempt count / common evaluation duration. |
+| Completion latency | Completion time minus producer time. |
+| Attempt SLO rate (diagnostic) | 100 × observed late valid completion attempts / observed valid completion attempts; distinct from the primary admitted-cohort deadline outcome. |
+| Instantaneous backlog growth | (Current B − previous B) / actual elapsed seconds. |
+| Window backlog growth | (Latest B − B from m intervals earlier) / elapsed time: m+1 consecutive valid snapshots. |
+| Partition mean, maximum and skew | Mean L = B / partition count; max L; skew = max L / mean L, or zero when all lag is zero. |
+| Mean skew | Arithmetic mean of skew over the last m valid contiguous snapshots. |
+| Hot partitions | Hot when L > minimum_lag AND L > mean L + k × population standard deviation. Both inequalities are strict. |
+| Hot-partition persistence | Persistence = count of hot observations / m. Persistently hot requires hot now AND persistence ≥ threshold. |
+
+Attempt-throughput and observed-attempt deadline rates are diagnostics; the proposal uses distinct completion throughput and acknowledged-cohort SLO outcomes.
 
 Population standard deviation divides squared deviations by the partition count. Window means and persistence use m snapshots. Growth uses m intervals. Windows reset after missing observations, excessive gaps, detected ownership changes or decreasing offsets. Unsampled changes cannot be reconstructed. At a 2-second export step, 15 growth intervals span 30 seconds but 15 sample points span 28 seconds; configure and report these explicitly.
 
@@ -111,6 +112,30 @@ For a run-level metric x over R matching runs: mean = sum(x)/R; sample standard 
 Pooled mean = sum of every valid message latency / total valid message count. Pooled p99 sorts those message latencies together. Pooled unfinished/deadline fractions use summed counts and denominators. Runs with more messages have more weight in pooled statistics. Do not pool different workloads/policies to claim one treatment result.
 
 Worked arithmetic: the 20-message example totals 1,240 ms, mean 62 ms. If the 150 ms message is unfinished, 19 observed completions total 1,090 ms, mean 57.368 ms and nearest-rank p99 100 ms. With a 99 ms deadline, two 100 ms completions plus the overdue unfinished message give 3/20 = 15% deadline misses; unfinished is 1/20 = 5%.
+
+## Reporting before and after intervention
+
+For ten-minute mitigation trials, the before-action interval is evaluation seconds [30,60), the post-activation interval runs from confirmed assignment to second 600, and the final interval is [570,600). Keep 3 uses second 60 as its reference. These intervals exclude drain; activation does not imply recovery. Backlog and skew means use valid original two-second measurements with equal weight, not overlapping rolling means. The before and final intervals each expect 15 samples, ending at seconds 58 and 598. Report valid/expected counts.
+
+Completion throughput counts distinct first completions in each interval, including warm-up messages completed then, divided by interval seconds. Interval p99 instead uses acknowledged evaluation messages whose first completion occurs in that interval. It retains each original producer timestamp, including waiting before activation, and excludes warm-up messages. Whole-run cohort outcomes still follow evaluation-produced messages through drain end. These populations must not be mixed.
+
+## Measured arrival rate and consumer capacity
+
+Partition arrival rate is estimated from the increase in producer acknowledgment counters divided by actual elapsed seconds, summed across producers. It is a proxy for broker arrival, not the configured target or an exact broker-arrival timestamp. The capacity analysis uses the thirty-second pre-action interval ending at nominal second 58, with fresh endpoints, unchanged process identity and no counter reset. Missing interior samples can be bridged only when cumulative endpoints remain valid.
+
+Assigned input is the sum of measured partition rates for each consumer's assignment. Resulting-assignment comparisons reuse those pre-action partition rates and assume unchanged input; they are not post-action arrival measurements. Native Kafka's resulting assignments are assessed retrospectively.
+
+Effective capacity is completed attempts divided by elapsed wall time in eligible calibration intervals with sustained available work, including polling, commits and other processing-loop overhead. The analysis uses nonoverlapping sixty-second intervals after evaluation second 60, stable ownership and process identity, fresh counters, valid contiguous processing backlog, ten-second throughput coefficient of variation at most 0.10, and minimum assigned processing backlog at least max(100, twice the observed messages/s). The preceding ten seconds are also checked. Pool eligible counts over eligible elapsed seconds; do not interpret interval subdivisions as independent trials.
+
+Calibration references match recorded nodes, resource requests and processing settings. CPU requests alone cannot establish messages/s capacity. The original C2 estimate is 291.5 messages/s from 112 eligible intervals in six runs; revised C1 is 213.9 messages/s from one interval. Other rates are demonstrated unsaturated throughput, and added-consumer capacities remain unmeasured. Capacity minus assigned input is a conditional margin for that consumer; positive margins for every consumer do not guarantee a recovery time, p99 target or worthwhile intervention cost. [Evidence and limitations](../experiment-records/signal-outcome-20261021/CAPACITY_CHECK.md) and [assignment checks](../experiment-records/signal-outcome-20261021/assignment-capacity.csv) retain the full calculation.
+
+The demand-versus-capacity framing follows the Kafka provisioning studies cited in the proposal: Diogo Landau et al., *Latency and Cost-Aware Consumer Group Autoscaling in Message Broker Systems*, Journal of Parallel and Distributed Computing 201 (2025), 105071; and Mazen Ezzeddine et al., *Latency Aware and Resource-Efficient Bin Pack Autoscaling for Distributed Event Queues: Parameters Impact and Setting*, SN Computer Science 6 (2025), 219. The acknowledgment-counter estimator and eligibility rules above describe this implementation, not a claim that those papers used identical measurements.
+
+## Intervention timing
+
+Decision to active ends when the intended assignment is verified. Normal Kafka scaling requires an unchanged six-consumer assignment across ten valid seconds; targeted actions use the explicit handover confirmation. Global gap is the longest interval during the transition when no consumer is processing, not a gap between two particular consumers.
+
+Pending change before resume is the acknowledged-but-unfinished message count at the first processing start after the resume request minus the count at partition-release request. This interval differs from assignment verification, which can continue after processing resumes. Negative values mean unfinished work decreased. Normal Kafka scaling has no explicit release/resume procedure, so this value is unavailable; no-action runs also have no value. Net pending during transfer is not a reported proposal metric.
 
 ## Capacity, cost and recovery
 

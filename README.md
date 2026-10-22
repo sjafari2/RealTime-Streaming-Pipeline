@@ -15,7 +15,7 @@ The current result set contains **32 performance trials** used in the main propo
 | 80% of input across 4 of 60 partitions, 700 messages/s | 4 | Redistribution within three consumers recorded lower whole-cohort p99 than targeted scaling to six in both runs. |
 | Four high-input partitions, revised deployment at 600 messages/s | 8 | All interventions finished the evaluation set; the best p99 differed by run, and Kafka scaling did not confirm recovery during input in Run 2. |
 
-The historical skew comparisons use **700 messages/s in total across three producers**. The additional eight-trial block uses **600 messages/s** after recalibration and is reported separately. Each condition has two runs. These are scheduled interventions on a synthetic workload; the adaptive controller and hot-key splitting remain research work.
+The original skew comparisons use **700 messages/s in total across three producers**. The additional eight-trial block uses **600 messages/s** after recalibration and is reported separately. Each condition has two runs. These are scheduled interventions on a synthetic workload; the adaptive controller and hot-key splitting remain research work.
 
 [Results, tables and plots](experiment-records/README.md) · [Research questions](docs/research-questions.md) · [Methodology](docs/experiment-methodology.md) · [Metric definitions](docs/metric-definitions.md)
 
