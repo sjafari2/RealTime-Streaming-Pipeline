@@ -50,3 +50,18 @@ python3 experiments/four-hot600-20261021/plot_resources.py \
 ```
 
 Analysis does not start cluster workloads. Large event files must be available locally before replay; a cloud placeholder is not a readable local copy.
+
+## Proposal figures
+
+The completion-window figure can be rendered with taller panels without changing its measurements:
+
+```bash
+python3 experiments/four-condition-20260929/analyze_action_windows.py \
+  results/four-hot600-20261021-analysis/comparison.json \
+  --output results/four-hot600-20261021-analysis --reuse --figure-height 10.8
+python3 experiments/four-hot600-20261021/plot_runtime_state.py \
+  results/four-hot600-20261021-analysis/comparison.json \
+  --repository . --output results/four-hot600-20261021-analysis/runtime-state
+```
+
+The runtime-state plot uses the same reconstruction as the historical four-partition figure. It verifies manifest and lag-evidence hashes before plotting both runs, and saves the reconstructed samples and hot-partition identities alongside the figures.

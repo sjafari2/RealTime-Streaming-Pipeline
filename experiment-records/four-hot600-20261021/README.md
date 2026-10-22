@@ -24,6 +24,7 @@ Redistribution requested 72 core-minutes and 27 GiB-minutes in each run. Scaling
 ![Total backlog](figures/lag.png)
 ![Completion performance](figures/completion-windows.png)
 ![Observed resources](figures/resources.png)
+![Windowed runtime state](figures/runtime-state.png)
 
 ## Measurement and interpretation
 
@@ -38,3 +39,5 @@ The original client pods, nodes, resource declarations and initial partition own
 [Numerical results](results-summary.json), [completion windows](completion-windows.json), [signal windows](signal-windows.json) and [evidence hashes](evidence-hashes.json) identify the saved measurements. Large raw records remain in separately retained storage; these summaries are not a backup of them.
 
 The [experiment protocol and analysis commands](../../experiments/four-hot600-20261021/README.md) describe reproduction from the retained raw files. Historical execution revisions remain unchanged.
+
+The [runtime-state reconstruction](runtime-states.json) retains all eight trial traces, persistent-hot partition identifiers and source hashes. Backlog, skew and persistence use 15 observations; growth spans 15 two-second intervals, matching the historical proposal figure. Missing observations and ownership transitions remain gaps. These signals were reconstructed after the runs and did not trigger the scheduled interventions.

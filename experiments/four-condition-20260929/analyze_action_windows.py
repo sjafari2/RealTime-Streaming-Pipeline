@@ -298,7 +298,7 @@ def write_outputs(data, output):
     (output/'post-action-table-rows.tex').write_text('\n'.join(post_latex)+'\n')
 
 
-def plot(data, output):
+def plot(data, output, figure_height=9.0):
     output = output/'figures'
     output.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault('MPLCONFIGDIR','/private/tmp/action-window-mpl')
@@ -306,7 +306,7 @@ def plot(data, output):
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
-    fig,axes=plt.subplots(3,2,figsize=(10,9),sharex=True,sharey='row')
+    fig,axes=plt.subplots(3,2,figsize=(10,figure_height),sharex=True,sharey='row')
     for r in data['runs']:
         col=r['run_number']-1; points=r['rolling']; x=[p['end_after_evaluation_seconds']/60 for p in points]
         for i,key in enumerate(('completion_throughput_per_second','completion_window_p99_seconds','acknowledged_evaluation_messages_pending_at_end')):
@@ -344,13 +344,16 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('comparison',type=Path);p.add_argument('--repository',type=Path,default=ROOT)
     p.add_argument('--output',type=Path,required=True);p.add_argument('--reuse',action='store_true')
+    p.add_argument('--figure-height', type=float, default=9.0, help='Figure height in inches; width remains ten inches')
     args=p.parse_args()
+    if not math.isfinite(args.figure_height) or args.figure_height <= 0:
+        p.error('--figure-height must be positive and finite')
     if args.reuse:
         data=json.loads((args.output/'action-window-performance.json').read_text())
     else:
         data=analyze(args.comparison,args.repository)
         write_outputs(data,args.output)
-    plot(data,args.output)
+    plot(data,args.output,args.figure_height)
 
 
 if __name__=='__main__': main()
