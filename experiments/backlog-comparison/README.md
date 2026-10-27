@@ -25,13 +25,14 @@ python3 experiments/backlog-comparison/prepare.py \
 
 python3 experiments/backlog-comparison/run.py \
   --specification results/PREPARATION/validated-specification.json \
-  --monitoring-gate PATH_TO_PASSED_MONITORING_GATE --execute
+  --monitoring-gate PATH_TO_PASSED_MONITORING_GATE \
+  --backup-root /path/to/raw-evidence-backup --execute
 
 python3 experiments/backlog-comparison/summarize.py \
   results/CAMPAIGN results/BACKLOG_ANALYSIS
 ```
 
-`--reuse-capacity` on the preparation command permits repeating the two pilot preparations after a producer-only correction, provided the previously validated original pods, placement, resources and processing settings are unchanged. Changes to consumer processing require new capacity measurements. `--partial` on the summary command produces an explicitly provisional report from the completed prefix of a running campaign.
+The campaign generates its report after all planned trials and configuration restoration pass. The backup option preserves and verifies raw records between runs, then includes the final validation records and campaign metadata at completion. `--reuse-capacity` on the preparation command permits repeating the two pilot preparations after a producer-only correction, provided the previously validated original pods, placement, resources and processing settings are unchanged. Changes to consumer processing require new capacity measurements. `--partial` on the summary command produces an explicitly provisional report from the completed prefix of a running campaign.
 
 Whole-run completion latency covers evaluation messages completed by the drain cutoff. Unfinished and deadline outcomes retain the full admitted evaluation cohort. Completion-window statistics describe messages completed within the before, activation-to-end and final-evaluation intervals. They do not replace whole-run outcomes. Signal means give valid samples equal weight; missing observations remain missing. Requested resources are integrated over time and remain separate from measured process CPU and RSS.
 
