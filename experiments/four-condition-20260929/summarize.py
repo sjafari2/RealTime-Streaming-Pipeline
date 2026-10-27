@@ -175,7 +175,7 @@ def deadline_sensitivity(path,saved,thresholds):
     return replay['completion_deadline_outcomes']
 
 
-def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,deadline_ms=99,deadline_thresholds=None):
+def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,deadline_ms=99,deadline_thresholds=None,initial_hot_owner='consumer-sts-2'):
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json');audit=read(p,'measurement-audit.json')
     assert read(p,'runner-status.json')['status']=='complete' and read(p,'handoff-validation.json')['status']=='passed'
     assert not o['validity_failures'] and not audit['issues']
@@ -184,7 +184,7 @@ def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,
     assert all(cfg[k]==v for k,v in {'NUM_PARTITIONS':'60','WARMUP_SECONDS':'60','EXP_DURATION_SEC':'660','DRAIN_SECONDS':'120','APP_CPU_ITERATIONS':'2000','APP_DELAY_MS':'0'}.items())
     assert m['placement_reference']==reference
     assert set(map(int,cfg['SKEW_PARTITION'].split(',')))==set(hot)
-    initial={x['partition']:x['pod'] for x in m['initial_assignment']};assert all(initial[p]=='consumer-sts-2' for p in hot)
+    initial={x['partition']:x['pod'] for x in m['initial_assignment']};assert all(initial[p]==initial_hot_owner for p in hot)
     start,finish=m['evaluation_start_epoch'],m['producer_end_epoch']
     s=dict(arm=row['arm'],run_number=row['run_number'],seed=row['seed'],run_id=m['run_id'],raw_evidence='results/'+m['run_id'],
         admitted=o['admitted_evaluation_cohort'],completed=o['completed_by_drain'],unfinished=o['incomplete_by_drain'],unfinished_percent=100*o['incomplete_fraction'],
