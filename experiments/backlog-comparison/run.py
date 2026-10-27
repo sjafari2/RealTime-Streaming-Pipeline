@@ -95,6 +95,11 @@ def main():
         if not (plan or {}).get('prepare_only'):
             compress(directory)
             compress_csv(directory)
+            manifest = json.loads((directory / 'manifest.json').read_text())
+            if manifest['config']['EXP_ID'].startswith('backlog-'):
+                from analyze_cohorts import analyze
+                (directory / 'decision-cohort-summary.json').write_text(
+                    json.dumps(analyze(directory), indent=2, allow_nan=False) + '\n')
         return directory
     base.r.complete_run = complete_and_compress
     sys.argv = [sys.argv[0], '--aggregate-rate', '600', '--hot-partitions', '12', '--slo-ms', '1000'] + remaining
