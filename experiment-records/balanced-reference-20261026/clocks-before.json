@@ -1,0 +1,388 @@
+{
+  "recorded_utc": "2026-10-27T04:39:39.532692+00:00",
+  "context": "nautilus",
+  "namespace": "kafkastreamingdata",
+  "placements": [
+    {
+      "pod": "consumer-sts-0",
+      "node": "k8s-chase-ci-04.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-1",
+      "node": "edex.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "consumer-sts-2",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "consumer-container",
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "pip-kafka-recovery-ucsd-controller-0",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "kafka",
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "4Gi"
+            },
+            "requests": {
+              "cpu": "1",
+              "ephemeral-storage": "0",
+              "memory": "2Gi"
+            }
+          }
+        },
+        {
+          "container": "jmx-exporter",
+          "resources": {
+            "limits": {
+              "cpu": "375m",
+              "ephemeral-storage": "2Gi",
+              "memory": "384Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "ephemeral-storage": "50Mi",
+              "memory": "256Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "pip-kafka-recovery-ucsd-controller-1",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "kafka",
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "4Gi"
+            },
+            "requests": {
+              "cpu": "1",
+              "ephemeral-storage": "0",
+              "memory": "2Gi"
+            }
+          }
+        },
+        {
+          "container": "jmx-exporter",
+          "resources": {
+            "limits": {
+              "cpu": "375m",
+              "ephemeral-storage": "2Gi",
+              "memory": "384Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "ephemeral-storage": "50Mi",
+              "memory": "256Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "pip-kafka-recovery-ucsd-controller-2",
+      "node": "k8s-u200-00.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "kafka",
+          "resources": {
+            "limits": {
+              "cpu": "4",
+              "ephemeral-storage": "50Gi",
+              "memory": "4Gi"
+            },
+            "requests": {
+              "cpu": "1",
+              "ephemeral-storage": "0",
+              "memory": "2Gi"
+            }
+          }
+        },
+        {
+          "container": "jmx-exporter",
+          "resources": {
+            "limits": {
+              "cpu": "375m",
+              "ephemeral-storage": "2Gi",
+              "memory": "384Mi"
+            },
+            "requests": {
+              "cpu": "250m",
+              "ephemeral-storage": "50Mi",
+              "memory": "256Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "producer-workers-0",
+      "node": "k8s-gen4-05.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "producer-workers-1",
+      "node": "knuron.calit2.optiputer.net",
+      "resources": [
+        {
+          "container": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "pod": "producer-workers-2",
+      "node": "unseenu.crbs.ucsd.edu",
+      "resources": [
+        {
+          "container": "producer-container",
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "node": "k8s-chase-ci-04.calit2.optiputer.net",
+      "timestamp_epoch": 1793075978.5141435,
+      "architecture": "x86_64",
+      "kernel_clock": {
+        "read_only_modes": 0,
+        "state": 0,
+        "status_bits": 0,
+        "unsynchronized": false,
+        "clock_error": false,
+        "offset_seconds": 0.0,
+        "maximum_error_seconds": 0.001668,
+        "estimated_error_seconds": 0.0
+      },
+      "chronyc_available_in_container": false,
+      "api_roundtrip_seconds": 0.729135274887085,
+      "offset_from_client_interval_seconds": [
+        -0.0362696647644043,
+        0.6928656101226807
+      ]
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "node": "edex.calit2.optiputer.net",
+      "timestamp_epoch": 1793075978.5756192,
+      "architecture": "x86_64",
+      "kernel_clock": {
+        "read_only_modes": 0,
+        "state": 0,
+        "status_bits": 0,
+        "unsynchronized": false,
+        "clock_error": false,
+        "offset_seconds": 0.0,
+        "maximum_error_seconds": 0.001666,
+        "estimated_error_seconds": 0.0
+      },
+      "chronyc_available_in_container": false,
+      "api_roundtrip_seconds": 0.7888429164886475,
+      "offset_from_client_interval_seconds": [
+        -0.034694671630859375,
+        0.7541482448577881
+      ]
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "timestamp_epoch": 1793075978.6907732,
+      "architecture": "x86_64",
+      "kernel_clock": {
+        "read_only_modes": 0,
+        "state": 0,
+        "status_bits": 0,
+        "unsynchronized": false,
+        "clock_error": false,
+        "offset_seconds": 0.0,
+        "maximum_error_seconds": 0.001166,
+        "estimated_error_seconds": 0.0
+      },
+      "chronyc_available_in_container": false,
+      "api_roundtrip_seconds": 0.9017269611358643,
+      "offset_from_client_interval_seconds": [
+        -0.03499770164489746,
+        0.8667292594909668
+      ]
+    },
+    {
+      "role": "producer",
+      "pod": "producer-workers-0",
+      "node": "k8s-gen4-05.calit2.optiputer.net",
+      "timestamp_epoch": 1793075979.2013059,
+      "architecture": "x86_64",
+      "kernel_clock": {
+        "read_only_modes": 0,
+        "state": 0,
+        "status_bits": 0,
+        "unsynchronized": false,
+        "clock_error": false,
+        "offset_seconds": 0.0,
+        "maximum_error_seconds": 0.001661,
+        "estimated_error_seconds": 0.0
+      },
+      "chronyc_available_in_container": false,
+      "api_roundtrip_seconds": 0.6984889507293701,
+      "offset_from_client_interval_seconds": [
+        -0.04767608642578125,
+        0.6508128643035889
+      ]
+    },
+    {
+      "role": "producer",
+      "pod": "producer-workers-1",
+      "node": "knuron.calit2.optiputer.net",
+      "timestamp_epoch": 1793075979.3616357,
+      "architecture": "x86_64",
+      "kernel_clock": {
+        "read_only_modes": 0,
+        "state": 0,
+        "status_bits": 0,
+        "unsynchronized": false,
+        "clock_error": false,
+        "offset_seconds": 0.0,
+        "maximum_error_seconds": 0.001664,
+        "estimated_error_seconds": 0.0
+      },
+      "chronyc_available_in_container": false,
+      "api_roundtrip_seconds": 0.7844851016998291,
+      "offset_from_client_interval_seconds": [
+        -0.033292531967163086,
+        0.751192569732666
+      ]
+    },
+    {
+      "role": "producer",
+      "pod": "producer-workers-2",
+      "node": "unseenu.crbs.ucsd.edu",
+      "timestamp_epoch": 1793075979.4982562,
+      "architecture": "x86_64",
+      "kernel_clock": {
+        "read_only_modes": 0,
+        "state": 0,
+        "status_bits": 0,
+        "unsynchronized": false,
+        "clock_error": false,
+        "offset_seconds": 0.0,
+        "maximum_error_seconds": 0.001734,
+        "estimated_error_seconds": 1e-06
+      },
+      "chronyc_available_in_container": false,
+      "api_roundtrip_seconds": 0.8066821098327637,
+      "offset_from_client_interval_seconds": [
+        -0.034268856048583984,
+        0.7724132537841797
+      ]
+    }
+  ],
+  "notes": [
+    "Point-in-time kernel synchronization diagnostics, not retrospective validation of earlier run clocks.",
+    "Kernel offsets/error estimates are reported by the host discipline; they are not an independently verified cross-node error bound.",
+    "Repeat at run boundaries and obtain clock-daemon/source evidence before a strict latency deadline claim.",
+    "No Kubernetes resources or system clock parameters are changed."
+  ],
+  "reference": "https://man7.org/linux/man-pages/man2/adjtimex.2.html"
+}

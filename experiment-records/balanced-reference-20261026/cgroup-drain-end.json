@@ -1,0 +1,472 @@
+{
+  "captured_epoch": 1793077468.385634,
+  "pods": [
+    {
+      "pod": "consumer-sts-0",
+      "uid": "7c967e23-e892-4d84-ab14-bd977230cfb0",
+      "node": "k8s-chase-ci-04.calit2.optiputer.net",
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          },
+          "containerID": "containerd://4001ec75b534a8b679e255185c8b37a64ff0baa3640a5cd8553ca2bf601ea09f",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-27T04:30:05Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-kdqvq",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "local_start_epoch": 1793077467.439007,
+      "local_end_epoch": 1793077468.251295,
+      "returncode": 0,
+      "epoch": 1793077468.217522,
+      "cgroup": {
+        "cpu.stat": "usage_usec 1007165386\nuser_usec 973072361\nsystem_usec 34093025\ncore_sched.force_idle_usec 0\nnr_periods 15038\nnr_throttled 1\nthrottled_usec 5267\nnr_bursts 0\nburst_usec 0",
+        "cpu.max": "240000 100000",
+        "memory.current": "293302272",
+        "memory.peak": "294068224",
+        "memory.max": "964689920",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "pod": "consumer-sts-1",
+      "uid": "aff6d7c2-b62d-43f9-aaa2-f4b7fbca16fa",
+      "node": "edex.calit2.optiputer.net",
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          },
+          "containerID": "containerd://fedee61fd3c2408eb491cb1d02cf056fa0f05bc3a3c1ba2171ae542ec1dfd11a",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-27T04:30:04Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-6p4xb",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "local_start_epoch": 1793077467.4412422,
+      "local_end_epoch": 1793077468.2365289,
+      "returncode": 0,
+      "epoch": 1793077468.2025323,
+      "cgroup": {
+        "cpu.stat": "usage_usec 517886589\nuser_usec 455204356\nsystem_usec 62682232\ncore_sched.force_idle_usec 0\nnr_periods 14950\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+        "cpu.max": "240000 100000",
+        "memory.current": "170766336",
+        "memory.peak": "170864640",
+        "memory.max": "964689920",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "pod": "consumer-sts-2",
+      "uid": "ae3713ac-2e3f-43d2-9ab4-84f922d123d5",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          },
+          "containerID": "containerd://dc5a5eb9d335dc8bb6bc5f400a067686dff5eae99ec0cf24a03501fdc0b797fe",
+          "image": "docker.io/sjafari2/kafkaconfluentconsumer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+          "lastState": {},
+          "name": "consumer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "2400m",
+              "ephemeral-storage": "50Gi",
+              "memory": "920Mi"
+            },
+            "requests": {
+              "cpu": "2",
+              "ephemeral-storage": "0",
+              "memory": "768Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-27T04:30:09Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/consumer-merge-data",
+              "name": "consumer-merge-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/tmp/metrics",
+              "name": "metrics"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-f9474",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "local_start_epoch": 1793077467.4436889,
+      "local_end_epoch": 1793077468.3813682,
+      "returncode": 0,
+      "epoch": 1793077468.3457115,
+      "cgroup": {
+        "cpu.stat": "usage_usec 431017882\nuser_usec 393985706\nsystem_usec 37032176\ncore_sched.force_idle_usec 0\nnr_periods 14914\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+        "cpu.max": "240000 100000",
+        "memory.current": "166801408",
+        "memory.peak": "166801408",
+        "memory.max": "964689920",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "pod": "producer-workers-0",
+      "uid": "7cef4d5e-c843-4533-bef3-701dcd0068ff",
+      "node": "k8s-gen4-05.calit2.optiputer.net",
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          },
+          "containerID": "containerd://a01113e6e7cb30308f5af9d547b78396d9b669c099150373c64ab3c5d60c83de",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "producer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-27T04:29:17Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-w8m2q",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "local_start_epoch": 1793077467.4438798,
+      "local_end_epoch": 1793077468.367359,
+      "returncode": 0,
+      "epoch": 1793077468.330934,
+      "cgroup": {
+        "cpu.stat": "usage_usec 72591622\nuser_usec 59356247\nsystem_usec 13235375\ncore_sched.force_idle_usec 0\nnr_periods 12912\nnr_throttled 18\nthrottled_usec 448380\nnr_bursts 0\nburst_usec 0",
+        "cpu.max": "36000 100000",
+        "memory.current": "89710592",
+        "memory.peak": "111575040",
+        "memory.max": "201326592",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "pod": "producer-workers-1",
+      "uid": "f7bf1892-e7a7-4573-8b20-c3b93759c559",
+      "node": "knuron.calit2.optiputer.net",
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          },
+          "containerID": "containerd://2a7b3c2680a056076e0f670d6e1c94cb1c3c6368f0a758944f392ff19e3deee6",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "producer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-27T04:36:00Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-rxh4f",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "local_start_epoch": 1793077467.4471822,
+      "local_end_epoch": 1793077468.321174,
+      "returncode": 0,
+      "epoch": 1793077468.282181,
+      "cgroup": {
+        "cpu.stat": "usage_usec 95122623\nuser_usec 71148253\nsystem_usec 23974370\ncore_sched.force_idle_usec 0\nnr_periods 12985\nnr_throttled 26\nthrottled_usec 1025016\nnr_bursts 0\nburst_usec 0",
+        "cpu.max": "36000 100000",
+        "memory.current": "79368192",
+        "memory.peak": "100880384",
+        "memory.max": "201326592",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      }
+    },
+    {
+      "pod": "producer-workers-2",
+      "uid": "1c584b0f-33c1-42cd-83b1-8209131a6fb4",
+      "node": "unseenu.crbs.ucsd.edu",
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          },
+          "containerID": "containerd://4fc65762fe78f29309e0328ae31e8a1efee32cf05c8795374c3b672026891b6e",
+          "image": "docker.io/sjafari2/kafkaconfluentproducer:latest",
+          "imageID": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+          "lastState": {},
+          "name": "producer-container",
+          "ready": true,
+          "resources": {
+            "limits": {
+              "cpu": "360m",
+              "ephemeral-storage": "50Gi",
+              "memory": "192Mi"
+            },
+            "requests": {
+              "cpu": "300m",
+              "ephemeral-storage": "0",
+              "memory": "160Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-27T04:29:21Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 1000,
+              "supplementalGroups": [
+                1000
+              ],
+              "uid": 1000
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/app/producer-data",
+              "name": "producer-data"
+            },
+            {
+              "mountPath": "/config",
+              "name": "pipeline-config"
+            },
+            {
+              "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+              "name": "kube-api-access-cfgbk",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            }
+          ]
+        }
+      ],
+      "local_start_epoch": 1793077467.448125,
+      "local_end_epoch": 1793077468.385165,
+      "returncode": 0,
+      "epoch": 1793077468.355105,
+      "cgroup": {
+        "cpu.stat": "usage_usec 74902254\nuser_usec 60686464\nsystem_usec 14215790\nnr_periods 12929\nnr_throttled 34\nthrottled_usec 1997224",
+        "cpu.max": "36000 100000",
+        "memory.current": "128335872",
+        "memory.max": "201326592",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0"
+      }
+    }
+  ]
+}
