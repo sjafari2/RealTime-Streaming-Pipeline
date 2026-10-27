@@ -18,6 +18,7 @@ from static_startup import audit_preparation
 sys.path.insert(0,str(ROOT/'python-scripts'))
 from validate_handoff import validate
 HPA_PLAN=dict(action='scale',initial_consumers=3,target_consumers=6,after_evaluation_start_seconds=60)
+HOT_OWNER = 'consumer-sts-2'
 ORDER=[('keep3',1,81),('redistribute3',1,81),('scale_redistribute6',1,81),('kafka_scale6',1,81),
        ('kafka_scale6',2,82),('scale_redistribute6',2,82),('redistribute3',2,82),('keep3',2,82)]
 
@@ -157,7 +158,7 @@ def main():
     if not args.execute:
         print(json.dumps(dict(aggregate_rate=args.aggregate_rate,partitions=60,hot_fraction=.8,hot_partition_count=args.hot_partitions,completion_deadline_ms=deadline_ms,
             completion_deadline_reporting_ms=protocol.get('completion_deadline_reporting_ms',[deadline_ms]),
-            initial_hot_owner='consumer-sts-2',phases_seconds=[60,600,120],order=order,
+            initial_hot_owner=HOT_OWNER,phases_seconds=[60,600,120],order=order,
             normal_scaling='technical validation only' if args.targeted_only else 'classic cooperative-sticky with unique static member identities; no targeted map',
             starting_map='capture Kafka empty-topic map; freeze the selected hot partitions owned by consumer 2; verify all trials against it',
             preparation_retry_limit=3),indent=2));return
@@ -250,7 +251,7 @@ def main():
                 else:
                     directory,m,_=run_one(config,plan,'capture-initial',preparation=True)
                     reference=m['placement_reference']
-                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']=='consumer-sts-2')[:args.hot_partitions]
+                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']==HOT_OWNER)[:args.hot_partitions]
                     counts={n:sum(x['pod']==n for x in reference['assignment']) for n in ['consumer-sts-0','consumer-sts-1','consumer-sts-2']}
                     if len(hot)!=args.hot_partitions or set(counts.values())!={20}:raise RuntimeError('Initial Kafka map is not 20 partitions per consumer')
                     state.update(reference=reference,hot_partitions=hot);save()

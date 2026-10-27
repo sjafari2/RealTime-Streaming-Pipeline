@@ -308,6 +308,9 @@ def validate_config(config):
             'Update /config/pipeline-configmap.yaml between runs. The local template uses 86400000 ms (24 hours).')
     if str(config.get('ACKS', '0')) == '0':
         raise ValueError('Set ACKS=1 or all in the shared YAML before this measurement run')
+    if config.get('PRODUCER_RATE_SCHEDULE_JSON'):
+        from rate_schedule import RateSchedule
+        RateSchedule(config['PRODUCER_RATE_SCHEDULE_JSON'], duration)
     return duration, drain, warmup, readiness_timeout
 
 
@@ -1031,6 +1034,8 @@ def preflight():
                    ROOT / 'src/common/launch.py', ROOT / 'src/common/pipeline_runtime.py']
         if role == 'consumer':
             sources += [ROOT / 'src/common/explicit_assignment.py', ROOT / 'src/consumer/supervise.py', ROOT / 'src/consumer/create_topics.sh']
+        else:
+            sources += [ROOT / 'src/common/rate_schedule.py']
         expected = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
         for pod in names:
             code = f'''import confluent_kafka,prometheus_client,psutil,yaml,hashlib,json

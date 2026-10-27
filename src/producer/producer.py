@@ -3,11 +3,13 @@ import os
 import random
 import time
 import hashlib
+import math
 
 import psutil
 from confluent_kafka import Producer
 from prometheus_client import Counter, Gauge, generate_latest
 from pipeline_runtime import Runtime, seed_for, producer_workload
+from rate_schedule import RateSchedule
 
 LABELS = ['pod', 'client_id', 'exp_id', 'run_id', 'traffic_mode', 'incarnation']
 sent = Counter('producer_messages_sent_total', 'Locally enqueued messages', LABELS)
@@ -69,6 +71,9 @@ class MyProducer:
         self.config = producer_config(os.environ, self.labels['client_id'])
         self.producer = Producer(self.config)
         self.rate = float(os.getenv('TARGET_RATE', '500'))
+        schedule = os.getenv('PRODUCER_RATE_SCHEDULE_JSON')
+        self.rate_schedule = RateSchedule(schedule, float(os.getenv('EXP_DURATION_SEC', '300'))) if schedule else None
+        self.rate_stage = -1
         self.count = int(os.getenv('NUM_PARTITIONS', '60'))
         self.topic_count = int(os.getenv('TOPIC_COUNT', '1'))
         self.max_messages = int(os.getenv('MAX_MESSAGES', os.getenv('PRODUCER_MAX_MESSAGES', '0')))
@@ -96,6 +101,28 @@ class MyProducer:
             metric.labels(**self.labels).inc(0)
         self.runtime.phase = 'ready'
         self.runtime.start_http(int(os.getenv('PRODUCER_HTTP_PORT', '8001')), generate_latest)
+
+    def update_rate(self, now, next_send):
+        if self.rate_schedule is None:
+            return next_send
+        control = self.runtime.control()
+        wall_time = time.time()
+        stage, rate = self.rate_schedule.at(wall_time - control['start_epoch'])
+        if stage == self.rate_stage:
+            return next_send
+        # Do not carry a late burst from the preceding rate into the next phase.
+        skipped = max(0, math.ceil((now - next_send) * self.rate)) if self.rate_stage >= 0 else 0
+        if skipped:
+            missed.labels(**self.labels).inc(skipped)
+        self.rate_stage, self.rate = stage, rate
+        scheduled = control['start_epoch'] + self.rate_schedule.points[stage][0]
+        self.runtime.details.update(rate_stage=stage, target_rate=rate)
+        rate_metric.labels(**self.labels).set(rate)
+        self.runtime.event('rate_changed', stage=stage, target_rate=rate,
+                           scheduled_epoch=scheduled, observed_epoch=wall_time,
+                           scheduling_delay_seconds=wall_time-scheduled,
+                           discarded_pacing_debt=skipped)
+        return now
 
     def delivered(self, error, msg, identity, produced):
         self.resolved += 1
@@ -149,6 +176,7 @@ class MyProducer:
                 if self.max_messages > 0 and self.enqueued >= self.max_messages:
                     break
                 now = time.monotonic()
+                next_send = self.update_rate(now, next_send)
                 if now < next_send:
                     time.sleep(min(.001, next_send - now))
                     self.producer.poll(0)

@@ -34,6 +34,8 @@ print(json.dumps(running))
              ROOT / 'src/common/pipeline_runtime.py', ROOT / 'src/common/launch.py']
     if role == 'consumer':
         files += [ROOT / 'src/common/explicit_assignment.py', ROOT / 'src/consumer/supervise.py', ROOT / 'src/consumer/create_topics.sh']
+    else:
+        files += [ROOT / 'src/common/rate_schedule.py']
     for source in files:
         destination = ROLES[role][1] + '/' + source.name
         code = f'''import os,sys,tempfile
