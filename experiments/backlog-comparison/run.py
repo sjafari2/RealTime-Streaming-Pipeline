@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Compare existing responses under two measured starting-backlog conditions."""
 import argparse
+import hashlib
 import importlib.util
 import json
 import math
 import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 
 ROOT = Path(os.environ.get('PIPELINE_REPOSITORY', Path(__file__).resolve().parents[2]))
@@ -15,6 +18,29 @@ spec.loader.exec_module(base)
 original_prepared = base.prepared
 original_protocol = base.campaign_protocol
 ARMS = ('keep3', 'redistribute3', 'scale_redistribute6', 'kafka_scale6')
+
+
+def backup_directory(source, root):
+    destination = root / source.name
+    hashes = {}
+    for path in sorted(source.rglob('*')):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(source)
+        target = destination / relative
+        with path.open('rb') as stream:
+            digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            temporary = target.with_name(target.name + '.copying')
+            shutil.copy2(path, temporary)
+            temporary.replace(target)
+        with target.open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != digest:
+                raise ValueError('Backup differs from source: ' + str(target))
+        hashes[str(relative)] = digest
+    (destination / 'backup-sha256.json').write_text(json.dumps(hashes, indent=2) + '\n')
+    return str(destination)
 
 
 def validate_specification(document):
@@ -85,6 +111,8 @@ def install(document):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser.add_argument('--specification', type=Path, required=True)
+    parser.add_argument('--analysis-output', type=Path)
+    parser.add_argument('--backup-root', type=Path)
     args, remaining = parser.parse_known_args()
     document = json.loads(args.specification.read_text())
     if '--execute' in remaining and document.get('status') != 'validated_before_performance_trials':
@@ -108,7 +136,28 @@ def main():
         return directory
     base.r.complete_run = complete_and_compress
     sys.argv = [sys.argv[0], '--aggregate-rate', '600', '--hot-partitions', '12', '--slo-ms', '1000'] + remaining
-    base.main()
+    audit = base.main()
+    if audit is not None and '--preparations-only' not in remaining:
+        state = json.loads((audit / 'campaign-status.json').read_text())
+        if state['status'] != 'complete' or state.get('restoration') != 'verified':
+            raise RuntimeError('Do not publish a completed analysis for an unfinished campaign')
+        delivery = dict(status='preparing_reports', backups=[])
+        status_path = audit / 'reporting-status.json'
+        try:
+            if args.backup_root:
+                for row in state['runs'] + state['technical'] + state['preparations']:
+                    if row.get('directory'):
+                        delivery['backups'].append(backup_directory(Path(row['directory']), args.backup_root))
+                delivery['backups'].append(backup_directory(audit, args.backup_root))
+            output = args.analysis_output or audit.with_name(audit.name + '-analysis')
+            subprocess.run([sys.executable, str(ROOT / 'experiments/backlog-comparison/summarize.py'),
+                            str(audit), str(output)], check=True)
+            delivery.update(status='complete', analysis_directory=str(output))
+        except BaseException as exc:
+            delivery.update(status='failed', error=str(exc) or type(exc).__name__)
+            raise
+        finally:
+            status_path.write_text(json.dumps(delivery, indent=2) + '\n')
 
 
 if __name__ == '__main__':

@@ -290,6 +290,7 @@ def main():
                     try:observer.wait(timeout=15)
                     except subprocess.TimeoutExpired:observer.terminate();observer.wait(timeout=5)
                 if observer_log:observer_log.close()
+    return audit
 
 
 if __name__=='__main__':main()
