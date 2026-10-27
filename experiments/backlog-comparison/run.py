@@ -36,8 +36,38 @@ def backup_directory(source, root):
             shutil.copy2(path, temporary)
             temporary.replace(target)
         with target.open('rb') as stream:
-            if hashlib.file_digest(stream, 'sha256').hexdigest() != digest:
+            previous_digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+        if previous_digest != digest:
+            previous, current = target.read_bytes(), path.read_bytes()
+            manifest = source / 'manifest.json'
+            suffix = current[len(previous):] if current.startswith(previous) else b''
+            appended = [json.loads(line) for line in suffix.splitlines()] if suffix else []
+            cutoff = json.loads(manifest.read_text())['drain_end_epoch'] if manifest.exists() else None
+            # Stopping an already completed run can append a final resource
+            # observation. Preserve the earlier backup and accept only additions
+            # strictly after the measurement cutoff; never replace outcomes.
+            allowed = (str(relative) == 'resource-history.jsonl' and previous.endswith(b'\n')
+                       and cutoff is not None and appended
+                       and all(row.get('timestamp', 0) > cutoff for row in appended))
+            if not allowed:
                 raise ValueError('Backup differs from source: ' + str(target))
+            archived = destination / 'versions' / (target.name + '.' + previous_digest)
+            archived.parent.mkdir(exist_ok=True)
+            if not archived.exists():
+                shutil.copy2(target, archived)
+            if hashlib.sha256(archived.read_bytes()).hexdigest() != previous_digest:
+                raise ValueError('Previous backup version failed verification')
+            temporary = target.with_name(target.name + '.copying')
+            temporary.write_bytes(current)
+            if hashlib.sha256(temporary.read_bytes()).hexdigest() != digest:
+                raise ValueError('Resource history changed during backup')
+            temporary.replace(target)
+            journal = destination / 'backup-revisions.jsonl'
+            with journal.open('a') as stream:
+                stream.write(json.dumps(dict(file=str(relative), previous_sha256=previous_digest,
+                    current_sha256=digest, retained_previous=str(archived.relative_to(destination)),
+                    reason='Append-only resource observations after the original drain cutoff',
+                    additional_records=len(appended))) + '\n')
         hashes[str(relative)] = digest
     (destination / 'backup-sha256.json').write_text(json.dumps(hashes, indent=2) + '\n')
     return str(destination)

@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -29,3 +30,30 @@ def test_existing_conflicting_backup_is_preserved_and_rejected(tmp_path):
     with pytest.raises(ValueError, match='Backup differs'):
         campaign.backup_directory(source, tmp_path / 'backup')
     assert target.read_text() == 'different'
+
+
+def test_resource_append_after_cutoff_retains_previous_backup(tmp_path):
+    source = tmp_path / 'source/run-test'
+    source.mkdir(parents=True)
+    (source / 'manifest.json').write_text(json.dumps(dict(drain_end_epoch=100)))
+    resource = source / 'resource-history.jsonl'
+    first = '{"timestamp": 90}\n'
+    resource.write_text(first)
+    destination = Path(campaign.backup_directory(source, tmp_path / 'backup'))
+    resource.write_text(first+'{"timestamp": 110}\n')
+    campaign.backup_directory(source, tmp_path / 'backup')
+    assert (destination / resource.name).read_bytes() == resource.read_bytes()
+    assert next((destination / 'versions').iterdir()).read_text() == first
+    assert json.loads((destination / 'backup-revisions.jsonl').read_text())['additional_records'] == 1
+
+
+def test_resource_append_inside_measurement_interval_is_rejected(tmp_path):
+    source = tmp_path / 'source/run-test'
+    source.mkdir(parents=True)
+    (source / 'manifest.json').write_text(json.dumps(dict(drain_end_epoch=100)))
+    resource = source / 'resource-history.jsonl'
+    resource.write_text('{"timestamp": 90}\n')
+    campaign.backup_directory(source, tmp_path / 'backup')
+    resource.write_text('{"timestamp": 90}\n{"timestamp": 95}\n')
+    with pytest.raises(ValueError, match='Backup differs'):
+        campaign.backup_directory(source, tmp_path / 'backup')

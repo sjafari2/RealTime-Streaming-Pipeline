@@ -1,0 +1,269 @@
+{
+  "status": "provisional",
+  "completed_trials": 6,
+  "planned_trials": 16,
+  "campaign_revision": "4b8817641cff8ab1b6db3299c08e186f5330dc5c",
+  "analysis_revision": "4b8817641cff8ab1b6db3299c08e186f5330dc5c",
+  "definitions": {
+    "latency": "Whole evaluation-production cohort, earliest completion by the drain cutoff; unfinished records are separate.",
+    "completion_windows": "Before: seconds 30\u201360; after: verified activation to 600; final: 570\u2013600. Throughput counts distinct completions in the interval; window latency uses evaluation messages completed there. All exclude drain.",
+    "signal_means": "Equal-weight valid raw observations within each stated interval. Rolling signal plots retain their separately defined 15-observation and 15-interval windows.",
+    "recovery": "Processing backlog at most 100 offsets for 30 continuous valid seconds during continuing input; elapsed time starts at the common scheduled decision.",
+    "repetitions": "Individual results retained; no pooled p99 or average of rolling percentiles."
+  },
+  "runs": [
+    {
+      "backlog_condition": "smaller",
+      "arm": "keep3",
+      "run_number": 1,
+      "run_id": "run-20261027-004457",
+      "admitted": 360000,
+      "completed": 249452,
+      "unfinished": 110548,
+      "unfinished_percent": 30.70777777777778,
+      "p99_seconds": 337.3145740032196,
+      "mean_completion_seconds": 131.81117498525904,
+      "useful_throughput": 362.1616666666667,
+      "deadline_miss_fraction": 0.8317111111111111,
+      "lag_coverage": 0.9966666666666667,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": null,
+        "confirmed_epoch": null,
+        "onset_after_anchor_seconds": null,
+        "confirmation_after_anchor_seconds": null,
+        "unconfirmed_low_start_epoch": null,
+        "observed_low_duration_seconds": 0
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "cb9214e5a795a38cead54c2aaae0e520da9846a520c65d8856150f20c1ae06e6",
+        "pipeline-configmap.yaml": "ab704d6dc7dca6b1bb80cc31cb0894fc17abf79219fa7bfc8fe30c47be5f1097",
+        "outcome-summary.json": "d476db18d35f319d2cd1df0f424ec507c29837bc6b735e6ded1b36de5dc16429",
+        "lag-summary.json": "81667b265e26bb32434d4e5302c7bf124406485f9d77d684169449ac180c90bf",
+        "measurement-audit.json": "ff9aee8e3565a7448010e97a473b59033441ea23bce0566fbc1e43f61ec105a9",
+        "handoff-validation.json": "631cee467616bb09da4975e5a5232f4d87b7113137e9c114ea542462033e42ee",
+        "prometheus.json": "a12201ed0e6fb5c548068affc182617d3db0f7a7304bcd4432513dc0d7f18340"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "run_id": "run-20261027-010153",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 53.109290599823,
+      "mean_completion_seconds": 6.077412279453543,
+      "useful_throughput": 599.9616666666667,
+      "deadline_miss_fraction": 0.25167222222222224,
+      "lag_coverage": 0.9633333333333334,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793084895.67,
+        "confirmed_epoch": 1793084925.67,
+        "onset_after_anchor_seconds": 206.00001192092896,
+        "confirmation_after_anchor_seconds": 236.00001192092896
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "7f628e4906f60c9c5d38a08d3a524958216c67ad093b95da925b6ca15e99406b",
+        "pipeline-configmap.yaml": "67437bfbdfeef66ebff5b8e23d6312933e6f855d141ae58cc35629b78c63f1af",
+        "outcome-summary.json": "84490e68ccf48f0183d6bad319f83bbf5e9caa85403604aeb2c877a29d737892",
+        "lag-summary.json": "7ec6b988a7c5b7ec0895686581df5ae1af18c4678cecef7516d30af2f167f628",
+        "measurement-audit.json": "132eb707a1457f9dd8c0c599085df72c67e4190d3cc9f8696935399a7a34ce6d",
+        "handoff-validation.json": "b12e423275aa17dda90d3acafbf8d363b4e04d1acc41573bdf5eaba5d7eac439",
+        "prometheus.json": "b95bbe583e9dbd09642924f9a0f4e3305cfe436ebec4adef27660fd7584f75d8"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "run_id": "run-20261027-011902",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 78.33990955352783,
+      "mean_completion_seconds": 8.793298009451231,
+      "useful_throughput": 599.9383333333334,
+      "deadline_miss_fraction": 0.24112777777777777,
+      "lag_coverage": 0.94,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793085845.646,
+        "confirmed_epoch": 1793085875.646,
+        "onset_after_anchor_seconds": 128.0003559589386,
+        "confirmation_after_anchor_seconds": 158.0003559589386
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4098.536660671234,
+        "consumer_container_requested_cpu_seconds_observed": 8197.073321342468,
+        "consumer_container_requested_gib_seconds_observed": 3073.9024955034256,
+        "intervals_with_unsupported_resources": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "cbabdecb956cb8616f6d32ca37aad95c825cdd8d262ea75ae554c697535dce8f",
+        "pipeline-configmap.yaml": "3fb35ba457406a6ab573dab8696314dec23f19f5340d60f04e3be6965c928772",
+        "outcome-summary.json": "cd685d49b30cd25d35211bfb29e444ed8c106f52aa40b85570d651d76d78508d",
+        "lag-summary.json": "d173bbe4a060be990848ff629e880afd03ef4b57da6ccb9e776c9521fe0fa4c2",
+        "measurement-audit.json": "7084ddbebcab26bd7500e40b3416b56c8c5068d1e62d10c4be9692ab50617aff",
+        "handoff-validation.json": "fc34ad28595d66a306fcfa27d906d4aab9969b803efa4292f28ee4bf1aae3013",
+        "prometheus.json": "0a613b98efbb69f5522457d812b7c60fc2f487db7bbc62c8d81f5ed6c21c9e49"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "run_id": "run-20261027-013636",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 54.44371676445007,
+      "mean_completion_seconds": 20.789876098907655,
+      "useful_throughput": 587.19,
+      "deadline_miss_fraction": 0.6973555555555555,
+      "lag_coverage": 0.98,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": null,
+        "confirmed_epoch": null,
+        "onset_after_anchor_seconds": null,
+        "confirmation_after_anchor_seconds": null,
+        "unconfirmed_low_start_epoch": null,
+        "observed_low_duration_seconds": 0
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4103.623478651047,
+        "consumer_container_requested_cpu_seconds_observed": 8207.246957302094,
+        "consumer_container_requested_gib_seconds_observed": 3077.717608988285,
+        "intervals_with_unsupported_resources": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "335ea00338d9f8b0aba78a974e7bf4d0bcc62bede0aa6f049fa7b92c21558059",
+        "pipeline-configmap.yaml": "1b7a2d8cf23190af050e5e7b8e66cc9786c9b210454ad161692a674c4d382616",
+        "outcome-summary.json": "02124b0f8b266bb18bcedd96437780390550ccd52d1c5f90606b078ee50a39e0",
+        "lag-summary.json": "87cd6111851e1eb073e87d6150ba9f3caf0b2d86c68525759e85aee092c70bf6",
+        "measurement-audit.json": "f15430e31c2697e1e4f6cc68b995660bd40902207d1b96f8d27bca32e7b31bae",
+        "handoff-validation.json": "d9cffa049a921c0aaca66343b568c5e8897ef5defb0aaa170b5f7646dd548298",
+        "prometheus.json": "3b98a202192a57e952e1e80d02af3fb80ec751dd2909fdc156535e00be9deff6"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "keep3",
+      "run_number": 1,
+      "run_id": "run-20261027-015403",
+      "admitted": 360000,
+      "completed": 221446,
+      "unfinished": 138554,
+      "unfinished_percent": 38.48722222222222,
+      "p99_seconds": 394.37230110168457,
+      "mean_completion_seconds": 187.3230678400451,
+      "useful_throughput": 364.55833333333334,
+      "deadline_miss_fraction": 0.8336,
+      "lag_coverage": 0.99,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": null,
+        "confirmed_epoch": null,
+        "onset_after_anchor_seconds": null,
+        "confirmation_after_anchor_seconds": null,
+        "unconfirmed_low_start_epoch": null,
+        "observed_low_duration_seconds": 0
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "d61a6ca3661d22c6282efe41bf66dba4f38b640f3ceb3e3a20d8569899cd4a66",
+        "pipeline-configmap.yaml": "2c4fc5972703a83b31871717723e949110e9be31bb8cbfd012f3b551afd9e7a9",
+        "outcome-summary.json": "74be94afc85065308989feaac3c703be10d04204934ec9dc8f2101640f8cb469",
+        "lag-summary.json": "2e2f6568499aeb7ca464071dfb56c3016de7b4b3c54b29fba4fd5d2762ae5457",
+        "measurement-audit.json": "f5957917455e153f14cac1d99c2dd7c31076aaad5efa9b8c969a56483d80f5af",
+        "handoff-validation.json": "1ff1e1a28fcf585b2aa6d076fea8dc493b38e85a7b345e172b06a26bbfbdd544",
+        "prometheus.json": "4a46bcfcd975f1360c007e61a80cc92e4a66a41069994b5b1e6a3ceeb1618eef"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "redistribute3",
+      "run_number": 1,
+      "run_id": "run-20261027-021058",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 110.49964714050293,
+      "mean_completion_seconds": 18.411119187196757,
+      "useful_throughput": 648.475,
+      "deadline_miss_fraction": 0.37705833333333333,
+      "lag_coverage": 0.9633333333333334,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793089222.932,
+        "confirmed_epoch": 1793089252.932,
+        "onset_after_anchor_seconds": 390.00027894973755,
+        "confirmation_after_anchor_seconds": 420.00027894973755
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "5c7f8e25051dfac3e9939f19cae1ebd68c90202db107b902b06bb41c0cb8e596",
+        "pipeline-configmap.yaml": "72a07136d0d0683d6586b9a2382549fdb37d6f40bc9fc3949f60a85835cac715",
+        "outcome-summary.json": "0c88f516da7edc21fd0617c24906ee8ac4f8347a84a4fa9829e9d9efcd02d995",
+        "lag-summary.json": "6dc4bec65cbe6a177240ceb931eb591ef10e0076f965bd378b2f4f836298b4bb",
+        "measurement-audit.json": "0b9646f01db684c30b3e288bf7d45e62f628b1657fca5b227b4118526558d4e9",
+        "handoff-validation.json": "1dd28af24524aef42da832550b33797b8cc7784b6d9446e217cdae5ef8d8c43e",
+        "prometheus.json": "7dd3fa403aacc53046f76091fe21f8bbbbd4ce9b7e4caab53480549a07cb2242"
+      }
+    }
+  ],
+  "execution_note": "The API timed out between trials after six validated completions. Original configuration and pod identities were verified before resuming the remaining ten; completed trials were retained."
+}

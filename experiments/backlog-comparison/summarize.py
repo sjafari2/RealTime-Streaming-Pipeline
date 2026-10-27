@@ -210,7 +210,7 @@ def report(payload, output):
         lines.append(f"| {s['backlog_condition'].capitalize()} | {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.3f} | {s['unfinished_percent']:.2f} | {recovery_text} | {cpu_text} |")
     lines += ['', *payload['definitions'].values(), '',
               'The pending-clearance curve uses all records acknowledged and still unfinished at the common decision time, including warm-up records. A plateau below 100% retains unfinished work in the denominator. The dashed line at 540 seconds marks production ending; the remaining 120 seconds are drain.', '',
-              'Capacity estimates apply to the original three pods under the saved busy calibration. Added consumers remain uncalibrated. Two repetitions provide preliminary evidence, and shared-node variability remains a limitation.', '']
+              'Capacity estimates apply to the original three pods under the saved busy calibration. Added consumers remain uncalibrated. Two repetitions per condition are planned; this report contains only the completed trials listed above. Limited repetitions and shared-node variability constrain interpretation.', '']
     (output / 'RESULTS.md').write_text('\n'.join(lines))
 
 
