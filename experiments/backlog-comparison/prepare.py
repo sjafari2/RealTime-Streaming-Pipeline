@@ -19,7 +19,9 @@ from placement_control import pod_identity
 from static_startup import audit_preparation
 from validate_handoff import validate
 from compress_evidence import compress
+from compress_monitoring_csv import compress_csv
 from build_capacity import CounterData, service_window, summarize_windows
+from verify_workload import compare_traces
 
 spec = importlib.util.spec_from_file_location('four_condition_setup', ROOT / 'experiments/four-condition-20260929/run.py')
 base = importlib.util.module_from_spec(spec)
@@ -83,7 +85,8 @@ def verify_pilot(directory, rate):
         if any(abs(counts[phase] / count - 1) > .03 for phase, count in expected.items()):
             raise ValueError('Acknowledged input differs from the scheduled rate by more than three percent')
     end = manifest['evaluation_start_epoch'] + 60
-    before = [x for x in lag['snapshots'] if x['valid'] and end - 2 <= x['timestamp'] <= end]
+    # Prometheus exports timestamps rounded to milliseconds.
+    before = [x for x in lag['snapshots'] if x['valid'] and end - 2 <= x['timestamp'] <= end + .001]
     if not before or lag['covered_fraction'] < .95:
         raise ValueError('Insufficient monitoring for the backlog preparation')
     point = before[-1]
@@ -97,6 +100,8 @@ def verify_pilot(directory, rate):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--calibration-reference', required=True)
+    parser.add_argument('--reuse-capacity', type=Path,
+                        help='Recheck only the pilots using an already validated, unchanged consumer deployment')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     if not args.execute:
@@ -106,7 +111,8 @@ def main():
         raise RuntimeError('Commit the reviewed source before preparation')
     work = ROOT / 'results' / ('backlog-preparation-' + time.strftime('%Y%m%d-%H%M%S'))
     work.mkdir()
-    state = dict(status='preparing', runs=[], calibration_reference=args.calibration_reference)
+    state = dict(status='preparing', runs=[], calibration_reference=args.calibration_reference,
+                 code_revision=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip())
     def save():
         temp = work / 'status.tmp'
         temp.write_text(json.dumps(state, indent=2) + '\n')
@@ -135,28 +141,43 @@ def main():
             checked = audit_preparation(directory) if plan.get('prepare_only') else validate(directory, require_all=False)
             if not plan.get('prepare_only'):
                 compress(directory)
+                compress_csv(directory)
             state['runs'].append(dict(label=label, directory=str(directory), validation=checked))
             save()
             return directory
         try:
             with r.paused_for_experiment(r, base.HPA_PLAN):
                 r.stop()
-                # This is a scheduling check, before performance measurements.
-                r.set_consumer_baseline(6, 240)
-                state['six_consumer_readiness'] = 'passed'
-                save()
-                r.set_consumer_baseline(3, 240)
-                pods = json.loads(r.kubectl('get', 'pods', '-l', r.POD_SELECTOR, '-o', 'json'))['items']
-                config, plan = base.prepared('kafka_scale6', 0, 91, aggregate_rate=600, deadline_ms=1000)
-                plan.update(action='none', target_consumers=None, prepare_only=True,
-                            capture_placement_pods=[pod_identity(p) for p in pods])
-                reference_run = run(config, plan, 'empty-reference')
-                reference = json.loads((reference_run / 'manifest.json').read_text())['placement_reference']
+                if args.reuse_capacity:
+                    previous = json.loads((args.reuse_capacity / 'status.json').read_text())
+                    if (previous['status'] != 'complete' or previous.get('restoration') != 'verified'
+                            or previous['calibration_reference'] != args.calibration_reference):
+                        raise ValueError('Capacity preparation is incomplete or uses a different balanced reference')
+                    reference = json.loads((args.reuse_capacity / 'placement-reference.json').read_text())
+                    pods = json.loads(r.kubectl('get', 'pods', '-l', r.POD_SELECTOR, '-o', 'json'))['items']
+                    if {p['pod']: p for p in reference['pods']} != {p['metadata']['name']: pod_identity(p) for p in pods}:
+                        raise ValueError('Pod identity, placement or resources changed since capacity calibration')
+                    capacity_run = Path(next(item['directory'] for item in previous['runs'] if item['label'] == 'busy-capacity'))
+                    state.update(reused_preparation=str(args.reuse_capacity.resolve()),
+                                 six_consumer_readiness=previous['six_consumer_readiness'])
+                    state['runs'].extend(item for item in previous['runs'] if item['label'] in ('empty-reference', 'busy-capacity'))
+                else:
+                    # This is a scheduling check, before performance measurements.
+                    r.set_consumer_baseline(6, 240)
+                    state['six_consumer_readiness'] = 'passed'
+                    save()
+                    r.set_consumer_baseline(3, 240)
+                    pods = json.loads(r.kubectl('get', 'pods', '-l', r.POD_SELECTOR, '-o', 'json'))['items']
+                    config, plan = base.prepared('kafka_scale6', 0, 91, aggregate_rate=600, deadline_ms=1000)
+                    plan.update(action='none', target_consumers=None, prepare_only=True,
+                                capture_placement_pods=[pod_identity(p) for p in pods])
+                    reference_run = run(config, plan, 'empty-reference')
+                    reference = json.loads((reference_run / 'manifest.json').read_text())['placement_reference']
+                    config, plan = base.prepared('keep3', 0, 90, reference, list(range(12)), aggregate_rate=600, deadline_ms=1000)
+                    config['data'].update(EXP_ID='backlog-capacity-calibration', TRAFFIC_MODE='balanced',
+                                          TARGET_RATE='800', EXP_DURATION_SEC='240', WARMUP_SECONDS='60')
+                    capacity_run = run(config, plan, 'busy-capacity')
                 (work / 'placement-reference.json').write_text(json.dumps(reference, indent=2) + '\n')
-                config, plan = base.prepared('keep3', 0, 90, reference, list(range(12)), aggregate_rate=600, deadline_ms=1000)
-                config['data'].update(EXP_ID='backlog-capacity-calibration', TRAFFIC_MODE='balanced',
-                                      TARGET_RATE='800', EXP_DURATION_SEC='240', WARMUP_SECONDS='60')
-                capacity_run = run(config, plan, 'busy-capacity')
                 capacities = capacity_windows(capacity_run)
                 state['capacities'] = capacities
                 save()
@@ -174,18 +195,25 @@ def main():
                     config['data'].update(EXP_ID='backlog-' + level + '-pilot', EXP_DURATION_SEC='180',
                         PRODUCER_RATE_SCHEDULE_JSON=json.dumps([
                             {'at_seconds': 0, 'rate': rate / 3}, {'at_seconds': 60, 'rate': 200}]))
+                    capacity_config = json.loads((capacity_run / 'manifest.json').read_text())['config']
+                    for key in ('APP_CPU_ITERATIONS', 'APP_DELAY_MS', 'NUM_PARTITIONS'):
+                        if config['data'].get(key) != capacity_config.get(key):
+                            raise ValueError('Processing settings differ from the reused calibration: ' + key)
                     pilots[level] = verify_pilot(run(config, plan, level + '-pilot'), rate)
                     state['pilots'] = pilots
                     save()
                 low, high = [pilots[k]['pre_action_processing_backlog'] for k in ('smaller', 'larger')]
                 if high < 1.5 * low or high - low < 5000:
                     raise RuntimeError('Pilot backlogs were not sufficiently separated; revise preparation before comparisons')
+                trace_check = compare_traces(pilots['smaller']['directory'], pilots['larger']['directory'])
+                state['evaluation_trace_check'] = trace_check
                 specification = dict(status='validated_before_performance_trials', aggregate_input_rate=600,
                     hot_partition_count=12, initial_hot_owner=hot_owner,
                     warmup_aggregate_rates={'smaller': 300, 'larger': 900},
                     calibration_reference=args.calibration_reference,
                     technical_evidence=state['runs'], capacity_reference=str(capacity_run),
-                    pilot_backlogs=pilots, capacity_estimates=capacities,
+                    pilot_backlogs=pilots, capacity_estimates=capacities, evaluation_trace_check=trace_check,
+                    code_revision=state['code_revision'],
                     hot_owner_selection='Lowest eligible measured capacity among the original three, selected before performance comparisons.')
                 (work / 'validated-specification.json').write_text(json.dumps(specification, indent=2) + '\n')
                 state['status'] = 'complete'

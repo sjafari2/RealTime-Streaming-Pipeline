@@ -3,6 +3,7 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import random
 from types import SimpleNamespace
 from unittest.mock import Mock
 import uuid
@@ -61,3 +62,32 @@ def test_producer_uses_shared_start_and_clears_old_pacing_debt(monkeypatch):
     p.runtime.event.assert_called_once()
     p.rate_schedule = None
     assert p.update_rate(101, 102) == 102
+
+
+def test_evaluation_partition_sequence_is_independent_of_warmup_count(monkeypatch):
+    spec = importlib.util.spec_from_file_location('phase_producer', ROOT / 'src/producer/producer.py')
+    module = importlib.util.module_from_spec(spec)
+    import prometheus_client
+    monkeypatch.setattr(prometheus_client, 'Counter', lambda *a, **k: Mock())
+    monkeypatch.setattr(prometheus_client, 'Gauge', lambda *a, **k: Mock())
+    spec.loader.exec_module(module)
+    def trace(warmup_count):
+        p = module.MyProducer.__new__(module.MyProducer)
+        p.rate_schedule, p.workload_phase, p.workload_phase_index = schedule(), 0, 0
+        p.workload_rng_seed_hex = 'abc'
+        p.rng = random.Random(int('abc', 16))
+        p.runtime = SimpleNamespace(control=lambda: {'start_epoch':1000}, event=Mock())
+        for _ in range(warmup_count):
+            p.workload_metadata(1030)
+            p.rng.random()
+            p.rng.choice(range(60))
+        result = []
+        for index in range(1000):
+            metadata = p.workload_metadata(1060 + index/200)
+            assert metadata == {'workload_phase':1,'workload_phase_index':index}
+            candidates = range(12) if p.rng.random() < .8 else range(12,60)
+            result.append(p.rng.choice(candidates))
+        with pytest.raises(RuntimeError, match='backward'):
+            p.workload_metadata(1059)
+        return result
+    assert trace(100) == trace(10000)

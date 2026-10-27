@@ -82,6 +82,9 @@ class MyProducer:
         self.seed = workload['workload_seed']
         # Deployment names remain in evidence, but do not choose the workload sequence.
         self.rng = random.Random(int(workload['workload_rng_seed_hex'], 16))
+        self.workload_rng_seed_hex = workload['workload_rng_seed_hex']
+        self.workload_phase = 0
+        self.workload_phase_index = 0
         self.payload = random.Random(seed_for(self.seed, 'payload')).randbytes(int(os.getenv('PAYLOAD_SIZE_BYTES', '100')))
         self.hot = hot_partitions(os.getenv('SKEW_PARTITION', '.2'), self.count, self.seed) if self.labels['traffic_mode'] == 'skew' else []
         self.cold = [p for p in range(self.count) if p not in self.hot]
@@ -124,19 +127,37 @@ class MyProducer:
                            discarded_pacing_debt=skipped)
         return now
 
-    def delivered(self, error, msg, identity, produced):
+    def workload_metadata(self, produced):
+        if self.rate_schedule is None:
+            return {}
+        phase, _ = self.rate_schedule.at(produced - self.runtime.control()['start_epoch'])
+        if phase < self.workload_phase:
+            raise RuntimeError('Producer clock moved backward across a workload phase')
+        if phase != self.workload_phase:
+            # The evaluation trace does not depend on the amount of warm-up traffic.
+            seed = seed_for(self.workload_rng_seed_hex, 'rate-phase-' + str(phase))
+            self.rng = random.Random(seed)
+            self.workload_phase, self.workload_phase_index = phase, 0
+            self.runtime.event('workload_phase_changed', phase=phase,
+                               first_message_timestamp=produced, rng_seed_hex=format(seed, 'x'))
+        metadata = dict(workload_phase=phase, workload_phase_index=self.workload_phase_index)
+        self.workload_phase_index += 1
+        return metadata
+
+    def delivered(self, error, msg, identity, produced, metadata=None):
         self.resolved += 1
         if error:
             errors.labels(**self.labels).inc()
-            self.runtime.outcome('delivery_failed', message_id=identity, producer_timestamp=produced, error=str(error))
+            self.runtime.outcome('delivery_failed', message_id=identity, producer_timestamp=produced, error=str(error), **(metadata or {}))
         else:
             acknowledged.labels(**self.labels).inc()
             partition_count.labels(**self.labels, topic=msg.topic(), partition=str(msg.partition())).inc()
             self.runtime.outcome('acknowledged', message_id=identity, producer_timestamp=produced,
-                                 topic=msg.topic(), partition=msg.partition(), offset=msg.offset())
+                                 topic=msg.topic(), partition=msg.partition(), offset=msg.offset(), **(metadata or {}))
 
     def send_one(self):
         produced = time.time()
+        metadata = self.workload_metadata(produced)
         identity = f'{self.runtime.run_id}/{self.runtime.pod}/{self.runtime.incarnation}/{self.index}'
         topic = f"{os.environ['TOPIC_TITLE']}_{self.index % self.topic_count}"
         candidates = self.hot if self.hot and self.rng.random() < self.fraction else self.cold
@@ -148,7 +169,7 @@ class MyProducer:
         while not self.runtime.should_stop() and self.runtime.production_open():
             try:
                 self.producer.produce(topic=topic, value=self.payload, partition=partition, headers=headers,
-                                      callback=lambda err, msg: self.delivered(err, msg, identity, produced))
+                                      callback=lambda err, msg: self.delivered(err, msg, identity, produced, metadata))
                 self.enqueued += 1
                 sent.labels(**self.labels).inc()
                 bytes_sent.labels(**self.labels).inc(len(self.payload))

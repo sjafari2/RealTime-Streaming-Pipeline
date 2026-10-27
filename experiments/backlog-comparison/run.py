@@ -29,6 +29,8 @@ def validate_specification(document):
         raise ValueError('The hot owner must be one of the original consumers')
     if not document.get('calibration_reference') or not document.get('technical_evidence'):
         raise ValueError('Record the calibration and technical evidence before the campaign')
+    if document.get('status') == 'validated_before_performance_trials' and document.get('evaluation_trace_check', {}).get('status') != 'passed':
+        raise ValueError('Validate the evaluation input trace across preparation histories')
 
 
 def trial_order():
@@ -69,9 +71,12 @@ def install(document):
                           'Twelve partitions owned by ' + document['initial_hot_owner'] + ' receive 80 percent of input.',
                       study_purpose='Test how accumulated work changes the performance and cost of the four existing responses. '
                           'Warm-up history also changes message count and age; report these differences.',
+                      evaluation_workload='Partition-selection randomness restarts at evaluation with a seed derived from the workload seed and logical producer identifier; the sequence is independent of the warm-up message count.',
+                      slo_rationale='One second is the primary experimental completion deadline, with 0.5 seconds as a stricter sensitivity threshold. Neither is a validated application SLA. The current balanced reference had bounded backlog but did not meet the one-second deadline for every message.',
                       calibration_reference=document['calibration_reference'],
                       lag_analysis_parameters=dict(window_samples=15, growth_window_samples=15,
                           export_step_seconds=2, hot_k=1., minimum_lag=10., persistence=.8, max_gap_seconds=3.))
+        result['outcomes'] = [item.replace('10-second growth', '30-second growth') for item in result['outcomes']]
         return result
 
     base.prepared, base.campaign_protocol = prepared, protocol
