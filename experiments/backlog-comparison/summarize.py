@@ -174,6 +174,26 @@ def plots(runs, output, complete):
     for extension in ('png', 'pdf'):
         fig.savefig(output / ('pending-clearance.'+extension), dpi=180)
     plt.close(fig)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.8), sharex=True, sharey=True)
+    handles = {}
+    for s, _, _ in runs:
+        ax = axes[0 if s['backlog_condition'] == 'smaller' else 1]
+        point = ax.scatter(s['p99_seconds'], s['unfinished_percent'], s=65,
+                           marker='o' if s['run_number'] == 1 else 's',
+                           color=previous.COLORS[ARMS.index(s['arm'])], label=LABELS[s['arm']])
+        ax.annotate(str(s['run_number']), (s['p99_seconds'], s['unfinished_percent']),
+                    xytext=(4, 5), textcoords='offset points', fontsize=9)
+        handles[s['arm']] = point
+    for ax, level in zip(axes, ('Smaller', 'Larger')):
+        ax.set(title=level+' starting backlog', xlabel='Completed-message p99 (s)',
+               ylabel='Unfinished evaluation messages (%)')
+        ax.grid(alpha=.2)
+    fig.suptitle('Performance: completion latency alongside unfinished work' + ('' if complete else ' — provisional'))
+    fig.legend([handles[a] for a in ARMS if a in handles], [LABELS[a] for a in ARMS if a in handles], loc='lower center', ncol=2)
+    fig.tight_layout(rect=(0, .13, 1, .93))
+    for extension in ('png', 'pdf'):
+        fig.savefig(output / ('latency-and-unfinished.'+extension), dpi=180)
+    plt.close(fig)
 
 
 def report(payload, output):
