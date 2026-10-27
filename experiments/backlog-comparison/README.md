@@ -18,4 +18,4 @@ python3 experiments/backlog-comparison/run.py \
   --monitoring-gate path/to/monitoring-gate.json --execute
 ```
 
-The existing campaign coordinator performs empty-topic ownership checks and a low-load scaling check before admitting performance trials. It retains rejected preparations and unfavorable valid outcomes, checks each trial, and restores the shared configuration. Local message logs are compressed only after byte verification; the original cluster evidence is retained. Use the recorded campaign directory with `--resume` only after inspecting and resolving a technical failure.
+The existing campaign coordinator performs empty-topic ownership checks and a low-load scaling check before admitting performance trials. It retains rejected preparations and unfavorable valid outcomes, checks each trial, and restores the shared configuration. Local message logs and the redundant monitoring CSV are compressed only after byte verification; the original cluster evidence and the monitoring JSON used by analysis are retained. Use the recorded campaign directory with `--resume` only after inspecting and resolving a technical failure.

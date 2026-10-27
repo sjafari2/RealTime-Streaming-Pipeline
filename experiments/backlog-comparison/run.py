@@ -88,11 +88,13 @@ def main():
     # Raw logs remain on the cluster PVCs. Locally, retain a byte-verified
     # compressed copy so this campaign does not exhaust the analysis machine.
     from compress_evidence import compress
+    from compress_monitoring_csv import compress_csv
     complete = base.r.complete_run
     def complete_and_compress(plan=None):
         directory = complete(plan)
         if not (plan or {}).get('prepare_only'):
             compress(directory)
+            compress_csv(directory)
         return directory
     base.r.complete_run = complete_and_compress
     sys.argv = [sys.argv[0], '--aggregate-rate', '600', '--hot-partitions', '12', '--slo-ms', '1000'] + remaining
