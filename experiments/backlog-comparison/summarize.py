@@ -25,6 +25,8 @@ previous = module('comparison_summary', 'experiments/four-condition-20260929/sum
 completion = module('completion_windows', 'experiments/four-condition-20260929/analyze_action_windows.py')
 signal = module('signal_windows', 'experiments/four-hot600-20261021/analyze_signal_windows.py')
 ARMS, LABELS = previous.ARMS, previous.LABELS
+INTERVALS = [('before', 'Before'), ('activation_to_end', 'Active–end'),
+             ('evaluation_end', 'Eval. end')]
 
 
 def arrival_capacity(directory, manifest, lag, left, right, capacities):
@@ -103,9 +105,10 @@ def main():
             decision_cohorts=json.loads((directory / 'decision-cohort-summary.json').read_text()),
             arrival_and_capacity={name:arrival_capacity(directory, manifest, lag, left, right, protocol['capacity_estimates'])
                                  for name, left, right in [('before', 30, 60), ('evaluation_end', 570, 600)]})
-        rolling = [completion.window_metrics(messages, left, left+30, 1000) for left in (start+offset for offset in range(30, 571, 30))]
-        curves['window_p99'] = [([(w['end_epoch']-start)/60 for w in rolling],
-                                [w['completion_window_p99_seconds'] for w in rolling])]
+        completion_intervals = [completion.window_metrics(messages, left, left+30, 1000)
+                                for left in (start+offset for offset in range(30, 571, 30))]
+        curves['window_p99'] = [([(w['end_epoch']-start)/60 for w in completion_intervals],
+                                [w['completion_window_p99_seconds'] for w in completion_intervals])]
         summaries.append(summary)
         plot_data.append((summary, curves, marks))
         del ack, done, messages
@@ -115,24 +118,27 @@ def main():
         campaign_revision=state['code_commit'], analysis_revision=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip(),
         protocol=protocol, runs=summaries,
         definitions=dict(latency='Whole evaluation-production cohort, earliest completion by the drain cutoff; unfinished records are separate.',
-            completion_windows='Before: seconds 30–60; after: verified activation to 600; final: 570–600. Throughput counts distinct completions in the interval; window latency uses evaluation messages completed there. All exclude drain.',
+            completion_windows='Before: seconds 30–60; Active–end: verified activation to 600 (60–600 for Keep 3); Eval. end: seconds 570–600. Throughput counts distinct completions in the interval, including warm-up messages completed then. Interval p99 uses evaluation messages completed there, retaining their full creation-to-completion latency. All intervals exclude drain.',
             signal_means='Equal-weight valid raw observations within each stated interval. Rolling signal plots retain their separately defined 15-observation and 15-interval windows.',
             recovery='Processing backlog at most 100 offsets for 30 continuous valid seconds during continuing input; elapsed time starts at the common scheduled decision.',
             repetitions='Individual results retained; no pooled p99 or average of rolling percentiles.'))
     (args.output / 'comparison.json').write_text(json.dumps(payload, indent=2, allow_nan=False)+'\n')
     plots(plot_data, args.output, complete)
+    interval_plots(summaries, args.output)
     report(payload, args.output)
+    interval_report(payload, args.output)
 
 
 def plots(runs, output, complete):
     import matplotlib.pyplot as plt
+    from matplotlib.ticker import MultipleLocator, StrMethodFormatter
     plt.rcParams.update({'font.size': 10, 'axes.spines.top': False, 'axes.spines.right': False})
     for key, title, ylabel in [
-        ('lag', 'Runtime control signals: total lag', 'Offsets'),
+        ('lag', 'Performance Evaluation Metrics: total backlog', 'Offsets'),
         ('growth', 'Runtime control signals: processing-backlog growth', 'Offsets/s; rolling 30 s'),
         ('skew', 'Runtime control signals: mean lag skew', 'Maximum / mean partition lag'),
-        ('throughput', 'Performance: distinct completion throughput', 'Messages/s; 10 s bins'),
-        ('window_p99', 'Performance: completion-window p99', 'Seconds; 30 s completion intervals')]:
+        ('throughput', 'Performance Evaluation Metrics: throughput', 'Messages/s; 10 s intervals'),
+        ('window_p99', 'Performance Evaluation Metrics: p99 completion latency', 'Seconds; 30 s completion intervals')]:
         fig, axes = plt.subplots(2, 2, figsize=(12, 7.6), sharex=True, sharey=True)
         handles = {}
         for s, data, _ in runs:
@@ -147,12 +153,31 @@ def plots(runs, output, complete):
                        xlabel='Minutes after evaluation starts', ylabel=ylabel, xlim=(0, 10))
                 if key != 'growth':
                     ax.set_ylim(bottom=0)
+                if key == 'throughput':
+                    ax.yaxis.set_major_locator(MultipleLocator(500))
+                ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}' if key in ('lag', 'throughput') else '{x:g}'))
+                if key == 'window_p99':
+                    for left, right, label in [(.5, 1, 'Before'), (9.5, 10, 'Eval. end')]:
+                        ax.axvspan(left, right, color='#dddddd', alpha=.4, zorder=0)
+                        ax.text((left+right)/2, .96, label, transform=ax.get_xaxis_transform(),
+                                ha='center', va='top', fontsize=8)
                 ax.grid(alpha=.2)
         fig.suptitle(title + ('' if complete else ' — provisional'))
         fig.legend([handles[a] for a in ARMS if a in handles], [LABELS[a] for a in ARMS if a in handles], loc='lower center', ncol=2)
         fig.tight_layout(rect=(0, .08, 1, .95))
         for extension in ('png', 'pdf'):
             fig.savefig(output / (key+'.'+extension), dpi=180)
+        # Keep the full range above; these additional views intentionally zoom in.
+        if key in ('lag', 'throughput'):
+            upper = 2500 if key == 'lag' else 500
+            for ax in axes.flat:
+                ax.set_ylim(0, upper)
+                ax.yaxis.set_major_locator(MultipleLocator(500 if key == 'lag' else 100))
+            fig.suptitle(title + f' — zoom 0–{upper:,}')
+            fig.text(.5, .925, f'Values above {upper:,} are outside this view; the full-scale plot retains them.',
+                     ha='center', fontsize=9)
+            for extension in ('png', 'pdf'):
+                fig.savefig(output / (key+'-zoom.'+extension), dpi=180)
         plt.close(fig)
     fig, axes = plt.subplots(2, 2, figsize=(12, 7.6), sharex=True, sharey=True)
     handles = {}
@@ -196,6 +221,96 @@ def plots(runs, output, complete):
     plt.close(fig)
 
 
+def interval_plots(summaries, output):
+    """Use the proposal's named intervals without relabelling an entire time series."""
+    import matplotlib.pyplot as plt
+    for metric, title, unit, filename in [
+        ('completion_window_p99_seconds', 'p99 completion latency', 'Seconds', 'p99-reporting-intervals'),
+        ('completion_throughput_per_second', 'throughput', 'Messages/s', 'throughput-reporting-intervals')]:
+        fig, axes = plt.subplots(2, 3, figsize=(13, 8.3))
+        for row, level in enumerate(('smaller', 'larger')):
+            for column, (key, label) in enumerate(INTERVALS):
+                ax = axes[row, column]
+                observed = []
+                for s in summaries:
+                    if s['backlog_condition'] != level:
+                        continue
+                    index = ARMS.index(s['arm'])
+                    value = s['windows'][key]['completion'][metric]
+                    if value is None:
+                        continue
+                    observed.append(value)
+                    shift = -.11 if s['run_number'] == 1 else .11
+                    ax.scatter(index+shift, value, marker='o' if s['run_number'] == 1 else 's',
+                               color=previous.COLORS[index], s=35, zorder=3, clip_on=False)
+                    if metric == 'completion_window_p99_seconds':
+                        ax.annotate(f'{value:.3f}' if value < 1 else f'{value:.1f}',
+                                    (index+shift, value), xytext=(-3 if shift < 0 else 3, 7),
+                                    textcoords='offset points', ha='right' if shift < 0 else 'left',
+                                    fontsize=7, color=previous.COLORS[index])
+                ax.set(title=f'{level.capitalize()} backlog — {label}', ylabel=unit,
+                       xticks=range(4), xticklabels=['Keep 3', 'Redistribute\n3', 'Targeted\nscale 6', 'Kafka\nscale 6'])
+                ax.set_xlim(-.5, 3.5)
+                ax.set_ylim(0, max(observed)*1.15 if observed and max(observed) > 0 else 1)
+                ax.grid(axis='y', alpha=.2)
+        from matplotlib.lines import Line2D
+        fig.legend([Line2D([], [], marker=m, color='#444444', linestyle='None') for m in ('o', 's')],
+                   ['Run 1', 'Run 2'], loc='lower center', ncol=2)
+        fig.suptitle('Performance Evaluation Metrics: '+title)
+        fig.text(.5, .938, 'Before: 30–60 s   |   Active–end: confirmed activation–600 s   |   Eval. end: 570–600 s',
+                 ha='center', fontsize=10)
+        fig.text(.5, .903, 'Times are relative to evaluation start; drain excluded. Keep 3 uses 60–600 s for Active–end.',
+                 ha='center', fontsize=9)
+        fig.tight_layout(rect=(0, .055, 1, .89))
+        for extension in ('png', 'pdf'):
+            fig.savefig(output / (filename+'.'+extension), dpi=180)
+        plt.close(fig)
+
+
+def interval_report(payload, output):
+    """Export unrounded interval values, and the ownership evidence behind recovery."""
+    lines = ['# Performance and signals by reporting interval', '', payload['definitions']['completion_windows'], '',
+             'Mean backlog and mean skew use equally weighted valid original observations. Pending counts refer to evaluation messages at each interval endpoint, not unfinished messages after drain.', '']
+    records = []
+    for level in ('smaller', 'larger'):
+        for number in (1, 2):
+            lines += [f'## {level.capitalize()} starting backlog, Run {number}', '',
+                '| Response | Interval | Throughput (msg/s) | p99 (s) | Mean backlog (offsets) | Mean skew | Pending at endpoint | Valid/expected signal samples |',
+                '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |']
+            for s in sorted(payload['runs'], key=lambda x: ARMS.index(x['arm'])):
+                if s['backlog_condition'] != level or s['run_number'] != number:
+                    continue
+                for key, label in INTERVALS:
+                    window = s['windows'][key]
+                    c, signals = window['completion'], window['signals']
+                    fields = signals['fields']
+                    record = dict(backlog_condition=level, run_number=number, run_id=s['run_id'], arm=s['arm'],
+                        interval=label, start_epoch=c['start_epoch'], end_epoch=c['end_epoch'],
+                        throughput=c['completion_throughput_per_second'], p99_seconds=c['completion_window_p99_seconds'],
+                        mean_backlog=fields.get('total_lag', {}).get('mean'),
+                        mean_skew=fields.get('skew', {}).get('mean'),
+                        pending_at_endpoint=c['acknowledged_evaluation_messages_pending_at_end'],
+                        valid_signal_samples=signals['valid_observations'], expected_signal_samples=signals['expected_observations'])
+                    records.append(record)
+                    def fmt(value, digits=2):
+                        return f'{value:,.{digits}f}' if value is not None else 'Unavailable'
+                    lines.append(f"| {LABELS[s['arm']]} | {label} | {fmt(record['throughput'])} | {fmt(record['p99_seconds'],3)} | {fmt(record['mean_backlog'],1)} | {fmt(record['mean_skew'])} | {record['pending_at_endpoint']:,} | {record['valid_signal_samples']}/{record['expected_signal_samples']} |")
+            lines.append('')
+    lines += ['## Assignment after scaling', '',
+              'These counts describe high-traffic partitions specified by the workload, not partitions classified as hot from measured lag. Each native Kafka scaling run ended with ten total partitions per consumer.', '',
+              '| Starting backlog | Run | C0 | C1 | C2 | C3 | C4 | C5 |',
+              '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+    for s in payload['runs']:
+        if s['arm'] == 'kafka_scale6':
+            counts = s['final_hot_partitions_per_owner']
+            lines.append(f"| {s['backlog_condition'].capitalize()} | {s['run_number']} | " +
+                         ' | '.join(str(counts.get(f'consumer-sts-{i}', 0)) for i in range(6)) + ' |')
+    lines += ['', 'Starting ownership and the original consumers were matched. Native scaling produced different final assignments, and added-consumer nodes could differ. These differences prevent attributing recovery differences solely to starting backlog.', '',
+              'Within each backlog condition, all four responses use the same input and three-consumer assignment before the action at 60 seconds. Similar initial trajectories are therefore expected. Smaller and larger preparations differ in warm-up input and retained backlog; evaluation input is 600 messages/s for both.', '']
+    (output / 'reporting-intervals.json').write_text(json.dumps(records, indent=2, allow_nan=False)+'\n')
+    (output / 'REPORTING_INTERVALS.md').write_text('\n'.join(lines))
+
+
 def report(payload, output):
     lines = ['# Starting backlog and mitigation outcomes', '',
              f"Status: {payload['status']}. Completed trials: {payload['completed_trials']} of {payload['planned_trials']}.", '',
@@ -210,7 +325,8 @@ def report(payload, output):
         lines.append(f"| {s['backlog_condition'].capitalize()} | {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.3f} | {s['unfinished_percent']:.2f} | {recovery_text} | {cpu_text} |")
     lines += ['', *payload['definitions'].values(), '',
               'The pending-clearance curve uses all records acknowledged and still unfinished at the common decision time, including warm-up records. A plateau below 100% retains unfinished work in the denominator. The dashed line at 540 seconds marks production ending; the remaining 120 seconds are drain.', '',
-              'Capacity estimates apply to the original three pods under the saved busy calibration. Added consumers remain uncalibrated. Two repetitions per condition are planned; this report contains only the completed trials listed above. Limited repetitions and shared-node variability constrain interpretation.', '']
+              'Capacity estimates apply to the original three pods under the saved busy calibration. Added consumers remain uncalibrated. Individual repetitions are retained; limited repetitions and shared-node variability constrain interpretation.', '',
+              'See [reporting intervals](REPORTING_INTERVALS.md) for Before, Active–end and Eval. end throughput, p99, mean backlog, mean skew and pending messages, together with native scaling assignments.', '']
     (output / 'RESULTS.md').write_text('\n'.join(lines))
 
 
