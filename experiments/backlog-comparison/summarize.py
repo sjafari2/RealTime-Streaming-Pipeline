@@ -129,7 +129,7 @@ def main():
     interval_report(payload, args.output)
 
 
-def plots(runs, output, complete):
+def plots(runs, output, complete, metrics=None):
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MultipleLocator, StrMethodFormatter
     plt.rcParams.update({'font.size': 10, 'axes.spines.top': False, 'axes.spines.right': False})
@@ -139,6 +139,8 @@ def plots(runs, output, complete):
         ('skew', 'Runtime control signals: mean lag skew', 'Maximum / mean partition lag'),
         ('throughput', 'Performance Evaluation Metrics: throughput', 'Messages/s; 10 s intervals'),
         ('window_p99', 'Performance Evaluation Metrics: p99 completion latency', 'Seconds; 30 s completion intervals')]:
+        if metrics is not None and key not in metrics:
+            continue
         fig, axes = plt.subplots(2, 2, figsize=(12, 7.6), sharex=True, sharey=True)
         handles = {}
         for s, data, _ in runs:
@@ -155,6 +157,11 @@ def plots(runs, output, complete):
                     ax.set_ylim(bottom=0)
                 if key == 'throughput':
                     ax.yaxis.set_major_locator(MultipleLocator(500))
+                elif key == 'lag':
+                    # Label the overview sparsely while retaining 2,500-offset ticks.
+                    ax.yaxis.set_major_locator(MultipleLocator(25000))
+                    ax.yaxis.set_minor_locator(MultipleLocator(2500))
+                    ax.tick_params(axis='y', which='minor', length=3)
                 ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}' if key in ('lag', 'throughput') else '{x:g}'))
                 if key == 'window_p99':
                     for left, right, label in [(.5, 1, 'Before'), (9.5, 10, 'Eval. end')]:
@@ -163,22 +170,16 @@ def plots(runs, output, complete):
                                 ha='center', va='top', fontsize=8)
                 ax.grid(alpha=.2)
         fig.suptitle(title + ('' if complete else ' — provisional'))
+        if key == 'lag':
+            fig.text(.5, .925, 'Tick spacing: 2,500 offsets; labels every 25,000 offsets. Full data range shown.',
+                     ha='center', fontsize=9)
         fig.legend([handles[a] for a in ARMS if a in handles], [LABELS[a] for a in ARMS if a in handles], loc='lower center', ncol=2)
         fig.tight_layout(rect=(0, .08, 1, .95))
         for extension in ('png', 'pdf'):
             fig.savefig(output / (key+'.'+extension), dpi=180)
-        # Keep the full range above; these additional views intentionally zoom in.
-        if key in ('lag', 'throughput'):
-            upper = 2500 if key == 'lag' else 500
-            for ax in axes.flat:
-                ax.set_ylim(0, upper)
-                ax.yaxis.set_major_locator(MultipleLocator(500 if key == 'lag' else 100))
-            fig.suptitle(title + f' — zoom 0–{upper:,}')
-            fig.text(.5, .925, f'Values above {upper:,} are outside this view; the full-scale plot retains them.',
-                     ha='center', fontsize=9)
-            for extension in ('png', 'pdf'):
-                fig.savefig(output / (key+'-zoom.'+extension), dpi=180)
         plt.close(fig)
+    if metrics is not None:
+        return
     fig, axes = plt.subplots(2, 2, figsize=(12, 7.6), sharex=True, sharey=True)
     handles = {}
     for s, _, _ in runs:

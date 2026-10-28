@@ -17,6 +17,8 @@ The evaluation rate is 600 messages/s across three producers. Twelve of sixty pa
 
 The second repetition reverses the order of both backlog conditions and responses. Evaluation partition selection uses a separate deterministic sequence, independent of warm-up message count. Preparation rates are fixed before performance trials; actual backlog and message age at the decision are reported. The two histories change both backlog amount and age, so they are not interpreted as an isolated manipulation of queue size.
 
+The smaller preparation sends 100 messages/s from each of three producers during warm-up; the larger preparation sends 300 messages/s per producer. Consumers process throughout warm-up, and queued records remain when evaluation begins. At that boundary every producer switches to 200 messages/s. The original assignment stays in place for another 60 seconds before the scheduled response, allowing the same continuing input to act on different retained backlogs.
+
 `prepare.py` verifies readiness, the initial assignment, busy-capacity evidence and the two preparation histories. A successful specification records the measured backlogs and the matching evaluation traces. `run.py` then reuses the managed runner, verifies the original pod identities, locations and resources, and checks native scale-up before admitting the sixteen trials. Every trial uses a fresh topic and a saved configuration. Preparation failures remain separate from performance trials; valid unfavorable outcomes remain in the results.
 
 ```bash
@@ -38,7 +40,7 @@ Whole-run completion latency covers evaluation messages completed by the drain c
 
 The reporting intervals follow the proposal: **Before** is evaluation seconds 30–60, **Active–end** is confirmed assignment activation through second 600, and **Eval. end** is seconds 570–600. Keep 3 uses 60–600 for Active–end. `REPORTING_INTERVALS.md` and `reporting-intervals.json` retain throughput, p99, mean backlog, mean skew, endpoint pending counts and signal coverage for each interval and run. Separate interval plots use these same labels. The p99 time series uses consecutive 30-second completion intervals; only its final point represents Eval. end, and the series is not a mean of percentiles.
 
-Full-scale plots retain all observed values. Additional `lag-zoom` and `throughput-zoom` figures show 0–2,500 offsets and 0–500 messages/s respectively, with an explicit note that higher values lie outside the view. In particular, the throughput zoom excludes the 600-message/s steady rate and recovery peaks, so the full-scale figure is needed to interpret sustained throughput.
+Full-scale plots retain all observed values. Backlog ticks are spaced every 2,500 offsets, with labels every 25,000 offsets to keep the full-range overview readable. Throughput ticks and labels are spaced every 500 messages/s. These settings change tick spacing, not axis limits.
 
 `analyze_cohorts.py` also follows records already acknowledged but unfinished at the common decision time, including warm-up records. Its clearance curve retains the entire pending cohort in the denominator. Records produced afterward form a separate cohort; records produced earlier but acknowledged later are retained separately. Recovery requires processing backlog at or below 100 offsets for 30 continuous valid seconds while input continues. Finishing during drain alone does not establish that recovery criterion.
 

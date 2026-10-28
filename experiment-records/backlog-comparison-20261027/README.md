@@ -43,4 +43,4 @@ See [reporting intervals](REPORTING_INTERVALS.md) for Before, Active–end and E
 
 [P99 by reporting interval](p99-reporting-intervals.png), [throughput by reporting interval](throughput-reporting-intervals.png), [p99 over time](window_p99.png), [backlog growth](growth.png), [lag skew](skew.png), [latency and unfinished work](latency-and-unfinished.png), [clearing the pending cohort](pending-clearance.png).
 
-Additional zoom views show [backlog from 0 to 2,500 offsets](lag-zoom.png) and [throughput from 0 to 500 messages/s](throughput-zoom.png). Values above these limits remain in the full-scale plots and are not shown in the zoom views.
+The full data range is retained. Backlog tick marks are spaced every 2,500 offsets, with labels every 25,000 offsets for readability; throughput ticks and labels are spaced every 500 messages/s.
