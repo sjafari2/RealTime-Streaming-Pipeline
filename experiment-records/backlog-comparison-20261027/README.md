@@ -1,24 +1,46 @@
 # Starting backlog and mitigation outcomes
 
-Status: provisional. Completed trials: 6 of 16.
+Status: complete. Completed trials: 16 of 16.
 
 Every evaluation uses 600 total messages/s, with 80% sent to twelve of sixty partitions. Different warm-up rates establish two backlog conditions. These histories also change the age of queued records; they are not a pure manipulation of queue size.
 
 | Starting backlog | Response | Run | Completion p99 (s) | Unfinished (%) | Recovery confirmed (s) | Requested CPU (core-min) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Larger | Keep 3 | 1 | 394.372 | 38.49 | Unconfirmed | 72.0 |
+| Larger | Keep 3 | 2 | 392.254 | 39.24 | Unconfirmed | 72.0 |
 | Larger | Redistribute within 3 | 1 | 110.500 | 0.00 | 420.0 | 72.0 |
+| Larger | Redistribute within 3 | 2 | 105.779 | 0.00 | 432.0 | 72.0 |
+| Larger | Scale + targeted redistribution | 1 | 164.675 | 0.00 | 260.0 | 136.3 |
+| Larger | Scale + targeted redistribution | 2 | 140.455 | 0.00 | 234.0 | 136.5 |
+| Larger | Scale + Kafka rebalance | 1 | 89.844 | 0.00 | 144.0 | 136.8 |
+| Larger | Scale + Kafka rebalance | 2 | 92.795 | 0.00 | 146.0 | 136.9 |
 | Smaller | Keep 3 | 1 | 337.315 | 30.71 | Unconfirmed | 72.0 |
+| Smaller | Keep 3 | 2 | 342.026 | 31.38 | Unconfirmed | 72.0 |
 | Smaller | Redistribute within 3 | 1 | 53.109 | 0.00 | 236.0 | 72.0 |
+| Smaller | Redistribute within 3 | 2 | 54.814 | 0.00 | 242.0 | 72.0 |
 | Smaller | Scale + targeted redistribution | 1 | 78.340 | 0.00 | 158.0 | 136.6 |
+| Smaller | Scale + targeted redistribution | 2 | 82.724 | 0.00 | 190.0 | 136.6 |
 | Smaller | Scale + Kafka rebalance | 1 | 54.444 | 0.00 | Unconfirmed | 136.8 |
+| Smaller | Scale + Kafka rebalance | 2 | 39.309 | 0.00 | 112.0 | 136.8 |
 
 Whole evaluation-production cohort, earliest completion by the drain cutoff; unfinished records are separate.
-Before: seconds 30–60; after: verified activation to 600; final: 570–600. Throughput counts distinct completions in the interval; window latency uses evaluation messages completed there. All exclude drain.
+Before: seconds 30–60; Active–end: verified activation to 600 (60–600 for Keep 3); Eval. end: seconds 570–600. Throughput counts distinct completions in the interval, including warm-up messages completed then. Interval p99 uses evaluation messages completed there, retaining their full creation-to-completion latency. All intervals exclude drain.
 Equal-weight valid raw observations within each stated interval. Rolling signal plots retain their separately defined 15-observation and 15-interval windows.
 Processing backlog at most 100 offsets for 30 continuous valid seconds during continuing input; elapsed time starts at the common scheduled decision.
 Individual results retained; no pooled p99 or average of rolling percentiles.
 
 The pending-clearance curve uses all records acknowledged and still unfinished at the common decision time, including warm-up records. A plateau below 100% retains unfinished work in the denominator. The dashed line at 540 seconds marks production ending; the remaining 120 seconds are drain.
 
-Capacity estimates apply to the original three pods under the saved busy calibration. Added consumers remain uncalibrated. Two repetitions per condition are planned; this report contains only the completed trials listed above. Limited repetitions and shared-node variability constrain interpretation.
+Capacity estimates apply to the original three pods under the saved busy calibration. Added consumers remain uncalibrated. Individual repetitions are retained; limited repetitions and shared-node variability constrain interpretation.
+
+See [reporting intervals](REPORTING_INTERVALS.md) for Before, Active–end and Eval. end throughput, p99, mean backlog, mean skew and pending messages, together with native scaling assignments.
+
+## Figures
+
+![Total backlog during evaluation](lag.png)
+
+![Throughput during evaluation](throughput.png)
+
+[P99 by reporting interval](p99-reporting-intervals.png), [throughput by reporting interval](throughput-reporting-intervals.png), [p99 over time](window_p99.png), [backlog growth](growth.png), [lag skew](skew.png), [latency and unfinished work](latency-and-unfinished.png), [clearing the pending cohort](pending-clearance.png).
+
+Additional zoom views show [backlog from 0 to 2,500 offsets](lag-zoom.png) and [throughput from 0 to 500 messages/s](throughput-zoom.png). Values above these limits remain in the full-scale plots and are not shown in the zoom views.

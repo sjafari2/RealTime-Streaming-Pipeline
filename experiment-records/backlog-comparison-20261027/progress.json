@@ -1,12 +1,12 @@
 {
-  "status": "provisional",
-  "completed_trials": 6,
+  "status": "complete",
+  "completed_trials": 16,
   "planned_trials": 16,
   "campaign_revision": "4b8817641cff8ab1b6db3299c08e186f5330dc5c",
-  "analysis_revision": "4b8817641cff8ab1b6db3299c08e186f5330dc5c",
+  "analysis_revision": "f3042c5f6dfd1f7be50ed401eaa36cb32713bb60",
   "definitions": {
     "latency": "Whole evaluation-production cohort, earliest completion by the drain cutoff; unfinished records are separate.",
-    "completion_windows": "Before: seconds 30\u201360; after: verified activation to 600; final: 570\u2013600. Throughput counts distinct completions in the interval; window latency uses evaluation messages completed there. All exclude drain.",
+    "completion_windows": "Before: seconds 30\u201360; Active\u2013end: verified activation to 600 (60\u2013600 for Keep 3); Eval. end: seconds 570\u2013600. Throughput counts distinct completions in the interval, including warm-up messages completed then. Interval p99 uses evaluation messages completed there, retaining their full creation-to-completion latency. All intervals exclude drain.",
     "signal_means": "Equal-weight valid raw observations within each stated interval. Rolling signal plots retain their separately defined 15-observation and 15-interval windows.",
     "recovery": "Processing backlog at most 100 offsets for 30 continuous valid seconds during continuing input; elapsed time starts at the common scheduled decision.",
     "repetitions": "Individual results retained; no pooled p99 or average of rolling percentiles."
@@ -44,6 +44,11 @@
         "consumer_container_requested_cpu_seconds_observed": 4320.0,
         "consumer_container_requested_gib_seconds_observed": 1620.0,
         "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 12,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0
       },
       "evidence_hashes": {
         "manifest.json": "cb9214e5a795a38cead54c2aaae0e520da9846a520c65d8856150f20c1ae06e6",
@@ -86,6 +91,11 @@
         "consumer_container_requested_gib_seconds_observed": 1620.0,
         "intervals_with_unsupported_resources": 0
       },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 4,
+        "consumer-sts-1": 4,
+        "consumer-sts-2": 4
+      },
       "evidence_hashes": {
         "manifest.json": "7f628e4906f60c9c5d38a08d3a524958216c67ad093b95da925b6ca15e99406b",
         "pipeline-configmap.yaml": "67437bfbdfeef66ebff5b8e23d6312933e6f855d141ae58cc35629b78c63f1af",
@@ -126,6 +136,14 @@
         "consumer_container_requested_cpu_seconds_observed": 8197.073321342468,
         "consumer_container_requested_gib_seconds_observed": 3073.9024955034256,
         "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 2,
+        "consumer-sts-2": 2,
+        "consumer-sts-3": 2,
+        "consumer-sts-4": 2,
+        "consumer-sts-5": 2
       },
       "evidence_hashes": {
         "manifest.json": "cbabdecb956cb8616f6d32ca37aad95c825cdd8d262ea75ae554c697535dce8f",
@@ -170,6 +188,14 @@
         "consumer_container_requested_gib_seconds_observed": 3077.717608988285,
         "intervals_with_unsupported_resources": 0
       },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 0,
+        "consumer-sts-4": 0,
+        "consumer-sts-5": 10
+      },
       "evidence_hashes": {
         "manifest.json": "335ea00338d9f8b0aba78a974e7bf4d0bcc62bede0aa6f049fa7b92c21558059",
         "pipeline-configmap.yaml": "1b7a2d8cf23190af050e5e7b8e66cc9786c9b210454ad161692a674c4d382616",
@@ -213,6 +239,11 @@
         "consumer_container_requested_gib_seconds_observed": 1620.0,
         "intervals_with_unsupported_resources": 0
       },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 12,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0
+      },
       "evidence_hashes": {
         "manifest.json": "d61a6ca3661d22c6282efe41bf66dba4f38b640f3ceb3e3a20d8569899cd4a66",
         "pipeline-configmap.yaml": "2c4fc5972703a83b31871717723e949110e9be31bb8cbfd012f3b551afd9e7a9",
@@ -254,6 +285,11 @@
         "consumer_container_requested_gib_seconds_observed": 1620.0,
         "intervals_with_unsupported_resources": 0
       },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 4,
+        "consumer-sts-1": 4,
+        "consumer-sts-2": 4
+      },
       "evidence_hashes": {
         "manifest.json": "5c7f8e25051dfac3e9939f19cae1ebd68c90202db107b902b06bb41c0cb8e596",
         "pipeline-configmap.yaml": "72a07136d0d0683d6586b9a2382549fdb37d6f40bc9fc3949f60a85835cac715",
@@ -263,7 +299,489 @@
         "handoff-validation.json": "1dd28af24524aef42da832550b33797b8cc7784b6d9446e217cdae5ef8d8c43e",
         "prometheus.json": "7dd3fa403aacc53046f76091fe21f8bbbbd4ce9b7e4caab53480549a07cb2242"
       }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "run_id": "run-20261027-032235",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 164.67528128623962,
+      "mean_completion_seconds": 31.348595812910794,
+      "useful_throughput": 648.9183333333333,
+      "deadline_miss_fraction": 0.36785,
+      "lag_coverage": 0.95,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793093361.941,
+        "confirmed_epoch": 1793093391.941,
+        "onset_after_anchor_seconds": 229.99960088729858,
+        "confirmation_after_anchor_seconds": 259.9996008872986
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4089.8147377967834,
+        "consumer_container_requested_cpu_seconds_observed": 8179.629475593567,
+        "consumer_container_requested_gib_seconds_observed": 3067.3610533475876,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 2,
+        "consumer-sts-2": 2,
+        "consumer-sts-3": 2,
+        "consumer-sts-4": 2,
+        "consumer-sts-5": 2
+      },
+      "evidence_hashes": {
+        "manifest.json": "76341d72513e89d7fd0860b3ef3cd178ca23ce0af08896876e03d0854356a53b",
+        "pipeline-configmap.yaml": "9f41b2e42f71a856693e61e3695aabc04e3343963e51d5cda52b620fa8b9251c",
+        "outcome-summary.json": "ca6fa134432a7800cb3e7f449d26a6eda23e03a817341c765052e0f85de4fc3f",
+        "lag-summary.json": "4765ba27e1ff3f3913d360b7aba2b5a3aedf7158ccaf25d05d6b318d596288f1",
+        "measurement-audit.json": "66c53146a2cdf23a6053e765121689e2f9c71a4d859dd26de56c7a6acf002a05",
+        "handoff-validation.json": "a807f6d89fc91cd0a81aa9a55597605874b2bfd7e1a2d22e9f2dde9f460a55ec",
+        "prometheus.json": "7b17ed3250dbca72e2a067d0a7c7ad75a0cdc5057a6cb031143f6f31757b6f87"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "run_id": "run-20261027-034017",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 89.84351444244385,
+      "mean_completion_seconds": 9.519672193958362,
+      "useful_throughput": 648.9383333333334,
+      "deadline_miss_fraction": 0.2180888888888889,
+      "lag_coverage": 0.9833333333333333,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793094319.74,
+        "confirmed_epoch": 1793094349.74,
+        "onset_after_anchor_seconds": 114.00002884864807,
+        "confirmation_after_anchor_seconds": 144.00002884864807
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4104.047502279282,
+        "consumer_container_requested_cpu_seconds_observed": 8208.095004558563,
+        "consumer_container_requested_gib_seconds_observed": 3078.035626709461,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 3,
+        "consumer-sts-4": 4,
+        "consumer-sts-5": 3
+      },
+      "evidence_hashes": {
+        "manifest.json": "581d9ed9a6f6e04cd12a9f9c02404a983a017113a571fa53faa1817119494991",
+        "pipeline-configmap.yaml": "9e2ceb50fdfbb3c5871f209c8bce4d75010def539902a82b8dcba9031c3ddc08",
+        "outcome-summary.json": "0b2faf68c6a39874b69bcfd8a741ae4597b8e8c1d2b0cc998a96093f6483fa71",
+        "lag-summary.json": "be6852b8fdcca40dc77603fe24900d61826abbaca23f18aa69e89d2372f40a89",
+        "measurement-audit.json": "c5d8cfbcf2e4a208e44c6ec7bb652fab22ae5ecf902a96aad7935b24bf12c739",
+        "handoff-validation.json": "01a9053be95b515320740a6413da0b107be2f0f2dc0403f5e90f636308792e14",
+        "prometheus.json": "fdbe433060a1c2520dc599a6bb972e09545776150a60e191233a205560f52b51"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "run_id": "run-20261027-035814",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 92.79484701156616,
+      "mean_completion_seconds": 9.813823400814666,
+      "useful_throughput": 649.0833333333334,
+      "deadline_miss_fraction": 0.22362222222222222,
+      "lag_coverage": 0.9733333333333334,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793095392.794,
+        "confirmed_epoch": 1793095422.794,
+        "onset_after_anchor_seconds": 116.00043082237244,
+        "confirmation_after_anchor_seconds": 146.00043082237244
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4107.072456121445,
+        "consumer_container_requested_cpu_seconds_observed": 8214.14491224289,
+        "consumer_container_requested_gib_seconds_observed": 3080.3043420910835,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 3,
+        "consumer-sts-4": 4,
+        "consumer-sts-5": 3
+      },
+      "evidence_hashes": {
+        "manifest.json": "304b5e8157f748405d6bdec0b8f24df9f8d252f6d66dad3be64c3513cf5fd0db",
+        "pipeline-configmap.yaml": "943ed9b928bdd6493e368a004d1bf41a68bb349ab91ae59fc407199e4a65c6b3",
+        "outcome-summary.json": "e16c41ef9bcd34a2330f4e0cd9efc72a930c990e7dc2feb1958761699fbe75df",
+        "lag-summary.json": "fb07eae58c2813557e72679ba1aaa2e359ca238a9588ea45e586c8869f776a65",
+        "measurement-audit.json": "17d8088d46d9cc8b1bb53cd3883478502d9a82512f1433e92cddcea4b21bdf2e",
+        "handoff-validation.json": "ecf16253babe00053d289aac81b0b2bf7f75bcd84bc1c9d85bf55298f65330e8",
+        "prometheus.json": "2f3e101cb017f7f3589bee25a1b88165bdb16e348f06ad5e1e314b4abfaab0c0"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "run_id": "run-20261027-041603",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 140.45509386062622,
+      "mean_completion_seconds": 21.23963306078712,
+      "useful_throughput": 649.685,
+      "deadline_miss_fraction": 0.3354111111111111,
+      "lag_coverage": 0.95,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793096543.654,
+        "confirmed_epoch": 1793096573.654,
+        "onset_after_anchor_seconds": 203.99968099594116,
+        "confirmation_after_anchor_seconds": 233.99968099594116
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4096.188446760178,
+        "consumer_container_requested_cpu_seconds_observed": 8192.376893520355,
+        "consumer_container_requested_gib_seconds_observed": 3072.141335070133,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 2,
+        "consumer-sts-2": 2,
+        "consumer-sts-3": 2,
+        "consumer-sts-4": 2,
+        "consumer-sts-5": 2
+      },
+      "evidence_hashes": {
+        "manifest.json": "605b4ed3f715180cfb96efbbd6c81904ec7782a1b45ff2e985f6f08cae3476d5",
+        "pipeline-configmap.yaml": "2b08f4ef7fe760bf8958118fd164c7fd7ed2daf9ef9d9ca4be4a621c72fb3eb8",
+        "outcome-summary.json": "4de8009939e6d580d93e0534ee730a2bf9991431560f49b920e42beea30bd05b",
+        "lag-summary.json": "b00cb90667a058a8b0c84968a87aaf9196de0a47f84dc9375765555ab281bea4",
+        "measurement-audit.json": "094bef13f3290a6acaee302ca75b037a770ccac2149b499ac65815ed5342ecf6",
+        "handoff-validation.json": "9820e53936c9c3ed3c39c7eb152e95dad39f43b5f187efbf9dcfaf0973c86dba",
+        "prometheus.json": "3861c58fef051867ee5e2dd7bfbbf6ef18a8eb92dcf6a6405462fee766b94823"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "run_id": "run-20261027-043343",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 105.77876377105713,
+      "mean_completion_seconds": 18.734574423360826,
+      "useful_throughput": 649.6716666666666,
+      "deadline_miss_fraction": 0.38303055555555554,
+      "lag_coverage": 0.9666666666666667,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793097803.886,
+        "confirmed_epoch": 1793097833.886,
+        "onset_after_anchor_seconds": 401.9997248649597,
+        "confirmation_after_anchor_seconds": 431.9997248649597
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 4,
+        "consumer-sts-1": 4,
+        "consumer-sts-2": 4
+      },
+      "evidence_hashes": {
+        "manifest.json": "ac070225eb80bcd3748f5e620d1298dd32cf1e168e80b251f2c6f8e05c632e20",
+        "pipeline-configmap.yaml": "ea009b68ba2cb2b7a916a01896083029a2150073c6ff0cd274d1ab90a5486bc8",
+        "outcome-summary.json": "a3bd3d05ff6bfb83dd0ace668d208b7a2dc4b50d43f3ecdb9fa5a23f4ed969de",
+        "lag-summary.json": "ac96e8541ddfdf14d0e86913673d0dd466e3390aca673ae8a8538c5c9bfab8d9",
+        "measurement-audit.json": "b01fe8b4bf34e9f181f5537e47e734db59be2944a6c25ce84aaf9ad0828e6c70",
+        "handoff-validation.json": "dc4b9c7a0b5645a9d1052106338a2a331c6fd4d0abd0c95584ea7234943ffd74",
+        "prometheus.json": "9c84b46a9e9c11ff63633dc88cd29abb722c727080c6c049224cd46108a3adf2"
+      }
+    },
+    {
+      "backlog_condition": "larger",
+      "arm": "keep3",
+      "run_number": 2,
+      "run_id": "run-20261027-045115",
+      "admitted": 360000,
+      "completed": 218737,
+      "unfinished": 141263,
+      "unfinished_percent": 39.23972222222222,
+      "p99_seconds": 392.2539474964142,
+      "mean_completion_seconds": 188.6199794597487,
+      "useful_throughput": 361.15166666666664,
+      "deadline_miss_fraction": 0.833475,
+      "lag_coverage": 0.99,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": null,
+        "confirmed_epoch": null,
+        "onset_after_anchor_seconds": null,
+        "confirmation_after_anchor_seconds": null,
+        "unconfirmed_low_start_epoch": null,
+        "observed_low_duration_seconds": 0
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 12,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "6f0411be58d2552ec8869f05fc931adb8e0a2ff50f403635e01c2c4580216087",
+        "pipeline-configmap.yaml": "44a3d6e6c9d53a4de37988f3812f6867b0130ab2fee5d416298cd3ee0d70619a",
+        "outcome-summary.json": "82c98094c82b0dd9e458d9a9b18a141d8336800b893304d49ff452db87e1dc98",
+        "lag-summary.json": "5bd3e9e32968b3a9af446528501f9175557879bc05c088126470e3b15887c6b8",
+        "measurement-audit.json": "001adc63b501034e28d81c3bb3e4ce1730c6fa1ea22a3e0f2deadd49631b364a",
+        "handoff-validation.json": "a520838f5351676050c0b5efcee0f39aac24f0c80dbfd67ebc56cb7e0a680e47",
+        "prometheus.json": "4e3596fa4dec40baaa38aaf3a655fe498ef7c4924474f37f35d294923abb6e03"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "run_id": "run-20261027-050819",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 39.308648347854614,
+      "mean_completion_seconds": 3.3611210467411414,
+      "useful_throughput": 599.9433333333334,
+      "deadline_miss_fraction": 0.17040555555555556,
+      "lag_coverage": 0.9566666666666667,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793099563.93,
+        "confirmed_epoch": 1793099593.93,
+        "onset_after_anchor_seconds": 81.99980616569519,
+        "confirmation_after_anchor_seconds": 111.99980616569519
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4103.830412149429,
+        "consumer_container_requested_cpu_seconds_observed": 8207.660824298859,
+        "consumer_container_requested_gib_seconds_observed": 3077.872809112072,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 3,
+        "consumer-sts-4": 4,
+        "consumer-sts-5": 3
+      },
+      "evidence_hashes": {
+        "manifest.json": "0098c416ccc2d1f187db639ae8c1a247059777e103448ed4e8b972e83bcd27ef",
+        "pipeline-configmap.yaml": "d622c4490fefcdaf12020d4375ef4b47bfcd43d5ad2c35e79f3d254351f499f9",
+        "outcome-summary.json": "eb63eacba16946390937d8a3c5fea5043149e426ee1c169b8ec0d4562c588281",
+        "lag-summary.json": "7290691050d091688b4f36bc1d74742c617ee6eb5811118061a81c5394fc878c",
+        "measurement-audit.json": "bd236665ce25612745d4b71b73a6275e96ecfd7b96cb0edbb25cf8a35d313bca",
+        "handoff-validation.json": "7f0d5148a40032ef82828bd954afbf22d45561067cb9f78c10620963d7f5d64f",
+        "prometheus.json": "64aa782dc1f237dfa9fc799201bfb093213d10aaade8b33c94e9c378664081c8"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "run_id": "run-20261027-052551",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 82.72400903701782,
+      "mean_completion_seconds": 10.577225943163368,
+      "useful_throughput": 599.9116666666666,
+      "deadline_miss_fraction": 0.27636944444444445,
+      "lag_coverage": 0.9566666666666667,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793100691.136,
+        "confirmed_epoch": 1793100721.136,
+        "onset_after_anchor_seconds": 160.0001220703125,
+        "confirmation_after_anchor_seconds": 190.0001220703125
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 4099.4956312179565,
+        "consumer_container_requested_cpu_seconds_observed": 8198.991262435913,
+        "consumer_container_requested_gib_seconds_observed": 3074.6217234134674,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 2,
+        "consumer-sts-2": 2,
+        "consumer-sts-3": 2,
+        "consumer-sts-4": 2,
+        "consumer-sts-5": 2
+      },
+      "evidence_hashes": {
+        "manifest.json": "4a133d2f6733267cd8cd58f872d3b5405d3a91dadab929a3823b89d15c406dda",
+        "pipeline-configmap.yaml": "1f2eeddc99dc3e6538c8de7bae52a0fe734d76f18a6f0d839327c1c9db7ddb13",
+        "outcome-summary.json": "32178f1c3bf74fdd1edf22b8ea61a5cfdf4a20ac2a93edb74254f8a8f0f303bb",
+        "lag-summary.json": "50b94ef286ee65ef6e8cac52cab12c0d52dba28f5362ebf0aca369211ec5b448",
+        "measurement-audit.json": "10fc1cdcfdc1c12a8aa2b9eda18ab5348ba0136e89a979784e9d42990fd30730",
+        "handoff-validation.json": "1546c48f981f513cdebfa29517ae82fab5382f8a4a4252740113ab723e9d5c5b",
+        "prometheus.json": "d2a64eec507c01c85fa76937125637c9ffcd459562fbc35523a39b25cbbb6cb9"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "redistribute3",
+      "run_number": 2,
+      "run_id": "run-20261027-054324",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 54.814449310302734,
+      "mean_completion_seconds": 6.440167273567782,
+      "useful_throughput": 600.0233333333333,
+      "deadline_miss_fraction": 0.2541555555555556,
+      "lag_coverage": 0.9666666666666667,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": 1793101796.415,
+        "confirmed_epoch": 1793101826.415,
+        "onset_after_anchor_seconds": 211.99989080429077,
+        "confirmation_after_anchor_seconds": 241.99989080429077
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 4,
+        "consumer-sts-1": 4,
+        "consumer-sts-2": 4
+      },
+      "evidence_hashes": {
+        "manifest.json": "d554f710db990e721685dede4fcf277b9ed4089794f8f67f5e3199f90854fa69",
+        "pipeline-configmap.yaml": "2ecf1ec0f8087cb201724726d83de71d0809156b26b7264077f6604ee2f169a2",
+        "outcome-summary.json": "f8ea4e75ad9c90aa9868e604f50cd0460d84ddbf21b62cbc77f25a0113853d7e",
+        "lag-summary.json": "5b5947ac6f97ad21df1192ecb8b95664914c7ea73c4cee22f7da34aa4371de7d",
+        "measurement-audit.json": "880e5d905505c9f172cdf3101bed60c5549dd046ecbe4ba554dfa1064c95a412",
+        "handoff-validation.json": "50729c5f2abfc5d8bffe848037569335ccd1ee422dcd7dbb2ebd8b7c63a8057c",
+        "prometheus.json": "939ab165c6b5517a9bd44b0c495e7d7f1bd9e1f6ef30c693df2ea6ea0453f262"
+      }
+    },
+    {
+      "backlog_condition": "smaller",
+      "arm": "keep3",
+      "run_number": 2,
+      "run_id": "run-20261027-060048",
+      "admitted": 360000,
+      "completed": 247036,
+      "unfinished": 112964,
+      "unfinished_percent": 31.378888888888888,
+      "p99_seconds": 342.0257797241211,
+      "mean_completion_seconds": 131.94002720912286,
+      "useful_throughput": 358.43666666666667,
+      "deadline_miss_fraction": 0.8338111111111111,
+      "lag_coverage": 0.99,
+      "recovery_common_decision": {
+        "threshold_offsets": 100,
+        "hold_seconds": 30,
+        "first_low_epoch": null,
+        "confirmed_epoch": null,
+        "onset_after_anchor_seconds": null,
+        "confirmation_after_anchor_seconds": null,
+        "unconfirmed_low_start_epoch": null,
+        "observed_low_duration_seconds": 0
+      },
+      "requested_resources_evaluation_and_drain": {
+        "covered_seconds": 720.0,
+        "observation_seconds": 720.0,
+        "covered_fraction": 1.0,
+        "scheduled_consumer_pod_seconds_observed": 2160.0,
+        "consumer_container_requested_cpu_seconds_observed": 4320.0,
+        "consumer_container_requested_gib_seconds_observed": 1620.0,
+        "intervals_with_unsupported_resources": 0
+      },
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 12,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "8f1440bf6442128ce75fda07cf0fb20323658c58a69d080b55841762afc41c24",
+        "pipeline-configmap.yaml": "3b207efb0938a5a78a1bdea80e86925b83653e075cd84e4d911a0d7c45e39ace",
+        "outcome-summary.json": "3f608a6a866d0409d5e82a06c58230844b974eec847d5b4bbe2722a3ce4e96ef",
+        "lag-summary.json": "5348d588d500e8d7f4e30694c61ea9e6dfac39068c6f5a8ce3073a6e9c610966",
+        "measurement-audit.json": "81e0edde5adb58cdd6377ba922067200303a0ab828ba18fba11f765de7d739b1",
+        "handoff-validation.json": "bf86bcd6ecbb340ec1207a8ad5e561525d42ea9a900edcba115d2db25decbe8a",
+        "prometheus.json": "3a45a966537fe56f920d1e2fff6a663e0074d0279d011ba78a941992a55a91ce"
+      }
     }
   ],
-  "execution_note": "The API timed out between trials after six validated completions. Original configuration and pod identities were verified before resuming the remaining ten; completed trials were retained."
+  "execution_note": "The API timed out between trials after six validated completions. Original configuration and pod identities were verified before resuming the remaining ten; all sixteen trials completed and passed validation. Completed trials were retained."
 }

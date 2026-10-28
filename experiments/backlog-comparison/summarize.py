@@ -261,7 +261,11 @@ def interval_plots(summaries, output):
                  ha='center', fontsize=10)
         fig.text(.5, .903, 'Times are relative to evaluation start; drain excluded. Keep 3 uses 60–600 s for Active–end.',
                  ha='center', fontsize=9)
-        fig.tight_layout(rect=(0, .055, 1, .89))
+        note = ('P99 includes completed evaluation messages only; pending work is reported separately. Panel scales vary.'
+                if metric == 'completion_window_p99_seconds' else
+                'Throughput includes warm-up messages completed within each interval. Panel scales vary.')
+        fig.text(.5, .057, note, ha='center', fontsize=9)
+        fig.tight_layout(rect=(0, .085, 1, .89))
         for extension in ('png', 'pdf'):
             fig.savefig(output / (filename+'.'+extension), dpi=180)
         plt.close(fig)
