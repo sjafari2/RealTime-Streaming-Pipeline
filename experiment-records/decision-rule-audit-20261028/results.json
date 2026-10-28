@@ -1,0 +1,270 @@
+{
+  "scope": "Constructed deterministic cases; source execution plus mathematical oracle. No Nautilus trials.",
+  "source_revision": "bed4c83dea8b68cb665cc222e080ea7736818606",
+  "checks": [
+    "Aggregate-capacity counterexample reproduced in original C#; exact feasible fleet found.",
+    "Lag-aware feasibility repair exists in the same fleet, with three moves and five-second global pause.",
+    "Ezzeddine 2024 handles the concentrated-backlog state for all 120 item orders.",
+    "Elapsed-pause counterexample survives both orders; prospective lag is included, not omitted.",
+    "Pause sensitivity includes beneficial and harmful moves; a zero-pause negative control passes.",
+    "Healthy no-action and physically infeasible single-partition controls pass.",
+    "Snapshot waiting/latency and time to zero backlog are kept distinct."
+  ],
+  "cc_packing": {
+    "original": {
+      "planned_fleet": [
+        "Small",
+        "Medium"
+      ],
+      "decision": {
+        "fleet": [
+          {
+            "Id": "C0",
+            "profile": "Medium",
+            "capacity": 1000,
+            "rate": 1100,
+            "lag": 0,
+            "required": 1100,
+            "partitions": [
+              "P0"
+            ]
+          },
+          {
+            "Id": "C1",
+            "profile": "Small",
+            "capacity": 500,
+            "rate": 100,
+            "lag": 0,
+            "required": 100,
+            "partitions": [
+              "P1",
+              "P2"
+            ]
+          }
+        ],
+        "cost_per_second": 1.5
+      },
+      "backlog_after_10_seconds": 1000
+    },
+    "repair_profiles": [
+      "Large"
+    ],
+    "repair_assignment": [
+      0,
+      0,
+      0
+    ],
+    "repair_cost_per_second": 2.5,
+    "steady_backlog_growth_original_msg_s": 100,
+    "steady_backlog_growth_repair_msg_s": 0
+  },
+  "cc_stickiness": {
+    "original": {
+      "planned_fleet": [
+        "Large",
+        "Large",
+        "Large"
+      ],
+      "decision": {
+        "fleet": [
+          {
+            "Id": "C0",
+            "profile": "Large",
+            "capacity": 2500,
+            "rate": 2370,
+            "lag": 30000,
+            "required": 5370,
+            "partitions": [
+              "P0",
+              "P1",
+              "P2"
+            ]
+          },
+          {
+            "Id": "C1",
+            "profile": "Large",
+            "capacity": 2500,
+            "rate": 500,
+            "lag": 0,
+            "required": 500,
+            "partitions": [
+              "P3",
+              "P4"
+            ]
+          },
+          {
+            "Id": "C2",
+            "profile": "Large",
+            "capacity": 2500,
+            "rate": 0,
+            "lag": 0,
+            "required": 0,
+            "partitions": []
+          }
+        ],
+        "cost_per_second": 7.5
+      },
+      "backlog_after_10_seconds": 28700
+    },
+    "repair_assignment": [
+      0,
+      1,
+      2,
+      0,
+      1
+    ],
+    "moved_partitions": 3,
+    "no_action_fluid_recovery_seconds": 230.76923076923077,
+    "repair_fluid_recovery_with_5s_pause_seconds": 15.41095890410959,
+    "ezzeddine_recovery_seconds_range": [
+      15.41095890410959,
+      18.59504132231405
+    ],
+    "same_fleet_cost_per_second": 7.5
+  },
+  "ezzeddine_elapsed_pause": {
+    "rates": [
+      100,
+      100
+    ],
+    "initial_lags": [
+      18000,
+      3000
+    ],
+    "capacity_each": 2500,
+    "latency_target_seconds": 10,
+    "item_orders": [
+      {
+        "order": [
+          0,
+          1
+        ],
+        "action": "REASS",
+        "assignment": [
+          0,
+          1
+        ],
+        "unchanged": {
+          "count": 21000,
+          "p99_seconds": 8.316,
+          "max_seconds": 8.4,
+          "deadline_misses": 0,
+          "deadline_miss_percent": 0.0
+        },
+        "published_rule": {
+          "count": 21000,
+          "p99_seconds": 12.116,
+          "max_seconds": 12.2,
+          "deadline_misses": 5500,
+          "deadline_miss_percent": 26.190476190476193
+        },
+        "admission_guard": "KEEP",
+        "fixed": {
+          "count": 21000,
+          "p99_seconds": 8.316,
+          "max_seconds": 8.4,
+          "deadline_misses": 0,
+          "deadline_miss_percent": 0.0
+        }
+      },
+      {
+        "order": [
+          1,
+          0
+        ],
+        "action": "REASS",
+        "assignment": [
+          1,
+          0
+        ],
+        "unchanged": {
+          "count": 21000,
+          "p99_seconds": 8.316,
+          "max_seconds": 8.4,
+          "deadline_misses": 0,
+          "deadline_miss_percent": 0.0
+        },
+        "published_rule": {
+          "count": 21000,
+          "p99_seconds": 12.116,
+          "max_seconds": 12.2,
+          "deadline_misses": 5500,
+          "deadline_miss_percent": 26.190476190476193
+        },
+        "admission_guard": "KEEP",
+        "fixed": {
+          "count": 21000,
+          "p99_seconds": 8.316,
+          "max_seconds": 8.4,
+          "deadline_misses": 0,
+          "deadline_miss_percent": 0.0
+        }
+      }
+    ],
+    "pause_sensitivity": [
+      {
+        "pause_seconds": 0,
+        "action": "REASS",
+        "count": 21000,
+        "p99_seconds": 7.116,
+        "max_seconds": 7.2,
+        "deadline_misses": 0,
+        "deadline_miss_percent": 0.0
+      },
+      {
+        "pause_seconds": 1,
+        "action": "REASS",
+        "count": 21000,
+        "p99_seconds": 8.116,
+        "max_seconds": 8.2,
+        "deadline_misses": 0,
+        "deadline_miss_percent": 0.0
+      },
+      {
+        "pause_seconds": 2,
+        "action": "REASS",
+        "count": 21000,
+        "p99_seconds": 9.116,
+        "max_seconds": 9.2,
+        "deadline_misses": 0,
+        "deadline_miss_percent": 0.0
+      },
+      {
+        "pause_seconds": 2.8,
+        "action": "REASS",
+        "count": 21000,
+        "p99_seconds": 9.916,
+        "max_seconds": 10.0,
+        "deadline_misses": 0,
+        "deadline_miss_percent": 0.0
+      },
+      {
+        "pause_seconds": 3,
+        "action": "REASS",
+        "count": 21000,
+        "p99_seconds": 10.116,
+        "max_seconds": 10.2,
+        "deadline_misses": 500,
+        "deadline_miss_percent": 2.380952380952381
+      },
+      {
+        "pause_seconds": 5,
+        "action": "REASS",
+        "count": 21000,
+        "p99_seconds": 12.116,
+        "max_seconds": 12.2,
+        "deadline_misses": 5500,
+        "deadline_miss_percent": 26.190476190476193
+      }
+    ],
+    "no_action_fluid_recovery_seconds": 9.130434782608695,
+    "reassignment_fluid_recovery_seconds": 12.708333333333332
+  },
+  "limits": [
+    "Ezzeddine 2024 full paper verified; 2025 full text unavailable.",
+    "Packing helper is a reconstruction; all item orders checked, not author implementation.",
+    "Repair uses a tiny exhaustive oracle, not a scalable controller.",
+    "Transition guard tested with known creation time, exact capacities and constant arrivals.",
+    "No claim of novelty, general superiority, production correctness, or reproduction of published tables."
+  ]
+}

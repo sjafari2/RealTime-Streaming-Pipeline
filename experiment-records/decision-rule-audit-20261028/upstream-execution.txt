@@ -1,0 +1,86 @@
+{
+  "upstream_revision": "bed4c83dea8b68cb665cc222e080ea7736818606",
+  "scope": "Original C# decision methods and ten fixed-assignment simulation steps; not a Kafka trial or complete campaign.",
+  "packing": {
+    "planned_fleet": [
+      "Small",
+      "Medium"
+    ],
+    "decision": {
+      "fleet": [
+        {
+          "Id": "C0",
+          "profile": "Medium",
+          "capacity": 1000,
+          "rate": 1100,
+          "lag": 0,
+          "required": 1100,
+          "partitions": [
+            "P0"
+          ]
+        },
+        {
+          "Id": "C1",
+          "profile": "Small",
+          "capacity": 500,
+          "rate": 100,
+          "lag": 0,
+          "required": 100,
+          "partitions": [
+            "P1",
+            "P2"
+          ]
+        }
+      ],
+      "cost_per_second": 1.5
+    },
+    "backlog_after_10_seconds": 1000
+  },
+  "stickiness": {
+    "planned_fleet": [
+      "Large",
+      "Large",
+      "Large"
+    ],
+    "decision": {
+      "fleet": [
+        {
+          "Id": "C0",
+          "profile": "Large",
+          "capacity": 2500,
+          "rate": 2370,
+          "lag": 30000,
+          "required": 5370,
+          "partitions": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        {
+          "Id": "C1",
+          "profile": "Large",
+          "capacity": 2500,
+          "rate": 500,
+          "lag": 0,
+          "required": 500,
+          "partitions": [
+            "P3",
+            "P4"
+          ]
+        },
+        {
+          "Id": "C2",
+          "profile": "Large",
+          "capacity": 2500,
+          "rate": 0,
+          "lag": 0,
+          "required": 0,
+          "partitions": []
+        }
+      ],
+      "cost_per_second": 7.5
+    },
+    "backlog_after_10_seconds": 28700
+  }
+}

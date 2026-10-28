@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(Upstream)/Components/*.cs" />
+    <Compile Include="$(Upstream)/Models/ConsumerProfile.cs" />
+    <Compile Include="$(Upstream)/MathUtils.cs" />
+    <Compile Include="$(Upstream)/IPartitionAssignmentStrategy.cs" />
+    <Compile Include="$(Upstream)/Strategies/CostCentricModifiedWorstFitAssignment.cs" />
+  </ItemGroup>
+</Project>
