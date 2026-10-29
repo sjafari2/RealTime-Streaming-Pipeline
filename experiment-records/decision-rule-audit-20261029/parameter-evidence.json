@@ -1,0 +1,60 @@
+{
+  "measured_reference": {
+    "technical_run_id": "run-20261027-003622",
+    "source_sha256": "9c13245aea87eabbc7d5543a4868fece0b7f85ee1a72a42aaef26a9813dd372b",
+    "measurement_interval_seconds": [
+      30,
+      60
+    ],
+    "measured_total_arrival_msg_s": 599.9666666666667,
+    "original_consumer_rates_and_capacity": {
+      "consumer-sts-0": {
+        "arrival_rate": 499.53333333333325,
+        "calibrated_capacity": 286.875,
+        "calibrated_margin": -212.65833333333325,
+        "calibration_limit": "Balanced busy calibration on the same original pod; not a guaranteed service rate under every assignment."
+      },
+      "consumer-sts-1": {
+        "arrival_rate": 49.666666666666664,
+        "calibrated_capacity": 635.625,
+        "calibrated_margin": 585.9583333333334,
+        "calibration_limit": "Balanced busy calibration on the same original pod; not a guaranteed service rate under every assignment."
+      },
+      "consumer-sts-2": {
+        "arrival_rate": 50.766666666666666,
+        "calibrated_capacity": 670.2083333333334,
+        "calibrated_margin": 619.4416666666667,
+        "calibration_limit": "Balanced busy calibration on the same original pod; not a guaranteed service rate under every assignment."
+      }
+    }
+  },
+  "synthetic_choices": {
+    "total_arrival_msg_s": 600,
+    "partitions": 60,
+    "hot_partitions": 12,
+    "hot_input_fraction": 0.8,
+    "equal_capacity_each_msg_s": 300,
+    "capacity_explanation": "Illustrative round value near the slowest original calibration, not the measured capacity of six consumers.",
+    "global_pause_seconds": [
+      0,
+      1,
+      3,
+      5
+    ],
+    "pause_explanation": "Constructed sensitivity values, not measured Nautilus pauses. Assignment activation duration is not substituted for a global processing pause.",
+    "initial_backlog_counts": [
+      2900,
+      5800
+    ],
+    "initial_backlog_explanation": "Constructed snapshots, not the smaller/larger 16-trial initial queues.",
+    "initial_message_age_seconds": 0,
+    "cutoff_after_decision_seconds": 12,
+    "latency_target_seconds": 10,
+    "continuing_arrivals_seconds": 30
+  },
+  "limits": [
+    "Added-consumer capacities were not calibrated in the saved campaign.",
+    "Kafka cross-partition service scheduling has not been replayed or calibrated here.",
+    "These synthetic findings do not change the proposal trial count."
+  ]
+}

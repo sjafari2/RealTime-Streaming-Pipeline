@@ -1,0 +1,36 @@
+{
+  "paper": {
+    "doi": "10.1007/s42979-025-03740-9",
+    "sha256": "e2792df61833c8eaad133d29128c195a4be82a77f5d0fbfcf908268968e6ee28",
+    "checked_pages": [
+      6,
+      7,
+      8,
+      9,
+      19,
+      23
+    ]
+  },
+  "linked_repository": {
+    "url": "https://github.com/fatimazahraelaaziz/Experience",
+    "branch": "no_elastic",
+    "revision": "49331239a9c0acf362498d13c404bb0b7c88556a",
+    "source_sha256": {
+      "BinPacking/src/main/java/org/example/BinPackState.java": "eb8c5b1108146470cb79938b98f4e327119037f7784785112d69c3fda96cc56b",
+      "BinPacking/src/main/java/org/example/Consumer.java": "ddb3ff87ec9c7ac4684ebf71049ce5be6a73ccb0ec629212a4431f1f0e9c53c1",
+      "BinPacking/src/main/java/org/example/Partition.java": "7d0877ad7673425c49692a354413f095d403396e93a8755534d08ace5689e59b",
+      "restructuredbinpack/src/main/java/BinPackRestructureWithLag.java": "092016c97cbcc4daf85e8fd1529c84df3e03ae104b98374963de11c02f9ba5da",
+      "restructuredbinpack/src/main/java/BinPackRestructureWithLagLag8p.java": "4c86a73eb07b8ae3ae815f75f69e63c25cdc73e4345090e3d7d4ee45fe77111a",
+      "restructuredbinpack/src/main/java/Consumer.java": "934890f03363e13fd86e94758c9fbe433430bd50252302c8c751e47dda746436",
+      "restructuredbinpack/src/main/java/Partition.java": "3654b75610338afe7e2c82493755f1a2c0da016eee7a6c97a47d214bac532236",
+      "restructuredbinpack/src/main/java/Main.java": "db901d05548f38338b66fa11dce72f17d9c1286dadf381b3d67fe96a33314665"
+    },
+    "scope": "Read-only source inspection. No author controller code was executed and this public revision is not certified as the paper evaluation release."
+  },
+  "base_pipeline_revision": "6eb60d1c2da94d8fd8755916045a154c93578213",
+  "pipeline_service_order_check": {
+    "path": "src/consumer/consumer.py",
+    "sha256": "f3c0a5d7f041c3beb45a0ceab6da460862456cd1322564dcec4b9501ba7115c1",
+    "behavior": "consume(num_messages=poll_count, timeout=poll_timeout), then sequential process_message in returned batch order; no global creation-time sort."
+  }
+}

@@ -1,7 +1,8 @@
 """Deterministic decision-rule checks, not Kafka measurements.
 
 CC-MWF decisions are read from an execution of the pinned upstream C# code.
-Ezzeddine's two-stage action logic is reconstructed from the 2024 paper.
+Ezzeddine's two-stage action logic is reconstructed from the 2024 paper;
+the same action branches were checked in the full 2025 extension on 2026-10-29.
 The paper omits its Least-Loaded packing pseudocode, so all item permutations
 are checked for the small examples; an exact packing oracle checks feasibility.
 """
@@ -214,7 +215,7 @@ def main(output, source_path):
                                    "pause_sensitivity": sensitivity,
                                    "no_action_fluid_recovery_seconds": recovery(er, eb, old, [2500] * 2),
                                    "reassignment_fluid_recovery_seconds": recovery(er, eb, [0, 1], [2500] * 2, 5)},
-        "limits": ["Ezzeddine 2024 full paper verified; 2025 full text unavailable.",
+        "limits": ["2024 and 2025 action branches verified; this original packing helper remains a reconstruction. See the 20261029 transition audit for the source-informed packing sensitivity.",
                    "Packing helper is a reconstruction; all item orders checked, not author implementation.",
                    "Repair uses a tiny exhaustive oracle, not a scalable controller.",
                    "Transition guard tested with known creation time, exact capacities and constant arrivals.",
