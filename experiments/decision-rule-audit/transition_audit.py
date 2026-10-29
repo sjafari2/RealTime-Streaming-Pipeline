@@ -271,7 +271,7 @@ def main(output):
                          "arm": arm, "rule_action": case["decision"]["action"] if arm == "paper_rule" else "",
                          **values})
     with (output / "outcomes.csv").open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=rows[0]); writer.writeheader(); writer.writerows(rows)
+        writer = csv.DictWriter(stream, fieldnames=rows[0], lineterminator="\n"); writer.writeheader(); writer.writerows(rows)
     for case in scenarios:
         values = case["outcomes"]["paper_rule"]
         print(case["condition"], case["pause_seconds"], case["decision"]["action"],
