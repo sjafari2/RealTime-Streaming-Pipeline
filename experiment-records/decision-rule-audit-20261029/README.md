@@ -72,7 +72,7 @@ Queue sensitivity covers two schedules, actual capacities of 240, 300 and 360 me
 
 The audit uses one decision and fixed subsequent assignments. It omits broker/network delays, stochastic task times, duplicates, commit behavior, CPU contention and feedback from future controller decisions. The mathematical initial-cohort predictor and simulator agree under the same specified service assumptions; that agreement is not empirical validation of Kafka. The paper does not promise zero deadline violations in every state, and the audit does not invalidate its overall findings.
 
-The next evidence needed is a replay or direct measurement of per-partition service during continuing skewed input and handover. A predictor that handles this scheduling effect should then be compared with the existing rules on separate cases. No validated novel controller claim follows from this audit yet.
+The [saved-record scheduling analysis](../consumer-scheduling-20261029/README.md) now checks pre-action processing order across all sixteen backlog-comparison trials. It finds unequal partition service and departures from strict creation-time ordering; local fetch-buffer availability and handover scheduling remain unobserved. The next evidence needed is direct measurement of fetch batches and per-partition service through handover. A predictor that handles this scheduling effect should then be compared with the existing rules on separate cases. No validated novel controller claim follows from this audit yet.
 
 ## Reproduce
 

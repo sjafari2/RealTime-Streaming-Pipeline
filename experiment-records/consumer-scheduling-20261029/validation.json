@@ -1,0 +1,13 @@
+{
+  "unit_checks_passed": 8,
+  "trials": 16,
+  "consumer_windows": 48,
+  "selected_processing_starts": 171846,
+  "all_sources_match_reviewed_consumer": true,
+  "one_assignment_epoch_per_window": true,
+  "nonincreasing_offsets_within_selected_epochs": 0,
+  "overlapping_or_reversed_processing_timestamps": 0,
+  "all_overloaded_consumer_partitions_positive_in_all_15_samples": true,
+  "reproduction": "Two complete reads agree exactly on results, source hashes and CSV; the second output adds the recorded hot-partition IDs.",
+  "scope": "Only evaluation seconds 30\u201360; no general correctness claim for unexamined records or later handovers."
+}
