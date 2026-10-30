@@ -5,6 +5,7 @@ These guides describe the experimental design, implementation and published evid
 | Guide | Contents |
 |---|---|
 | [Research questions](research-questions.md) | Individual methods, combinations, execution order and costs |
+| [Skew mitigation literature audit](skew-mitigation-novelty.md) | Existing decision rules, outcome prediction and the candidate research gap |
 | [Architecture](architecture.md) | Processing, coordination and evidence paths |
 | [Experiment methodology](experiment-methodology.md) | Calibration, timing and comparison controls |
 | [Results](../experiment-records/README.md) | The 24 main-proposal trials, tables and plots |
