@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-30",
+  "base_revision": "ca3f41b3dd57f411002da991e1895b15b31ae57f",
+  "publication": "https://doi.org/10.1007/s42979-025-03740-9",
+  "author_source_revision": "49331239a9c0acf362498d13c404bb0b7c88556a",
+  "baseline_status": "Published rule reconstruction; not a certified execution of the author release.",
+  "executions": [
+    {
+      "label": "First pilot",
+      "token": "age-probe-20261030-7662908000",
+      "status": "completed",
+      "executed_sources": {
+        "kafka_age_probe.py": "dec318f230b9bacd9d0cb4289662155f032d757bba41e5407462729845c33982",
+        "transition_audit.py": "4d1355a4d1151fb3978a6ff0ac10e111b83d00a9c07cbbb867507efd94a41d91"
+      },
+      "raw_archive": "/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/message-age-20261030/live/raw-evidence.tar.gz",
+      "raw_archive_sha256": "df58fc10591ac730b007412f27fd0ac01835d77f77ae1a1c6ff8dbdcf072b375",
+      "cluster_directory": "/config/age-probe-20261030-7662908000"
+    },
+    {
+      "label": "Repeat with preparation checks",
+      "token": "age-probe-20261030-4761760000",
+      "status": "completed",
+      "executed_sources": {
+        "kafka_age_probe.py": "2dc016ff52ec4205ed950f361db1e4db4ed0630b7c48e32b5167c166de62e626",
+        "transition_audit.py": "4d1355a4d1151fb3978a6ff0ac10e111b83d00a9c07cbbb867507efd94a41d91"
+      },
+      "raw_archive": "/Users/soheila/Documents/ChatGPT/Stream Processing Project/review/message-age-20261030/live-controlled-retry/raw-evidence.tar.gz",
+      "raw_archive_sha256": "44c3e6ba83a6c57ea0b46e0bd3c29cf22431b21d6a36c7fc9d1983b52c838cb9",
+      "cluster_directory": "/config/age-probe-20261030-4761760000"
+    }
+  ],
+  "source_files_sha256": {
+    "age_audit.py": "d278282a6b83e340cdc3615c20bc814ec109e193cc502f2dffb50e2abba00c0d",
+    "test_age_audit.py": "ec6ce561eac4af320c4d3a8b7c6be62feee14619dbda268b6dd8e7117e316d0e",
+    "kafka_age_probe.py": "2dc016ff52ec4205ed950f361db1e4db4ed0630b7c48e32b5167c166de62e626",
+    "run_probe.py": "601f2b2c1acc767fef2368669f145a18b283007091a756a0aad91bf2027d10b0",
+    "probe_clocks.py": "d6ca5a58ee7fcf5ef669a48eacc85dda69d50ffe024433f24ab655f15609a0d9",
+    "analyze_age_probe.py": "b5e03028c64efe3eaed5de75c2094ceb8824c7742fe3037dc6c3b385c52ee3dd",
+    "plot_age_probe.py": "3ae91ef809514705866c8b6145734d928ddd8f65e59e66646eaa8e023fa28824",
+    "transition_audit.py": "4d1355a4d1151fb3978a6ff0ac10e111b83d00a9c07cbbb867507efd94a41d91"
+  }
+}

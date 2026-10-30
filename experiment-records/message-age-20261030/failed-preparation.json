@@ -1,0 +1,8 @@
+{
+  "token": "age-probe-20261030-0976491000",
+  "status": "failed",
+  "error": "RuntimeError('Coordinator failed: Traceback (most recent call last):\\n  File \"/config/age-probe-20261030-0976491000/kafka_age_probe.py\", line 286, in <module>\\n    else: coordinator(a.root,a.bootstrap)\\n  File \"/config/age-probe-20261030-0976491000/kafka_age_probe.py\", line 247, in coordinator\\n    calibration=episode(\\'calibration\\',[p%6 for p in range(60)],\\n  File \"/config/age-probe-20261030-0976491000/kafka_age_probe.py\", line 137, in episode\\n    raise RuntimeError(\\'Fresh topic metadata is incomplete\\')\\nRuntimeError: Fresh topic metadata is incomplete\\ncommand terminated with exit code 1\\n')",
+  "restored_replicas": 3,
+  "archive_sha256": "71f32b8f5405a943c14dc470cab0c1a399e8b8ca57c9892a400c8b47f087ec06",
+  "remote": "/config/age-probe-20261030-0976491000"
+}
