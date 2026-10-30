@@ -4,6 +4,8 @@ The saved completion records show unequal service across backlogged partitions, 
 
 This analysis uses the existing sixteen [starting-backlog comparison trials](../backlog-comparison-20261027/README.md). It adds no performance trials and changes no runtime behavior. Its purpose is to check the service assumptions in the [transition audit](../decision-rule-audit-20261029/README.md) before using those assumptions to predict an intervention's effect.
 
+The [post-mitigation analysis](../post-mitigation-20261029/README.md) follows waiting messages and partition service after assignment confirmation. It distinguishes clearing the initial waiting group from recovering under continuing input.
+
 ## Scope and findings
 
 The reporting interval is evaluation seconds 30–60, before the scheduled intervention. All three original consumers are included: 48 consumer windows containing 171,846 recorded processing starts. This is one common reporting interval from each existing trial, not 48 independent experiments. Records produced during warm-up remain included if processing starts in this interval.
