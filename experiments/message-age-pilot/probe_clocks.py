@@ -5,7 +5,7 @@ from pathlib import Path
 def probe(pod):
     container='producer-container' if pod.startswith('producer') else 'consumer-container'
     code='import sys,time; print("ready",flush=True)\nfor line in sys.stdin: print(time.time(),flush=True)'
-    p=subprocess.Popen(['kubectl','-n','kafkastreamingdata','exec','-i',pod,'-c',container,'--','python3','-u','-c',code],
+    p=subprocess.Popen(['kubectl','--context','nautilus','-n','kafkastreamingdata','exec','-i',pod,'-c',container,'--','python3','-u','-c',code],
                        stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,bufsize=1)
     def line():
         sel=selectors.DefaultSelector();sel.register(p.stdout,selectors.EVENT_READ)

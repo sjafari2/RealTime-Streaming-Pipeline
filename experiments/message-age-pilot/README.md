@@ -31,3 +31,22 @@ The runner requires three stopped managed consumers and checks the shared run-co
 The raw archive is retained locally and on the cluster. Independent analysis checks producer acknowledgments, distinct completion identifiers, per-partition offset continuity, sequential processing, assignment ownership, matching queue counts, prediction timing, and original pod identities. Completion p99 is reported with unfinished counts. The fraction completing within the deadline uses the entire initial cohort, including unfinished records.
 
 The results cannot by themselves establish an age-only improvement, because the pooled capacity model, per-consumer rates, Kafka delivery order and preparation ages also affect the predictions. A successful diagnostic case is not evidence of a validated controller or novel contribution.
+
+## Controlled ages and individual capacity
+
+The follow-up diagnostic gives four high-input partitions to each of three consumers, or two to each of six. Both assignments must pass a per-consumer capacity check. A busy 60-second measurement interval provides an effective completion rate for each consumer; the assigned arrival rate must remain below 85% of the smaller half-interval rate.
+
+All comparisons begin with 6,600 acknowledged messages and the same per-partition counts. The preload is approximately 7–8 seconds old or 15–16 seconds old; a common recent input trace remains unchanged. Continuing input is 600 messages/s for 90 seconds, with a 100-second observation period. The objective is at least 99% of the initial waiting cohort completed within 20 seconds of creation. Each age condition and assignment is repeated twice.
+
+```bash
+python3 experiments/message-age-pilot/run_controlled_probe.py \
+  --output /path/to/separate-raw-evidence/controlled-age --execute
+
+python3 experiments/message-age-pilot/analyze_controlled_probe.py \
+  /path/to/separate-raw-evidence/controlled-age \
+  --output /path/to/controlled-results.json
+```
+
+The controlled launcher retains remote process status and logs independently of the monitoring connection. It stops only processes belonging to its unique probe directory and restores the original replica count. An interrupted attempt remains recorded rather than being silently replaced by a repeat.
+
+These are final-assignment diagnostics with prestarted pods. They do not measure real scaling or handover costs. The capacity estimates are conditional on the observed interval, and the oldest-first latency prediction remains an assumption to test. The [capacity-and-age report](../../experiment-records/capacity-age-20261030/README.md) separates the saved-data ablation, interrupted attempt and completed repeat.

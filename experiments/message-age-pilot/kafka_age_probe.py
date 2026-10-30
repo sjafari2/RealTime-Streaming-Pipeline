@@ -69,7 +69,7 @@ def worker(root, index):
                 'auto.offset.reset':'earliest','fetch.wait.max.ms':5,'fetch.min.bytes':1,
                 'max.poll.interval.ms':120000, 'queued.min.messages':1000})
             topic_ready(consumer,manifest['topic'])
-            consumer.assign([TopicPartition(manifest['topic'],p,0) for p in parts])
+            consumer.assign([TopicPartition(manifest['topic'],p,manifest.get('start_offset',0)) for p in parts])
             # Preparation occurs while the fresh topic is empty. Initialize the
             # consumer connection before the coordinator releases the preload.
             for _ in range(3):
@@ -77,8 +77,11 @@ def worker(root, index):
                 if early: raise RuntimeError('Fresh preparation topic was not empty')
         put(episode/f'ready-{index}.json', {'partitions':parts,'wall_time':time.time()})
         try:
-            gate=wait_for(lambda:read(episode/'release.json') or read(root/'stop.json'),180)
+            gate=wait_for(lambda:read(episode/'release.json') or read(root/'stop.json'),manifest.get('preparation_timeout_seconds',180))
             if 'release_epoch' not in gate: raise RuntimeError('Probe stopped before release')
+            while time.time()<gate['release_epoch']:
+                if read(root/'stop.json'): raise RuntimeError('Probe stopped before scheduled release')
+                time.sleep(min(.01,max(0,gate['release_epoch']-time.time())))
             end=gate['release_epoch']+manifest['observation_seconds']
             last_snapshot=0; done=0; idle=0; last_offset={}
             while time.time()<end:

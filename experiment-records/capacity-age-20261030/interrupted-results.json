@@ -1,0 +1,2529 @@
+{
+  "kind": "controlled-age final-assignment diagnostic",
+  "execution_status": "failed",
+  "token": "age-controlled-20261030-7702579000",
+  "archive_sha256": "939d566e30a3ce3b51fa15ecc10da586c31d093ddc94b5e7ab95381674f715c2",
+  "remote": "/config/age-controlled-20261030-7702579000",
+  "protocol": {
+    "primary_deadline_seconds": 20,
+    "required_fraction": 0.99,
+    "total_input_rate": 600,
+    "partitions": 60,
+    "high_input_partitions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "high_input_fraction": 0.8,
+    "initial_count": 6600,
+    "common_trace_seconds": 5,
+    "continuing_input_seconds": 90,
+    "observation_seconds": 100,
+    "added_hold_seconds": [
+      0,
+      8
+    ],
+    "planned_preload_age_range_seconds": [
+      [
+        7,
+        8
+      ],
+      [
+        15,
+        16
+      ]
+    ],
+    "maximum_creation_schedule_error_seconds": 0.1,
+    "calibration_window_seconds": [
+      10,
+      70
+    ],
+    "capacity_guard": "Input below 85% of the smaller calibrated 30-second rate for every consumer",
+    "order": [
+      {
+        "hold": 0,
+        "response": "redistribute3",
+        "run": 1
+      },
+      {
+        "hold": 0,
+        "response": "targeted6",
+        "run": 1
+      },
+      {
+        "hold": 8,
+        "response": "redistribute3",
+        "run": 1
+      },
+      {
+        "hold": 8,
+        "response": "targeted6",
+        "run": 1
+      },
+      {
+        "hold": 8,
+        "response": "targeted6",
+        "run": 2
+      },
+      {
+        "hold": 8,
+        "response": "redistribute3",
+        "run": 2
+      },
+      {
+        "hold": 0,
+        "response": "targeted6",
+        "run": 2
+      },
+      {
+        "hold": 0,
+        "response": "redistribute3",
+        "run": 2
+      }
+    ],
+    "assignments": {
+      "redistribute3": [
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2
+      ],
+      "targeted6": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "allocated_pods": 6,
+    "scope": "Final assignments installed in advance; no observed transition or resource saving"
+  },
+  "capacity": [
+    {
+      "interval_seconds": [
+        10,
+        70
+      ],
+      "completions": 16931,
+      "effective_rate": 282.18333333333334,
+      "half_interval_rates": [
+        284.6,
+        279.76666666666665
+      ],
+      "conservative_rate": 237.80166666666665,
+      "eligible": true,
+      "reasons": [],
+      "maximum_interrecord_gap": 0.002474546432495117,
+      "task_rate": 283.40127627723655
+    },
+    {
+      "interval_seconds": [
+        10,
+        70
+      ],
+      "completions": 29105,
+      "effective_rate": 485.0833333333333,
+      "half_interval_rates": [
+        483.9,
+        486.26666666666665
+      ],
+      "conservative_rate": 411.315,
+      "eligible": true,
+      "reasons": [],
+      "maximum_interrecord_gap": 0.002833127975463867,
+      "task_rate": 489.996634964794
+    },
+    {
+      "interval_seconds": [
+        10,
+        70
+      ],
+      "completions": 43359,
+      "effective_rate": 722.65,
+      "half_interval_rates": [
+        722.3666666666667,
+        722.9333333333333
+      ],
+      "conservative_rate": 614.0116666666667,
+      "eligible": true,
+      "reasons": [],
+      "maximum_interrecord_gap": 0.0014150142669677734,
+      "task_rate": 725.6931572240611
+    },
+    {
+      "interval_seconds": [
+        10,
+        70
+      ],
+      "completions": 13549,
+      "effective_rate": 225.81666666666666,
+      "half_interval_rates": [
+        222.93333333333334,
+        228.7
+      ],
+      "conservative_rate": 189.49333333333334,
+      "eligible": true,
+      "reasons": [],
+      "maximum_interrecord_gap": 0.0027303695678710938,
+      "task_rate": 226.7829021670107
+    },
+    {
+      "interval_seconds": [
+        10,
+        70
+      ],
+      "completions": 16584,
+      "effective_rate": 276.4,
+      "half_interval_rates": [
+        277.6333333333333,
+        275.1666666666667
+      ],
+      "conservative_rate": 233.89166666666668,
+      "eligible": true,
+      "reasons": [],
+      "maximum_interrecord_gap": 0.0021848678588867188,
+      "task_rate": 277.5240085211015
+    },
+    {
+      "interval_seconds": [
+        10,
+        70
+      ],
+      "completions": 28524,
+      "effective_rate": 475.4,
+      "half_interval_rates": [
+        479.56666666666666,
+        471.23333333333335
+      ],
+      "conservative_rate": 400.54833333333335,
+      "eligible": true,
+      "reasons": [],
+      "maximum_interrecord_gap": 0.0037183761596679688,
+      "task_rate": 479.81603312421987
+    }
+  ],
+  "rows": [
+    {
+      "id": "02-redistribute3-hold0-run1",
+      "calibration": false,
+      "hold_seconds": 0,
+      "response": "redistribute3",
+      "run": 1,
+      "initial_count": 6600,
+      "initial_unfinished": 0,
+      "age_p99_seconds": 7.9816107749938965,
+      "completion_p99_seconds": 13.278769493103027,
+      "deadline_misses": 0,
+      "deadline_success": true,
+      "deadline_miss_percent": 0.0,
+      "clock_robust_classification": "pass",
+      "clock_bounded_miss_counts": [
+        0,
+        0
+      ],
+      "predictions": {
+        "A": {
+          "p99_seconds": 4.3854801722692125,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "B": {
+          "p99_seconds": 7.562459394010777,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "C": {
+          "p99_seconds": 9.391054465590864,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "D": {
+          "p99_seconds": 11.074436532085787,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        }
+      },
+      "consumer_arrival_rates": [
+        200.0,
+        200.0,
+        200.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_creation_schedule_error": 0.002967357635498047,
+      "maximum_age_schedule_deviation": 0.0029674243927004795,
+      "continuing_maximum_schedule_error": 0.0044403076171875,
+      "final_30s_completion_throughput": 600.0333333333333,
+      "final_15_sample_mean_pending": 62.2,
+      "pending_at_input_end": 62,
+      "pending_at_observation_end": 0,
+      "first_low_pending_15_sample_window_start": 26,
+      "timeline": [
+        {
+          "seconds": 0,
+          "pending_messages": 6600,
+          "initial_pending": 6600
+        },
+        {
+          "seconds": 2,
+          "pending_messages": 4830,
+          "initial_pending": 3664
+        },
+        {
+          "seconds": 4,
+          "pending_messages": 3067,
+          "initial_pending": 1456
+        },
+        {
+          "seconds": 6,
+          "pending_messages": 2250,
+          "initial_pending": 598
+        },
+        {
+          "seconds": 8,
+          "pending_messages": 1602,
+          "initial_pending": 88
+        },
+        {
+          "seconds": 10,
+          "pending_messages": 1453,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 12,
+          "pending_messages": 1248,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 14,
+          "pending_messages": 1088,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 16,
+          "pending_messages": 935,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 18,
+          "pending_messages": 773,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 20,
+          "pending_messages": 575,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 22,
+          "pending_messages": 388,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 24,
+          "pending_messages": 242,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 26,
+          "pending_messages": 86,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 28,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 30,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 32,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 34,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 36,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 38,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 40,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 42,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 44,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 46,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 48,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 50,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 52,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 54,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 56,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 58,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 60,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 62,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 64,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 66,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 68,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 70,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 72,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 74,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 76,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 78,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 80,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 82,
+          "pending_messages": 73,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 84,
+          "pending_messages": 52,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 86,
+          "pending_messages": 54,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 88,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 90,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 92,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 94,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 96,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 98,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 100,
+          "pending_messages": 0,
+          "initial_pending": 0
+        }
+      ],
+      "service_order_diagnostic": [
+        {
+          "consumer": 0,
+          "last_initial_completion_after_release": 8.43613314628601,
+          "continuing_completions_before_last_initial": 167,
+          "processing_seconds_for_those_continuing_messages": 0.6062535292003304,
+          "observed_task_rate_until_last_initial": 281.8796808984073,
+          "calibrated_effective_rate": 282.18333333333334
+        },
+        {
+          "consumer": 1,
+          "last_initial_completion_after_release": 4.900892019271851,
+          "continuing_completions_before_last_initial": 165,
+          "processing_seconds_for_those_continuing_messages": 0.33720513829030097,
+          "observed_task_rate_until_last_initial": 487.58146121934885,
+          "calibrated_effective_rate": 485.0833333333333
+        },
+        {
+          "consumer": 2,
+          "last_initial_completion_after_release": 3.5819125175476074,
+          "continuing_completions_before_last_initial": 376,
+          "processing_seconds_for_those_continuing_messages": 0.5205272088060156,
+          "observed_task_rate_until_last_initial": 722.7261427505024,
+          "calibrated_effective_rate": 722.65
+        }
+      ]
+    },
+    {
+      "id": "03-targeted6-hold0-run1",
+      "calibration": false,
+      "hold_seconds": 0,
+      "response": "targeted6",
+      "run": 1,
+      "initial_count": 6600,
+      "initial_unfinished": 0,
+      "age_p99_seconds": 7.981605529785156,
+      "completion_p99_seconds": 9.376680612564087,
+      "deadline_misses": 0,
+      "deadline_success": true,
+      "deadline_miss_percent": 0.0,
+      "clock_robust_classification": "pass",
+      "clock_bounded_miss_counts": [
+        0,
+        0
+      ],
+      "predictions": {
+        "A": {
+          "p99_seconds": 2.192740086134601,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "B": {
+          "p99_seconds": 4.578935714812934,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "C": {
+          "p99_seconds": 8.205359853416153,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "D": {
+          "p99_seconds": 9.475527067309022,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        }
+      },
+      "consumer_arrival_rates": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "maximum_creation_schedule_error": 0.002782583236694336,
+      "maximum_age_schedule_deviation": 0.002782548268635665,
+      "continuing_maximum_schedule_error": 0.005470752716064453,
+      "final_30s_completion_throughput": 600.1333333333333,
+      "final_15_sample_mean_pending": 61.666666666666664,
+      "pending_at_input_end": 61,
+      "pending_at_observation_end": 0,
+      "first_low_pending_15_sample_window_start": 10,
+      "timeline": [
+        {
+          "seconds": 0,
+          "pending_messages": 6600,
+          "initial_pending": 6600
+        },
+        {
+          "seconds": 2,
+          "pending_messages": 3028,
+          "initial_pending": 2016
+        },
+        {
+          "seconds": 4,
+          "pending_messages": 1340,
+          "initial_pending": 232
+        },
+        {
+          "seconds": 6,
+          "pending_messages": 359,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 8,
+          "pending_messages": 107,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 10,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 12,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 14,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 16,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 18,
+          "pending_messages": 54,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 20,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 22,
+          "pending_messages": 49,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 24,
+          "pending_messages": 76,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 26,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 28,
+          "pending_messages": 72,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 30,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 32,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 34,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 36,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 38,
+          "pending_messages": 54,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 40,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 42,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 44,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 46,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 48,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 50,
+          "pending_messages": 49,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 52,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 54,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 56,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 58,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 60,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 62,
+          "pending_messages": 50,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 64,
+          "pending_messages": 102,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 66,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 68,
+          "pending_messages": 55,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 70,
+          "pending_messages": 55,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 72,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 74,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 76,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 78,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 80,
+          "pending_messages": 52,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 82,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 84,
+          "pending_messages": 76,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 86,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 88,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 90,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 92,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 94,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 96,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 98,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 100,
+          "pending_messages": 0,
+          "initial_pending": 0
+        }
+      ],
+      "service_order_diagnostic": [
+        {
+          "consumer": 0,
+          "last_initial_completion_after_release": 4.2506797313690186,
+          "continuing_completions_before_last_initial": 98,
+          "processing_seconds_for_those_continuing_messages": 0.3404252687469125,
+          "observed_task_rate_until_last_initial": 283.05469889003626,
+          "calibrated_effective_rate": 282.18333333333334
+        },
+        {
+          "consumer": 1,
+          "last_initial_completion_after_release": 2.524277448654175,
+          "continuing_completions_before_last_initial": 98,
+          "processing_seconds_for_those_continuing_messages": 0.20835081138648093,
+          "observed_task_rate_until_last_initial": 479.71846150122826,
+          "calibrated_effective_rate": 485.0833333333333
+        },
+        {
+          "consumer": 2,
+          "last_initial_completion_after_release": 1.5652885437011719,
+          "continuing_completions_before_last_initial": 46,
+          "processing_seconds_for_those_continuing_messages": 0.06292623130138963,
+          "observed_task_rate_until_last_initial": 735.2851950831067,
+          "calibrated_effective_rate": 722.65
+        },
+        {
+          "consumer": 3,
+          "last_initial_completion_after_release": 5.186910152435303,
+          "continuing_completions_before_last_initial": 98,
+          "processing_seconds_for_those_continuing_messages": 0.42547889400157146,
+          "observed_task_rate_until_last_initial": 232.04805288192674,
+          "calibrated_effective_rate": 225.81666666666666
+        },
+        {
+          "consumer": 4,
+          "last_initial_completion_after_release": 4.24102258682251,
+          "continuing_completions_before_last_initial": 97,
+          "processing_seconds_for_those_continuing_messages": 0.32367472525220364,
+          "observed_task_rate_until_last_initial": 283.3844007162061,
+          "calibrated_effective_rate": 276.4
+        },
+        {
+          "consumer": 5,
+          "last_initial_completion_after_release": 2.3545267581939697,
+          "continuing_completions_before_last_initial": 0,
+          "processing_seconds_for_those_continuing_messages": 0,
+          "observed_task_rate_until_last_initial": 471.2598962445138,
+          "calibrated_effective_rate": 475.4
+        }
+      ]
+    },
+    {
+      "id": "04-redistribute3-hold8-run1",
+      "calibration": false,
+      "hold_seconds": 8,
+      "response": "redistribute3",
+      "run": 1,
+      "initial_count": 6600,
+      "initial_unfinished": 0,
+      "age_p99_seconds": 15.981610774993896,
+      "completion_p99_seconds": 20.967378854751587,
+      "deadline_misses": 101,
+      "deadline_success": false,
+      "deadline_miss_percent": 1.5303030303030303,
+      "clock_robust_classification": "fail",
+      "clock_bounded_miss_counts": [
+        101,
+        101
+      ],
+      "predictions": {
+        "A": {
+          "p99_seconds": 4.3854801722692125,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "B": {
+          "p99_seconds": 7.562459394010777,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "C": {
+          "p99_seconds": 17.391054227172283,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "D": {
+          "p99_seconds": 19.074441777294528,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        }
+      },
+      "consumer_arrival_rates": [
+        200.0,
+        200.0,
+        200.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_creation_schedule_error": 0.002657651901245117,
+      "maximum_age_schedule_deviation": 0.0026575660705567827,
+      "continuing_maximum_schedule_error": 0.0036444664001464844,
+      "final_30s_completion_throughput": 599.7333333333333,
+      "final_15_sample_mean_pending": 56.333333333333336,
+      "pending_at_input_end": 59,
+      "pending_at_observation_end": 0,
+      "first_low_pending_15_sample_window_start": 26,
+      "timeline": [
+        {
+          "seconds": 0,
+          "pending_messages": 6600,
+          "initial_pending": 6600
+        },
+        {
+          "seconds": 2,
+          "pending_messages": 4772,
+          "initial_pending": 3618
+        },
+        {
+          "seconds": 4,
+          "pending_messages": 2965,
+          "initial_pending": 1450
+        },
+        {
+          "seconds": 6,
+          "pending_messages": 2192,
+          "initial_pending": 554
+        },
+        {
+          "seconds": 8,
+          "pending_messages": 1557,
+          "initial_pending": 287
+        },
+        {
+          "seconds": 10,
+          "pending_messages": 1405,
+          "initial_pending": 37
+        },
+        {
+          "seconds": 12,
+          "pending_messages": 1224,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 14,
+          "pending_messages": 1055,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 16,
+          "pending_messages": 872,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 18,
+          "pending_messages": 723,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 20,
+          "pending_messages": 570,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 22,
+          "pending_messages": 383,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 24,
+          "pending_messages": 227,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 26,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 28,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 30,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 32,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 34,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 36,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 38,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 40,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 42,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 44,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 46,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 48,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 50,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 52,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 54,
+          "pending_messages": 52,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 56,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 58,
+          "pending_messages": 52,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 60,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 62,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 64,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 66,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 68,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 70,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 72,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 74,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 76,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 78,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 80,
+          "pending_messages": 60,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 82,
+          "pending_messages": 60,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 84,
+          "pending_messages": 60,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 86,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 88,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 90,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 92,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 94,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 96,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 98,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 100,
+          "pending_messages": 0,
+          "initial_pending": 0
+        }
+      ],
+      "service_order_diagnostic": [
+        {
+          "consumer": 0,
+          "last_initial_completion_after_release": 10.410168886184692,
+          "continuing_completions_before_last_initial": 760,
+          "processing_seconds_for_those_continuing_messages": 2.719867933774367,
+          "observed_task_rate_until_last_initial": 285.751810237864,
+          "calibrated_effective_rate": 282.18333333333334
+        },
+        {
+          "consumer": 1,
+          "last_initial_completion_after_release": 5.290231466293335,
+          "continuing_completions_before_last_initial": 367,
+          "processing_seconds_for_those_continuing_messages": 0.7498905814718455,
+          "observed_task_rate_until_last_initial": 490.1790920164119,
+          "calibrated_effective_rate": 485.0833333333333
+        },
+        {
+          "consumer": 2,
+          "last_initial_completion_after_release": 3.645615816116333,
+          "continuing_completions_before_last_initial": 454,
+          "processing_seconds_for_those_continuing_messages": 0.6213687477866188,
+          "observed_task_rate_until_last_initial": 731.165846485261,
+          "calibrated_effective_rate": 722.65
+        }
+      ]
+    },
+    {
+      "id": "05-targeted6-hold8-run1",
+      "calibration": false,
+      "hold_seconds": 8,
+      "response": "targeted6",
+      "run": 1,
+      "initial_count": 6600,
+      "initial_unfinished": 0,
+      "age_p99_seconds": 15.981611013412476,
+      "completion_p99_seconds": 17.45821261405945,
+      "deadline_misses": 0,
+      "deadline_success": true,
+      "deadline_miss_percent": 0.0,
+      "clock_robust_classification": "pass",
+      "clock_bounded_miss_counts": [
+        0,
+        0
+      ],
+      "predictions": {
+        "A": {
+          "p99_seconds": 2.192740086134601,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "B": {
+          "p99_seconds": 4.578935714812934,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "C": {
+          "p99_seconds": 16.205360568671892,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "D": {
+          "p99_seconds": 17.475527305727603,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        }
+      },
+      "consumer_arrival_rates": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "maximum_creation_schedule_error": 0.003247499465942383,
+      "maximum_age_schedule_deviation": 0.0032474252912741974,
+      "continuing_maximum_schedule_error": 0.0037336349487304688,
+      "final_30s_completion_throughput": 600.9333333333333,
+      "final_15_sample_mean_pending": 67.33333333333333,
+      "pending_at_input_end": 67,
+      "pending_at_observation_end": 0,
+      "first_low_pending_15_sample_window_start": 38,
+      "timeline": [
+        {
+          "seconds": 0,
+          "pending_messages": 6600,
+          "initial_pending": 6600
+        },
+        {
+          "seconds": 2,
+          "pending_messages": 3094,
+          "initial_pending": 2080
+        },
+        {
+          "seconds": 4,
+          "pending_messages": 1355,
+          "initial_pending": 216
+        },
+        {
+          "seconds": 6,
+          "pending_messages": 384,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 8,
+          "pending_messages": 106,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 10,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 12,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 14,
+          "pending_messages": 52,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 16,
+          "pending_messages": 73,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 18,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 20,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 22,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 24,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 26,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 28,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 30,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 32,
+          "pending_messages": 73,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 34,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 36,
+          "pending_messages": 182,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 38,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 40,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 42,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 44,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 46,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 48,
+          "pending_messages": 53,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 50,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 52,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 54,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 56,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 58,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 60,
+          "pending_messages": 95,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 62,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 64,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 66,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 68,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 70,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 72,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 74,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 76,
+          "pending_messages": 82,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 78,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 80,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 82,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 84,
+          "pending_messages": 76,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 86,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 88,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 90,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 92,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 94,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 96,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 98,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 100,
+          "pending_messages": 0,
+          "initial_pending": 0
+        }
+      ],
+      "service_order_diagnostic": [
+        {
+          "consumer": 0,
+          "last_initial_completion_after_release": 4.168916463851929,
+          "continuing_completions_before_last_initial": 98,
+          "processing_seconds_for_those_continuing_messages": 0.351097762119025,
+          "observed_task_rate_until_last_initial": 288.6885487986561,
+          "calibrated_effective_rate": 282.18333333333334
+        },
+        {
+          "consumer": 1,
+          "last_initial_completion_after_release": 2.3000478744506836,
+          "continuing_completions_before_last_initial": 0,
+          "processing_seconds_for_those_continuing_messages": 0,
+          "observed_task_rate_until_last_initial": 483.8338954474937,
+          "calibrated_effective_rate": 485.0833333333333
+        },
+        {
+          "consumer": 2,
+          "last_initial_completion_after_release": 1.5781927108764648,
+          "continuing_completions_before_last_initial": 42,
+          "processing_seconds_for_those_continuing_messages": 0.05829588696360588,
+          "observed_task_rate_until_last_initial": 726.8617672942249,
+          "calibrated_effective_rate": 722.65
+        },
+        {
+          "consumer": 3,
+          "last_initial_completion_after_release": 5.215030908584595,
+          "continuing_completions_before_last_initial": 92,
+          "processing_seconds_for_those_continuing_messages": 0.3981823260037345,
+          "observed_task_rate_until_last_initial": 229.61888772354757,
+          "calibrated_effective_rate": 225.81666666666666
+        },
+        {
+          "consumer": 4,
+          "last_initial_completion_after_release": 4.271002769470215,
+          "continuing_completions_before_last_initial": 88,
+          "processing_seconds_for_those_continuing_messages": 0.316979531373363,
+          "observed_task_rate_until_last_initial": 279.29711035161023,
+          "calibrated_effective_rate": 276.4
+        },
+        {
+          "consumer": 5,
+          "last_initial_completion_after_release": 2.484117031097412,
+          "continuing_completions_before_last_initial": 0,
+          "processing_seconds_for_those_continuing_messages": 0,
+          "observed_task_rate_until_last_initial": 446.63483186006493,
+          "calibrated_effective_rate": 475.4
+        }
+      ]
+    },
+    {
+      "id": "06-targeted6-hold8-run2",
+      "calibration": false,
+      "hold_seconds": 8,
+      "response": "targeted6",
+      "run": 2,
+      "initial_count": 6600,
+      "initial_unfinished": 0,
+      "age_p99_seconds": 15.98160982131958,
+      "completion_p99_seconds": 17.462822198867798,
+      "deadline_misses": 0,
+      "deadline_success": true,
+      "deadline_miss_percent": 0.0,
+      "clock_robust_classification": "pass",
+      "clock_bounded_miss_counts": [
+        0,
+        0
+      ],
+      "predictions": {
+        "A": {
+          "p99_seconds": 2.192740086134601,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "B": {
+          "p99_seconds": 4.578935714812934,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "C": {
+          "p99_seconds": 16.205359376578997,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "D": {
+          "p99_seconds": 17.475527305727603,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        }
+      },
+      "consumer_arrival_rates": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "maximum_creation_schedule_error": 0.0030677318572998047,
+      "maximum_age_schedule_deviation": 0.0030677286783848956,
+      "continuing_maximum_schedule_error": 0.008064508438110352,
+      "final_30s_completion_throughput": 600.1,
+      "final_15_sample_mean_pending": 65.2,
+      "pending_at_input_end": 60,
+      "pending_at_observation_end": 0,
+      "first_low_pending_15_sample_window_start": 10,
+      "timeline": [
+        {
+          "seconds": 0,
+          "pending_messages": 6600,
+          "initial_pending": 6600
+        },
+        {
+          "seconds": 2,
+          "pending_messages": 3004,
+          "initial_pending": 1992
+        },
+        {
+          "seconds": 4,
+          "pending_messages": 1375,
+          "initial_pending": 223
+        },
+        {
+          "seconds": 6,
+          "pending_messages": 426,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 8,
+          "pending_messages": 130,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 10,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 12,
+          "pending_messages": 71,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 14,
+          "pending_messages": 79,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 16,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 18,
+          "pending_messages": 54,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 20,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 22,
+          "pending_messages": 54,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 24,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 26,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 28,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 30,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 32,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 34,
+          "pending_messages": 51,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 36,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 38,
+          "pending_messages": 48,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 40,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 42,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 44,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 46,
+          "pending_messages": 58,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 48,
+          "pending_messages": 45,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 50,
+          "pending_messages": 49,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 52,
+          "pending_messages": 55,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 54,
+          "pending_messages": 54,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 56,
+          "pending_messages": 49,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 58,
+          "pending_messages": 70,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 60,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 62,
+          "pending_messages": 52,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 64,
+          "pending_messages": 40,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 66,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 68,
+          "pending_messages": 71,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 70,
+          "pending_messages": 60,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 72,
+          "pending_messages": 72,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 74,
+          "pending_messages": 76,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 76,
+          "pending_messages": 59,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 78,
+          "pending_messages": 61,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 80,
+          "pending_messages": 108,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 82,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 84,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 86,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 88,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 90,
+          "pending_messages": 60,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 92,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 94,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 96,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 98,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 100,
+          "pending_messages": 0,
+          "initial_pending": 0
+        }
+      ],
+      "service_order_diagnostic": [
+        {
+          "consumer": 0,
+          "last_initial_completion_after_release": 4.235759973526001,
+          "continuing_completions_before_last_initial": 98,
+          "processing_seconds_for_those_continuing_messages": 0.34416757500730455,
+          "observed_task_rate_until_last_initial": 284.1264672770676,
+          "calibrated_effective_rate": 282.18333333333334
+        },
+        {
+          "consumer": 1,
+          "last_initial_completion_after_release": 2.444408655166626,
+          "continuing_completions_before_last_initial": 97,
+          "processing_seconds_for_those_continuing_messages": 0.19600411131978035,
+          "observed_task_rate_until_last_initial": 494.80352034280554,
+          "calibrated_effective_rate": 485.0833333333333
+        },
+        {
+          "consumer": 2,
+          "last_initial_completion_after_release": 1.5696394443511963,
+          "continuing_completions_before_last_initial": 42,
+          "processing_seconds_for_those_continuing_messages": 0.057979857199825346,
+          "observed_task_rate_until_last_initial": 730.7414589938478,
+          "calibrated_effective_rate": 722.65
+        },
+        {
+          "consumer": 3,
+          "last_initial_completion_after_release": 4.86798882484436,
+          "continuing_completions_before_last_initial": 7,
+          "processing_seconds_for_those_continuing_messages": 0.03092092500446597,
+          "observed_task_rate_until_last_initial": 228.38653418485788,
+          "calibrated_effective_rate": 225.81666666666666
+        },
+        {
+          "consumer": 4,
+          "last_initial_completion_after_release": 4.303184270858765,
+          "continuing_completions_before_last_initial": 97,
+          "processing_seconds_for_those_continuing_messages": 0.3510875775828026,
+          "observed_task_rate_until_last_initial": 279.4472591407428,
+          "calibrated_effective_rate": 276.4
+        },
+        {
+          "consumer": 5,
+          "last_initial_completion_after_release": 2.547931671142578,
+          "continuing_completions_before_last_initial": 98,
+          "processing_seconds_for_those_continuing_messages": 0.21346295275725424,
+          "observed_task_rate_until_last_initial": 474.07724828557986,
+          "calibrated_effective_rate": 475.4
+        }
+      ]
+    },
+    {
+      "id": "07-redistribute3-hold8-run2",
+      "calibration": false,
+      "hold_seconds": 8,
+      "response": "redistribute3",
+      "run": 2,
+      "initial_count": 6600,
+      "initial_unfinished": 0,
+      "age_p99_seconds": 15.98161005973816,
+      "completion_p99_seconds": 22.052937984466553,
+      "deadline_misses": 98,
+      "deadline_success": false,
+      "deadline_miss_percent": 1.4848484848484849,
+      "clock_robust_classification": "fail",
+      "clock_bounded_miss_counts": [
+        98,
+        98
+      ],
+      "predictions": {
+        "A": {
+          "p99_seconds": 4.3854801722692125,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "B": {
+          "p99_seconds": 7.562459394010777,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "C": {
+          "p99_seconds": 17.391054227172283,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        },
+        "D": {
+          "p99_seconds": 19.07444153887595,
+          "deadline_misses": 0,
+          "meets_deadline_objective": true
+        }
+      },
+      "consumer_arrival_rates": [
+        200.0,
+        200.0,
+        200.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_creation_schedule_error": 0.0028781890869140625,
+      "maximum_age_schedule_deviation": 0.0028782102796771625,
+      "continuing_maximum_schedule_error": 0.003495931625366211,
+      "final_30s_completion_throughput": 600.4,
+      "final_15_sample_mean_pending": 63.53333333333333,
+      "pending_at_input_end": 57,
+      "pending_at_observation_end": 0,
+      "first_low_pending_15_sample_window_start": 26,
+      "timeline": [
+        {
+          "seconds": 0,
+          "pending_messages": 6600,
+          "initial_pending": 6600
+        },
+        {
+          "seconds": 2,
+          "pending_messages": 4776,
+          "initial_pending": 3610
+        },
+        {
+          "seconds": 4,
+          "pending_messages": 3007,
+          "initial_pending": 1443
+        },
+        {
+          "seconds": 6,
+          "pending_messages": 2254,
+          "initial_pending": 646
+        },
+        {
+          "seconds": 8,
+          "pending_messages": 1617,
+          "initial_pending": 327
+        },
+        {
+          "seconds": 10,
+          "pending_messages": 1448,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 12,
+          "pending_messages": 1294,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 14,
+          "pending_messages": 1141,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 16,
+          "pending_messages": 979,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 18,
+          "pending_messages": 806,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 20,
+          "pending_messages": 634,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 22,
+          "pending_messages": 456,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 24,
+          "pending_messages": 277,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 26,
+          "pending_messages": 98,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 28,
+          "pending_messages": 56,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 30,
+          "pending_messages": 63,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 32,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 34,
+          "pending_messages": 62,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 36,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 38,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 40,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 42,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 44,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 46,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 48,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 50,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 52,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 54,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 56,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 58,
+          "pending_messages": 67,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 60,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 62,
+          "pending_messages": 68,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 64,
+          "pending_messages": 69,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 66,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 68,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 70,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 72,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 74,
+          "pending_messages": 66,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 76,
+          "pending_messages": 73,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 78,
+          "pending_messages": 64,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 80,
+          "pending_messages": 65,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 82,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 84,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 86,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 88,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 90,
+          "pending_messages": 57,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 92,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 94,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 96,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 98,
+          "pending_messages": 0,
+          "initial_pending": 0
+        },
+        {
+          "seconds": 100,
+          "pending_messages": 0,
+          "initial_pending": 0
+        }
+      ],
+      "service_order_diagnostic": [
+        {
+          "consumer": 0,
+          "last_initial_completion_after_release": 9.868505954742432,
+          "continuing_completions_before_last_initial": 564,
+          "processing_seconds_for_those_continuing_messages": 1.9999587151687592,
+          "observed_task_rate_until_last_initial": 281.35054047544094,
+          "calibrated_effective_rate": 282.18333333333334
+        },
+        {
+          "consumer": 1,
+          "last_initial_completion_after_release": 6.147068023681641,
+          "continuing_completions_before_last_initial": 762,
+          "processing_seconds_for_those_continuing_messages": 1.5908295216504484,
+          "observed_task_rate_until_last_initial": 486.6630925894398,
+          "calibrated_effective_rate": 485.0833333333333
+        },
+        {
+          "consumer": 2,
+          "last_initial_completion_after_release": 3.493629217147827,
+          "continuing_completions_before_last_initial": 353,
+          "processing_seconds_for_those_continuing_messages": 0.4823087074328214,
+          "observed_task_rate_until_last_initial": 733.8095787967453,
+          "calibrated_effective_rate": 722.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "completed_episodes": 6,
+    "initial_partition_counts": [
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12
+    ],
+    "matched_counts": true,
+    "maximum_age_profile_difference_after_normalizing_hold_seconds": 0.003191709518432617,
+    "original_three_pods_unchanged": true,
+    "all_six_prepared_pods_unchanged": true,
+    "restored_replicas": 3,
+    "distinct_ids": true,
+    "offset_continuity": true,
+    "predictions_before_release": true,
+    "clock_robust_episodes": 6
+  },
+  "false_successes": {
+    "A": 2,
+    "B": 2,
+    "C": 2,
+    "D": 2
+  },
+  "limitations": [
+    "Final assignments are installed before release; the diagnostic does not include an actual scaling or reassignment transition.",
+    "All six pods remain allocated; active consumer counts do not represent measured resource-cost differences.",
+    "Capacity is estimated from one specified busy 60-second interval per consumer on shared nodes.",
+    "Continuing input lasts 90 seconds; bounded pending work here is not a guarantee of indefinite stability.",
+    "Predictions assume oldest-first service across partitions, which actual Kafka consume batches do not guarantee.",
+    "The 20-second waiting-cohort objective is diagnostic and does not replace the proposal SLO.",
+    "This is a candidate-assignment test, not an evaluation of a complete published or proposed controller."
+  ]
+}

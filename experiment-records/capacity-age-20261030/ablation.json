@@ -1,0 +1,897 @@
+{
+  "kind": "retrospective 2 by 2 prediction ablation",
+  "pilots": [
+    {
+      "token": "age-probe-20261030-7662908000",
+      "archive_sha256": "df58fc10591ac730b007412f27fd0ac01835d77f77ae1a1c6ff8dbdcf072b375",
+      "individual_task_rates": [
+        286.751124733505,
+        467.03001853831535,
+        753.9839017068724,
+        505.6079570098984,
+        231.7846626024003,
+        279.45689074241443
+      ],
+      "pooled_task_rate": 502.58834832623097,
+      "rows": [
+        {
+          "id": "02-baseline-hold0-run1",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 62,
+          "observed_completed_p99_seconds": 17.076217651367188,
+          "unfinished": 62,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.04878837434563,
+            300.04878837434563,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.50034966166631,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.278072589969618,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 10.455802212500611,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 12.987239973523039,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        },
+        {
+          "id": "03-targeted6-hold0-run1",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 12.250726461410522,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02113789001119,
+            100.02113789001119,
+            100.02113789001119,
+            100.02113789001119,
+            100.02113789001119,
+            100.02113789001119
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1667832205555873,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.461037190254923,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 11.054932677197433,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 12.187743625530086,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "04-baseline-hold8-run1",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 1672,
+          "observed_completed_p99_seconds": 29.429368257522583,
+          "unfinished": 39,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.0718288698635,
+            300.0718288698635,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.50034966166631,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.278072589969618,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 20.026828299307862,
+              "deadline_misses": 94,
+              "meets_deadline_objective": false,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 22.55825294730844,
+              "deadline_misses": 972,
+              "meets_deadline_objective": false,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        },
+        {
+          "id": "05-targeted6-hold8-run1",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 19.419706344604492,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02166740584494,
+            100.02166740584494,
+            100.02166740584494,
+            100.02166740584494,
+            100.02166740584494,
+            100.02166740584494
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1667832205555873,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.461037190254923,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 18.22817572300432,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 19.360990724452815,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "06-targeted6-hold8-run2",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 16.968682527542114,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            99.93963073529461,
+            99.93963073529461,
+            99.93963073529461,
+            99.93963073529461,
+            99.93963073529461,
+            99.93963073529461
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1667832205555873,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.461037190254923,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 15.795745932507492,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 16.92858692158111,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "07-baseline-hold8-run2",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 1465,
+          "observed_completed_p99_seconds": 34.6794867515564,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.0713995115075,
+            300.0713995115075,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.50034966166631,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.278072589969618,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 19.40005065038208,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 21.931478636242765,
+              "deadline_misses": 621,
+              "meets_deadline_objective": false,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        },
+        {
+          "id": "08-targeted6-hold0-run2",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 10.766622543334961,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02287911181924,
+            100.02287911181924,
+            100.02287911181924,
+            100.02287911181924,
+            100.02287911181924,
+            100.02287911181924
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1667832205555873,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.461037190254923,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 9.592599236416794,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 10.725407323726497,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "09-baseline-hold0-run2",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 632,
+          "observed_completed_p99_seconds": 26.82122278213501,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.066404732912,
+            300.066404732912,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.50034966166631,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.278072589969618,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 14.022850523734132,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 16.554281847454924,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        }
+      ],
+      "error_counts": {
+        "A": {
+          "false_successes": 3,
+          "false_failures": 0
+        },
+        "B": {
+          "false_successes": 3,
+          "false_failures": 0
+        },
+        "C": {
+          "false_successes": 2,
+          "false_failures": 0
+        },
+        "D": {
+          "false_successes": 1,
+          "false_failures": 0
+        }
+      }
+    },
+    {
+      "token": "age-probe-20261030-4761760000",
+      "archive_sha256": "44c3e6ba83a6c57ea0b46e0bd3c29cf22431b21d6a36c7fc9d1983b52c838cb9",
+      "individual_task_rates": [
+        285.03784762446315,
+        466.33248656459705,
+        742.5867605326958,
+        472.40253851606184,
+        217.06810974181184,
+        280.4849715591979
+      ],
+      "pooled_task_rate": 497.9856982405854,
+      "rows": [
+        {
+          "id": "02-baseline-hold0-run1",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 846,
+          "observed_completed_p99_seconds": 30.597638368606567,
+          "unfinished": 12,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.06827954435306,
+            300.06827954435306,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.5604293688399435,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.345861705568542,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 15.846193441781821,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 18.381543661113813,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        },
+        {
+          "id": "03-targeted6-hold0-run1",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 12.246316194534302,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02244976382437,
+            100.02244976382437,
+            100.02244976382437,
+            100.02244976382437,
+            100.02244976382437,
+            100.02244976382437
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1868097896134753,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.763481845536322,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 11.076546075951171,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 12.354839183358319,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "04-baseline-hold8-run1",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 1660,
+          "observed_completed_p99_seconds": 44.491251707077026,
+          "unfinished": 103,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.07281639874685,
+            300.07281639874685,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.5604293688399435,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.345861705568542,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 18.844488748941245,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 21.37977149581535,
+              "deadline_misses": 461,
+              "meets_deadline_objective": false,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        },
+        {
+          "id": "05-targeted6-hold8-run1",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 16.587374925613403,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02390002074262,
+            100.02390002074262,
+            100.02390002074262,
+            100.02390002074262,
+            100.02390002074262,
+            100.02390002074262
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1868097896134753,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.763481845536322,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 15.410205724846435,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 16.688452817467816,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "06-targeted6-hold8-run2",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 16.38828444480896,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02278370083515,
+            100.02278370083515,
+            100.02278370083515,
+            100.02278370083515,
+            100.02278370083515,
+            100.02278370083515
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1868097896134753,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.763481845536322,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 15.287500503670287,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 16.56589589264787,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "07-baseline-hold8-run2",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 2053,
+          "observed_completed_p99_seconds": 25.757094621658325,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.0701830028359,
+            300.0701830028359,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.5604293688399435,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.345861705568542,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 21.36768067780477,
+              "deadline_misses": 1436,
+              "meets_deadline_objective": false,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 23.902976299282148,
+              "deadline_misses": 1970,
+              "meets_deadline_objective": false,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        },
+        {
+          "id": "08-targeted6-hold0-run2",
+          "observed_deadline_success": true,
+          "observed_deadline_misses": 0,
+          "observed_completed_p99_seconds": 11.857993602752686,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            100.02283617685387,
+            100.02283617685387,
+            100.02283617685387,
+            100.02283617685387,
+            100.02283617685387,
+            100.02283617685387
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 2.1868097896134753,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 4.763481845536322,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "C": {
+              "p99_seconds": 10.677496317040038,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 11.955864049462445,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": false,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            }
+          }
+        },
+        {
+          "id": "09-baseline-hold0-run2",
+          "observed_deadline_success": false,
+          "observed_deadline_misses": 394,
+          "observed_completed_p99_seconds": 23.714276552200317,
+          "unfinished": 0,
+          "initial_count": 6600,
+          "consumer_arrival_rates": [
+            300.06481617056147,
+            300.06481617056147,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "predictions": {
+            "A": {
+              "p99_seconds": 6.5604293688399435,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "B": {
+              "p99_seconds": 11.345861705568542,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            },
+            "C": {
+              "p99_seconds": 11.614359983835044,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": true
+            },
+            "D": {
+              "p99_seconds": 14.149652744289472,
+              "deadline_misses": 0,
+              "meets_deadline_objective": true,
+              "false_success": true,
+              "false_failure": false,
+              "assigned_input_below_task_rate": false
+            }
+          }
+        }
+      ],
+      "error_counts": {
+        "A": {
+          "false_successes": 4,
+          "false_failures": 0
+        },
+        "B": {
+          "false_successes": 4,
+          "false_failures": 0
+        },
+        "C": {
+          "false_successes": 3,
+          "false_failures": 0
+        },
+        "D": {
+          "false_successes": 2,
+          "false_failures": 0
+        }
+      }
+    }
+  ],
+  "variants": {
+    "A": {
+      "individual_capacity": false,
+      "include_age": false
+    },
+    "B": {
+      "individual_capacity": true,
+      "include_age": false
+    },
+    "C": {
+      "individual_capacity": false,
+      "include_age": true
+    },
+    "D": {
+      "individual_capacity": true,
+      "include_age": true
+    }
+  },
+  "limitations": [
+    "Task-processing rates are not full effective pipeline capacities.",
+    "Oldest-first processing across partitions is held fixed in all four diagnostics; Kafka does not guarantee it.",
+    "Only executed assignments have observed outcomes; predictions for unexecuted alternatives are not validated.",
+    "The 16 episodes share deployments and diagnostics and are not 16 independent calibration replicates.",
+    "The baseline assigns about 300 messages/s to a consumer measured below that task rate. Capacity alone challenges continuing-input recovery.",
+    "A finite waiting cohort can meet a deadline even when continuing input overloads a consumer; these are different objectives."
+  ]
+}

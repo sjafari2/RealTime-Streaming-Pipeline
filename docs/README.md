@@ -7,6 +7,7 @@ These guides describe the experimental design, implementation and published evid
 | [Research questions](research-questions.md) | Individual methods, combinations, execution order and costs |
 | [Skew mitigation literature audit](skew-mitigation-novelty.md) | Existing decision rules, outcome prediction and the candidate research gap |
 | [Message-age pilot](../experiment-records/message-age-20261030/README.md) | Reconstructed assignment rule, real Kafka diagnostics and limits of an age-aware correction |
+| [Capacity and message age](../experiment-records/capacity-age-20261030/README.md) | Four-way prediction comparison and controlled waiting-cohort diagnostics |
 | [Architecture](architecture.md) | Processing, coordination and evidence paths |
 | [Experiment methodology](experiment-methodology.md) | Calibration, timing and comparison controls |
 | [Results](../experiment-records/README.md) | The 24 main-proposal trials, tables and plots |

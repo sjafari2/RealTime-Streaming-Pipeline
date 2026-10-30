@@ -1,0 +1,48 @@
+{
+  "repository_revision_before_changes": "f91104d",
+  "analysis_and_final_source_sha256": {
+    "capacity_age_ablation.py": "31d886f7ec77ef098a713823b3fbf73fe7642c89db48fa226268db3d763a0565",
+    "test_capacity_age_ablation.py": "74155b25f7a6e8508c133e4e7579402975fc42d6eae6a4bf229e97567ad0fe8b",
+    "controlled_age_probe.py": "ab3b04daae3a0ff0f8d55930c5a31e6ab680f1423e6f15bf972c437267ff8cff",
+    "test_controlled_probe.py": "736d8fd632ae390c69c858d613b69d4e979d40bb3dedf377554eae352989c4b7",
+    "run_controlled_probe.py": "40306e80d47d20d7cce27e683fbe55ba4441417260a7a6797ff25e4b8550b58b",
+    "probe_process.py": "aadb43f165987e44b4e5d00e6c79bd8af9a1201aa9ccc032f3c3f0d34d8e6741",
+    "analyze_controlled_probe.py": "95267b792043596b8eda50376123d70728c370240df12b260cf8b14d3821581b",
+    "plot_capacity_age.py": "ac5fd8c69be12ad9c14800415b999b0f52a2cca980349e2ccc383fb1132cf3ed",
+    "verify_controlled_backups.py": "d66c57e99c63d1334e9df0ec8cf7a3feb51fe831d53a54d14df9e4c37bf4072c",
+    "kafka_age_probe.py": "e2fe862571fe3d0d65d5cff2e5b97230b60ef00d2f087e4fbebe53478f4b7507",
+    "probe_clocks.py": "69a8c6c80abe809daa1ef4f8cf85066c73c0d6b37da57f16afbd1754aceee48f"
+  },
+  "executions": [
+    {
+      "token": "age-controlled-20261030-7702579000",
+      "status": "failed",
+      "remote": "/config/age-controlled-20261030-7702579000",
+      "sources": {
+        "kafka_age_probe.py": "e2fe862571fe3d0d65d5cff2e5b97230b60ef00d2f087e4fbebe53478f4b7507",
+        "transition_audit.py": "4d1355a4d1151fb3978a6ff0ac10e111b83d00a9c07cbbb867507efd94a41d91",
+        "controlled_age_probe.py": "ab3b04daae3a0ff0f8d55930c5a31e6ab680f1423e6f15bf972c437267ff8cff",
+        "capacity_age_ablation.py": "31d886f7ec77ef098a713823b3fbf73fe7642c89db48fa226268db3d763a0565"
+      },
+      "archive_sha256": "939d566e30a3ce3b51fa15ecc10da586c31d093ddc94b5e7ab95381674f715c2",
+      "original_replicas": 3,
+      "restored_replicas": 3
+    },
+    {
+      "token": "age-controlled-20261030-8643364000",
+      "status": "completed",
+      "remote": "/config/age-controlled-20261030-8643364000",
+      "sources": {
+        "kafka_age_probe.py": "e2fe862571fe3d0d65d5cff2e5b97230b60ef00d2f087e4fbebe53478f4b7507",
+        "controlled_age_probe.py": "ab3b04daae3a0ff0f8d55930c5a31e6ab680f1423e6f15bf972c437267ff8cff",
+        "capacity_age_ablation.py": "31d886f7ec77ef098a713823b3fbf73fe7642c89db48fa226268db3d763a0565",
+        "probe_process.py": "aadb43f165987e44b4e5d00e6c79bd8af9a1201aa9ccc032f3c3f0d34d8e6741"
+      },
+      "archive_sha256": "9fb883854eb25b797b23575b30309c4af64b82d78f7ca806c2a4a8bcd262dd72",
+      "original_replicas": 3,
+      "restored_replicas": 3
+    }
+  ],
+  "completed_block_executed_launcher_sha256": "f570c4480b6b11ec571ca6dee3439e5ef03f13449e9f4ee0861bb232b9ddb787",
+  "launcher_note": "The final launcher additionally preserves the cleanup path if the post-run pod snapshot fails. The executed version is retained with the raw evidence. Final clock probing explicitly selects the nautilus context."
+}
