@@ -35,6 +35,22 @@ Capacity estimates apply to the original three pods under the saved busy calibra
 
 See [reporting intervals](REPORTING_INTERVALS.md) for Before, Active–end and Eval. end throughput, p99, mean backlog, mean skew and pending messages, together with native scaling assignments.
 
+## Before-and-after comparison figures
+
+The [performance figure](starting-backlog-performance.pdf) shows processing backlog, throughput and completion-window p99. The [runtime control signals](starting-backlog-control-signals.pdf) show rolling processing-backlog growth and mean lag skew. Smaller and larger starting backlogs use the same axes; line styles distinguish the two runs. Monitoring gaps are retained.
+
+Throughput counts distinct first completions in each 10-second interval, including warm-up messages completed during evaluation. Window p99 uses the full end-to-end latencies of evaluation messages completed in each 30-second interval. These percentiles describe changing latency during input; they do not replace the whole-run p99 and unfinished outcomes above, which follow the evaluation cohort through drain.
+
+The compact plotting data include source hashes. Reproduce the figures without loading raw per-message records:
+
+```bash
+python3 experiments/backlog-comparison/plot_overview.py \
+  --data experiment-records/backlog-comparison-20261027/starting-backlog-plot-data.json \
+  --output /tmp/starting-backlog-figures
+```
+
+PNG, PDF and SVG versions are available. Running the script without `--data` verifies the saved evidence and reconstructs the intervals from message records. The smaller window-cache files allow an interrupted reconstruction to resume.
+
 ## Figures
 
 ![Total backlog during evaluation](lag.png)
