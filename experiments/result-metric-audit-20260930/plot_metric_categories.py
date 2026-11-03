@@ -248,13 +248,13 @@ def render(data, out, allow_partial=False):
                          'pdf.fonttype': 42, 'ps.fonttype': 42})
     out.mkdir(parents=True, exist_ok=True)
     groups = [
-        ('results-12hot-700-runtime', '12 high-input partitions | 700 messages/s | 8 trials',
+        ('results-12hot-700-runtime', '12 high-traffic partitions | 700 messages/s | 8 trials',
          [('Run 1', lambda r: r['campaign'] == 'twelve700' and r['run'] == 1),
           ('Run 2', lambda r: r['campaign'] == 'twelve700' and r['run'] == 2)], False),
-        ('results-4hot-runtime', '4 high-input partitions | deployment blocks shown separately | 12 trials',
+        ('results-4hot-runtime', '4 high-traffic partitions | deployment blocks shown separately | 12 trials',
          [('700 messages/s', lambda r: r['campaign'] == 'four700'),
           ('600 messages/s', lambda r: r['campaign'] == 'four600')], True),
-        ('results-starting-backlog-runtime', '12 high-input partitions | 600 messages/s during evaluation | 16 trials',
+        ('results-starting-backlog-runtime', '12 high-traffic partitions | 600 messages/s during evaluation | 16 trials',
          [('Smaller starting backlog', lambda r: r['campaign'] == 'starting' and r['condition'] == 'smaller'),
           ('Larger starting backlog', lambda r: r['campaign'] == 'starting' and r['condition'] == 'larger')], True),
     ]
@@ -263,7 +263,7 @@ def render(data, out, allow_partial=False):
          [('processing_backlog', 'Processing backlog\n(offsets)'), ('throughput', 'Throughput (msg/s)'),
           ('window_p99', 'Window p99\nend-to-end latency (s)')],
          'Throughput: 30-second intervals. P99: evaluation messages completed within each 30-second interval.\n'
-         'Window p99 excludes drain and differs from whole-run p99; unfinished messages have no completed latency.'),
+         'Window p99 excludes drain and differs from run-level p99; unfinished messages have no completed latency.'),
         ('control-signals', 'Runtime Control Signals',
          [('growth', 'Mean processing-backlog\ngrowth (offsets/s)'), ('skew', 'Mean lag skew ratio'),
           ('persistent_hot', 'Persistently hot\npartitions (count)')],
