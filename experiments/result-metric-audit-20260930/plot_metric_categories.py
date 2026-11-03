@@ -260,15 +260,27 @@ def render(data, out, allow_partial=False):
                        Line2D([], [], color='#333333', lw=1.5, ls='--', label='Run 2')]
         for suffix, title, metrics, note in categories:
             height = 10.5 if len(metrics) == 3 else 8.3
+            compact = suffix == 'performance' and name in (
+                'results-12hot-700-runtime', 'results-4hot-runtime')
+            if compact:
+                # Keep text size while fitting these panels beside their discussion.
+                height = 6.1 if name == 'results-12hot-700-runtime' else 6.7
             fig, axes = plt.subplots(len(metrics), 2, figsize=(9.5, height),
                                      sharex=True, sharey='row', squeeze=False)
-            fig.subplots_adjust(left=.14, right=.98, top=.82, bottom=.14,
+            fig.subplots_adjust(left=.14, right=.98,
+                                top=(.80 if not styles else .78) if compact else .82,
+                                bottom=(.19 if not styles else .18) if compact else .14,
                                 wspace=.18, hspace=.23)
             fig.suptitle(title, y=.985, fontsize=14, fontweight='bold')
-            fig.text(.5, .95, subtitle, ha='center', fontsize=10)
-            fig.legend(handles=legend, loc='upper center', bbox_to_anchor=(.5, .925),
+            fig.text(.5, .925 if compact else .95, subtitle, ha='center', fontsize=10)
+            fig.legend(handles=legend, loc='upper center',
+                       bbox_to_anchor=(.5, .89 if compact else .925),
                        ncol=3 if styles else 4, frameon=False, fontsize=9)
             for i, (key, label) in enumerate(metrics):
+                if compact:
+                    label = {'processing_backlog': 'Processing\nbacklog (offsets)',
+                             'throughput': 'Throughput\n(msg/s)',
+                             'window_p99': 'Window p99\nlatency (s)'}.get(key, label)
                 values = [v for row in all_rows for _, v in row[key] if v is not None]
                 assert values and all(math.isfinite(v) for v in values), (name, key)
                 low, high = min(0, min(values)), max(values)
