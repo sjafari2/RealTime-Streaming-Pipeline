@@ -66,9 +66,9 @@ def main():
     rates = sorted({r['rate'] for r in runs})
     columns = 3
     rows = math.ceil(len(rates) / columns)
-    plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10,
+    plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 11,
                          'axes.spines.top': False, 'axes.spines.right': False})
-    fig, axes = plt.subplots(rows, columns, figsize=(15, 4.1 * rows + 1), squeeze=False)
+    fig, axes = plt.subplots(rows, columns, figsize=(9.5, 2.4 * rows + 1), squeeze=False)
     palette = ['#176b93', '#d86a26', '#408b57']
     for ax, rate in zip(axes.flat, rates):
         selected = [r for r in runs if r['rate'] == rate]
@@ -79,23 +79,20 @@ def main():
         peak = max(r['peak'] for r in selected)
         upper = 500 if rate <= 800 else math.ceil(peak * 1.18 / 1000) * 1000
         ax.set(xlim=(0, 20), ylim=(0, upper), xticks=[0, 5, 10, 15, 20])
-        ax.set_title(f'{rate:,.0f} messages/s', loc='left', fontsize=13, fontweight='bold', pad=12)
+        ax.set_title(f'{rate:,.0f} messages/s', loc='left', fontsize=12, fontweight='bold', pad=12)
         ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
         ax.grid(axis='y', color='#d9e0e5', linewidth=.7, alpha=.8)
-        ax.legend(loc='upper left', frameon=False, fontsize=9)
+        ax.legend(loc='upper left', frameon=False, fontsize=10)
     for ax in list(axes.flat)[len(rates):]:
         ax.set_visible(False)
-    fig.suptitle('Balanced input: lag across all tested rates', x=.07, ha='left',
-                 y=.985, fontsize=21, fontweight='bold')
+    fig.suptitle('Balanced input: total backlog across tested rates', x=.07, ha='left',
+                 y=.985, fontsize=16, fontweight='bold')
     fig.text(.07, .935, f'{len(runs)} validated runs  |  3 consumers  |  60 partitions  |  no scaling',
-             fontsize=12, color='#52606a')
-    fig.supylabel('Total lag (offsets)', x=.012, fontsize=12)
-    fig.supxlabel('Time since evaluation started (minutes)', y=.09, fontsize=12)
-    fig.text(.07, .048, 'Each panel shows 20 minutes of evaluation; 1-minute warm-up and 2-minute drain are not shown.',
              fontsize=10, color='#52606a')
-    fig.text(.07, .019, 'The 600–800 panels share a 0–500 scale. Higher-rate panels use different vertical scales. Gaps remain visible.',
-             fontsize=10, color='#52606a')
-    fig.subplots_adjust(left=.075, right=.98, top=.86, bottom=.17, hspace=.35, wspace=.27)
+    fig.supylabel('Total backlog (offsets)', x=.012, fontsize=12)
+    fig.supxlabel('Evaluation time (minutes)', y=.035, fontsize=11)
+    # Phase boundaries and scale differences are explained in the proposal caption.
+    fig.subplots_adjust(left=.10, right=.98, top=.83, bottom=.12, hspace=.55, wspace=.42)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.output.with_suffix('.png'), dpi=200, facecolor='white')
     fig.savefig(args.output.with_suffix('.pdf'), facecolor='white')

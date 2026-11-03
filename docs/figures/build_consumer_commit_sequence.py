@@ -57,10 +57,10 @@ def build(destination):
     c.setStrokeColor(HexColor('#287357'))
     c.setLineWidth(1)
     c.lines([(72, 59, 72, 51), (72, 51, 418, 51), (418, 51, 418, 59)])
-    text(245, 31, 'Completion latency', 12, '#287357', True, True)
+    text(245, 31, 'End-to-end latency', 12, '#287357', True, True)
     text(590, 49, 'Periodic commits can cover several', 10, '#70519A', center=True)
     text(590, 35, 'completed messages.', 10, '#70519A', center=True)
-    text(20, 12, 'Commit acknowledgment is outside the completion-latency interval.', 10, '#536273')
+    text(20, 12, 'Commit acknowledgment is outside the end-to-end latency interval.', 10, '#536273')
     c.showPage()
     c.save()
 

@@ -265,12 +265,12 @@ def render(data, out, allow_partial=False):
          'Throughput: 30-second intervals. P99: evaluation messages completed within each 30-second interval.\n'
          'Window p99 excludes drain and differs from whole-run p99; unfinished messages have no completed latency.'),
         ('control-signals', 'Runtime Control Signals',
-         [('growth', 'Mean processing-backlog\ngrowth (offsets/s)'), ('skew', 'Mean lag skew (ratio)'),
+         [('growth', 'Mean processing-backlog\ngrowth (offsets/s)'), ('skew', 'Mean lag skew ratio'),
           ('persistent_hot', 'Persistently hot\npartitions (count)')],
-         'Growth: 15 valid two-second intervals. Skew and persistence: 15 consecutive valid observations.\n'
+         'Processing-backlog growth: 15 valid two-second intervals. Lag skew and persistence: 15 consecutive valid observations.\n'
          'Missing data and ownership changes leave gaps until affected windows refill.'),
         ('costs', 'Mitigation Cost Metrics',
-         [('cpu', 'Actual consumer CPU\n(cores)'), ('memory', 'Actual consumer RSS\n(MiB)')],
+         [('cpu', 'Actual CPU use\n(cores)'), ('memory', 'Actual RSS memory\n(MiB)')],
          'Observed use across all started consumer processes; missing or stale components leave a gap.\n'
          'These traces show actual use; requested resources and intervention delays are separate measures.'),
     ]
@@ -309,7 +309,7 @@ def render(data, out, allow_partial=False):
                 if compact:
                     label = {'processing_backlog': 'Processing\nbacklog (offsets)',
                              'throughput': 'Throughput\n(msg/s)',
-                             'window_p99': 'Window p99\nlatency (s)'}.get(key, label)
+                             'window_p99': 'Window p99\nend-to-end\nlatency (s)'}.get(key, label)
                 values = [v for row in all_rows for _, v in row[key] if v is not None]
                 assert values and all(math.isfinite(v) for v in values), (name, key)
                 low, high = min(0, min(values)), max(values)
