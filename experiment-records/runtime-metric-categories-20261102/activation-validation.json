@@ -1,0 +1,519 @@
+{
+  "note": "Markers use recorded confirmation, not action request, recovery or a rounded window. Keep 3 has no activation marker.",
+  "comparison_sha256": {
+    "experiment-records/four-condition-20260929/comparison.json": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074",
+    "experiment-records/four-hot-partitions-20260930/comparison.json": "7a6e62f797f3eb49c9d6e34cab5d70e72ecf5ba1557e95728617d7cd93500409",
+    "results/four-hot600-20261021-analysis/comparison.json": "e935699886459e089dc7963bc8d0847aa0e2519d0463d59a3d2358a9c10e08d3",
+    "results/four-condition-20261027-003002-analysis/comparison.json": "a7e899efeb43d51a0a12d3edfb46bf0dc627942c949f525b5b9a4fbc10639298"
+  },
+  "runs": [
+    {
+      "run_id": "run-20260929-020644",
+      "campaign": "twelve700",
+      "arm": "keep3",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": false,
+      "epoch": 1790669375.878759,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20260929-041940",
+      "campaign": "twelve700",
+      "arm": "keep3",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": false,
+      "epoch": 1790677351.8841028,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20260929-023622",
+      "campaign": "twelve700",
+      "arm": "redistribute3",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790671186.871548,
+      "after_evaluation_seconds": 92.55160999298096,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "7ea96cf6ec7a9464c367952cbd3264b506f2ef780af325542a39a636521a9d7f",
+        "explicit-handoff-events.jsonl": "e2f01d2414e6e0aa492f2a9d24a218722b9aee9efd5581591a219b9bac33df2c"
+      }
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "campaign": "twelve700",
+      "arm": "redistribute3",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790676362.94357,
+      "after_evaluation_seconds": 93.12241268157959,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "7c2fc856a3d780841a7e187eb64b1ac40aab66aa65e0f15093d35a13547bf726",
+        "explicit-handoff-events.jsonl": "0aa6b2d0d469ffe9a632e71c76e362b9dd40ba03f7106a261bc4607588355f90"
+      }
+    },
+    {
+      "run_id": "run-20260929-025321",
+      "campaign": "twelve700",
+      "arm": "scale_redistribute6",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790672253.78371,
+      "after_evaluation_seconds": 139.82869410514832,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "631f8091f02bd1f3a48f61d4e7bd9113dc62a8e9e43f4f4a1a1849bca479066a",
+        "explicit-handoff-events.jsonl": "486f8c29a2d393ed45c9fbdf8c749b27ac7700e268ce1792565c29a2c551fafe"
+      }
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "campaign": "twelve700",
+      "arm": "scale_redistribute6",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790675377.1341472,
+      "after_evaluation_seconds": 144.22744917869568,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "06ac006fe3d77876450d30b941937fd340229eadc49cacdae4614a188c533aae",
+        "explicit-handoff-events.jsonl": "15c7829c6817d45093549cd79de7121b10efe15f911ff1295e7ed330f1435fd8"
+      }
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "campaign": "twelve700",
+      "arm": "kafka_scale6",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790673260.208,
+      "after_evaluation_seconds": 97.99993181228638,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "ae5f4b8a07bdcb5a70cfc47f9b36a0f59322537bb1e212efcb2f9f2e3220e750"
+      }
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "campaign": "twelve700",
+      "arm": "kafka_scale6",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790674299.987,
+      "after_evaluation_seconds": 100.00010895729065,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "a028315c8af48c87e9c98c1b5bc7d8d105fb05b4695c7a5fd90be45b8da7d313"
+      }
+    },
+    {
+      "run_id": "run-20260930-003405",
+      "campaign": "four700",
+      "arm": "redistribute3",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790750252.190275,
+      "after_evaluation_seconds": 94.40742588043213,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "b9f55688fc287807eb534defaa9099caa034c056763bde4d2cd343e61eb62247",
+        "explicit-handoff-events.jsonl": "da5be8550090022ffc049f7c3aa60be1145398b9b6f1b63ad2f138880b1cc6c7"
+      }
+    },
+    {
+      "run_id": "run-20260930-012528",
+      "campaign": "four700",
+      "arm": "redistribute3",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790753323.462157,
+      "after_evaluation_seconds": 88.47109603881836,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "4dfca81237a2bc8cb7b3cc8490f014abc14dc2051e847bc0aa8ccaa4ac67ba9a",
+        "explicit-handoff-events.jsonl": "375f321d4a17a61c02a8093f2f2f10b021edb79cd97cac3d2450fdf3eb1800e7"
+      }
+    },
+    {
+      "run_id": "run-20260930-005056",
+      "campaign": "four700",
+      "arm": "scale_redistribute6",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790751314.388705,
+      "after_evaluation_seconds": 145.97186994552612,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "8400a56c677e8b7ab0ab4e5d144da35dc7a7f8a4f2c86c3a2dabee1c6027c5ea",
+        "explicit-handoff-events.jsonl": "3da82da2f2b06024cfac664d021f97c98c50f3cd917f5bfe175f7fb741d9a2d1"
+      }
+    },
+    {
+      "run_id": "run-20260930-010811",
+      "campaign": "four700",
+      "arm": "scale_redistribute6",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1790752351.94206,
+      "after_evaluation_seconds": 148.4679479598999,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "23bb4d1190eef133b8ea387353f1ac3e79de447fbe7d60dc871961654f18bab3",
+        "explicit-handoff-events.jsonl": "5e63e79e5ab6bde3685239ec8f535f6a42c4b5056c4786179fa2a252af0e5b49"
+      }
+    },
+    {
+      "run_id": "run-20261021-081142",
+      "campaign": "four600",
+      "arm": "keep3",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": false,
+      "epoch": 1792592077.643859,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20261021-102633",
+      "campaign": "four600",
+      "arm": "keep3",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": false,
+      "epoch": 1792600168.5970612,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20261021-083131",
+      "campaign": "four600",
+      "arm": "redistribute3",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1792593346.938964,
+      "after_evaluation_seconds": 131.4501450061798,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "139c2df212db4af3ade32eb0906a906ff78182acc1f0b26af963ce0f2cf70e99",
+        "explicit-handoff-events.jsonl": "11d9c74d78d6eeeb3c3a5b9e0f47f5f21505d97c9a05a9ad717c1ae648561686"
+      }
+    },
+    {
+      "run_id": "run-20261021-100744",
+      "campaign": "four600",
+      "arm": "redistribute3",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1792599076.432189,
+      "after_evaluation_seconds": 97.52945804595947,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "c1d4db8cdc24afb2925ab491b8d2488f1841776650aed7596f8a8c5b8c2e94e9",
+        "explicit-handoff-events.jsonl": "350d68849a8c88c6ebc98acb1fed5f00527e8754be55f8211eb228fa5dfda429"
+      }
+    },
+    {
+      "run_id": "run-20261021-084932",
+      "campaign": "four600",
+      "arm": "scale_redistribute6",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1792594445.354453,
+      "after_evaluation_seconds": 157.7923400402069,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "2647d36ab77a877eb58721a5ed30fe6cde823b81c9164f902e7cda0848f831a2",
+        "explicit-handoff-events.jsonl": "f09a737e3b4ef195f26ae449b6e0c0f4bfe9866860b56db2db389ad3167f525b"
+      }
+    },
+    {
+      "run_id": "run-20261021-094855",
+      "campaign": "four600",
+      "arm": "scale_redistribute6",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1792598004.175097,
+      "after_evaluation_seconds": 151.79224491119385,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "f688b7f2c3fcbb000b80f07c105ec4d1974ffac1a5c591ea484adefe829fda7d",
+        "explicit-handoff-events.jsonl": "8d1ccb8c2046ccf9dca6b68a153d09382facf46fc2905377d311f2e76936e220"
+      }
+    },
+    {
+      "run_id": "run-20261021-091003",
+      "campaign": "four600",
+      "arm": "kafka_scale6",
+      "run": 1,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1792595619.749,
+      "after_evaluation_seconds": 95.99959206581116,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "744dc419188c0ffa35f568589e326fd041a5cbeffc4747997f20df87b625a8f2"
+      }
+    },
+    {
+      "run_id": "run-20261021-092942",
+      "campaign": "four600",
+      "arm": "kafka_scale6",
+      "run": 2,
+      "condition": null,
+      "marker_drawn": true,
+      "epoch": 1792596802.172,
+      "after_evaluation_seconds": 97.9996018409729,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "47a77fcbc53c16978f7681837de38834688fe27d84e656333ffdfd1c067c14d2"
+      }
+    },
+    {
+      "run_id": "run-20261027-004457",
+      "campaign": "starting",
+      "arm": "keep3",
+      "run": 1,
+      "condition": "smaller",
+      "marker_drawn": false,
+      "epoch": 1793083672.809684,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20261027-010153",
+      "campaign": "starting",
+      "arm": "redistribute3",
+      "run": 1,
+      "condition": "smaller",
+      "marker_drawn": true,
+      "epoch": 1793084727.204685,
+      "after_evaluation_seconds": 97.53469681739807,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "56458da3cc27043016ca3d36ec5eb3aeb0e2a9077503cf5fff00b38503978e24",
+        "explicit-handoff-events.jsonl": "b1681a0864cb00290267ada217088bbe2b8bbcd17e06bdf9c13c1508ea723190"
+      }
+    },
+    {
+      "run_id": "run-20261027-011902",
+      "campaign": "starting",
+      "arm": "scale_redistribute6",
+      "run": 1,
+      "condition": "smaller",
+      "marker_drawn": true,
+      "epoch": 1793085810.019365,
+      "after_evaluation_seconds": 152.3737211227417,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "80b595a844672bdcf15324df2668730d74ace24fce5f18b1c5740c502ec7d810",
+        "explicit-handoff-events.jsonl": "acd128bb2691ad93f5e3a51b706b8aa03b5efcdc9ca9555e0041d00dd7ddb92c"
+      }
+    },
+    {
+      "run_id": "run-20261027-013636",
+      "campaign": "starting",
+      "arm": "kafka_scale6",
+      "run": 1,
+      "condition": "smaller",
+      "marker_drawn": true,
+      "epoch": 1793086816.998,
+      "after_evaluation_seconds": 99.99985694885254,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "37960be51bf59d329768eaba5cb8313f63e3b30b5a62943a8c34ec8fb660ce4e"
+      }
+    },
+    {
+      "run_id": "run-20261027-015403",
+      "campaign": "starting",
+      "arm": "keep3",
+      "run": 1,
+      "condition": "larger",
+      "marker_drawn": false,
+      "epoch": 1793087818.2690299,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20261027-021058",
+      "campaign": "starting",
+      "arm": "redistribute3",
+      "run": 1,
+      "condition": "larger",
+      "marker_drawn": true,
+      "epoch": 1793088870.5377548,
+      "after_evaluation_seconds": 97.60603380203247,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "c2055a3252ee2a40220b0322cf843c05bea45e482618ad9a92453ae1f5a24db3",
+        "explicit-handoff-events.jsonl": "88f623c84e04b064cf7c4007a91ed3726193d9973b491b9692a7524916b0d9a6"
+      }
+    },
+    {
+      "run_id": "run-20261027-032235",
+      "campaign": "starting",
+      "arm": "scale_redistribute6",
+      "run": 1,
+      "condition": "larger",
+      "marker_drawn": true,
+      "epoch": 1793093275.8641438,
+      "after_evaluation_seconds": 203.92274475097656,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "374ddb5a7678b9fa0ef2c2a404adf45fb9c215dc3f79fd161fd6c5bef61f8b55",
+        "explicit-handoff-events.jsonl": "60118b171f19f8d9715a9187e0fa725b5a7b90f95a5a2dff0c0e20da5b3fed2d"
+      }
+    },
+    {
+      "run_id": "run-20261027-034017",
+      "campaign": "starting",
+      "arm": "kafka_scale6",
+      "run": 1,
+      "condition": "larger",
+      "marker_drawn": true,
+      "epoch": 1793094245.74,
+      "after_evaluation_seconds": 100.00002884864807,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "8765dbe7a881c13e49ae04c85a21c64710b70867385a6e869c0e997ff2c1bd4b"
+      }
+    },
+    {
+      "run_id": "run-20261027-035814",
+      "campaign": "starting",
+      "arm": "kafka_scale6",
+      "run": 2,
+      "condition": "larger",
+      "marker_drawn": true,
+      "epoch": 1793095316.794,
+      "after_evaluation_seconds": 100.00043082237244,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "0f4e6115c8c70c2ff07cf3298efa45e724fdbb0364b84566ce45f28718dbfe66"
+      }
+    },
+    {
+      "run_id": "run-20261027-041603",
+      "campaign": "starting",
+      "arm": "scale_redistribute6",
+      "run": 2,
+      "condition": "larger",
+      "marker_drawn": true,
+      "epoch": 1793096434.975358,
+      "after_evaluation_seconds": 155.32103896141052,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "d26965eabfde72dbdde5988a2abeb37ae84201f99420bdedeb49f9b10837da3a",
+        "explicit-handoff-events.jsonl": "d1bf883532c358025d464bc01dd37bd6e9dd1ebde7247051a726264c07a62d1a"
+      }
+    },
+    {
+      "run_id": "run-20261027-043343",
+      "campaign": "starting",
+      "arm": "redistribute3",
+      "run": 2,
+      "condition": "larger",
+      "marker_drawn": true,
+      "epoch": 1793097439.948448,
+      "after_evaluation_seconds": 98.06217288970947,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "1233ec892f325e4e46ba88324e2464e7cf9848b32466b625cf9ab187a8e89d1d",
+        "explicit-handoff-events.jsonl": "f2c673a7870c03cfcc5d2d72d7807593e258437f2749b1c12857d1fcf157eba5"
+      }
+    },
+    {
+      "run_id": "run-20261027-045115",
+      "campaign": "starting",
+      "arm": "keep3",
+      "run": 2,
+      "condition": "larger",
+      "marker_drawn": false,
+      "epoch": 1793098452.963694,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20261027-050819",
+      "campaign": "starting",
+      "arm": "kafka_scale6",
+      "run": 2,
+      "condition": "smaller",
+      "marker_drawn": true,
+      "epoch": 1793099515.93,
+      "after_evaluation_seconds": 93.99980616569519,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "2a186f56ca23650ecf698951807d68536573cc47773fca46f12fa3a78eed1549"
+      }
+    },
+    {
+      "run_id": "run-20261027-052551",
+      "campaign": "starting",
+      "arm": "scale_redistribute6",
+      "run": 2,
+      "condition": "smaller",
+      "marker_drawn": true,
+      "epoch": 1793100633.842798,
+      "after_evaluation_seconds": 162.70692014694214,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "d4729df92a3b2a40cd88f5aaaab080fe2a91122797179f8e78a37d55e960edaf",
+        "explicit-handoff-events.jsonl": "8e082db57a2af6b47ca4a3b0a1e856434175e3a2218aa16a69f34f12a1a261f6"
+      }
+    },
+    {
+      "run_id": "run-20261027-054324",
+      "campaign": "starting",
+      "arm": "redistribute3",
+      "run": 2,
+      "condition": "smaller",
+      "marker_drawn": true,
+      "epoch": 1793101624.5902138,
+      "after_evaluation_seconds": 100.17510461807251,
+      "basis": "explicit active_verified event",
+      "evidence_sha256": {
+        "intervention-events.jsonl": "47d3e59fcf7b6e1cd34f54d2c8f5843a4ace8eb7d054312e9447ce74f748cdbb",
+        "explicit-handoff-events.jsonl": "0da39d2669e5d712a2951cafe6a883ccd6a2f3be900ed1286c1e47bf52b1522f"
+      }
+    },
+    {
+      "run_id": "run-20261027-060048",
+      "campaign": "starting",
+      "arm": "keep3",
+      "run": 2,
+      "condition": "smaller",
+      "marker_drawn": false,
+      "epoch": 1793102624.7168121,
+      "after_evaluation_seconds": 60.0,
+      "basis": "scheduled reference; no action",
+      "evidence_sha256": {}
+    }
+  ]
+}

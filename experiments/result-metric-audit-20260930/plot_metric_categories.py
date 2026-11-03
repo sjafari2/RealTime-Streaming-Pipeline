@@ -208,6 +208,35 @@ def collect(repo, cache, previous_resources=None, campaigns=None):
                     'scope': 'Evaluation only, excluding warm-up and drain. No averaging across trials or deployments.'})
 
 
+def attach_activation_boundaries(data, repository):
+    """Verify each marker against the original handover or ownership record."""
+    windows = load_module('activation_windows', repository / 'experiments/four-condition-20260929/analyze_action_windows.py')
+    comparisons = {}
+    for campaign, relative in CAMPAIGNS.items():
+        path = repository / relative
+        assert sha(path) == data['comparison_sha256'][relative], relative
+        comparisons[campaign] = {r['run_id']: r for r in read(path)['runs']}
+    for row in data['rows']:
+        source = comparisons[row['campaign']][row['run_id']]
+        assert source['arm'] == row['arm'] and source['run_number'] == row['run']
+        assert source['intervention_cost']['event_file_sha256'] == row['event_sha256']
+        directory = repository / source['raw_evidence']
+        manifest_path = directory / 'manifest.json'
+        assert sha(manifest_path) == row['source_hashes']['manifest.json']
+        manifest = read(manifest_path)
+        assert manifest['run_id'] == row['run_id']
+        assert math.isclose(manifest['producer_end_epoch'] - manifest['evaluation_start_epoch'], 600)
+        if row['arm'] == 'kafka_scale6':
+            # Native confirmation depends on the saved sequence of ownership observations.
+            assert sha(directory / 'lag-summary.json') == row['source_hashes']['lag-summary.json']
+        boundary = windows.post_action_boundary(directory, manifest, source)
+        if source.get('activation'):
+            assert boundary == source['activation']
+        row['activation'] = boundary
+        print('Verified activation:', row['run_id'], row['arm'],
+              round(boundary['after_evaluation_seconds'], 3), flush=True)
+
+
 def render(data, out, allow_partial=False):
     import matplotlib
     matplotlib.use('Agg')
@@ -243,7 +272,7 @@ def render(data, out, allow_partial=False):
         ('costs', 'Mitigation Cost Metrics',
          [('cpu', 'Actual consumer CPU\n(cores)'), ('memory', 'Actual consumer RSS\n(MiB)')],
          'Observed use across all started consumer processes; missing or stale components leave a gap.\n'
-         'Requested-resource integrals and action delays are separate costs shown in the other result figures.'),
+         'These traces show actual use; requested resources and intervention delays are separate measures.'),
     ]
     audit = []
     figure_count = 0
@@ -295,7 +324,17 @@ def render(data, out, allow_partial=False):
                                 [math.nan if v is None else v for _, v in points],
                                 color=COLORS[ARMS.index(row['arm'])],
                                 ls='--' if styles and row['run'] == 2 else '-', lw=1.2)
-                    ax.axvline(1, color='#333333', ls=':', lw=1)
+                    ax.axvline(1, color='#666666', ls=':', lw=1, zorder=1)
+                    for row in selected[col]:
+                        boundary = row['activation']
+                        seconds = boundary['after_evaluation_seconds']
+                        assert 60 <= seconds < 600
+                        if row['arm'] == 'keep3':
+                            assert seconds == 60 and boundary['basis'] == 'scheduled reference; no action'
+                            continue
+                        ax.axvline(seconds / 60, color=COLORS[ARMS.index(row['arm'])],
+                                   ls=':', lw=1.25, alpha=.85, zorder=1)
+
                     ax.axvspan(.5, 1, color='#d8dee5', alpha=.35, zorder=0)
                     ax.axvspan(9.5, 10, color='#d8dee5', alpha=.35, zorder=0)
                     ax.set_xlim(0, 10); ax.set_ylim(low, high)
@@ -322,12 +361,22 @@ def render(data, out, allow_partial=False):
                 audit.append(dict(figure=name+'-'+suffix, metric=key,
                                   valid_min=min(values), valid_max=max(values),
                                   axis_min=low, axis_max=high))
-            fig.text(.545, .035, note+'\nDotted vertical line: scheduled action at minute 1. Shading: Before and Eval. end.',
-                     ha='center', fontsize=8.5)
+            fig.text(.545, .035, note+'\nDotted vertical lines: gray = request; colors = confirmed activation for each run. Shading: Before / Eval. end.',
+                     ha='center', fontsize=8)
             for extension in ('pdf', 'png', 'svg'):
-                fig.savefig(out/(name+'-'+suffix+'.'+extension), dpi=190, bbox_inches='tight', facecolor='white')
+                path = out/(name+'-'+suffix+'.'+extension)
+                fig.savefig(path, dpi=190, bbox_inches='tight', facecolor='white')
+                if extension == 'svg':
+                    path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines()) + '\n')
             plt.close(fig)
             figure_count += 1
+    (out/'activation-validation.json').write_text(json.dumps({
+        'note': 'Markers use recorded confirmation, not action request, recovery or a rounded window. Keep 3 has no activation marker.',
+        'comparison_sha256': data['comparison_sha256'],
+        'runs': [dict(run_id=r['run_id'], campaign=r['campaign'], arm=r['arm'],
+                      run=r['run'], condition=r['condition'],
+                      marker_drawn=r['arm'] != 'keep3', **r['activation']) for r in data['rows']]
+    }, indent=2) + '\n')
     (out/'plot-validation.json').write_text(json.dumps(audit, indent=2)+'\n')
     return figure_count
 
@@ -351,6 +400,10 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     if not args.collect_only and not args.campaign:
         assert len(data['rows']) == len({r['run_id'] for r in data['rows']}) == 36
+    if args.repository:
+        attach_activation_boundaries(data, args.repository)
+    elif any('activation' not in row for row in data['rows']):
+        parser.error('--repository is required to verify activation boundaries for older plot data')
     data['plotter_sha256'] = sha(Path(__file__))
     (args.output/'metric-category-plot-data.json').write_text(json.dumps(data, allow_nan=False)+'\n')
     if args.collect_only:
