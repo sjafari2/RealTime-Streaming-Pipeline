@@ -1,0 +1,99 @@
+{
+  "source_sha256": {
+    "experiment-records/runtime-metric-categories-20261102/metric-category-plot-data.json": "2197cd6095c13bdefeee0a2ce268e7dbb3154f47dceb3ebc9a9c0bd1e736ae77",
+    "experiment-records/four-condition-20260929/action-window-performance.json": "6eb8d63954adbed862bfa5246d70eb7087cb5ffa6e6df461f1e0dcd3b1a9b282",
+    "experiment-records/four-condition-20260929/comparison.json": "006a39afdce29f7130c48964f1ce97fce11c1c89de6a9dd1e3c3825455457074"
+  },
+  "note": "Existing time series are unchanged; activation markers use the saved unrounded boundaries. Keep 3 has only a scheduled reference.",
+  "marker_style": "vertical",
+  "intervals": [
+    {
+      "run_id": "run-20260929-020644",
+      "arm": "keep3",
+      "run": 1,
+      "start_seconds": 60.0,
+      "end_seconds": 600.0,
+      "basis": "scheduled reference; no action",
+      "boundary_evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20260929-041940",
+      "arm": "keep3",
+      "run": 2,
+      "start_seconds": 60.0,
+      "end_seconds": 600.0,
+      "basis": "scheduled reference; no action",
+      "boundary_evidence_sha256": {}
+    },
+    {
+      "run_id": "run-20260929-023622",
+      "arm": "redistribute3",
+      "run": 1,
+      "start_seconds": 92.55160999298096,
+      "end_seconds": 600.0,
+      "basis": "explicit active_verified event",
+      "boundary_evidence_sha256": {
+        "intervention-events.jsonl": "7ea96cf6ec7a9464c367952cbd3264b506f2ef780af325542a39a636521a9d7f",
+        "explicit-handoff-events.jsonl": "e2f01d2414e6e0aa492f2a9d24a218722b9aee9efd5581591a219b9bac33df2c"
+      }
+    },
+    {
+      "run_id": "run-20260929-040237",
+      "arm": "redistribute3",
+      "run": 2,
+      "start_seconds": 93.12241268157959,
+      "end_seconds": 600.0,
+      "basis": "explicit active_verified event",
+      "boundary_evidence_sha256": {
+        "intervention-events.jsonl": "7c2fc856a3d780841a7e187eb64b1ac40aab66aa65e0f15093d35a13547bf726",
+        "explicit-handoff-events.jsonl": "0aa6b2d0d469ffe9a632e71c76e362b9dd40ba03f7106a261bc4607588355f90"
+      }
+    },
+    {
+      "run_id": "run-20260929-025321",
+      "arm": "scale_redistribute6",
+      "run": 1,
+      "start_seconds": 139.82869410514832,
+      "end_seconds": 600.0,
+      "basis": "explicit active_verified event",
+      "boundary_evidence_sha256": {
+        "intervention-events.jsonl": "631f8091f02bd1f3a48f61d4e7bd9113dc62a8e9e43f4f4a1a1849bca479066a",
+        "explicit-handoff-events.jsonl": "486f8c29a2d393ed45c9fbdf8c749b27ac7700e268ce1792565c29a2c551fafe"
+      }
+    },
+    {
+      "run_id": "run-20260929-034520",
+      "arm": "scale_redistribute6",
+      "run": 2,
+      "start_seconds": 144.22744917869568,
+      "end_seconds": 600.0,
+      "basis": "explicit active_verified event",
+      "boundary_evidence_sha256": {
+        "intervention-events.jsonl": "06ac006fe3d77876450d30b941937fd340229eadc49cacdae4614a188c533aae",
+        "explicit-handoff-events.jsonl": "15c7829c6817d45093549cd79de7121b10efe15f911ff1295e7ed330f1435fd8"
+      }
+    },
+    {
+      "run_id": "run-20260929-031044",
+      "arm": "kafka_scale6",
+      "run": 1,
+      "start_seconds": 97.99993181228638,
+      "end_seconds": 600.0,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "boundary_evidence_sha256": {
+        "intervention-events.jsonl": "ae5f4b8a07bdcb5a70cfc47f9b36a0f59322537bb1e212efcb2f9f2e3220e750"
+      }
+    },
+    {
+      "run_id": "run-20260929-032802",
+      "arm": "kafka_scale6",
+      "run": 2,
+      "start_seconds": 100.00010895729065,
+      "end_seconds": 600.0,
+      "basis": "native six-owner map confirmed unchanged for ten seconds",
+      "boundary_evidence_sha256": {
+        "intervention-events.jsonl": "a028315c8af48c87e9c98c1b5bc7d8d105fb05b4695c7a5fd90be45b8da7d313"
+      }
+    }
+  ]
+}

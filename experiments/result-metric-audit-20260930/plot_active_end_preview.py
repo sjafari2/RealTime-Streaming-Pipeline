@@ -1,4 +1,4 @@
-"""Preview recorded Active–end intervals beneath the twelve-partition traces."""
+"""Preview recorded activation boundaries on the twelve-partition traces."""
 import argparse
 import hashlib
 import json
@@ -17,7 +17,7 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def render(repository, output):
+def render(repository, output, style="vertical"):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -60,15 +60,20 @@ def render(repository, output):
 
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10,
                          "svg.fonttype": "none", "axes.labelsize": 11})
-    fig = plt.figure(figsize=(12, 9.5))
-    grid = fig.add_gridspec(4, 2, height_ratios=[1, 1, 1, .87],
-                           left=.105, right=.98, bottom=.18, top=.825,
+    vertical = style == "vertical"
+    fig = plt.figure(figsize=(12, 8 if vertical else 9.5))
+    row_count = 3 if vertical else 4
+    grid = fig.add_gridspec(row_count, 2, height_ratios=[1] * 3 if vertical else [1, 1, 1, .87],
+                           left=.105, right=.98, bottom=.20 if vertical else .18, top=.79 if vertical else .825,
                            hspace=.27, wspace=.17)
-    axes = [[fig.add_subplot(grid[i, j]) for j in range(2)] for i in range(4)]
-    fig.suptitle("Performance Evaluation Metrics", y=.975, fontsize=16, weight="bold")
-    fig.text(.5, .939, "12 high-input partitions | 700 messages/s | recorded Active–end intervals", ha="center", fontsize=11)
+    axes = [[fig.add_subplot(grid[i, j]) for j in range(2)] for i in range(row_count)]
+    fig.suptitle("Performance Evaluation Metrics", y=.985 if vertical else .975, fontsize=16, weight="bold")
+    fig.text(.5, .93 if vertical else .939, "12 high-input partitions | 700 messages/s | recorded Active–end intervals", ha="center", fontsize=11)
     fig.legend(handles=[Line2D([], [], color=c, lw=2, label=l) for c, l in zip(COLORS, LABELS)],
                loc="upper center", bbox_to_anchor=(.5, .918), ncol=4, frameon=False)
+    if vertical:
+        fig.text(.5, .855, "Colored dotted lines: confirmed activation   |   Gray dashed line: scheduled action request",
+                 ha="center", fontsize=9.5, color="#444444")
     metrics = [("processing_backlog", "Processing backlog\n(offsets)"),
                ("throughput", "Throughput\n(msg/s)"),
                ("window_p99", "Window p99\nend-to-end latency (s)")]
@@ -82,7 +87,14 @@ def render(repository, output):
                 ax.plot([t / 60 for t, _ in points], [math.nan if v is None else v for _, v in points],
                         color=COLORS[ARMS.index(row["arm"])], lw=1.5)
             ax.set(xlim=(0, 10), ylim=(0, max(values) * 1.08))
-            ax.axvline(1, color="#333333", ls=":", lw=1)
+            ax.axvline(1, color="#666666", ls="--" if vertical else ":", lw=1, zorder=1)
+            if vertical:
+                for item in audit:
+                    if item["run"] == j + 1 and item["arm"] != "keep3":
+                        ax.axvline(item["start_seconds"] / 60,
+                                   color=COLORS[ARMS.index(item["arm"])], ls=":", lw=1.35,
+                                   alpha=.9, zorder=1)
+                ax.axvline(10, color="#555555", ls=":", lw=1, clip_on=False)
             ax.axvspan(.5, 1, color="#d8dee5", alpha=.4, zorder=0)
             ax.axvspan(9.5, 10, color="#d8dee5", alpha=.4, zorder=0)
             ax.xaxis.set_major_locator(MultipleLocator(1))
@@ -93,7 +105,9 @@ def render(repository, output):
             ax.spines[["top", "right"]].set_visible(False)
             ax.grid(alpha=.18)
             ax.set_axisbelow(True)
-            ax.tick_params(axis="x", labelbottom=False)
+            ax.tick_params(axis="x", labelbottom=vertical and i == 2)
+            if vertical and i == 2:
+                ax.set_xlabel("Evaluation time (min)")
             if j == 0:
                 ax.set_ylabel(label)
             else:
@@ -103,7 +117,7 @@ def render(repository, output):
                 for x, name in [(.75, "Before"), (9.75, "Eval. end")]:
                     ax.text(x, 1.025, name, transform=ax.get_xaxis_transform(), ha="center", fontsize=9, color="#62676d")
 
-    for j in range(2):
+    for j in ([] if vertical else range(2)):
         ax = axes[3][j]
         ax.set(xlim=(0, 10), ylim=(-.6, 3.8), yticks=[])
         ax.set_title("Active–end intervals", fontsize=11, loc="left", pad=6)
@@ -126,20 +140,27 @@ def render(repository, output):
         ax.xaxis.set_major_locator(MultipleLocator(1))
         ax.set_xlabel("Evaluation time (min)")
 
-    fig.text(.105, .072, "Dotted line: action requested at 60 s. Filled circles: confirmed activation; bars continue to evaluation end (600 s).\n"
-             "Keep 3 has no intervention: its open circle marks the comparison reference. Active–end can include backlog recovery.", fontsize=9)
+    if vertical:
+        timing_note = ("Active–end extends from each colored dotted line to evaluation end (600 s); it can include backlog recovery.\n"
+                       "Keep 3 has no activation line: its comparison interval starts at the gray 60-second reference.")
+    else:
+        timing_note = ("Dotted line: scheduled action request at 60 s. Filled circles: confirmed activation; bars continue to 600 s.\n"
+                       "Keep 3 has no intervention: its open circle marks the comparison reference. Active–end can include backlog recovery.")
+    fig.text(.105, .072, timing_note, fontsize=9)
     fig.text(.105, .024, "Shading: Before (30–60 s) and Eval. end (570–600 s). Throughput and p99 use consecutive 30-second intervals.\n"
              "P99 uses evaluation messages completed in each interval. Warm-up completions can contribute to throughput; drain is excluded.", fontsize=8.5, color="#555555")
     output.mkdir(parents=True, exist_ok=True)
     for ext in ("png", "svg"):
-        path = output / ("twelve-partition-active-end-preview." + ext)
+        name = "twelve-partition-active-end-vertical-preview" if vertical else "twelve-partition-active-end-preview"
+        path = output / (name + "." + ext)
         fig.savefig(path, dpi=180, facecolor="white")
         if ext == "svg":
             path.write_text("\n".join(s.rstrip() for s in path.read_text().splitlines()) + "\n")
     plt.close(fig)
-    (output / "validation.json").write_text(json.dumps(dict(
+    (output / ("validation-vertical.json" if vertical else "validation.json")).write_text(json.dumps(dict(
         source_sha256={str(p.relative_to(repository)): digest(p) for p in (data_path, windows_path, comparison_path)},
-        note="Existing time series are unchanged; added bars use the saved unrounded activation boundaries.",
+        note="Existing time series are unchanged; activation markers use the saved unrounded boundaries. Keep 3 has only a scheduled reference.",
+        marker_style=style,
         intervals=audit), indent=2) + "\n")
     print("Verified and rendered 8 recorded intervals; all end at 600 seconds.")
 
@@ -148,5 +169,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--style", choices=["vertical", "bars"], default="vertical")
     args = parser.parse_args()
-    render(args.repository, args.output)
+    render(args.repository, args.output, args.style)
