@@ -32,8 +32,29 @@ def read(p,n):return json.loads((p/n).read_text())
 
 def portable_preparations(rows):
     """Publish evidence locations relative to the checkout, without local user paths."""
-    return [dict(row,directory=str(Path(row['directory']).resolve().relative_to(ROOT.resolve())))
-            for row in rows]
+    result=[]
+    for row in rows:
+        if 'directory' not in row:
+            result.append(dict(row))
+            continue
+        path=Path(row['directory']).resolve()
+        try:
+            relative=path.relative_to(ROOT.resolve())
+        except ValueError:
+            canonical=ROOT/'results'/path.name
+            if not canonical.is_symlink() or canonical.resolve()!=path:
+                raise ValueError('Evidence outside the checkout has no matching results link')
+            relative=canonical.relative_to(ROOT)
+        result.append(dict(row,directory=str(relative)))
+    return result
+
+
+def recorded_hot_owner(reference, hot):
+    selected=[row for row in reference['assignment'] if row['topic_index']==0 and row['partition'] in hot]
+    owners={row['pod'] for row in selected}
+    if not hot or len(selected)!=len(set(hot)) or len(owners)!=1:
+        raise ValueError('The starting reference must place every high-traffic partition on one consumer')
+    return next(iter(owners))
 
 def stable_six(snapshots,anchor,hold=10):
     first=previous=None
@@ -175,7 +196,8 @@ def deadline_sensitivity(path,saved,thresholds):
     return replay['completion_deadline_outcomes']
 
 
-def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,deadline_ms=99,deadline_thresholds=None,initial_hot_owner='consumer-sts-2'):
+def load(row,resources,reference,hot,growth_window_samples=5,aggregate_rate=700,deadline_ms=99,deadline_thresholds=None,initial_hot_owner=None):
+    if initial_hot_owner is None:initial_hot_owner=recorded_hot_owner(reference,hot)
     p=Path(row['directory']);m=read(p,'manifest.json');o=read(p,'outcome-summary.json');lag=read(p,'lag-summary.json');audit=read(p,'measurement-audit.json')
     assert read(p,'runner-status.json')['status']=='complete' and read(p,'handoff-validation.json')['status']=='passed'
     assert not o['validity_failures'] and not audit['issues']
@@ -244,6 +266,8 @@ def main():
     a=parser.parse_args();growth_seconds=2*a.growth_window_samples
     campaign=read(a.campaign,'campaign-status.json')
     arms,aggregate_rate=campaign_design(campaign)
+    owner=recorded_hot_owner(campaign['reference'],campaign['hot_partitions'])
+    owner_label='Consumer '+owner.rsplit('-',1)[-1]
     resource_files=sorted(a.campaign.rglob('resource-observations.jsonl'))
     resources=sorted([json.loads(x) for p in resource_files for x in p.read_text().splitlines()],key=lambda x:x['timestamp'])
     rows=sorted(campaign['runs'],key=lambda r:(arms.index(r['arm']),r['run_number']))
@@ -311,7 +335,7 @@ def main():
         ax.set(title=LABELS[s['arm']]+' - Run '+str(s['run_number']),ylabel='High-input partitions',ylim=(0,max(2,len(campaign['hot_partitions'])+1)),xticks=range(6),xticklabels=['C'+str(i) for i in range(6)])
         ax.tick_params(labelbottom=True,labelleft=True);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
     fig.suptitle('Ownership of the configured high-input partitions at evaluation end',fontweight='bold')
-    fig.text(.07,.02,f"All trials started with {len(campaign['hot_partitions'])} high-input partitions on Consumer 2. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nThese are the configured input targets, not the set classified as persistently hot from lag.",fontsize=9)
+    fig.text(.07,.02,f"All trials started with {len(campaign['hot_partitions'])} high-input partitions on {owner_label}. C0-C5 identify consumers.\nCounts use the last complete valid ownership snapshot; n/a means no partition ownership in that snapshot.\nThese are the configured input targets, not the set classified as persistently hot from lag.",fontsize=9)
     fig.tight_layout(rect=(0,.085,1,.96));figures.append((fig,'four-condition-ownership'))
     fig,axes=plt.subplots(1,2,figsize=(12,5));x=np.arange(2);width=.8/len(arms)
     for index,arm in enumerate(arms):
@@ -329,7 +353,7 @@ def main():
         for fig,name in figures:
             for ext in ['png','pdf']:fig.savefig(a.output/(name+'.'+ext),dpi=180,facecolor='white')
             pdf.savefig(fig,facecolor='white');plt.close(fig)
-    lines=['# Responses to concentrated ownership','',f"{len(runs)} performance trials used a common verified starting map, all {len(campaign['hot_partitions'])} hot partitions on Consumer 2, and {aggregate_rate:,} aggregate messages/s. Every trial lasted thirteen minutes: one warm-up, ten evaluation and two drain. The second run reversed condition order.",'',
+    lines=['# Responses to concentrated ownership','',f"{len(runs)} performance trials used a common verified starting map, all {len(campaign['hot_partitions'])} hot partitions on {owner_label}, and {aggregate_rate:,} aggregate messages/s. Every trial lasted thirteen minutes: one warm-up, ten evaluation and two drain. The second run reversed condition order.",'',
         '| Condition | Run | Completion p99 (s) | Unfinished (%) | Useful completions/s | Mean lag | Lag coverage |','|---|---:|---:|---:|---:|---:|---:|']
     for s,_,_ in runs:lines.append(f"| {LABELS[s['arm']]} | {s['run_number']} | {s['p99_seconds']:.2f} | {s['unfinished_percent']:.3f} | {s['useful_throughput']:.2f} | {s['mean_lag']:,.1f} | {s['lag_coverage']*100:.1f}% |")
     lines+=['','Mean lag in the table is the arithmetic mean of valid evaluation samples. P99 is calculated from distinct acknowledged evaluation messages that completed by the drain cutoff; it is not an average of rolling percentiles. Warm-up messages remain queued but are outside that latency cohort. Useful completion throughput includes warm-up work finishing during evaluation.','',

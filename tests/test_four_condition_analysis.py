@@ -99,3 +99,21 @@ def test_full_evaluation_signal_mean_gives_samples_equal_weight():
             dict(timestamp=10, valid=True, total_lag=90)]
     assert m.sampled_mean(rows, 'total_lag', 0, 10) == 20
     assert m.sampled_mean(rows, 'skew', 0, 10) is None
+
+
+def test_preparation_paths_support_local_storage_links_and_rejections(monkeypatch,tmp_path):
+    monkeypatch.setattr(m,'ROOT',tmp_path/'pipeline')
+    (m.ROOT/'results').mkdir(parents=True)
+    local=tmp_path/'local-evidence/run-1';local.mkdir(parents=True)
+    (m.ROOT/'results/run-1').symlink_to(local,target_is_directory=True)
+    rejected={'label':'attempt-1','status':'rejected_before_traffic'}
+    rows=[dict(directory=str(local),validation={'status':'passed'}),rejected]
+    assert m.portable_preparations(rows)==[dict(directory='results/run-1',validation={'status':'passed'}),rejected]
+
+
+@pytest.mark.parametrize('owner',['consumer-sts-0','consumer-sts-2'])
+def test_analysis_uses_recorded_hot_owner_for_current_and_historical_trials(owner):
+    ref={'assignment':[dict(topic_index=0,partition=p,pod=owner) for p in range(12)]}
+    assert m.recorded_hot_owner(ref,list(range(12)))==owner
+    ref['assignment'][0]['pod']='another-consumer'
+    with pytest.raises(ValueError):m.recorded_hot_owner(ref,list(range(12)))
