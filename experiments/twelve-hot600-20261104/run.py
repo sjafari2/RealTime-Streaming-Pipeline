@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -49,6 +50,33 @@ def load_base():
     return module
 
 
+def use_local_evidence(base, evidence_root):
+    """Keep live files on local storage while retaining the existing result paths."""
+    evidence_root = evidence_root.resolve()
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    original_journal = base.r.journal
+
+    def journal(control, filename, row):
+        run_id = control['run_id']
+        if not re.fullmatch(r'run-\d{8}-\d{6}', run_id):
+            raise ValueError('Unexpected run identifier')
+        target = evidence_root / run_id
+        link = ROOT / 'results' / run_id
+        if link.is_symlink():
+            if link.resolve() != target:
+                raise RuntimeError('Result path points to different storage: ' + str(link))
+        elif link.exists():
+            raise RuntimeError('Refusing to replace existing run evidence: ' + str(link))
+        else:
+            if target.exists():
+                raise RuntimeError('Local evidence already exists: ' + str(target))
+            target.mkdir()
+            link.symlink_to(target, target_is_directory=True)
+        original_journal(control, filename, row)
+
+    base.r.journal = journal
+
+
 def install(base, calibration_reference):
     original_protocol = base.campaign_protocol
     original_prepared = base.prepared
@@ -91,12 +119,16 @@ def main():
     parser.add_argument('--calibration-reference', required=True)
     parser.add_argument('--backup-root', type=Path, required=True)
     parser.add_argument('--analysis-output', type=Path, required=True)
+    parser.add_argument('--evidence-root', type=Path,
+                        help='Local directory outside cloud storage for live run evidence')
     args, remaining = parser.parse_known_args()
     base = load_base()
     protocol = install(base, args.calibration_reference)
     if '--execute' not in remaining:
         print(json.dumps(protocol, indent=2))
         return
+    if args.evidence_root:
+        use_local_evidence(base, args.evidence_root)
     from compress_evidence import compress
     from compress_monitoring_csv import compress_csv
     original_complete = base.r.complete_run
