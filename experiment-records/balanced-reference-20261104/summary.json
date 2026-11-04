@@ -1,0 +1,143 @@
+{
+  "run_id": "run-20261104-000632",
+  "execution_revision": "cb898561c2a0f0eed2399be6d6d070ffbf57af2b",
+  "status": "complete",
+  "role": "balanced reference, separate from eight mitigation trials",
+  "target_total_messages_per_second": 600,
+  "consumers": 3,
+  "partitions": 60,
+  "warmup_seconds": 60,
+  "evaluation_seconds": 1200,
+  "drain_seconds": 120,
+  "outcomes": {
+    "admitted_evaluation_cohort": 720000,
+    "completed_by_drain": 720000,
+    "incomplete_by_drain": 0,
+    "admitted_messages_per_second": 600.0,
+    "useful_throughput_per_second": 600.0008333333334,
+    "admitted_cohort_completion_p99_seconds": 0.30729246139526367,
+    "deadline_miss_fraction": 0.0012597222222222222,
+    "validity_failures": []
+  },
+  "stability": {
+    "run_id": "run-20261104-000632",
+    "windows": {
+      "evaluation_minutes_0_5": {
+        "start": 1793776110.383439,
+        "end": 1793776410.383439,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": 0.03355704697986577,
+        "time_weighted_mean_backlog": 49.73154362416108,
+        "peak_observed_backlog": 122.0,
+        "segments": [
+          {
+            "start": 1793776112.383,
+            "end": 1793776410.383,
+            "growth_offsets_per_second": 0.03355704697986577,
+            "first": 46.0,
+            "last": 56.0
+          }
+        ]
+      },
+      "evaluation_minutes_5_10": {
+        "start": 1793776410.383439,
+        "end": 1793776710.383439,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": 0.0,
+        "time_weighted_mean_backlog": 47.24832214765101,
+        "peak_observed_backlog": 139.0,
+        "segments": [
+          {
+            "start": 1793776412.383,
+            "end": 1793776710.383,
+            "growth_offsets_per_second": 0.0,
+            "first": 45.0,
+            "last": 45.0
+          }
+        ]
+      },
+      "evaluation_minutes_10_15": {
+        "start": 1793776710.383439,
+        "end": 1793777010.383439,
+        "covered_seconds": 294.0,
+        "coverage_fraction": 0.98,
+        "covered_interval_growth_offsets_per_second": -0.06802721088435375,
+        "time_weighted_mean_backlog": 47.197278911564624,
+        "peak_observed_backlog": 79.0,
+        "segments": [
+          {
+            "start": 1793776712.383,
+            "end": 1793776842.383,
+            "growth_offsets_per_second": -0.1,
+            "first": 52.0,
+            "last": 39.0
+          },
+          {
+            "start": 1793776846.383,
+            "end": 1793777010.383,
+            "growth_offsets_per_second": -0.042682926829268296,
+            "first": 53.0,
+            "last": 46.0
+          }
+        ]
+      },
+      "evaluation_minutes_15_20": {
+        "start": 1793777010.383439,
+        "end": 1793777310.383439,
+        "covered_seconds": 298.0,
+        "coverage_fraction": 0.9933333333333333,
+        "covered_interval_growth_offsets_per_second": 0.08053691275167785,
+        "time_weighted_mean_backlog": 47.1744966442953,
+        "peak_observed_backlog": 122.0,
+        "segments": [
+          {
+            "start": 1793777012.383,
+            "end": 1793777310.383,
+            "growth_offsets_per_second": 0.08053691275167785,
+            "first": 41.0,
+            "last": 65.0
+          }
+        ]
+      },
+      "final_ten_minutes": {
+        "start": 1793776710.383439,
+        "end": 1793777310.383439,
+        "covered_seconds": 594.0,
+        "coverage_fraction": 0.99,
+        "covered_interval_growth_offsets_per_second": -0.0016835016835016834,
+        "time_weighted_mean_backlog": 47.17340067340067,
+        "peak_observed_backlog": 122.0,
+        "segments": [
+          {
+            "start": 1793776712.383,
+            "end": 1793776842.383,
+            "growth_offsets_per_second": -0.1,
+            "first": 52.0,
+            "last": 39.0
+          },
+          {
+            "start": 1793776846.383,
+            "end": 1793777310.383,
+            "growth_offsets_per_second": 0.02586206896551724,
+            "first": 53.0,
+            "last": 65.0
+          }
+        ]
+      }
+    },
+    "interpretation": "Continuous-production interval only. Growth summarizes covered, same-owner segments; it is not extrapolated over missing data. Inspect segment direction and coverage, input/completion throughput and resource traces. No automatic stable/unstable threshold or infinite-horizon guarantee."
+  },
+  "lag_coverage": 0.995,
+  "source_sha256": {
+    "manifest.json": "66a0b1dd6ab4cc8df5b34bac61ec8da8c6faa5bcd9f4a7f6e1807c915fbff7e3",
+    "pipeline-configmap.yaml": "d807ec022e1793b303d27c3a02ecb2046147090f059d919a8bee9aaccbe9c72a",
+    "outcome-summary.json": "682e15783b345e1bf5ded2d3d6044c0b3478b9391867d96addf54bb4bf791217",
+    "lag-summary.json": "f3d192c359bbf32fa5083bd8f1782fe4fe75ca3150bd20f35a742e36e9bad2df",
+    "stability-summary.json": "1b18849f0925f9b8c833be4d510545b94d6e68748b826d8dcbc6375dcb87addf",
+    "measurement-audit.json": "ef24e65f1e63b52aa6b9949714c15a258571ee499bc374e976848f88f839aaf3",
+    "runner-status.json": "b2b10ee28ae38b651ebe0ea6eeb72d601fd648a9302d5125029ec9b55800287f"
+  },
+  "interpretation": "Low fluctuating backlog without sustained accumulation supports 600 messages/s for this recorded deployment and observation period. This is not an infinite-horizon stability guarantee or a capacity estimate for each consumer."
+}
