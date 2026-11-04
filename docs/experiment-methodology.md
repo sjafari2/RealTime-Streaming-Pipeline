@@ -34,6 +34,8 @@ With the same seed, ID, workload settings and compatible Python runtime, each pr
 
 The revised deployment requires separate nodes for producers and consumers in the experiment namespace, including added consumers. The coordinator checks the deployed rules and actual placement before production and after scaling, and rejects unmet requirements. Broker isolation is a separate explicit option. These controls do not exclude unrelated workloads or guarantee equal machine capacity. The original trials used softer scheduling preferences and include producer–consumer co-location; their measurements remain unchanged. New trials must record the revised placement conditions and repeat calibration and starting checks. See [node placement](node-placement.md) for the evidence and exact scope.
 
+New deliberately stressed comparisons also require a declared earlier producer/consumer deployment reference and a prespecified first Keep 3 stress check. If placement differs, monitoring is insufficient, or the first control does not demonstrate sustained backlog growth, the runner stops for review and preserves the evidence. It does not automatically alter the workload or continue to mitigation trials. The [admission procedure](comparison-admission.md) defines these checks without changing historical results.
+
 ## Measurement and interpretation
 
 Producer acknowledgments are reconciled with distinct message identities and earliest completion records. Completion follows application processing and precedes commit acknowledgment. Whole-cohort p99 includes completed evaluation messages; unfinished messages are reported separately against all acknowledged evaluation messages. It is not an average of rolling dashboard p99 values.

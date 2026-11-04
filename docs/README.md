@@ -10,6 +10,7 @@ These guides describe the experimental design, implementation and published evid
 | [Capacity and message age](../experiment-records/capacity-age-20261030/README.md) | Four-way prediction comparison and controlled waiting-cohort diagnostics |
 | [Architecture](architecture.md) | Processing, coordination and evidence paths |
 | [Experiment methodology](experiment-methodology.md) | Calibration, timing and comparison controls |
+| [Comparison admission](comparison-admission.md) | Reference placement and the mandatory first Keep 3 stress check |
 | [Results](../experiment-records/README.md) | The 24 main-proposal trials, tables and plots |
 | [Metric definitions](metric-definitions.md) | Populations, formulas, coverage and repetition summaries |
 | [Experiment protocols](../experiments/README.md) | Configurations and campaign commands |

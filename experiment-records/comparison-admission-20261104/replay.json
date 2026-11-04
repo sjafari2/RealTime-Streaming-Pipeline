@@ -1,0 +1,279 @@
+{
+  "purpose": "Read-only regression replay, not a new experiment or retrospective eligibility rule",
+  "example_stress_settings": {
+    "window_seconds": 60,
+    "consecutive_windows": 3,
+    "minimum_growth_offsets_per_second": 10,
+    "minimum_mean_backlog_offsets": 1000,
+    "minimum_coverage": 0.95,
+    "maximum_gap_seconds": 3
+  },
+  "new_controls": [
+    {
+      "status": "stopped_for_review",
+      "reason": "stress_not_demonstrated",
+      "run_id": "run-20261104-005142",
+      "settings": {
+        "window_seconds": 60,
+        "consecutive_windows": 3,
+        "minimum_growth_offsets_per_second": 10,
+        "minimum_mean_backlog_offsets": 1000,
+        "minimum_coverage": 0.95,
+        "maximum_gap_seconds": 3
+      },
+      "windows": [
+        {
+          "start_after_evaluation_seconds": 420.0,
+          "end_after_evaluation_seconds": 480.0,
+          "valid_observations": 31,
+          "coverage_fraction": 1.0,
+          "growth_offsets_per_second": 0.16666666666666666,
+          "mean_backlog_offsets": 27.903225806451612,
+          "passed": false
+        },
+        {
+          "start_after_evaluation_seconds": 480.0,
+          "end_after_evaluation_seconds": 540.0,
+          "valid_observations": 31,
+          "coverage_fraction": 1.0,
+          "growth_offsets_per_second": -0.25,
+          "mean_backlog_offsets": 43.774193548387096,
+          "passed": false
+        },
+        {
+          "start_after_evaluation_seconds": 540.0,
+          "end_after_evaluation_seconds": 600.0,
+          "valid_observations": 31,
+          "coverage_fraction": 1.0,
+          "growth_offsets_per_second": -0.2833333333333333,
+          "mean_backlog_offsets": 33.225806451612904,
+          "passed": false
+        }
+      ],
+      "invalid_observations": [],
+      "message": "STOP: Keep 3 did not establish the required stress condition. Do not start further mitigation trials. Report the measurements for review without automatically changing rate, placement, or processing settings.",
+      "evidence_sha256": {
+        "manifest.json": "6489e3ae49aa597efdf0134132ed9cf865bae414a88e74617e83eaa27c2c3c42",
+        "lag-summary.json": "8dc55999561625c7b3528be08aadc8b035df537daba63a0f7e986c32a55298cf",
+        "outcome-summary.json": "6207d9befa1d50739257ea085d48c3472d9cd5d6cfa8229fbca4be548ed5f409"
+      }
+    },
+    {
+      "status": "stopped_for_review",
+      "reason": "stress_not_demonstrated",
+      "run_id": "run-20261104-030525",
+      "settings": {
+        "window_seconds": 60,
+        "consecutive_windows": 3,
+        "minimum_growth_offsets_per_second": 10,
+        "minimum_mean_backlog_offsets": 1000,
+        "minimum_coverage": 0.95,
+        "maximum_gap_seconds": 3
+      },
+      "windows": [
+        {
+          "start_after_evaluation_seconds": 420.0,
+          "end_after_evaluation_seconds": 480.0,
+          "valid_observations": 31,
+          "coverage_fraction": 1.0,
+          "growth_offsets_per_second": 0.06666666666666667,
+          "mean_backlog_offsets": 28.870967741935484,
+          "passed": false
+        },
+        {
+          "start_after_evaluation_seconds": 480.0,
+          "end_after_evaluation_seconds": 540.0,
+          "valid_observations": 31,
+          "coverage_fraction": 1.0,
+          "growth_offsets_per_second": 0.2833333333333333,
+          "mean_backlog_offsets": 27.483870967741936,
+          "passed": false
+        },
+        {
+          "start_after_evaluation_seconds": 540.0,
+          "end_after_evaluation_seconds": 600.0,
+          "valid_observations": 30,
+          "coverage_fraction": 0.9666666666666667,
+          "growth_offsets_per_second": -0.5344827586206896,
+          "mean_backlog_offsets": 27.1,
+          "passed": false
+        }
+      ],
+      "invalid_observations": [],
+      "message": "STOP: Keep 3 did not establish the required stress condition. Do not start further mitigation trials. Report the measurements for review without automatically changing rate, placement, or processing settings.",
+      "evidence_sha256": {
+        "manifest.json": "c0fae1a038d669169a15a86d44274dc87f64fc8b1e8879a21658ae550041f7ae",
+        "lag-summary.json": "b3e3be1ca9c81af66171e88d8a98329e17b0de65d0df1e5ad5b75c3885c1b2d7",
+        "outcome-summary.json": "2d769d7e4ea5e02b520f828133d4fb6263c42a118c85f975aa0aa15f90d1581c"
+      }
+    }
+  ],
+  "earlier_control": {
+    "status": "passed",
+    "reason": "stress_demonstrated",
+    "run_id": "run-20261027-004457",
+    "settings": {
+      "window_seconds": 60,
+      "consecutive_windows": 3,
+      "minimum_growth_offsets_per_second": 10,
+      "minimum_mean_backlog_offsets": 1000,
+      "minimum_coverage": 0.95,
+      "maximum_gap_seconds": 3
+    },
+    "windows": [
+      {
+        "start_after_evaluation_seconds": 420.0,
+        "end_after_evaluation_seconds": 480.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 230.68333333333334,
+        "mean_backlog_offsets": 107445.74193548386,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 480.0,
+        "end_after_evaluation_seconds": 540.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 237.16666666666666,
+        "mean_backlog_offsets": 121333.3870967742,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 540.0,
+        "end_after_evaluation_seconds": 600.0,
+        "valid_observations": 30,
+        "coverage_fraction": 0.9666666666666667,
+        "growth_offsets_per_second": 227.94827586206895,
+        "mean_backlog_offsets": 135043.66666666666,
+        "passed": true
+      }
+    ],
+    "invalid_observations": [],
+    "message": "Keep 3 demonstrated the prespecified stress condition.",
+    "evidence_sha256": {
+      "manifest.json": "cb9214e5a795a38cead54c2aaae0e520da9846a520c65d8856150f20c1ae06e6",
+      "lag-summary.json": "81667b265e26bb32434d4e5302c7bf124406485f9d77d684169449ac180c90bf",
+      "outcome-summary.json": "d476db18d35f319d2cd1df0f424ec507c29837bc6b735e6ded1b36de5dc16429"
+    }
+  },
+  "new_deployment_against_earlier": {
+    "status": "stopped_for_review",
+    "failures": [
+      "Producer/consumer node placement, container images, or resources differ from the declared reference",
+      "The selected hot-partition owner is not on the reference bottleneck node"
+    ],
+    "reference_run_id": "run-20261027-004457",
+    "hot_owner": "consumer-sts-2",
+    "expected_hot_node": "k8s-chase-ci-04.calit2.optiputer.net",
+    "observed_hot_node": "k8s-gen4-03.calit2.optiputer.net",
+    "missing_deployment_entries": [
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "node": "edex.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        },
+        "role": "consumer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "k8s-gen4-05.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "unseenu.crbs.ucsd.edu",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      }
+    ],
+    "unexpected_deployment_entries": [
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "node": "k8s-chase-ci-10.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        },
+        "role": "consumer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "k8s-4090-01.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "edex.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      }
+    ],
+    "processing_differences": {},
+    "interpretation": "Matching placement does not establish unchanged capacity on shared nodes. A live Keep 3 stress check is also required."
+  }
+}

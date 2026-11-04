@@ -14,6 +14,8 @@ ROOT=Path(os.environ.get('PIPELINE_REPOSITORY',Path(__file__).resolve().parents[
 sys.path.insert(0,str(ROOT/'my-shell'))
 import run_experiment as r
 from placement_control import PlacementMismatch,pod_identity
+from comparison_admission import (AdmissionStopped, load_plan, deployment_check,
+                                  check_saved_control, require_passed)
 from static_startup import audit_preparation
 sys.path.insert(0,str(ROOT/'python-scripts'))
 from validate_handoff import validate
@@ -124,6 +126,9 @@ def validate_resume_state(state, protocol):
         raise ValueError('Completed trials must form an unrepeated prefix of the planned order')
     if any(x.get('validation',{}).get('status')!='passed' for x in state['runs']):
         raise ValueError('A completed trial lacks validation')
+    if 'comparison_admission' in protocol and completed:
+        if state.get('stress_admission',{}).get('status')!='passed':
+            raise ValueError('Resume cannot bypass the Keep 3 stress check')
     technical = state.get('technical', [])
     if any(x['validation']['status'] != 'passed' for x in technical):
         raise ValueError('Native scaling validation is missing')
@@ -139,12 +144,35 @@ def validate_resume_state(state, protocol):
     return len(completed)
 
 
+def admit_control(directory, state, audit, admission, save):
+    """Persist the decision before permitting any mitigation trial."""
+    report=check_saved_control(directory,admission)
+    state['stress_admission']=report
+    (audit/'stress-admission.json').write_text(json.dumps(report,indent=2)+'\n')
+    if report['status']!='passed':
+        (audit/'attention-required.json').write_text(json.dumps(report,indent=2)+'\n')
+    save()
+    print('[STRESS CHECK]',json.dumps(report),flush=True)
+    require_passed(report)
+
+
+def is_control(arm):
+    return arm.rsplit('__',1)[-1]=='keep3'
+
+
+def require_comparison_ready(state, arm):
+    if (state['runs'] or not is_control(arm)) and state.get('stress_admission',{}).get('status')!='passed':
+        raise AdmissionStopped('STOP: no mitigation trial is allowed before a passed Keep 3 stress check')
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute',action='store_true')
     parser.add_argument('--resume',type=Path,help='Continue only unexecuted trials in a restored campaign')
     parser.add_argument('--monitoring-gate',type=Path)
     parser.add_argument('--preparations-only',action='store_true')
+    parser.add_argument('--admission-plan',type=Path,
+                        help='Declared earlier deployment, hot-partition owner, and stress thresholds')
     parser.add_argument('--aggregate-rate',type=int,choices=(600,700,800),default=700,
                         help='Total messages/s across all three producers')
     parser.add_argument('--targeted-only',action='store_true',
@@ -154,14 +182,26 @@ def main():
     args=parser.parse_args()
     deadline_ms=args.slo_ms if args.slo_ms is not None else (1000 if args.hot_partitions==4 else 99)
     protocol=campaign_protocol(args.aggregate_rate,args.targeted_only,args.hot_partitions,deadline_ms)
+    admission=load_plan(args.admission_plan,ROOT) if args.admission_plan else None
+    hot_owner=admission['hot_owner'] if admission else HOT_OWNER
+    if admission and protocol.get('initial_hot_owner',hot_owner)!=hot_owner:
+        raise ValueError('The protocol and admission plan specify different hot-partition owners')
+    if admission:
+        protocol['comparison_admission']=admission
+        protocol['starting_conditions']=('Check producer and consumer node/resource placement against '+admission['reference_run_id']+
+            '. Select the '+str(args.hot_partitions)+' lowest-numbered partitions owned by '+hot_owner+
+            '. Freeze the initial ownership and original pod identities for every trial. Require the first Keep 3 run to demonstrate the declared stress condition before testing mitigation.')
     order=[tuple(row) for row in protocol['order']]
     if not args.execute:
         print(json.dumps(dict(aggregate_rate=args.aggregate_rate,partitions=60,hot_fraction=.8,hot_partition_count=args.hot_partitions,completion_deadline_ms=deadline_ms,
             completion_deadline_reporting_ms=protocol.get('completion_deadline_reporting_ms',[deadline_ms]),
-            initial_hot_owner=HOT_OWNER,phases_seconds=[60,600,120],order=order,
+            initial_hot_owner=hot_owner,phases_seconds=[60,600,120],order=order,
+            comparison_admission=admission or 'An admission plan is required before execution',
             normal_scaling='technical validation only' if args.targeted_only else 'classic cooperative-sticky with unique static member identities; no targeted map',
-            starting_map='capture Kafka empty-topic map; freeze the selected hot partitions owned by consumer 2; verify all trials against it',
+            starting_map='capture Kafka empty-topic map; freeze the selected hot partitions owned by '+hot_owner+'; verify all trials against it',
             preparation_retry_limit=3),indent=2));return
+    if admission is None:
+        raise ValueError('No workload started. Supply --admission-plan with the reference deployment and prespecified stress thresholds')
     if not args.monitoring_gate or json.loads(args.monitoring_gate.read_text())['status']!='passed':
         raise RuntimeError('A passed live monitoring correction gate is required')
     if subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=ROOT).strip():
@@ -194,6 +234,18 @@ def main():
         if count!=3:raise RuntimeError('Three starting consumers are required')
         items=json.loads(r.kubectl('get','pods','-l',r.POD_SELECTOR,'-o','json'))['items']
         original_pods=[pod_identity(p) for p in items]
+        proposed,_=prepared('keep3',1,81,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
+        placement=deployment_check(admission,original_pods,proposed['data'])
+        state['deployment_admission']=placement
+        (audit/'deployment-admission.json').write_text(json.dumps(placement,indent=2)+'\n')
+        if placement['status']!='passed':
+            state.update(status='stopped_for_review',requires_user_review=True,
+                         restoration='not_needed_no_runtime_change',finished_epoch=time.time())
+            (audit/'attention-required.json').write_text(json.dumps(placement,indent=2)+'\n')
+            save()
+            print('[STOP FOR REVIEW]',json.dumps(placement),flush=True)
+            require_passed(placement)
+        save()
         expected=None;observer=None;observer_log=None
         def configure(config,label,plan):
             nonlocal expected
@@ -251,7 +303,7 @@ def main():
                 else:
                     directory,m,_=run_one(config,plan,'capture-initial',preparation=True)
                     reference=m['placement_reference']
-                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']==HOT_OWNER)[:args.hot_partitions]
+                    hot=sorted(x['partition'] for x in reference['assignment'] if x['pod']==hot_owner)[:args.hot_partitions]
                     counts={n:sum(x['pod']==n for x in reference['assignment']) for n in ['consumer-sts-0','consumer-sts-1','consumer-sts-2']}
                     if len(hot)!=args.hot_partitions or set(counts.values())!={20}:raise RuntimeError('Initial Kafka map is not 20 partitions per consumer')
                     state.update(reference=reference,hot_partitions=hot);save()
@@ -265,14 +317,30 @@ def main():
                     directory,m,checked=run_one(config,plan,'native-scale-technical',technical=True)
                     state['technical'].append(dict(directory=str(directory),validation=checked));save()
                 if not args.preparations_only:
+                    if args.resume and state.get('stress_admission'):
+                        controls=[x for x in state['runs'] if is_control(x['arm'])] or state.get('stress_screening',[])
+                        if not controls or check_saved_control(Path(controls[0]['directory']),admission)!=state['stress_admission']:
+                            raise AdmissionStopped('STOP: saved stress evidence changed. Review before resuming')
+                    if not state.get('stress_admission') and not is_control(order[0][0]):
+                        config,plan=prepared('keep3',0,81,reference,hot,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
+                        directory,m,checked=run_one(config,plan,'keep3-stress-screening')
+                        state['stress_screening']=[dict(directory=str(directory),run_id=m['run_id'],validation=checked)]
+                        admit_control(directory,state,audit,admission,save)
                     for arm,number,seed in order[len(state['runs']):]:
+                        require_comparison_ready(state,arm)
                         if shutil.disk_usage(ROOT).free<4*1024**3:raise RuntimeError('Less than 4 GiB free; preserve evidence before continuing')
                         config,plan=prepared(arm,number,seed,reference,hot,aggregate_rate=args.aggregate_rate,hot_count=args.hot_partitions,deadline_ms=deadline_ms)
                         directory,m,checked=run_one(config,plan,arm+'-run'+str(number))
                         state['runs'].append(dict(arm=arm,run_number=number,seed=seed,directory=str(directory),run_id=m['run_id'],validation=checked));save()
                         print('[VERIFIED]',arm,number,m['run_id'],flush=True)
+                        if is_control(arm) and not state.get('stress_admission'):
+                            admit_control(directory,state,audit,admission,save)
                 r.stop();r.set_consumer_baseline(count,180)
             state['status']='complete'
+        except AdmissionStopped as exc:
+            state.update(status='stopped_for_review',requires_user_review=True,error=str(exc))
+            print('[STOP FOR REVIEW]',str(exc),flush=True)
+            raise
         except BaseException as exc:
             state.update(status='failed',error=str(exc) or type(exc).__name__);raise
         finally:
@@ -282,6 +350,8 @@ def main():
                 r.shared_write(r.CONFIG,original)
                 if r.shared_read(r.CONFIG)!=original:raise RuntimeError('Restoration differs from backup')
                 state['restoration']='verified'
+                if state.get('requires_user_review'):
+                    print('[STOPPED] Original configuration restored. No further trials will start until the stopped comparison is reviewed.',flush=True)
             except BaseException as exc:
                 state.update(status='failed',restoration_error=str(exc));raise
             finally:
