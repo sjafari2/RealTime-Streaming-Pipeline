@@ -1,0 +1,112 @@
+{
+  "run_id": "run-20261104-073554",
+  "code_commit": "40056bcc8030be52fab77fa07b9036685440fdc9",
+  "workload": "skew",
+  "aggregate_target_msg_s": 600,
+  "high_traffic_partitions": [
+    0,
+    3,
+    6,
+    9,
+    12,
+    15,
+    18,
+    21,
+    24,
+    27,
+    30,
+    33
+  ],
+  "initial_hot_owner": "consumer-sts-0",
+  "consumers": 3,
+  "mitigation": "none",
+  "acknowledged_evaluation_messages": 360000,
+  "achieved_input_msg_s": 600.0,
+  "throughput_during_evaluation_msg_s": 363.98833333333334,
+  "completed_by_drain": 236158,
+  "unfinished_by_drain": 123842,
+  "unfinished_percent": 34.400555555555556,
+  "p99_end_to_end_latency_seconds": 363.3570439815521,
+  "slo_violation_percent": 83.36916666666667,
+  "first_valid_lag": {
+    "evaluation_seconds": 0.0004851818084716797,
+    "offsets": 13805.0
+  },
+  "last_valid_lag": {
+    "evaluation_seconds": 598.0004851818085,
+    "offsets": 154976.0
+  },
+  "peak_valid_lag_offsets": 154976.0,
+  "stress_check": {
+    "status": "passed",
+    "reason": "stress_demonstrated",
+    "run_id": "run-20261104-073554",
+    "settings": {
+      "window_seconds": 60,
+      "consecutive_windows": 3,
+      "minimum_growth_offsets_per_second": 10,
+      "minimum_mean_backlog_offsets": 1000,
+      "minimum_coverage": 0.95,
+      "maximum_gap_seconds": 3
+    },
+    "windows": [
+      {
+        "start_after_evaluation_seconds": 420.0,
+        "end_after_evaluation_seconds": 480.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 232.43333333333334,
+        "mean_backlog_offsets": 120662.35483870968,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 480.0,
+        "end_after_evaluation_seconds": 540.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 234.25,
+        "mean_backlog_offsets": 134541.64516129033,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 540.0,
+        "end_after_evaluation_seconds": 600.0,
+        "valid_observations": 30,
+        "coverage_fraction": 0.9666666666666667,
+        "growth_offsets_per_second": 232.0344827586207,
+        "mean_backlog_offsets": 148114.5,
+        "passed": true
+      }
+    ],
+    "invalid_observations": [],
+    "message": "Keep 3 demonstrated the prespecified stress condition.",
+    "evidence_sha256": {
+      "manifest.json": "0dcdecfaf56d9fca8f7e87a51db5ef66b513a3b4ba5a1d56f9299f7be854b30c",
+      "lag-summary.json": "ea7f9753b2fafb1c77b5bf4396285df29e4bfb02f3f4642312c4124b635a5ffb",
+      "outcome-summary.json": "9cfbd3a2ad00234860acf6827d412304561c953486aaa728d007cf7fac5d2754"
+    }
+  },
+  "validation": {
+    "run_id": "run-20261104-073554",
+    "status": "passed",
+    "failures": [],
+    "acknowledged_whole_run": 395991,
+    "completion_attempts_whole_run": 272150,
+    "unfinished_whole_run": 123841,
+    "duplicate_message_ids": 0,
+    "duplicate_offsets": 0,
+    "unmatched_completion_identities": 0,
+    "handoff_checked": false,
+    "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+  },
+  "restoration": "verified",
+  "latency_population": "Completed acknowledged evaluation messages followed through the original drain cutoff. Reported with unfinished messages.",
+  "interpretation": "One no-action control on a declared new deployment. This tests the intended stress condition and does not compare mitigation performance.",
+  "evidence_sha256": {
+    "manifest.json": "0dcdecfaf56d9fca8f7e87a51db5ef66b513a3b4ba5a1d56f9299f7be854b30c",
+    "lag-summary.json": "ea7f9753b2fafb1c77b5bf4396285df29e4bfb02f3f4642312c4124b635a5ffb",
+    "outcome-summary.json": "9cfbd3a2ad00234860acf6827d412304561c953486aaa728d007cf7fac5d2754",
+    "runner-status.json": "b29b95638e4d8e4ea34d3ed94c2656863dd9921156e4e57dbd45a271ea8d9ea6",
+    "execution-summary.json": "3a2423f501a4c834fbac10b567f5bfdce3975fded9b9627ea9bfe1737a19a681"
+  }
+}
