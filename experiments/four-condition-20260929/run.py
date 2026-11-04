@@ -173,6 +173,8 @@ def main():
     parser.add_argument('--preparations-only',action='store_true')
     parser.add_argument('--admission-plan',type=Path,
                         help='Declared earlier deployment, hot-partition owner, and stress thresholds')
+    parser.add_argument('--audit-root',type=Path,
+                        help='Local storage for live campaign records, outside cloud synchronization')
     parser.add_argument('--aggregate-rate',type=int,choices=(600,700,800),default=700,
                         help='Total messages/s across all three producers')
     parser.add_argument('--targeted-only',action='store_true',
@@ -218,7 +220,13 @@ def main():
         state.setdefault('resume_events',[]).append(dict(timestamp=time.time(),revision=revision,prior_error=state.get('error'),completed_trials=len(state['runs'])))
         state.update(status='preparing');state.pop('error',None);state.pop('finished_epoch',None)
     else:
-        audit=ROOT/'results'/('four-condition-'+time.strftime('%Y%m%d-%H%M%S'));audit.mkdir()
+        name='four-condition-'+time.strftime('%Y%m%d-%H%M%S')
+        audit_root=args.audit_root.resolve() if args.audit_root else ROOT/'results'
+        audit_root.mkdir(parents=True,exist_ok=True)
+        audit=audit_root/name;audit.mkdir()
+        canonical=ROOT/'results'/name
+        if audit.resolve()!=canonical.resolve():
+            canonical.symlink_to(audit,target_is_directory=True)
         state=dict(status='preparing',runs=[],preparations=[],technical=[],cost_protocol=protocol,code_commit=revision,monitoring_gate=json.loads(args.monitoring_gate.read_text()))
     def save():
         p=audit/'campaign-status.tmp';p.write_text(json.dumps(state,indent=2)+'\n');p.replace(audit/'campaign-status.json')

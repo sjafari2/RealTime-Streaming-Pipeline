@@ -129,6 +129,8 @@ def main():
         return
     if args.evidence_root:
         use_local_evidence(base, args.evidence_root)
+        if '--audit-root' not in remaining:
+            remaining += ['--audit-root',str(args.evidence_root)]
     from compress_evidence import compress
     from compress_monitoring_csv import compress_csv
     original_complete = base.r.complete_run
@@ -136,6 +138,9 @@ def main():
     def complete(plan=None):
         directory = original_complete(plan)
         if not (plan or {}).get('prepare_only'):
+            # Finish application cleanup before hashing the evidence. A later
+            # stop must not append resource records after the verified backup.
+            base.r.stop()
             compress(directory)
             compress_csv(directory)
         preserve(directory, args.backup_root)

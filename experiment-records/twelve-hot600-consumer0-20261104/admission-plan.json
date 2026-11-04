@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "purpose": "stressed_skew_comparison",
+  "reference_run": "results/run-20261104-073554",
+  "hot_owner": "consumer-sts-0",
+  "stress": {
+    "window_seconds": 60,
+    "consecutive_windows": 3,
+    "minimum_growth_offsets_per_second": 10,
+    "minimum_mean_backlog_offsets": 1000,
+    "minimum_coverage": 0.95,
+    "maximum_gap_seconds": 3
+  }
+}

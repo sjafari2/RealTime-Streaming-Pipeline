@@ -141,7 +141,8 @@ def test_missing_plan_rejects_execution_before_any_cluster_call(monkeypatch):
     with pytest.raises(ValueError,match='admission-plan'):m.main()
 
 
-def test_first_clear_control_stops_batch_and_restores_configuration(monkeypatch,tmp_path):
+@pytest.mark.parametrize('local_audit',[False,True])
+def test_first_clear_control_stops_batch_and_restores_configuration(monkeypatch,tmp_path,local_audit):
     m=runner()
     protocol=m.campaign_protocol()
     monkeypatch.setattr(m,'campaign_protocol',lambda *a:copy.deepcopy(protocol))
@@ -151,7 +152,9 @@ def test_first_clear_control_stops_batch_and_restores_configuration(monkeypatch,
     a,p,c=deployment();a['stress']=SETTINGS
     monkeypatch.setattr(m,'load_plan',lambda *args:a)
     monkeypatch.setattr(m,'deployment_check',lambda *args:{'status':'passed'})
-    monkeypatch.setattr(sys,'argv',['run.py','--execute','--admission-plan','declared.json','--monitoring-gate',str(gate)])
+    argv=['run.py','--execute','--admission-plan','declared.json','--monitoring-gate',str(gate)]
+    if local_audit:argv += ['--audit-root',str(tmp_path/'local-evidence')]
+    monkeypatch.setattr(sys,'argv',argv)
     monkeypatch.setattr(m.subprocess,'check_output',lambda args,**k: b'nautilus' if args[:2]==['kubectl','config'] else (b'' if 'status' in args else b'revision'))
     monkeypatch.setattr(m.shutil,'which',lambda name:None)
     class Observer:
@@ -194,6 +197,10 @@ def test_first_clear_control_stops_batch_and_restores_configuration(monkeypatch,
     assert state['status']=='stopped_for_review' and state['restoration']=='verified'
     assert len(state['runs'])==1 and state['runs'][0]['validation']['status']=='passed'
     assert next((tmp_path/'results').glob('four-condition-*/attention-required.json')).exists()
+    if local_audit:
+        canonical=next((tmp_path/'results').glob('four-condition-*'))
+        assert canonical.is_symlink()
+        assert canonical.resolve().parent==tmp_path/'local-evidence'
 
 
 def test_resume_and_direct_dispatch_cannot_bypass_a_failed_stress_check():
