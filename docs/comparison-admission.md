@@ -46,3 +46,9 @@ For a 600-second evaluation, this example tests seconds 420–480, 480–540 and
 ## Verification
 
 Offline tests exercise the full batch stop/restoration path with a clear first control, placement and processing mismatches, invalid monitoring, and resume protection. A read-only replay using the example thresholds rejects both nearly clear November 4 controls. The earlier October 27 control demonstrates sustained growth under the same replay settings. Replaying these checks does not change the validity or classification originally recorded for any trial and is not a new cluster experiment.
+
+## Standalone Keep 3 on a declared new deployment
+
+New skewed trials initially place all high-traffic partitions on Consumer 0. Mitigation may change their ownership later. Historical assignments remain unchanged.
+
+`experiments/twelve-hot600-20261104/run_keep3.py` runs one control at 600 aggregate messages/s using a separately declared new deployment. Its plan records exact current pod identities, node placement, resources, processing settings, the earlier deployment differences and the stress criteria before traffic. An empty-topic preparation verifies readiness and captures ownership. Twelve partitions owned by Consumer 0 become the high-traffic set, and the no-action run verifies that map again before input. The command always stops after this one control, restores the shared configuration and preserves evidence, whether or not the stress check passes. It does not launch mitigation trials or claim that changed nodes match an earlier deployment.

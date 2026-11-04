@@ -20,7 +20,7 @@ from static_startup import audit_preparation
 sys.path.insert(0,str(ROOT/'python-scripts'))
 from validate_handoff import validate
 HPA_PLAN=dict(action='scale',initial_consumers=3,target_consumers=6,after_evaluation_start_seconds=60)
-HOT_OWNER = 'consumer-sts-2'
+HOT_OWNER = 'consumer-sts-0'
 ORDER=[('keep3',1,81),('redistribute3',1,81),('scale_redistribute6',1,81),('kafka_scale6',1,81),
        ('kafka_scale6',2,82),('scale_redistribute6',2,82),('redistribute3',2,82),('keep3',2,82)]
 
@@ -184,6 +184,8 @@ def main():
     protocol=campaign_protocol(args.aggregate_rate,args.targeted_only,args.hot_partitions,deadline_ms)
     admission=load_plan(args.admission_plan,ROOT) if args.admission_plan else None
     hot_owner=admission['hot_owner'] if admission else HOT_OWNER
+    if hot_owner != 'consumer-sts-0':
+        raise ValueError('New skew trials must initially assign all high-traffic partitions to Consumer 0')
     if admission and protocol.get('initial_hot_owner',hot_owner)!=hot_owner:
         raise ValueError('The protocol and admission plan specify different hot-partition owners')
     if admission:

@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "purpose": "single_keep3_new_deployment",
+  "aggregate_rate": 600,
+  "phases_seconds": [
+    60,
+    600,
+    120
+  ],
+  "maximum_performance_trials": 1,
+  "continue_to_mitigation": false,
+  "hot_owner": "consumer-sts-0",
+  "reference_hot_node": "k8s-chase-ci-04.calit2.optiputer.net",
+  "reference_run_id": "declared-consumer0-deployment-20261104",
+  "reference_pods": [
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-0",
+      "uid": "7c967e23-e892-4d84-ab14-bd977230cfb0",
+      "node": "k8s-chase-ci-04.calit2.optiputer.net",
+      "container_id": "containerd://4001ec75b534a8b679e255185c8b37a64ff0baa3640a5cd8553ca2bf601ea09f",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "2400m",
+          "ephemeral-storage": "50Gi",
+          "memory": "920Mi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "768Mi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-1",
+      "uid": "2a92d9ad-2ba1-4800-9512-9e83e20ccb49",
+      "node": "k8s-chase-ci-10.calit2.optiputer.net",
+      "container_id": "containerd://6c28078b7d89f4efad9ab92b426b52cb0bd6c41da56cae361e712d25d644f4dc",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "2400m",
+          "ephemeral-storage": "50Gi",
+          "memory": "920Mi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "768Mi"
+        }
+      }
+    },
+    {
+      "role": "consumer",
+      "pod": "consumer-sts-2",
+      "uid": "ae3713ac-2e3f-43d2-9ab4-84f922d123d5",
+      "node": "k8s-gen4-03.calit2.optiputer.net",
+      "container_id": "containerd://dc5a5eb9d335dc8bb6bc5f400a067686dff5eae99ec0cf24a03501fdc0b797fe",
+      "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "2400m",
+          "ephemeral-storage": "50Gi",
+          "memory": "920Mi"
+        },
+        "requests": {
+          "cpu": "2",
+          "ephemeral-storage": "0",
+          "memory": "768Mi"
+        }
+      }
+    },
+    {
+      "role": "producer",
+      "pod": "producer-workers-0",
+      "uid": "3b19b780-1c9b-4d52-8c8d-b11150991887",
+      "node": "k8s-4090-01.calit2.optiputer.net",
+      "container_id": "containerd://c588d70e1d28f54e7e0707ecbcaebd98527632884fdf0a13d883d35895205abe",
+      "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "360m",
+          "ephemeral-storage": "50Gi",
+          "memory": "192Mi"
+        },
+        "requests": {
+          "cpu": "300m",
+          "ephemeral-storage": "0",
+          "memory": "160Mi"
+        }
+      }
+    },
+    {
+      "role": "producer",
+      "pod": "producer-workers-1",
+      "uid": "f7bf1892-e7a7-4573-8b20-c3b93759c559",
+      "node": "knuron.calit2.optiputer.net",
+      "container_id": "containerd://2a7b3c2680a056076e0f670d6e1c94cb1c3c6368f0a758944f392ff19e3deee6",
+      "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "360m",
+          "ephemeral-storage": "50Gi",
+          "memory": "192Mi"
+        },
+        "requests": {
+          "cpu": "300m",
+          "ephemeral-storage": "0",
+          "memory": "160Mi"
+        }
+      }
+    },
+    {
+      "role": "producer",
+      "pod": "producer-workers-2",
+      "uid": "9fa8085e-9c1c-4dfc-88ff-f7f8194d30b1",
+      "node": "edex.calit2.optiputer.net",
+      "container_id": "containerd://69755d735a0b5da5cb8a0eab830b738de326be3c801669292365f06297e814f2",
+      "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+      "restart_count": 0,
+      "resources": {
+        "limits": {
+          "cpu": "360m",
+          "ephemeral-storage": "50Gi",
+          "memory": "192Mi"
+        },
+        "requests": {
+          "cpu": "300m",
+          "ephemeral-storage": "0",
+          "memory": "160Mi"
+        }
+      }
+    }
+  ],
+  "processing_settings": {
+    "APP_CPU_ITERATIONS": "2000",
+    "APP_DELAY_MS": "0",
+    "APP_DELAY_MODE": "fixed",
+    "APP_DELAY_MAX_MS": "0",
+    "PAYLOAD_SIZE_BYTES": "100",
+    "POLL_MAX_MSG": "25",
+    "POLL_TIMEOUT": "0.1",
+    "FETCH_MIN_BYTES": "1",
+    "FETCH_MAX_BYTES": "5242880",
+    "FETCH_MAX_WAIT_MS": "5",
+    "MAX_PARTITION_FETCH_BYTES": "1048576",
+    "COMMIT_INTERVAL_SECONDS": null
+  },
+  "stress": {
+    "window_seconds": 60,
+    "consecutive_windows": 3,
+    "minimum_growth_offsets_per_second": 10,
+    "minimum_mean_backlog_offsets": 1000,
+    "minimum_coverage": 0.95,
+    "maximum_gap_seconds": 3
+  },
+  "calibration_reference": "run-20261104-000632",
+  "earlier_deployment_comparison": {
+    "status": "stopped_for_review",
+    "failures": [
+      "Producer/consumer node placement, container images, or resources differ from the declared reference"
+    ],
+    "reference_run_id": "run-20261027-004457",
+    "hot_owner": "consumer-sts-0",
+    "expected_hot_node": "k8s-chase-ci-04.calit2.optiputer.net",
+    "observed_hot_node": "k8s-chase-ci-04.calit2.optiputer.net",
+    "missing_deployment_entries": [
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "node": "edex.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        },
+        "role": "consumer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "k8s-gen4-05.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "unseenu.crbs.ucsd.edu",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      }
+    ],
+    "unexpected_deployment_entries": [
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "node": "k8s-chase-ci-10.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        },
+        "role": "consumer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "k8s-4090-01.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      },
+      {
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "node": "edex.calit2.optiputer.net",
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        },
+        "role": "producer"
+      }
+    ],
+    "processing_differences": {},
+    "interpretation": "Matching placement does not establish unchanged capacity on shared nodes. A live Keep 3 stress check is also required."
+  },
+  "interpretation": "Single newly authorized control on recorded current nodes. Historical differences remain explicit. No mitigation runs are authorized by this plan. No processor or pod resource changes.",
+  "authorization": "User requested Keep 3 then said start and always initially align high traffic to Consumer 0."
+}
