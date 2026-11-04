@@ -1,0 +1,559 @@
+{
+  "campaign": "four-condition-20261104-081200",
+  "status": "complete",
+  "restoration": "verified",
+  "code_revision": "4d4a24f8a0c6051b9df125505817b9551bcafdc7",
+  "performance_trials": 8,
+  "technical_trials": 1,
+  "empty_topic_preparations": 2,
+  "initial_hot_owner": "consumer-sts-0",
+  "total_arrival_rate_messages_per_second": 600,
+  "partition_count": 60,
+  "high_traffic_partition_count": 12,
+  "high_traffic_fraction": 0.8,
+  "phase_seconds": {
+    "warmup": 60,
+    "evaluation": 600,
+    "drain": 120
+  },
+  "comparison_sha256": "7ac6e06662fe703f0f8b0a70e7dd11daf925eddd051eb3f1eeaac08bd35e01f4",
+  "campaign_status_sha256": "872439fe745ae1d986ef38fe20a5f3e9b6d1daf81383e1c915105a451798c420",
+  "source_and_backup_summary_files_verified": 56,
+  "stress_admission": {
+    "status": "passed",
+    "reason": "stress_demonstrated",
+    "run_id": "run-20261104-082727",
+    "settings": {
+      "window_seconds": 60,
+      "consecutive_windows": 3,
+      "minimum_growth_offsets_per_second": 10,
+      "minimum_mean_backlog_offsets": 1000,
+      "minimum_coverage": 0.95,
+      "maximum_gap_seconds": 3
+    },
+    "windows": [
+      {
+        "start_after_evaluation_seconds": 420.0,
+        "end_after_evaluation_seconds": 480.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 221.18333333333334,
+        "mean_backlog_offsets": 122198.2258064516,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 480.0,
+        "end_after_evaluation_seconds": 540.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 238.76666666666668,
+        "mean_backlog_offsets": 135815.32258064515,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 540.0,
+        "end_after_evaluation_seconds": 600.0,
+        "valid_observations": 30,
+        "coverage_fraction": 0.9666666666666667,
+        "growth_offsets_per_second": 237.3448275862069,
+        "mean_backlog_offsets": 149971.56666666668,
+        "passed": true
+      }
+    ],
+    "invalid_observations": [],
+    "message": "Keep 3 demonstrated the prespecified stress condition.",
+    "evidence_sha256": {
+      "manifest.json": "5ff459e3b001a9bf9df563180c81fd4fe9044d733d3c47c1cf83af8452a11810",
+      "lag-summary.json": "fb47a9e0030228c3d979b943787c16b5c47dc3a9a02c0f53a8c0105f39a8f597",
+      "outcome-summary.json": "663d8b2b87eafc03122a02f584ca7ec89eeb9a07a041f2396692ab6c2050110a"
+    }
+  },
+  "definitions": {
+    "p99": "99th percentile of distinct acknowledged evaluation messages completed by the drain cutoff. It excludes unfinished messages.",
+    "unfinished": "Acknowledged evaluation messages without valid completion by the drain cutoff.",
+    "throughput": "Distinct messages completed during evaluation, including warm-up messages.",
+    "recovery": "Processing backlog at most 100 offsets for 30 consecutive valid seconds during continuing input. Time is from the recorded action decision to confirmation.",
+    "requested_resources": "Consumer requests integrated over evaluation and drain, excluding warm-up. These are not actual CPU/RSS use.",
+    "repeat_summaries": "Equal weight per run. Mean p99 is the mean of run-level p99 values, not a pooled-message percentile. With two runs, sample standard deviation is descriptive."
+  },
+  "runs": [
+    {
+      "arm": "keep3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-082727",
+      "admitted": 360000,
+      "completed": 233590,
+      "unfinished": 126410,
+      "unfinished_percent": 35.11388888888889,
+      "p99_seconds": 368.54192304611206,
+      "mean_completion_seconds": 161.10311547004736,
+      "useful_throughput": 361.13,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.8338194444444444,
+      "mean_lag": 86048.46666666666,
+      "mean_skew": 4.91188759842643,
+      "peak_lag": 156850.0,
+      "lag_coverage": 0.9966666666666667,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 12,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "5ff459e3b001a9bf9df563180c81fd4fe9044d733d3c47c1cf83af8452a11810",
+        "pipeline-configmap.yaml": "2edd1b737dea54506147bf883b00a5e879f75d0fb13acbbfc9b4044f7178c22c",
+        "outcome-summary.json": "663d8b2b87eafc03122a02f584ca7ec89eeb9a07a041f2396692ab6c2050110a",
+        "lag-summary.json": "fb47a9e0030228c3d979b943787c16b5c47dc3a9a02c0f53a8c0105f39a8f597",
+        "measurement-audit.json": "a459e26ab847077b212700a5270450a01074b46505282d0413a7ddc327eb89e7",
+        "handoff-validation.json": "d33d3e955692bb0487602e264f05dc7f35c124851d0b05d9d26c40a630d006fc",
+        "prometheus.json": "8c7ba54166dd8f3566132c9b6e55ad12ac91d04a1fb36412e50cd668fa61e67e"
+      },
+      "requested_cpu_core_minutes": 72.0,
+      "requested_memory_gib_minutes": 27.0,
+      "recovery_confirmed_seconds_after_decision": null,
+      "decision_to_active_seconds": null
+    },
+    {
+      "arm": "keep3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261104-103058",
+      "admitted": 360000,
+      "completed": 236005,
+      "unfinished": 123995,
+      "unfinished_percent": 34.44305555555556,
+      "p99_seconds": 363.70127725601196,
+      "mean_completion_seconds": 159.14003012413136,
+      "useful_throughput": 363.7216666666667,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.8339722222222222,
+      "mean_lag": 85416.40468227425,
+      "mean_skew": 4.901476431667504,
+      "peak_lag": 155910.0,
+      "lag_coverage": 0.99,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 12,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0
+      },
+      "evidence_hashes": {
+        "manifest.json": "13ab59f33dc6fc6b937c2adc0bea336aa450c1c165c000e38280a79923763478",
+        "pipeline-configmap.yaml": "4fb0c287a221739e4b2fe3fbd1eef876a5755e5c2159a73381d82c27e3488581",
+        "outcome-summary.json": "6ea1a0ccf095381384e392f9f761d5aabcce2c74355ad3743a36ce5cc2807cc2",
+        "lag-summary.json": "db1a67917b9c134ffabd2fca80fea2d087ec7ce701008ab079c19f546aae11de",
+        "measurement-audit.json": "b33a7e7a2ec1b276d21c12d830bc7ab199a41103243cedeae130f6f0dcc8267f",
+        "handoff-validation.json": "aed77a69e9b406d87a4ff9806ce99566ae33523c84cae91dc7c56ef9e0c6ea08",
+        "prometheus.json": "6b5a8c772991627328f3811e3a53eb0589df1508337428d9ee1c9ae90a3ad8e0"
+      },
+      "requested_cpu_core_minutes": 72.0,
+      "requested_memory_gib_minutes": 27.0,
+      "recovery_confirmed_seconds_after_decision": null,
+      "decision_to_active_seconds": null
+    },
+    {
+      "arm": "redistribute3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-084449",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 83.2797920703888,
+      "mean_completion_seconds": 13.176202204591036,
+      "useful_throughput": 623.7416666666667,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.3294861111111111,
+      "mean_lag": 7656.993127147766,
+      "mean_skew": 9.69728302599402,
+      "peak_lag": 42230.0,
+      "lag_coverage": 0.9633333333333334,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 4,
+        "consumer-sts-1": 4,
+        "consumer-sts-2": 4
+      },
+      "evidence_hashes": {
+        "manifest.json": "71e1f5d22ec845633e51d76e52ca6555acf4720be4d9440456984ff290fecdc5",
+        "pipeline-configmap.yaml": "81ea30aeb0efce2a80b0cfcf89faa193f868daab69a0848cc11ebd2911bb0661",
+        "outcome-summary.json": "93581d02a9752a30f4b99bb6cabafcdee07593252bfc23712442e6e382a070c2",
+        "lag-summary.json": "b7be11f6bfc5642c52b58ac23515cb77cf1498616eeceb6d7094216d2956ee45",
+        "measurement-audit.json": "05d7d452d73c989c7094f60e30cdabf8e0f566f8968e52e6092f2b7eed6f1b86",
+        "handoff-validation.json": "dc00e10ca7f471910ae8cead6712de3ea8be9575cdd46cc5966a1b51c0951ae1",
+        "prometheus.json": "9ec972f7436aecac5da54c52d6a3100e807ded8421a21126fd6203b98868137a"
+      },
+      "requested_cpu_core_minutes": 72.0,
+      "requested_memory_gib_minutes": 27.0,
+      "recovery_confirmed_seconds_after_decision": 318.25826597213745,
+      "decision_to_active_seconds": 29.352292776107788
+    },
+    {
+      "arm": "redistribute3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261104-101335",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 84.71323084831238,
+      "mean_completion_seconds": 13.448335059316953,
+      "useful_throughput": 624.035,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.33841944444444444,
+      "mean_lag": 7906.577319587629,
+      "mean_skew": 9.87313507806205,
+      "peak_lag": 43148.0,
+      "lag_coverage": 0.9633333333333334,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 4,
+        "consumer-sts-1": 4,
+        "consumer-sts-2": 4
+      },
+      "evidence_hashes": {
+        "manifest.json": "dc3d2bfd89c309a4b2d506f4a76012b0d9c08f2b8e15956df6f8706645efda3c",
+        "pipeline-configmap.yaml": "7f51b24a8ccf4cee15941d1f8000e6221ae1d3fb1ab2f07ca0657d51c45ea1c4",
+        "outcome-summary.json": "eba3444ab58d1791ba544243603d47082380750084b91dba6b9c44dd1e5e2137",
+        "lag-summary.json": "356155e18ffc61209efe184af95fc6f01b51e4494728b7b01ccc91c66c35a75c",
+        "measurement-audit.json": "96c2cf9b18f183ab2db775efc0d195e8404019a125a7a603ce8c219a6c24912e",
+        "handoff-validation.json": "132af9d70b95e99b9e7e3922df7ff60f4618c14cb81c1d50f37a39f4b2c4b60a",
+        "prometheus.json": "4c5d6bb5260686263e51fb7964e480b1a639d20ab0cd0867fdd58d0fa6bf0694"
+      },
+      "requested_cpu_core_minutes": 72.0,
+      "requested_memory_gib_minutes": 27.0,
+      "recovery_confirmed_seconds_after_decision": 322.4890069961548,
+      "decision_to_active_seconds": 30.232773065567017
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-090223",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 121.42729449272156,
+      "mean_completion_seconds": 20.81725071338415,
+      "useful_throughput": 623.38,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.3253972222222222,
+      "mean_lag": 11506.871972318339,
+      "mean_skew": 9.145942998614515,
+      "peak_lag": 64630.0,
+      "lag_coverage": 0.9566666666666667,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 2,
+        "consumer-sts-2": 2,
+        "consumer-sts-3": 2,
+        "consumer-sts-4": 2,
+        "consumer-sts-5": 2
+      },
+      "evidence_hashes": {
+        "manifest.json": "cecb889c5c458c841d69887f54a8595a70826c1b9ad1d09d71679ed366e4592e",
+        "pipeline-configmap.yaml": "3a6e056afec0fa762ec87a2db9a7aea1f034b183221643319b428816aa6b1cd0",
+        "outcome-summary.json": "3cdc96e2c775c20d272574876d3b58226cff7495e5c5dd7916727d2502285de3",
+        "lag-summary.json": "4abf404604f8b5ebf6eb5ae05570c3a46a5595fe3e10020c24b56e0bcf95c04e",
+        "measurement-audit.json": "51263b87673c42538e7d4a49568b4600c5c1bf3b8a8c3b7e34ef83b4a0c6d021",
+        "handoff-validation.json": "f6f15014900adcea75d6b3e2d53b75cc7e0a190ec3d828e7d8d6f0886b384228",
+        "prometheus.json": "2f39cb0987cf0d6891fe068d3d734d665e2eb12401bc23dfc4738c3deab284d1"
+      },
+      "requested_cpu_core_minutes": 133.32008130550383,
+      "requested_memory_gib_minutes": 49.995030489563945,
+      "recovery_confirmed_seconds_after_decision": 210.77768182754517,
+      "decision_to_active_seconds": 115.67729711532593
+    },
+    {
+      "arm": "scale_redistribute6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261104-095551",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 109.3055067062378,
+      "mean_completion_seconds": 15.878054780104426,
+      "useful_throughput": 624.1033333333334,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.27684444444444445,
+      "mean_lag": 8656.01384083045,
+      "mean_skew": 9.556099476380032,
+      "peak_lag": 56894.0,
+      "lag_coverage": 0.9566666666666667,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 2,
+        "consumer-sts-2": 2,
+        "consumer-sts-3": 2,
+        "consumer-sts-4": 2,
+        "consumer-sts-5": 2
+      },
+      "evidence_hashes": {
+        "manifest.json": "65df4803e94d940cb81ce34d43f2365cdac01a2b603866029df82828251b7913",
+        "pipeline-configmap.yaml": "ed5c3ff4a0301ed4703ee541a1511ecc67dbc642089e5ec73a1333131736e23e",
+        "outcome-summary.json": "72b6b71dd78d30f9534f06f066f37654b146547a99586f9ba6abecdff665e3c3",
+        "lag-summary.json": "641e6946f252a5929c661375071dfb9a2e4688591b33592e655197c7289d00f5",
+        "measurement-audit.json": "87dd67519dae3de5ac34ab7e36121daaf1f185d5a1748b4216ed87fb3020d833",
+        "handoff-validation.json": "981c8aeee8b5f6e5502b6849741a45450830e2ef48c43d6ca3feeedf65d5979d",
+        "prometheus.json": "c88ba6f665a1c18564ef851b11ab5095de5f7a2efd8a9134c59bb72387bc1197"
+      },
+      "requested_cpu_core_minutes": 136.53862779140474,
+      "requested_memory_gib_minutes": 51.20198542177677,
+      "recovery_confirmed_seconds_after_decision": 174.4458281993866,
+      "decision_to_active_seconds": 85.16138219833374
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-092004",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 67.80987215042114,
+      "mean_completion_seconds": 7.751449227254258,
+      "useful_throughput": 623.585,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.21468333333333334,
+      "mean_lag": 5113.727272727273,
+      "mean_skew": 9.928058702279257,
+      "peak_lag": 33938.0,
+      "lag_coverage": 0.98,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 3,
+        "consumer-sts-4": 3,
+        "consumer-sts-5": 4
+      },
+      "evidence_hashes": {
+        "manifest.json": "ce4e6c1a11938284bf13406afad784ccd51f2ba969ffe733a1a51332182af3d5",
+        "pipeline-configmap.yaml": "542584d7b0dbf6e0abb705e9a43226bd595abc1ee8676f4ce536ffb3fd8a7827",
+        "outcome-summary.json": "90284fc33901b29ccffec8c827ec32286c3ae72a5e4929537f5e09305d2d175e",
+        "lag-summary.json": "acbda20bdc1a52d4dba5c16100fe811caba07f73ed7949232ae0f8e111707b6e",
+        "measurement-audit.json": "279d2ba49f0779451c9bb607041941356a8bb2139ea86cb91ecc8acbf8bb12e2",
+        "handoff-validation.json": "137321bf3e6bdee43c683ecdd37d6c80351fb414d1210166da5dd8c7b314b877",
+        "prometheus.json": "4f21593a2c751798d1d6a52b0c7a0d534c3e586bd0e13e5e900c56898dae3dec"
+      },
+      "requested_cpu_core_minutes": 136.91142251491547,
+      "requested_memory_gib_minutes": 51.3417834430933,
+      "recovery_confirmed_seconds_after_decision": 163.04621601104736,
+      "decision_to_active_seconds": 27.046216011047363
+    },
+    {
+      "arm": "kafka_scale6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261104-093801",
+      "admitted": 360000,
+      "completed": 360000,
+      "unfinished": 0,
+      "unfinished_percent": 0.0,
+      "p99_seconds": 68.64113903045654,
+      "mean_completion_seconds": 6.955730999533998,
+      "useful_throughput": 623.9466666666667,
+      "admitted_rate": 600.0,
+      "deadline_miss_fraction": 0.18988055555555555,
+      "mean_lag": 4690.771812080537,
+      "mean_skew": 9.099866610982527,
+      "peak_lag": 33053.0,
+      "lag_coverage": 0.9833333333333333,
+      "final_hot_partitions_per_owner": {
+        "consumer-sts-0": 2,
+        "consumer-sts-1": 0,
+        "consumer-sts-2": 0,
+        "consumer-sts-3": 4,
+        "consumer-sts-4": 3,
+        "consumer-sts-5": 3
+      },
+      "evidence_hashes": {
+        "manifest.json": "9970fefb44228d0d51ca175f7d66a5744f985097ff1ac99490be6b65bcf370c8",
+        "pipeline-configmap.yaml": "02d0375013543bebcf838682b6f11fcf8d698583da6cef29018098c03af95820",
+        "outcome-summary.json": "e88cd3a64eaf6d25dbc7ea1d3a124ef9f273afea053c536044881e603726b424",
+        "lag-summary.json": "49723f972b126342b8259e5843759a0ddf6dd753589a826db7f57c8dd7cf4997",
+        "measurement-audit.json": "b30fb572dfbfcc332646c10131ce2b4bf6f137a080b59730d87b86f5a9a83530",
+        "handoff-validation.json": "f5b101502ac663d87b6fac00ac44d3e1ea2750e4dbb4aa5e739d8716490f7847",
+        "prometheus.json": "2952452cdddcf3865fcc1ab53564d542f208789790b234f070566b69d8915ff1"
+      },
+      "requested_cpu_core_minutes": 136.96068208217622,
+      "requested_memory_gib_minutes": 51.360255780816075,
+      "recovery_confirmed_seconds_after_decision": 108.83032417297363,
+      "decision_to_active_seconds": 28.830324172973633
+    }
+  ],
+  "repeat_summaries": {
+    "keep3": {
+      "p99_seconds": {
+        "n": 2,
+        "mean": 366.121600151062,
+        "sample_standard_deviation": 3.4228534635018923
+      },
+      "unfinished_percent": {
+        "n": 2,
+        "mean": 34.77847222222222,
+        "sample_standard_deviation": 0.47435079904597127
+      },
+      "useful_throughput": {
+        "n": 2,
+        "mean": 362.42583333333334,
+        "sample_standard_deviation": 1.832585074575157
+      },
+      "mean_lag": {
+        "n": 2,
+        "mean": 85732.43567447046,
+        "sample_standard_deviation": 446.93531529409665
+      },
+      "deadline_miss_fraction": {
+        "n": 2,
+        "mean": 0.8338958333333333,
+        "sample_standard_deviation": 0.00010803020268127928
+      },
+      "recovery_confirmed_seconds_after_decision": {
+        "n": 0,
+        "mean": null,
+        "sample_standard_deviation": null
+      },
+      "requested_cpu_core_minutes": {
+        "n": 2,
+        "mean": 72.0,
+        "sample_standard_deviation": 0.0
+      },
+      "requested_memory_gib_minutes": {
+        "n": 2,
+        "mean": 27.0,
+        "sample_standard_deviation": 0.0
+      }
+    },
+    "redistribute3": {
+      "p99_seconds": {
+        "n": 2,
+        "mean": 83.99651145935059,
+        "sample_standard_deviation": 1.0135942802855238
+      },
+      "unfinished_percent": {
+        "n": 2,
+        "mean": 0.0,
+        "sample_standard_deviation": 0.0
+      },
+      "useful_throughput": {
+        "n": 2,
+        "mean": 623.8883333333333,
+        "sample_standard_deviation": 0.20741798914802606
+      },
+      "mean_lag": {
+        "n": 2,
+        "mean": 7781.785223367698,
+        "sample_standard_deviation": 176.48267495119524
+      },
+      "deadline_miss_fraction": {
+        "n": 2,
+        "mean": 0.33395277777777777,
+        "sample_standard_deviation": 0.0063168205785998355
+      },
+      "recovery_confirmed_seconds_after_decision": {
+        "n": 2,
+        "mean": 320.3736364841461,
+        "sample_standard_deviation": 2.991585667526775
+      },
+      "requested_cpu_core_minutes": {
+        "n": 2,
+        "mean": 72.0,
+        "sample_standard_deviation": 0.0
+      },
+      "requested_memory_gib_minutes": {
+        "n": 2,
+        "mean": 27.0,
+        "sample_standard_deviation": 0.0
+      }
+    },
+    "scale_redistribute6": {
+      "p99_seconds": {
+        "n": 2,
+        "mean": 115.36640059947968,
+        "sample_standard_deviation": 8.571398343926939
+      },
+      "unfinished_percent": {
+        "n": 2,
+        "mean": 0.0,
+        "sample_standard_deviation": 0.0
+      },
+      "useful_throughput": {
+        "n": 2,
+        "mean": 623.7416666666667,
+        "sample_standard_deviation": 0.5114739050582865
+      },
+      "mean_lag": {
+        "n": 2,
+        "mean": 10081.442906574393,
+        "sample_standard_deviation": 2015.861116975896
+      },
+      "deadline_miss_fraction": {
+        "n": 2,
+        "mean": 0.30112083333333334,
+        "sample_standard_deviation": 0.034331998412110175
+      },
+      "recovery_confirmed_seconds_after_decision": {
+        "n": 2,
+        "mean": 192.61175501346588,
+        "sample_standard_deviation": 25.690500073547994
+      },
+      "requested_cpu_core_minutes": {
+        "n": 2,
+        "mean": 134.92935454845428,
+        "sample_standard_deviation": 2.27585604574466
+      },
+      "requested_memory_gib_minutes": {
+        "n": 2,
+        "mean": 50.59850795567036,
+        "sample_standard_deviation": 0.8534460171542376
+      }
+    },
+    "kafka_scale6": {
+      "p99_seconds": {
+        "n": 2,
+        "mean": 68.22550559043884,
+        "sample_standard_deviation": 0.587794447848816
+      },
+      "unfinished_percent": {
+        "n": 2,
+        "mean": 0.0,
+        "sample_standard_deviation": 0.0
+      },
+      "useful_throughput": {
+        "n": 2,
+        "mean": 623.7658333333334,
+        "sample_standard_deviation": 0.25573695252914325
+      },
+      "mean_lag": {
+        "n": 2,
+        "mean": 4902.249542403904,
+        "sample_standard_deviation": 299.0746743631872
+      },
+      "deadline_miss_fraction": {
+        "n": 2,
+        "mean": 0.20228194444444444,
+        "sample_standard_deviation": 0.01753821235892968
+      },
+      "recovery_confirmed_seconds_after_decision": {
+        "n": 2,
+        "mean": 135.9382700920105,
+        "sample_standard_deviation": 38.33642476677833
+      },
+      "requested_cpu_core_minutes": {
+        "n": 2,
+        "mean": 136.93605229854586,
+        "sample_standard_deviation": 0.03483177404838966
+      },
+      "requested_memory_gib_minutes": {
+        "n": 2,
+        "mean": 51.35101961195468,
+        "sample_standard_deviation": 0.013061915268143612
+      }
+    }
+  }
+}
