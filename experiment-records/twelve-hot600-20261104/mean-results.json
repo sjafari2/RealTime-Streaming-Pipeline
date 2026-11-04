@@ -1,0 +1,443 @@
+{
+  "notes": [
+    "Mean run-level p99 is not a pooled-message percentile.",
+    "Window p99 means average replicate window percentiles.",
+    "Only times with valid values in both runs contribute to time-series means.",
+    "Cross-campaign differences do not isolate traffic concentration or backlog size from deployment effects.",
+    "Starting-backlog preparation changes both backlog amount and message age."
+  ],
+  "summaries": [
+    {
+      "campaign": "twelve600",
+      "condition": null,
+      "arm": "keep3",
+      "run_ids": [
+        "run-20261104-005142",
+        "run-20261104-030525"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            0.45691967010498047,
+            0.5220515727996826
+          ],
+          "mean": 0.48948562145233154,
+          "sample_std": 0.046055210067006254
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "twelve600",
+      "condition": null,
+      "arm": "redistribute3",
+      "run_ids": [
+        "run-20261104-012035",
+        "run-20261104-024817"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            13.936556339263916,
+            13.993000030517578
+          ],
+          "mean": 13.964778184890747,
+          "sample_std": 0.0399117168406643
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "twelve600",
+      "condition": null,
+      "arm": "scale_redistribute6",
+      "run_ids": [
+        "run-20261104-013743",
+        "run-20261104-023044"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            16.589622735977173,
+            17.560104370117188
+          ],
+          "mean": 17.07486355304718,
+          "sample_std": 0.6862341445174064
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "twelve600",
+      "condition": null,
+      "arm": "kafka_scale6",
+      "run_ids": [
+        "run-20261104-015506",
+        "run-20261104-021315"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            0.5137844085693359,
+            0.965177059173584
+          ],
+          "mean": 0.73948073387146,
+          "sample_std": 0.3191828042200337
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "four600",
+      "condition": null,
+      "arm": "keep3",
+      "run_ids": [
+        "run-20261021-081142",
+        "run-20261021-102633"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            309.29474663734436,
+            378.349228143692
+          ],
+          "mean": 343.8219873905182,
+          "sample_std": 48.828892144459466
+        },
+        "unfinished_percent": {
+          "individual": [
+            26.92027777777778,
+            37.56583333333333
+          ],
+          "mean": 32.24305555555556,
+          "sample_std": 7.5275445228314535
+        }
+      }
+    },
+    {
+      "campaign": "four600",
+      "condition": null,
+      "arm": "redistribute3",
+      "run_ids": [
+        "run-20261021-083131",
+        "run-20261021-100744"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            91.81760144233704,
+            83.29212641716003
+          ],
+          "mean": 87.55486392974854,
+          "sample_std": 6.02842120313921
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "four600",
+      "condition": null,
+      "arm": "scale_redistribute6",
+      "run_ids": [
+        "run-20261021-084932",
+        "run-20261021-094855"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            114.08268666267395,
+            109.42453336715698
+          ],
+          "mean": 111.75361001491547,
+          "sample_std": 3.293811783066512
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "four600",
+      "condition": null,
+      "arm": "kafka_scale6",
+      "run_ids": [
+        "run-20261021-091003",
+        "run-20261021-092942"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            75.59332227706909,
+            90.28109192848206
+          ],
+          "mean": 82.93720710277557,
+          "sample_std": 10.38582152102008
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "smaller",
+      "arm": "keep3",
+      "run_ids": [
+        "run-20261027-004457",
+        "run-20261027-060048"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            337.3145740032196,
+            342.0257797241211
+          ],
+          "mean": 339.67017686367035,
+          "sample_std": 3.3313255128143004
+        },
+        "unfinished_percent": {
+          "individual": [
+            30.70777777777778,
+            31.378888888888888
+          ],
+          "mean": 31.043333333333333,
+          "sample_std": 0.474547217596304
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "smaller",
+      "arm": "redistribute3",
+      "run_ids": [
+        "run-20261027-010153",
+        "run-20261027-054324"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            53.109290599823,
+            54.814449310302734
+          ],
+          "mean": 53.961869955062866,
+          "sample_std": 1.2057292871795304
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "smaller",
+      "arm": "scale_redistribute6",
+      "run_ids": [
+        "run-20261027-011902",
+        "run-20261027-052551"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            78.33990955352783,
+            82.72400903701782
+          ],
+          "mean": 80.53195929527283,
+          "sample_std": 3.1000264741722123
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "smaller",
+      "arm": "kafka_scale6",
+      "run_ids": [
+        "run-20261027-013636",
+        "run-20261027-050819"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            54.44371676445007,
+            39.308648347854614
+          ],
+          "mean": 46.876182556152344,
+          "sample_std": 10.702109511096992
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "larger",
+      "arm": "keep3",
+      "run_ids": [
+        "run-20261027-015403",
+        "run-20261027-045115"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            394.37230110168457,
+            392.2539474964142
+          ],
+          "mean": 393.3131242990494,
+          "sample_std": 1.4979021992376607
+        },
+        "unfinished_percent": {
+          "individual": [
+            38.48722222222222,
+            39.23972222222222
+          ],
+          "mean": 38.86347222222222,
+          "sample_std": 0.5320978528428754
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "larger",
+      "arm": "redistribute3",
+      "run_ids": [
+        "run-20261027-021058",
+        "run-20261027-043343"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            110.49964714050293,
+            105.77876377105713
+          ],
+          "mean": 108.13920545578003,
+          "sample_std": 3.3381686437259233
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "larger",
+      "arm": "scale_redistribute6",
+      "run_ids": [
+        "run-20261027-032235",
+        "run-20261027-041603"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            164.67528128623962,
+            140.45509386062622
+          ],
+          "mean": 152.56518757343292,
+          "sample_std": 17.12625877026039
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    },
+    {
+      "campaign": "starting",
+      "condition": "larger",
+      "arm": "kafka_scale6",
+      "run_ids": [
+        "run-20261027-034017",
+        "run-20261027-035814"
+      ],
+      "metrics": {
+        "whole_run_p99_seconds": {
+          "individual": [
+            89.84351444244385,
+            92.79484701156616
+          ],
+          "mean": 91.319180727005,
+          "sample_std": 2.0869072731631038
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_std": 0.0
+        }
+      }
+    }
+  ]
+}
