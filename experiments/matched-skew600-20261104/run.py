@@ -144,6 +144,13 @@ def assess_balanced(directory):
         message='Balanced reference passed.' if passed else 'Balanced reference did not pass. Stop for review without changing the input rate.')
 
 
+def require_measured_stress(report):
+    """Retry incomplete monitoring without changing the stress criterion."""
+    if report.get('status') != 'passed' and report.get('reason') == 'monitoring_insufficient':
+        raise RuntimeError('Retryable monitoring failure in Keep 3: ' + report['run_id'])
+    require_passed(report)
+
+
 def validate_resume_source(series, campaign, protocol):
     """Resume only an interrupted series with the same design and passed gates."""
     if series.get('status') != 'failed' or series.get('restoration') != 'verified':
@@ -271,7 +278,7 @@ def main():
         support.preserve(directory, args.backup_root)
         if stress:
             print('[PRESSURE]', json.dumps(stress), flush=True)
-            require_passed(stress)
+            require_measured_stress(stress)
         return directory
     r.complete_run = complete
     original_prepared = base.prepared

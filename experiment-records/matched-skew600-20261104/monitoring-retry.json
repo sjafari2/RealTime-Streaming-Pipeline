@@ -1,0 +1,65 @@
+{
+  "run_id": "run-20261105-045103",
+  "condition": "12 high-traffic partitions",
+  "response": "Keep 3",
+  "repetition": 2,
+  "classification": "Repeated because monitoring evidence did not meet the predefined quality requirement",
+  "original_report": {
+    "status": "stopped_for_review",
+    "reason": "monitoring_insufficient",
+    "run_id": "run-20261105-045103",
+    "settings": {
+      "window_seconds": 60,
+      "consecutive_windows": 3,
+      "minimum_growth_offsets_per_second": 100,
+      "minimum_mean_backlog_offsets": 10000,
+      "minimum_coverage": 0.95,
+      "maximum_gap_seconds": 3
+    },
+    "windows": [
+      {
+        "start_after_evaluation_seconds": 420.0,
+        "end_after_evaluation_seconds": 480.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 232.5,
+        "mean_backlog_offsets": 122756.7741935484,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 480.0,
+        "end_after_evaluation_seconds": 540.0,
+        "valid_observations": 30,
+        "coverage_fraction": 0.9333333333333333,
+        "growth_offsets_per_second": null,
+        "mean_backlog_offsets": null,
+        "passed": false
+      },
+      {
+        "start_after_evaluation_seconds": 540.0,
+        "end_after_evaluation_seconds": 600.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 235.56666666666666,
+        "mean_backlog_offsets": 151291.70967741936,
+        "passed": true
+      }
+    ],
+    "invalid_observations": [
+      "Missing or invalid lag/ownership observation"
+    ],
+    "message": "STOP: Keep 3 did not establish the required stress condition. Do not start further mitigation trials. Report the measurements for review without automatically changing rate, placement, or processing settings.",
+    "evidence_sha256": {
+      "manifest.json": "8ffe095271de1c2dbb01eae2abb57e8dd2056432c7fdd688a81833dabbb7ae1d",
+      "lag-summary.json": "92e93ef5955a27b90723425e748abdb2397a117724a3c1a3b8dee5bb93c661b7",
+      "outcome-summary.json": "0f5e7ebd3fd8a6dd869d06aebf5bfee38a938ed0b28d9e2ee8217997b4c93d3a"
+    }
+  },
+  "decision": "Repeat the same settings and seed after verifying restoration. Preserve the original raw attempt and its outcomes. No threshold or workload changes.",
+  "evidence_sha256": {
+    "runner-status.json": "e44998eba86add8ccb2696d723e9bc368d2d8b19cef2fd7a0f9b7571704df86b",
+    "outcome-summary.json": "0f5e7ebd3fd8a6dd869d06aebf5bfee38a938ed0b28d9e2ee8217997b4c93d3a",
+    "matched-placement-checks.jsonl": "88a731b4d0c1bc645a3924997d2e21d7e30df90f85a729a5a38dbfd0ecd97328",
+    "matched-stress-admission.json": "1522c2bcc3cca628bc1cb269a91c900ad0574e8affc72a7cd0765e6855b12a26"
+  }
+}

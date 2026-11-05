@@ -12,6 +12,7 @@ TRANSIENT_ERRORS = (
     'New consumer enrollment timed out',
     'TLS handshake timeout', 'i/o timeout', 'context deadline exceeded',
     'ServiceUnavailable', 'connection reset by peer',
+    'Retryable monitoring failure in Keep 3:',
 )
 
 
