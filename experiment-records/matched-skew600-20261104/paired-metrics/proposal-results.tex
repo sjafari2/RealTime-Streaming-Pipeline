@@ -29,16 +29,21 @@ The measured arrival rates in Figure~\ref{fig:skew-mean-candidates}
 show approximately 40~messages/s per high-traffic partition in the
 12-partition condition and 120~messages/s in the 4-partition condition.
 The latter therefore places more demand on each partition even though
-the total input remains unchanged. Matching capacity estimates from
-sufficiently busy calibration intervals are unavailable for this
-deployment, and the balanced reference cannot establish those
-capacities. The capacity panels identify this missing evidence without
-substituting throughput observed under insufficient load.
+the total input remains unchanged. An audit of the saved records found eligible busy intervals for
+Consumer~0 in both conditions and for Consumers~4 and~5 in the
+4-partition condition. Their effective rates were approximately
+259--260, 267, and 293~messages/s, respectively. These capacity points
+pool completed attempts over observed time in eligible intervals,
+while their whiskers show the observed interval-rate range. They are
+retrospective diagnostics from the same trials rather than independent
+calibration or means of 2 run-level capacity estimates. Consumers~1,
+2, and~3 had no qualifying interval, and the balanced reference did
+not establish a capacity estimate for any consumer.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/skew-mean-candidates.pdf}
-\caption{Pre-action partition arrival rates and capacity availability.}
+\caption{Pre-action arrival rates and retrospective busy-period capacity estimates.}
 \label{fig:skew-mean-candidates}
 \end{figure}
 
@@ -68,7 +73,14 @@ evaluation messages at the cutoff, or 0.44\%, whereas targeted scaling
 completed the cohort and recovered in both runs. Its mean run-level
 p99 was also lower, at 112.1 rather than 124.4~seconds. The benefit of
 adding consumers therefore differed between the two traffic
-concentrations under the tested partition maps.
+concentrations under the tested partition maps. The measured
+partition rates imply about 279--282~messages/s for Consumer~0 after
+4-partition redistribution, above its observed busy-period range of
+255--266~messages/s. With 12 high-traffic partitions, its corresponding
+input was about 201--205~messages/s. This comparison is consistent
+with the different backlog trajectories, but it does not establish
+prospective prediction accuracy because the service estimates use
+these same trials.
 
 Normal Kafka scaling achieved the lowest mean run-level p99 in both
 conditions, at 65.0 and 77.1~seconds, respectively. However, neither

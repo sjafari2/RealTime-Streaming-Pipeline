@@ -280,8 +280,9 @@ def point_figure(rows,panels,title,out):
     finish(fig,out)
 
 
-def candidate_figure(rows,out):
+def candidate_figure(rows,out,capacity_audit=None):
     fig,axes=setup(2,'Runtime control signals: candidate responses')
+    capacity_limits=[]
     for j,condition in enumerate(CONDITIONS):
         for arm,color in zip(ARMS,COLORS):
             rr=pair(rows,condition,arm)
@@ -295,22 +296,40 @@ def candidate_figure(rows,out):
                 for pod,value in r['capacity'].items():
                     assert pod not in caps or caps[pod]==value
                     caps[pod]=value
+        ranges={}
+        if capacity_audit is not None:
+            caps={}
+            for consumer in range(6):
+                pod='consumer-sts-'+str(consumer)
+                windows=[w for r in capacity_audit['records']
+                         if r['source_kind']=='mitigation_trial' and r['workload']==condition and r['pod']==pod
+                         for w in r['windows'] if w['eligible']]
+                if windows:
+                    caps[pod]=sum(w['completions'] for w in windows)/sum(w['observed_seconds'] for w in windows)
+                    ranges[pod]=(min(w['effective_rate'] for w in windows),max(w['effective_rate'] for w in windows))
+            axes[1,j].text(.5,.97,'Retrospective busy-period estimates',transform=axes[1,j].transAxes,
+                           ha='center',va='top',fontsize=9)
         x=list(range(6));y=[caps.get('consumer-sts-'+str(c),np.nan) for c in x]
         axes[1,j].scatter(x,y,color='#446986',s=40,zorder=3)
+        for pod,(low,high) in ranges.items():
+            consumer=int(pod.rsplit('-',1)[-1]); value=caps[pod]
+            axes[1,j].errorbar(consumer,value,yerr=[[value-low],[high-value]],color='#446986',capsize=3,lw=1)
+        capacity_limits.extend(caps.values())
+        capacity_limits.extend(high for _,high in ranges.values())
         axes[1,j].set_xticks(x)
         axes[1,j].set_xlabel('Consumer index')
         for c in x:
-            if math.isnan(y[c]):axes[1,j].text(c,.06,'Not\nmeasured',transform=axes[1,j].get_xaxis_transform(),ha='center',fontsize=8)
+            if math.isnan(y[c]):axes[1,j].text(c,.06,'No eligible\ninterval' if capacity_audit else 'Not\nmeasured',transform=axes[1,j].get_xaxis_transform(),ha='center',fontsize=8)
         axes[0,j].set(xlabel='Partition index',ylabel='Arrival (msg/s)',xlim=(-1,60))
         axes[1,j].set(ylabel='Capacity (msg/s)',xlim=(-.5,5.5))
     arrivals=[v for r in rows for v in (r['partition_rates'] or {}).values() if v is not None]
-    capacities=[v for r in rows for v in r['capacity'].values() if v is not None]
+    capacities=capacity_limits
     if CONDITIONS == ('smaller', 'larger'):
         axes[0,0].set_ylim(0,46)
         axes[1,0].set_ylim(0,750)
     else:
         axes[0,0].set_ylim(0,max(arrivals)*1.15 if arrivals else 1)
-        axes[1,0].set_ylim(0,max(capacities)*1.12 if capacities else 1)
+        axes[1,0].set_ylim(0,max(capacities)*1.20 if capacities else 1)
     if not capacities:
         for ax in axes[1]:
             ax.set_yticks([])
@@ -324,6 +343,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--comparison',type=Path,default=REPO/'results/four-condition-20261027-003002-analysis/comparison.json')
     p.add_argument('--plots-only',action='store_true')
+    p.add_argument('--capacity-audit',type=Path,help='Retrospective trial-derived rates, kept separate from calibrated capacity')
     p.add_argument('--dataset',choices=['backlog','matched-skew'],default='backlog')
     args=p.parse_args();out=args.output;out.mkdir(parents=True,exist_ok=True)
     global CONDITIONS, CONDITION_TITLES
@@ -331,6 +351,10 @@ def main():
         CONDITIONS=('hot12','hot4')
         CONDITION_TITLES=('12 high-traffic partitions','4 high-traffic partitions')
     prefix='backlog-mean' if args.dataset=='backlog' else 'skew-mean'
+    capacity_audit=read(args.capacity_audit) if args.capacity_audit else None
+    if capacity_audit is not None:
+        assert args.dataset=='matched-skew'
+        assert capacity_audit['comparison_sha256']==sha(args.comparison)
     if args.plots_only:
         cached=read(out/'plot-data.json')
         assert cached['comparison_sha256']==sha(args.comparison)
@@ -340,7 +364,9 @@ def main():
     save(out/'plot-data.json',dict(metrics=METRICS,rows=rows,comparison_sha256=sha(args.comparison),
          averaging='Equal-weight means of two run-level values. Time-series means require both observations. No pooling of message latencies.',
          age='Mean elapsed time since creation among all messages acknowledged but not completed at each observation, including warm-up. Empty sets are unavailable.',
-         capacity='Matching original-consumer calibration estimates are fixed references, not new independent estimates from each trial.',
+         capacity=('The capacity panel shows retrospective busy-period estimates separately for each workload condition. These are not independent calibration or means of two run-level capacities.' if capacity_audit else
+                   'Matching original-consumer calibration estimates are fixed references, not new independent estimates from each trial.'),
+         capacity_audit_sha256=sha(args.capacity_audit) if args.capacity_audit else None,
          resource_cost='Sum of observed consumer CPU and RSS integrals over evaluation and drain. Missing intervals are omitted, not filled with zero.'))
     summaries=[]
     for c in CONDITIONS:
@@ -357,7 +383,7 @@ def main():
                 'Runtime control signals: intervention need',out/(prefix+'-control'))
     time_figure(rows,[('throughput','Throughput (msg/s)',30),('p99','Window p99 (s)',30)],
                 'Performance evaluation metrics',out/(prefix+'-performance'))
-    candidate_figure(rows,out/(prefix+'-candidates'))
+    candidate_figure(rows,out/(prefix+'-candidates'),capacity_audit)
     point_figure(rows,[('whole_p99','P99 latency (s)'),('unfinished_percent','Unfinished (%)'),('slo_percent','SLO violations (%)'),('recovery','Recovery (s)')],
                  'Performance evaluation metrics: run outcomes',out/(prefix+'-outcomes'))
     point_figure(rows,[('cpu_cost','CPU (core-min)'),('memory_cost','Memory (GiB-min)'),('decision_to_active','Decision–active (s)')],
@@ -369,7 +395,8 @@ def main():
                  '30-second throughput integrates to recorded evaluation throughput',
                  'Missing observations and unconfirmed recovery are not zero'],
          limitations=['Partition-rate availability is assessed independently of lag-window availability',
-                      'Capacity is shown only where matching busy-calibration evidence exists',
+                      ('Capacity estimates are retrospective and shown only where busy, stable trial intervals pass the existing screen' if capacity_audit else
+                       'Capacity is shown only where matching busy-calibration evidence exists'),
                       'Resource costs cover observed intervals only',
                       'Unconfirmed recovery is reported separately and prevents a two-run recovery mean']))
     print('Complete',out,flush=True)
