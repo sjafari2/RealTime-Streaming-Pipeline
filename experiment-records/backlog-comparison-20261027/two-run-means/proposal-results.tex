@@ -1,0 +1,102 @@
+% Two-run comparisons reconstructed from the 16 validated starting-backlog trials.
+% Individual observations and analysis provenance are retained with the experiment records.
+The following figures compare the metrics in Table~\ref{tab:metric-roles}
+using equal-weight means of the 2 runs for each response and backlog
+condition. Bands and vertical whiskers show the range of those runs,
+not confidence intervals. Time-series means require valid values from
+both runs, so unavailable observations remain gaps. Gray dotted lines
+mark the action request at minute~1, while colored dotted lines mark
+confirmed activation in each run. The dashed throughput line marks
+the continuing input rate of 600~messages/s.
+
+Figure~\ref{fig:backlog-mean-control} shows that the larger-backlog
+preparation also produced older waiting work. At the action request,
+mean message age was approximately 42--43~seconds, compared with
+14--15~seconds in the smaller-backlog condition. These ages include
+acknowledged warm-up messages still awaiting completion, and they
+cannot be separated from the effect of backlog size in this comparison.
+Without intervention, backlog and message age continued increasing
+in both conditions.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.78\textheight,keepaspectratio]{figures/backlog-mean-control.pdf}
+\caption{Runtime control signals for smaller and larger starting backlogs.}
+\label{fig:backlog-mean-control}
+\end{figure}
+
+The measured partition arrival rates remained similar across the two
+backlog conditions, as shown in Figure~\ref{fig:backlog-mean-candidates}.
+Before intervention, Consumer~0 received approximately
+500~messages/s, exceeding its matching calibrated rate of about
+287~messages/s. Redistribution's specified map spread this demand to approximately
+200~messages/s per existing consumer. The capacity points are the fixed calibration
+references used for these trials, rather than new estimates from each
+repetition. Matching capacity measurements were unavailable for the
+added consumers, so their capacities are left unreported.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/backlog-mean-candidates.pdf}
+\caption{Pre-action partition arrival rates and matching consumer capacities.}
+\label{fig:backlog-mean-candidates}
+\end{figure}
+
+The throughput peaks in Figure~\ref{fig:backlog-mean-performance}
+reflect processing of accumulated work while input continued.
+Throughput includes distinct warm-up messages completed during
+evaluation, whereas window p99 uses evaluation messages completed
+within each 30-second interval. Figure~\ref{fig:backlog-mean-outcomes}
+separately shows evaluation-message outcomes through the drain cutoff.
+All intervention runs completed that cohort, while Keep~3 left a mean
+of 31.0\% unfinished with the smaller backlog and 38.9\% with the larger
+backlog. Run-level p99 points average the 2 run-level percentiles
+without pooling message latencies.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/backlog-mean-performance.pdf}
+\caption{Throughput and window p99 during evaluation.}
+\label{fig:backlog-mean-performance}
+\end{figure}
+
+Targeted scaling reduced mean recovery time from 239 to 174~seconds
+for the smaller backlog and from 426 to 247~seconds for the larger
+backlog, compared with redistribution. However, its mean run-level p99
+was higher, increasing from 54.0 to 80.5~seconds and from 108.1 to
+152.6~seconds, respectively. Its longer activation interval and higher
+resource cost in Figure~\ref{fig:backlog-mean-costs} therefore matter
+alongside the faster recovery. These observations support comparing
+latency, recovery, and cost separately when assessing a response.
+
+Kafka scaling had the lowest mean run-level p99 in both conditions,
+but its smaller-backlog runs differed substantially in SLO violations
+and recovery. Only 1 of those 2 runs met the recovery criterion during
+continuing input, so the open recovery marker shows that individual
+result and no two-run mean is reported. The run without confirmed recovery also had a more concentrated final
+partition distribution than the larger-backlog runs, which both
+recovered. Their contrast therefore cannot be attributed to starting
+backlog alone.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.78\textheight,keepaspectratio]{figures/backlog-mean-outcomes.pdf}
+\caption{Evaluation-message outcomes and confirmed recovery times.}
+\label{fig:backlog-mean-outcomes}
+\end{figure}
+
+Consumer CPU and memory costs cover evaluation and drain and include
+only observed intervals. Measurement coverage exceeded 99\% of the
+recorded consumer operating time in these runs. Redistribution had
+lower CPU and memory costs than targeted scaling in both backlog
+conditions, while completing all evaluation messages. Keep~3 used
+less CPU but completed fewer messages, so its lower CPU cost does
+not establish a more efficient response.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.70\textheight,keepaspectratio]{figures/backlog-mean-costs.pdf}
+\caption{Consumer resource cost and decision-to-active time.}
+\label{fig:backlog-mean-costs}
+\end{figure}
+\FloatBarrier
