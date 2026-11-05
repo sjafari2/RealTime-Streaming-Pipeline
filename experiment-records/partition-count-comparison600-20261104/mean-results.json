@@ -1,0 +1,879 @@
+{
+  "definitions": {
+    "time_series": "Each time-series point is the equal-weight mean of two runs at the same evaluation time, requiring valid values in both.",
+    "bands": "Observed two-run range, not confidence intervals.",
+    "p99": "Run-level and window p99 averages are means of percentiles, not percentiles of pooled messages.",
+    "whole_run_latency": "Mean and p99 for completed evaluation messages followed through drain, reported with unfinished percentage.",
+    "resources": "Run summary means integrate aggregate consumer CPU/RSS over adjacent valid evaluation observations. Coverage is reported. Warm-up and drain are excluded.",
+    "backlog_and_skew_summary": "Arithmetic means of valid original evaluation observations within each run, then equal weight across the two runs.",
+    "growth": "Arithmetic mean of valid 30-second rolling total-backlog growth values, then equal weight across the two runs.",
+    "scope": "Performance and control traces exclude drain. CPU/RSS represent actual process use, not requests or monetary costs.",
+    "comparison": "Both blocks use 600 messages/s and 60 partitions with 80% of input concentrated. Different deployments and starting ownership prevent attributing differences to partition count alone."
+  },
+  "summaries": [
+    {
+      "block": "four",
+      "arm": "keep3",
+      "run_ids": [
+        "run-20261021-081142",
+        "run-20261021-102633"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            166.90335588151757,
+            172.24379497050722
+          ],
+          "mean": 169.57357542601238,
+          "sample_standard_deviation": 3.776260694338293
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            309.29474663734436,
+            378.349228143692
+          ],
+          "mean": 343.8219873905182,
+          "sample_standard_deviation": 48.828892144459466
+        },
+        "unfinished_percent": {
+          "individual": [
+            26.92027777777778,
+            37.56583333333333
+          ],
+          "mean": 32.24305555555556,
+          "sample_standard_deviation": 7.5275445228314535
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            392.245,
+            347.08
+          ],
+          "mean": 369.6625,
+          "sample_standard_deviation": 31.936477772290434
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            84169.24666666667,
+            91634.8355704698
+          ],
+          "mean": 87902.04111856825,
+          "sample_standard_deviation": 5278.968539430238
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            14.114878637587678,
+            14.114062460913548
+          ],
+          "mean": 14.114470549250612,
+          "sample_standard_deviation": 0.0005771240609235497
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            1.3718846153846145,
+            1.3953762711864395
+          ],
+          "mean": 1.383630443285527,
+          "sample_standard_deviation": 0.016611109118770756
+        },
+        "mean_actual_memory": {
+          "individual": [
+            242.26062134197323,
+            245.08577860169493
+          ],
+          "mean": 243.6731999718341,
+          "sample_standard_deviation": 1.9976878562676128
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            208.6821052631579,
+            252.1832674571805
+          ],
+          "mean": 230.4326863601692,
+          "sample_standard_deviation": 30.75996677688926
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 1.3718846153846145,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 1.3953762711864395,
+            "covered_seconds": 590.0,
+            "coverage_fraction": 0.9833333333333333
+          }
+        ],
+        "memory": [
+          {
+            "mean": 242.26062134197323,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 245.08577860169493,
+            "covered_seconds": 590.0,
+            "coverage_fraction": 0.9833333333333333
+          }
+        ]
+      }
+    },
+    {
+      "block": "four",
+      "arm": "redistribute3",
+      "run_ids": [
+        "run-20261021-083131",
+        "run-20261021-100744"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            17.481471585111485,
+            12.829437656831079
+          ],
+          "mean": 15.155454620971282,
+          "sample_standard_deviation": 3.2894847369969686
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            91.81760144233704,
+            83.29212641716003
+          ],
+          "mean": 87.55486392974854,
+          "sample_standard_deviation": 6.02842120313921
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_standard_deviation": 0.0
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            617.5783333333334,
+            625.16
+          ],
+          "mean": 621.3691666666666,
+          "sample_standard_deviation": 5.361047912695955
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            9867.642611683848,
+            7534.577319587629
+          ],
+          "mean": 8701.109965635738,
+          "sample_standard_deviation": 1649.72628899221
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            23.05602999731001,
+            22.124709447581083
+          ],
+          "mean": 22.590369722445544,
+          "sample_standard_deviation": 0.6585430761717074
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            1.9762006688963203,
+            1.9787040133779261
+          ],
+          "mean": 1.9774523411371232,
+          "sample_standard_deviation": 0.0017701318585894043
+        },
+        "mean_actual_memory": {
+          "individual": [
+            217.1693339778428,
+            211.81067098662209
+          ],
+          "mean": 214.49000248223246,
+          "sample_standard_deviation": 3.789146939185554
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            -39.8765006385696,
+            -47.62452107279693
+          ],
+          "mean": -43.75051085568327,
+          "sample_standard_deviation": 5.478677789814082
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 1.9762006688963203,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 1.9787040133779261,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          }
+        ],
+        "memory": [
+          {
+            "mean": 217.1693339778428,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 211.81067098662209,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          }
+        ]
+      }
+    },
+    {
+      "block": "four",
+      "arm": "scale_redistribute6",
+      "run_ids": [
+        "run-20261021-084932",
+        "run-20261021-094855"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            21.871727921069994,
+            19.251465190843742
+          ],
+          "mean": 20.561596555956868,
+          "sample_standard_deviation": 1.8528055450333596
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            114.08268666267395,
+            109.42453336715698
+          ],
+          "mean": 111.75361001491547,
+          "sample_standard_deviation": 3.293811783066512
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_standard_deviation": 0.0
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            625.9083333333333,
+            625.4766666666667
+          ],
+          "mean": 625.6925,
+          "sample_standard_deviation": 0.3052344272121566
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            12338.892733564015,
+            10949.982578397212
+          ],
+          "mean": 11644.437655980613,
+          "sample_standard_deviation": 982.1077891773061
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            24.401243335866173,
+            24.82215813505309
+          ],
+          "mean": 24.61170073545963,
+          "sample_standard_deviation": 0.29763170880684314
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            2.1786655290102384,
+            2.0179140893470797
+          ],
+          "mean": 2.098289809178659,
+          "sample_standard_deviation": 0.11366843307131962
+        },
+        "mean_actual_memory": {
+          "individual": [
+            332.48210190912965,
+            323.5476737006013
+          ],
+          "mean": 328.01488780486545,
+          "sample_standard_deviation": 6.31759477227477
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            -37.60952380952381,
+            -29.833333333333336
+          ],
+          "mean": -33.721428571428575,
+          "sample_standard_deviation": 5.49859701751253
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 2.1786655290102384,
+            "covered_seconds": 586.0,
+            "coverage_fraction": 0.9766666666666667
+          },
+          {
+            "mean": 2.0179140893470797,
+            "covered_seconds": 582.0,
+            "coverage_fraction": 0.97
+          }
+        ],
+        "memory": [
+          {
+            "mean": 332.48210190912965,
+            "covered_seconds": 586.0,
+            "coverage_fraction": 0.9766666666666667
+          },
+          {
+            "mean": 323.5476737006013,
+            "covered_seconds": 582.0,
+            "coverage_fraction": 0.97
+          }
+        ]
+      }
+    },
+    {
+      "block": "four",
+      "arm": "kafka_scale6",
+      "run_ids": [
+        "run-20261021-091003",
+        "run-20261021-092942"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            15.455944975497324,
+            35.65174043098953
+          ],
+          "mean": 25.553842703243426,
+          "sample_standard_deviation": 14.280583918034996
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            75.59332227706909,
+            90.28109192848206
+          ],
+          "mean": 82.93720710277557,
+          "sample_standard_deviation": 10.38582152102008
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_standard_deviation": 0.0
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            625.6733333333333,
+            597.3966666666666
+          ],
+          "mean": 611.535,
+          "sample_standard_deviation": 19.994622749351592
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            9887.017123287671,
+            21412.3265993266
+          ],
+          "mean": 15649.671861307135,
+          "sample_standard_deviation": 8149.624485780701
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            19.52170837329769,
+            19.133524350986875
+          ],
+          "mean": 19.327616362142283,
+          "sample_standard_deviation": 0.2744875545242488
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            1.7188153310104528,
+            1.8384778156996586
+          ],
+          "mean": 1.7786465733550556,
+          "sample_standard_deviation": 0.08461415437736884
+        },
+        "mean_actual_memory": {
+          "individual": [
+            287.559056511324,
+            315.08306447312276
+          ],
+          "mean": 301.3210604922234,
+          "sample_standard_deviation": 19.462412675220428
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            -16.860194174757282,
+            -0.6652
+          ],
+          "mean": -8.76269708737864,
+          "sample_standard_deviation": 11.451590202247509
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 1.7188153310104528,
+            "covered_seconds": 574.0,
+            "coverage_fraction": 0.9566666666666667
+          },
+          {
+            "mean": 1.8384778156996586,
+            "covered_seconds": 586.0,
+            "coverage_fraction": 0.9766666666666667
+          }
+        ],
+        "memory": [
+          {
+            "mean": 287.559056511324,
+            "covered_seconds": 574.0,
+            "coverage_fraction": 0.9566666666666667
+          },
+          {
+            "mean": 315.08306447312276,
+            "covered_seconds": 586.0,
+            "coverage_fraction": 0.9766666666666667
+          }
+        ]
+      }
+    },
+    {
+      "block": "twelve",
+      "arm": "keep3",
+      "run_ids": [
+        "run-20261104-082727",
+        "run-20261104-103058"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            161.10311547004736,
+            159.14003012413136
+          ],
+          "mean": 160.12157279708936,
+          "sample_standard_deviation": 1.3881109601451425
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            368.54192304611206,
+            363.70127725601196
+          ],
+          "mean": 366.121600151062,
+          "sample_standard_deviation": 3.4228534635018923
+        },
+        "unfinished_percent": {
+          "individual": [
+            35.11388888888889,
+            34.44305555555556
+          ],
+          "mean": 34.77847222222222,
+          "sample_standard_deviation": 0.47435079904597127
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            361.13,
+            363.7216666666667
+          ],
+          "mean": 362.42583333333334,
+          "sample_standard_deviation": 1.832585074575157
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            86048.46666666666,
+            85416.40468227425
+          ],
+          "mean": 85732.43567447046,
+          "sample_standard_deviation": 446.93531529409665
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            4.91188759842643,
+            4.901476431667504
+          ],
+          "mean": 4.906682015046967,
+          "sample_standard_deviation": 0.007361806615300666
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            1.3485066889632111,
+            1.3455555555555556
+          ],
+          "mean": 1.3470311222593834,
+          "sample_standard_deviation": 0.0020867664447393785
+        },
+        "mean_actual_memory": {
+          "individual": [
+            249.4970343854515,
+            251.57464620159934
+          ],
+          "mean": 250.53584029352544,
+          "sample_standard_deviation": 1.4690934038714238
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            238.87649122807017,
+            236.3251548946716
+          ],
+          "mean": 237.60082306137087,
+          "sample_standard_deviation": 1.8040672224337386
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 1.3485066889632111,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 1.3455555555555556,
+            "covered_seconds": 594.0,
+            "coverage_fraction": 0.99
+          }
+        ],
+        "memory": [
+          {
+            "mean": 249.4970343854515,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 251.57464620159934,
+            "covered_seconds": 594.0,
+            "coverage_fraction": 0.99
+          }
+        ]
+      }
+    },
+    {
+      "block": "twelve",
+      "arm": "redistribute3",
+      "run_ids": [
+        "run-20261104-084449",
+        "run-20261104-101335"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            13.176202204591036,
+            13.448335059316953
+          ],
+          "mean": 13.312268631953994,
+          "sample_standard_deviation": 0.19242698696034996
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            83.2797920703888,
+            84.71323084831238
+          ],
+          "mean": 83.99651145935059,
+          "sample_standard_deviation": 1.0135942802855238
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_standard_deviation": 0.0
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            623.7416666666667,
+            624.035
+          ],
+          "mean": 623.8883333333333,
+          "sample_standard_deviation": 0.20741798914802606
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            7656.993127147766,
+            7906.577319587629
+          ],
+          "mean": 7781.785223367698,
+          "sample_standard_deviation": 176.48267495119524
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            9.69728302599402,
+            9.87313507806205
+          ],
+          "mean": 9.785209052028035,
+          "sample_standard_deviation": 0.12434617850287433
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            1.7832374581939783,
+            1.7968143812709028
+          ],
+          "mean": 1.7900259197324404,
+          "sample_standard_deviation": 0.00960033437534143
+        },
+        "mean_actual_memory": {
+          "individual": [
+            204.97459631061872,
+            204.79916779891303
+          ],
+          "mean": 204.88688205476586,
+          "sample_standard_deviation": 0.12404669024055669
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            -39.383269476372924,
+            -39.2109833971903
+          ],
+          "mean": -39.29712643678161,
+          "sample_standard_deviation": 0.12182465489407761
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 1.7832374581939783,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 1.7968143812709028,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          }
+        ],
+        "memory": [
+          {
+            "mean": 204.97459631061872,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 204.79916779891303,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          }
+        ]
+      }
+    },
+    {
+      "block": "twelve",
+      "arm": "scale_redistribute6",
+      "run_ids": [
+        "run-20261104-090223",
+        "run-20261104-095551"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            20.81725071338415,
+            15.878054780104426
+          ],
+          "mean": 18.347652746744288,
+          "sample_standard_deviation": 3.492538938031112
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            121.42729449272156,
+            109.3055067062378
+          ],
+          "mean": 115.36640059947968,
+          "sample_standard_deviation": 8.571398343926939
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_standard_deviation": 0.0
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            623.38,
+            624.1033333333334
+          ],
+          "mean": 623.7416666666667,
+          "sample_standard_deviation": 0.5114739050582865
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            11506.871972318339,
+            8656.01384083045
+          ],
+          "mean": 10081.442906574393,
+          "sample_standard_deviation": 2015.861116975896
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            9.145942998614515,
+            9.556099476380032
+          ],
+          "mean": 9.351021237497275,
+          "sample_standard_deviation": 0.2900244267755862
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            2.054780936454849,
+            2.0369135593220333
+          ],
+          "mean": 2.045847247888441,
+          "sample_standard_deviation": 0.012634143532631292
+        },
+        "mean_actual_memory": {
+          "individual": [
+            338.55021294941474,
+            329.94796080508473
+          ],
+          "mean": 334.24908687724974,
+          "sample_standard_deviation": 6.08271082473227
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            -19.425997425997426,
+            -20.874388674388673
+          ],
+          "mean": -20.15019305019305,
+          "sample_standard_deviation": 1.0241672735486993
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 2.054780936454849,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 2.0369135593220333,
+            "covered_seconds": 590.0,
+            "coverage_fraction": 0.9833333333333333
+          }
+        ],
+        "memory": [
+          {
+            "mean": 338.55021294941474,
+            "covered_seconds": 598.0,
+            "coverage_fraction": 0.9966666666666667
+          },
+          {
+            "mean": 329.94796080508473,
+            "covered_seconds": 590.0,
+            "coverage_fraction": 0.9833333333333333
+          }
+        ]
+      }
+    },
+    {
+      "block": "twelve",
+      "arm": "kafka_scale6",
+      "run_ids": [
+        "run-20261104-092004",
+        "run-20261104-093801"
+      ],
+      "metrics": {
+        "mean_end_to_end_latency_seconds": {
+          "individual": [
+            7.751449227254258,
+            6.955730999533998
+          ],
+          "mean": 7.353590113394128,
+          "sample_standard_deviation": 0.5626577547347374
+        },
+        "p99_end_to_end_latency_seconds": {
+          "individual": [
+            67.80987215042114,
+            68.64113903045654
+          ],
+          "mean": 68.22550559043884,
+          "sample_standard_deviation": 0.587794447848816
+        },
+        "unfinished_percent": {
+          "individual": [
+            0.0,
+            0.0
+          ],
+          "mean": 0.0,
+          "sample_standard_deviation": 0.0
+        },
+        "throughput_messages_per_second": {
+          "individual": [
+            623.585,
+            623.9466666666667
+          ],
+          "mean": 623.7658333333334,
+          "sample_standard_deviation": 0.25573695252914325
+        },
+        "mean_total_backlog_offsets": {
+          "individual": [
+            5113.727272727273,
+            4690.771812080537
+          ],
+          "mean": 4902.249542403904,
+          "sample_standard_deviation": 299.0746743631872
+        },
+        "mean_lag_skew_ratio": {
+          "individual": [
+            9.928058702279257,
+            9.099866610982527
+          ],
+          "mean": 9.513962656630891,
+          "sample_standard_deviation": 0.5856202438809859
+        },
+        "mean_actual_cpu": {
+          "individual": [
+            2.2395474576271193,
+            2.1424054054054054
+          ],
+          "mean": 2.1909764315162623,
+          "sample_standard_deviation": 0.06868980386435163
+        },
+        "mean_actual_memory": {
+          "individual": [
+            291.1398305084746,
+            287.9610298775338
+          ],
+          "mean": 289.5504301930042,
+          "sample_standard_deviation": 2.2477514821782947
+        },
+        "mean_rolling_backlog_growth_offsets_per_second": {
+          "individual": [
+            -24.598677248677248,
+            -18.51127819548872
+          ],
+          "mean": -21.554977722082985,
+          "sample_standard_deviation": 4.304441150298176
+        }
+      },
+      "resource_coverage": {
+        "cpu": [
+          {
+            "mean": 2.2395474576271193,
+            "covered_seconds": 590.0,
+            "coverage_fraction": 0.9833333333333333
+          },
+          {
+            "mean": 2.1424054054054054,
+            "covered_seconds": 592.0,
+            "coverage_fraction": 0.9866666666666667
+          }
+        ],
+        "memory": [
+          {
+            "mean": 291.1398305084746,
+            "covered_seconds": 590.0,
+            "coverage_fraction": 0.9833333333333333
+          },
+          {
+            "mean": 287.9610298775338,
+            "covered_seconds": 592.0,
+            "coverage_fraction": 0.9866666666666667
+          }
+        ]
+      }
+    }
+  ]
+}
