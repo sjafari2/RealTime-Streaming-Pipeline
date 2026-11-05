@@ -1,0 +1,110 @@
+% Results from the 16 validated matched 600 messages/s trials.
+% This passage and the figures are prepared for review before online inclusion.
+The following figures compare the metrics in Table~\ref{tab:metric-roles}
+using equal-weight means of the 2 runs for each response and traffic
+concentration. Bands and vertical whiskers show the range between the
+runs, rather than confidence intervals. Time-series means require valid
+values from both runs, so unavailable observations remain gaps. Gray
+dotted lines mark the scheduled action at minute~1, while colored dotted
+lines mark each run's confirmed activation. The dashed throughput line
+marks the continuing input rate of 600~messages/s.
+
+Figure~\ref{fig:skew-mean-control} shows sustained backlog growth and
+increasing message age without intervention in both conditions. With
+12 high-traffic partitions, redistribution reduced backlog and confirmed
+recovery in both runs. With 4 high-traffic partitions, its initial
+reduction was followed by continued accumulation, and the ages of
+waiting messages increased. Lag skew remained elevated even after some
+responses reduced backlog to a low level, so its magnitude alone does
+not establish whether further intervention is needed.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.78\textheight,keepaspectratio]{figures/skew-mean-control.pdf}
+\caption{Runtime control signals for the two traffic concentrations.}
+\label{fig:skew-mean-control}
+\end{figure}
+
+The measured arrival rates in Figure~\ref{fig:skew-mean-candidates}
+show approximately 40~messages/s per high-traffic partition in the
+12-partition condition and 120~messages/s in the 4-partition condition.
+The latter therefore places more demand on each partition even though
+the total input remains unchanged. Matching capacity estimates from
+sufficiently busy calibration intervals are unavailable for this
+deployment, and the balanced reference cannot establish those
+capacities. The capacity panels identify this missing evidence without
+substituting throughput observed under insufficient load.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/skew-mean-candidates.pdf}
+\caption{Pre-action partition arrival rates and capacity availability.}
+\label{fig:skew-mean-candidates}
+\end{figure}
+
+Figure~\ref{fig:skew-mean-performance} shows how completion rates and
+latency changed during evaluation. Throughput includes distinct
+warm-up messages completed during evaluation, which explains why
+recovery peaks exceed the continuing input rate. Window p99 uses
+evaluation messages completed in each 30-second interval, retaining
+their original producer timestamps. The run-level outcomes in
+Figure~\ref{fig:skew-mean-outcomes} instead follow the evaluation cohort
+through the drain cutoff, and the p99 points average the 2 run-level
+percentiles without pooling messages.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/skew-mean-performance.pdf}
+\caption{Throughput and window p99 during evaluation.}
+\label{fig:skew-mean-performance}
+\end{figure}
+
+With 12 high-traffic partitions, redistribution completed every
+evaluation message and recovered in a mean of 341~seconds after the
+scheduled action. Targeted scaling recovered sooner, at 200~seconds,
+but increased mean run-level p99 from 86.6 to 113.3~seconds. With
+4 high-traffic partitions, redistribution retained a mean of 1,570
+evaluation messages at the cutoff, or 0.44\%, whereas targeted scaling
+completed the cohort and recovered in both runs. Its mean run-level
+p99 was also lower, at 112.1 rather than 124.4~seconds. The benefit of
+adding consumers therefore differed between the two traffic
+concentrations under the tested partition maps.
+
+Normal Kafka scaling achieved the lowest mean run-level p99 in both
+conditions, at 65.0 and 77.1~seconds, respectively. However, neither
+4-partition run met the recovery criterion during continuing input,
+despite completing every evaluation message by the drain cutoff.
+Both final Kafka assignments placed 2 high-traffic partitions on at
+least 1 consumer, whereas targeted scaling distributed them across
+4 consumers. In this condition, Kafka scaling also had a higher mean
+SLO violation rate than targeted scaling, at 54.2\% rather than
+31.7\%. These outcomes show why consumer count and p99 alone do not
+fully describe the effectiveness of a response.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.78\textheight,keepaspectratio]{figures/skew-mean-outcomes.pdf}
+\caption{Evaluation-message outcomes and confirmed recovery times.}
+\label{fig:skew-mean-outcomes}
+\end{figure}
+
+Figure~\ref{fig:skew-mean-costs} shows that redistribution used less
+memory than either scaling response in both conditions. For the
+4-partition workload, redistribution and targeted scaling had similar
+CPU costs, about 19.4 and 19.6~core-minutes, although only targeted
+scaling completed all evaluation messages and confirmed recovery.
+Targeted scaling took longer to activate than the other interventions,
+so its eventual recovery benefit must be considered alongside that
+delay. Resource costs cover observed consumer CPU and RSS memory over
+evaluation and drain, with more than 99\% measurement coverage.
+Matched placement reduces one source of variation, but 2 repetitions
+on shared nodes do not establish performance guarantees beyond these
+conditions.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.70\textheight,keepaspectratio]{figures/skew-mean-costs.pdf}
+\caption{Consumer resource cost and decision-to-active time.}
+\label{fig:skew-mean-costs}
+\end{figure}
+\FloatBarrier

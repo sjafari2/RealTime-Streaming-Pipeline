@@ -1,0 +1,32 @@
+{
+  "trials": 16,
+  "pairs": 8,
+  "metrics": [
+    "Total backlog",
+    "Backlog growth",
+    "Lag skew ratio",
+    "Message age",
+    "Partition arrival rate",
+    "Consumer capacity",
+    "Throughput",
+    "P99 end-to-end latency",
+    "Unfinished messages",
+    "SLO violation rate",
+    "Recovery time",
+    "Resource cost",
+    "Decision-to-active time"
+  ],
+  "checks": [
+    "Raw manifest, lag and monitoring hashes match saved evidence",
+    "Message hashes checked and duplicate completions removed",
+    "Evaluation cohort sizes and run p99 reconcile with recorded results",
+    "30-second throughput integrates to recorded evaluation throughput",
+    "Missing observations and unconfirmed recovery are not zero"
+  ],
+  "limitations": [
+    "Partition-rate availability is assessed independently of lag-window availability",
+    "Capacity is shown only where matching busy-calibration evidence exists",
+    "Resource costs cover observed intervals only",
+    "Unconfirmed recovery is reported separately and prevents a two-run recovery mean"
+  ]
+}

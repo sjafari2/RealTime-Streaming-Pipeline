@@ -1,0 +1,433 @@
+{
+  "status": "complete",
+  "validated_comparison_trials": 16,
+  "restoration": "verified",
+  "campaign_revision": "bc8eebe7f61a5bfc5425ce3189e63bcd0ce1758a",
+  "resume_events": [
+    {
+      "timestamp": 1793857088.379491,
+      "revision": "c6690b1edc32ad96ff119a8c19a0d5a0db7622ee",
+      "prior_error": "consumer-sts-5: pod/container is not continuously ready",
+      "completed_trials": 5
+    },
+    {
+      "timestamp": 1793875192.6482089,
+      "revision": "dafdbeb80093856a2cd0dc2f2ec9f5bd496a535c",
+      "prior_error": "consumer-sts-3: pod/container is not continuously ready",
+      "completed_trials": 11
+    },
+    {
+      "timestamp": 1793894918.7106729,
+      "revision": "f42a3c283d0209f141f2388923ff00c792243f53",
+      "prior_error": "Retryable monitoring failure in Keep 3: run-20261105-045103",
+      "completed_trials": 15
+    }
+  ],
+  "trials": [
+    {
+      "arm": "hot12__keep3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-193306",
+      "validation": {
+        "run_id": "run-20261104-193306",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395982,
+        "completion_attempts_whole_run": 271419,
+        "unfinished_whole_run": 124563,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "a08e1599929a50eccfa2100b4525df1e808da2616c02ce1e7500a370ef68f78b",
+        "outcome-summary.json": "72ade2174dc1c63ad7856e31b2286d4f564c1469a43b4bb53f9cc5da289dca1c",
+        "lag-summary.json": "9914d11d383c180f687ad7540fb7f23246c8fa000d37af38afb2f761abe208f2",
+        "matched-placement-checks.jsonl": "d440c3443c984225e1e35ea85f4f2fc99a275ced23b49dfb0a869f1dec10a813"
+      }
+    },
+    {
+      "arm": "hot4__keep3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-195047",
+      "validation": {
+        "run_id": "run-20261104-195047",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395980,
+        "completion_attempts_whole_run": 259804,
+        "unfinished_whole_run": 136176,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "60b7102b26d36f198bdf04ecd7d5a853ae92db1971d186f0e7761a948a1d3cf3",
+        "outcome-summary.json": "f623cb85116c273b9faf876626a422a8ba9c38caa0365a8116bbdabff4260850",
+        "lag-summary.json": "55f2a77e4b57696fcd826b67b815859b7e4dd48cb4cbf74f968e119cb3aa02c5",
+        "matched-placement-checks.jsonl": "ceb8fc480867d9bd4865abd60422a05a5137e2510baed0edbca775f59a5f5c1d"
+      }
+    },
+    {
+      "arm": "hot12__redistribute3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-200815",
+      "validation": {
+        "run_id": "run-20261104-200815",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395978,
+        "completion_attempts_whole_run": 395978,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "1c2f6953591711e6bc5092ee52cb4dedef249d9526c2c0697496b8ac6d0078fa",
+        "outcome-summary.json": "92bec2b43ccf3d7d664644e64fcaeb0f32d2c415c44457bfefd27c97a6a5bb2a",
+        "lag-summary.json": "9c99ffa9a38905f49f440377b8294d1ff38fb32de8301c8de1dae1beb916ccc7",
+        "matched-placement-checks.jsonl": "76cfff073e5cdc09e641d6daf9baaa58cfca56811bbda875e11b88d12176ab2e"
+      }
+    },
+    {
+      "arm": "hot4__redistribute3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-202549",
+      "validation": {
+        "run_id": "run-20261104-202549",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395995,
+        "completion_attempts_whole_run": 394985,
+        "unfinished_whole_run": 1010,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "8fadcfb1165790d72ab55153017b54c182e5273fb73292ebeeb1fc607183b117",
+        "outcome-summary.json": "667e8e7d02162846a9f0e8f7c83ed88d1f91dfded18fbec8089f2e4cfdb74eaa",
+        "lag-summary.json": "d5cad88ec69e8adf3b624a71b6db5d24c1d1e44c7e47d4636980fc5c612444c5",
+        "matched-placement-checks.jsonl": "74a3160c47781385ef25e048c228d7f3deff478a7255b4faf8e95a565580132b"
+      }
+    },
+    {
+      "arm": "hot12__scale_redistribute6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-204339",
+      "validation": {
+        "run_id": "run-20261104-204339",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395993,
+        "completion_attempts_whole_run": 395993,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "df068af0ef594697f33a17bdc6cea4e66bb24c9cf6349821ad23b8817440e1f3",
+        "outcome-summary.json": "b4f258c805af63589c71d4ce9cf68c368615120262e2c46cce38a1c80a6d847b",
+        "lag-summary.json": "1d06688a1ef393fb77268350d42fe48313898d67b39da73cd29682078582e563",
+        "matched-placement-checks.jsonl": "91dce4cf8257db19f38fd3bf49b1aa9652847410f2488c20e32ab49c37d9cd10"
+      }
+    },
+    {
+      "arm": "hot4__scale_redistribute6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-223938",
+      "validation": {
+        "run_id": "run-20261104-223938",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395996,
+        "completion_attempts_whole_run": 395996,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "f1d714792532a78cc9fce56489817debb44740af3144a74e5d5a8d0816060e4c",
+        "outcome-summary.json": "78be789a9ae2f9063f6d994a62c8ed1a05c521972d95d54bb5afe73661aeb46a",
+        "lag-summary.json": "3f4838486b5152c683d2c5c4554c0625d53b0ed207835bac895f212a066f2564",
+        "matched-placement-checks.jsonl": "04a328abcb4a84e11c72b7900d4547f7ebd4252e1ff2c1a4d183daeafdb40ca2"
+      }
+    },
+    {
+      "arm": "hot12__kafka_scale6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-225719",
+      "validation": {
+        "run_id": "run-20261104-225719",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395990,
+        "completion_attempts_whole_run": 395990,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "168ea499d68364f8cba0338f3febb3904df90971d6cae6bc71bcc17662a6a2af",
+        "outcome-summary.json": "000fbc36a6fad2cd7e43fc2821ce8f71d20c7273c2250274aa66c4a3c0903f83",
+        "lag-summary.json": "b49be001e6a353d938facd8f230d4606dfff65ac6b7dd8e8bea3af56ee14bf80",
+        "matched-placement-checks.jsonl": "32e82ecd4e01bb61c9ced225195b9e00b13b0fb6d324324c5d4be9d372329508"
+      }
+    },
+    {
+      "arm": "hot4__kafka_scale6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-231543",
+      "validation": {
+        "run_id": "run-20261104-231543",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395988,
+        "completion_attempts_whole_run": 395988,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "41183613235e24edd2b663db4777668339509f3a62bf39ca2eb0cbd6409e017c",
+        "outcome-summary.json": "363c655e22838b8e64adda53d14111668d3253873e00f2bf57f78b4aef4a3aa2",
+        "lag-summary.json": "98fd8e7105150d3377aa96566bb7f209d3b0dfa2cadd27b6f801a97ee1923aee",
+        "matched-placement-checks.jsonl": "87df998d783c42fefb10a8fae61be0b2f55453ffd50bdfa69ff7571b3a49b6e7"
+      }
+    },
+    {
+      "arm": "hot4__kafka_scale6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261104-233330",
+      "validation": {
+        "run_id": "run-20261104-233330",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395987,
+        "completion_attempts_whole_run": 395987,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "ff3a1fbbd6b11b434d9391b6fb3acc012a1f9ee631ef6a56e8be34b99a808e98",
+        "outcome-summary.json": "522bf38364a66499dc1c2cdc0b880701c086afe17c0e8d9a2f743bef7a89736b",
+        "lag-summary.json": "71460dba74c85632d757c8de8254fe013f8358445ae7e9bfa81ea0b9606aec8a",
+        "matched-placement-checks.jsonl": "b71d185ba0554f324322c7f5b75132827f3db9ba0f6510eed80dbf5807ed949e"
+      }
+    },
+    {
+      "arm": "hot12__kafka_scale6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261104-235114",
+      "validation": {
+        "run_id": "run-20261104-235114",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395979,
+        "completion_attempts_whole_run": 395979,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "cda77d5fcf0e12bde561ab98dc6f97445f35b1452940d4f159ca8ca11bb08f3a",
+        "outcome-summary.json": "5bd95e1f8968795a5924d142d8b6f36a9debf7a4d7dbdfd52cec3f47005ce060",
+        "lag-summary.json": "014d565e87239494e6fd141732354692a00e91c539f53af458c43259f6baf2e1",
+        "matched-placement-checks.jsonl": "a7017e618ed6637c02582a021f13a9276000b2b195e3489adb18c6434621d6c9"
+      }
+    },
+    {
+      "arm": "hot4__scale_redistribute6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261105-000905",
+      "validation": {
+        "run_id": "run-20261105-000905",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395987,
+        "completion_attempts_whole_run": 395987,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "1bb864f95db6d2b3eadadda313aff6e5a9dc0b1f3b092b0f326d358b469668d7",
+        "outcome-summary.json": "41c6adaf5abfaf697316448d48dbed6da59303b75069dd30f4095bd30ffea1f1",
+        "lag-summary.json": "61608df146eb7ba7166ff03d40b7bdcd5c0f3d47161eb44ac93e0264046a7d7a",
+        "matched-placement-checks.jsonl": "bfad858dc8acc7293ac4a7369838678e41d7ccc907e98686638064861afd0da4"
+      }
+    },
+    {
+      "arm": "hot12__scale_redistribute6",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261105-034117",
+      "validation": {
+        "run_id": "run-20261105-034117",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395986,
+        "completion_attempts_whole_run": 395986,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "c794b14fb3b6c6cb89809996e3c06a986e9e39b1821adaf092ffb2989d8dc05b",
+        "outcome-summary.json": "1ff085d79fb525f7cd2b7bc5b32f686f8535149386b3543e512d0235ed02bb23",
+        "lag-summary.json": "991ef7566084bac279bce0934ee2d71d335e9574c286f2230de1ca71c69a4704",
+        "matched-placement-checks.jsonl": "380b7b9a314847c51dc15ea3f26d3107ba246430a876bb697699d7fe1a9dc467"
+      }
+    },
+    {
+      "arm": "hot4__redistribute3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261105-035933",
+      "validation": {
+        "run_id": "run-20261105-035933",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395993,
+        "completion_attempts_whole_run": 393865,
+        "unfinished_whole_run": 2128,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "38eb49d5381668c82a86d80cc8dfbfbf1bc28dce93a850495e6793e3614735c7",
+        "outcome-summary.json": "b86a806ca24f3d393cd739c7372c8d6c8023d4a36b82d92aac12394f6a2bb6f1",
+        "lag-summary.json": "ac5027d165baad89cd3b8da6bc4bc5d6435fbe6cbb184b8ca52c8f153cd707da",
+        "matched-placement-checks.jsonl": "ccb76d31356430ab0e69a54349c3e64e5b821fc8e5f54e8b235608e326711e07"
+      }
+    },
+    {
+      "arm": "hot12__redistribute3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261105-041652",
+      "validation": {
+        "run_id": "run-20261105-041652",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395986,
+        "completion_attempts_whole_run": 395986,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "3cb83a8a1ba0200fb7c447acf088202caf70b4a1628a8b025c908dbece8fce69",
+        "outcome-summary.json": "5ccead16acf73d04a6ad2a13de64c1d817d8c7d16d9b66bc94363043bbec61c9",
+        "lag-summary.json": "1035ba7a46312319cc1763afaf203b5b5a2df6a12a15cd5e9786403c9e555ba6",
+        "matched-placement-checks.jsonl": "561624d5511d9fe56366679db79ab1edd808b3ae8715959214423998e29b1f71"
+      }
+    },
+    {
+      "arm": "hot4__keep3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261105-043404",
+      "validation": {
+        "run_id": "run-20261105-043404",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395995,
+        "completion_attempts_whole_run": 259472,
+        "unfinished_whole_run": 136523,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "993f444abe9bcce208799934ed39d618135546b707d3be23a53797e2614637d9",
+        "outcome-summary.json": "82f7282884c426879ae84e1f77f0599f533636c7aff02d6ecbb116630c2548c9",
+        "lag-summary.json": "ecbea4418dd3a9d4ce7cd9034ee635f9b56ee37bcd5fde4d290ed0be21af133e",
+        "matched-placement-checks.jsonl": "66db8e7c190ef04ba23ef5d4df304325ca0466687280f40dd751b9e6fb3c62cc"
+      }
+    },
+    {
+      "arm": "hot12__keep3",
+      "run_number": 2,
+      "seed": 82,
+      "run_id": "run-20261105-091004",
+      "validation": {
+        "run_id": "run-20261105-091004",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395985,
+        "completion_attempts_whole_run": 268600,
+        "unfinished_whole_run": 127385,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "evidence_sha256": {
+        "manifest.json": "fe9066cf9952c9b074979836f5b90647e59a886e9077aa6e4260d04d87b45a4d",
+        "outcome-summary.json": "bf9aae74b65ca451e09bfbf1a312395808379614831f92bdd12a26d62209961c",
+        "lag-summary.json": "febb26aa24b59a19f46a75897e92195448b0e39bf97caa73d549d6c6b65e16c3",
+        "matched-placement-checks.jsonl": "c0fb112f15f5152bb57540ed3e7e47e4765d3451e06cb995a50bd36ae487e0ea"
+      }
+    }
+  ],
+  "failed_monitoring_attempt": "run-20261105-045103",
+  "raw_evidence_location": "/Users/soheila/Library/Application Support/StreamProcessing/matched-skew600-20261104",
+  "backup_location": "/Users/soheila/Desktop/Thesis-26-27/backup/matched-skew600-20261104",
+  "backup_limit": "The second raw copy is on the same computer, not independent off-device storage.",
+  "backup_check": "Matching hashes verified for manifests, outcomes, lag summaries and placement checks for all 16 trials."
+}
