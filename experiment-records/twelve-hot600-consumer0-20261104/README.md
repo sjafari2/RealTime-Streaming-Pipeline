@@ -24,3 +24,19 @@ Execution revision: `4d4a24f8a0c6051b9df125505817b9551bcafdc7`. The batch restor
 [Summary, run IDs, evidence hashes and descriptive repeat means](summary.json) · [Admission plan](admission-plan.json) · [Prior monitoring gate](monitoring-gate.json)
 
 ![Total backlog during each evaluation](backlog-comparison.png)
+
+## Means across two repetitions
+
+The mean-comparison figures align each pair by time since evaluation start. Each method receives one curve with equal weight for Run 1 and Run 2. Shading shows the observed two-run range, not a confidence interval. Both runs must have valid measurements at a plotted time, so unavailable values remain gaps.
+
+CPU and RSS memory are actual totals across started consumer processes before averaging the two runs. Latency and throughput use consecutive 30-second intervals. Mean latency uses evaluation messages completed within each interval, and the plotted p99 is the mean of the two interval percentiles, not a pooled-message percentile. Throughput includes warm-up messages completed during evaluation. Backlog growth uses 15 valid two-second intervals and retains negative values during draining. Lag skew uses the existing 15-observation rolling mean.
+
+The gray dotted line marks the request at evaluation minute 1. Colored dotted lines mark each run's confirmed activation, which can differ between repetitions. The traces exclude drain. The whole-run results above continue to use the fixed drain cutoff.
+
+![Mean performance metrics](mean-performance.png)
+
+![Mean control signals](mean-control-signals.png)
+
+![Mean actual resource use](mean-resources.png)
+
+The reproducible analysis is `experiments/twelve-hot600-20261104/plot_repeat_means.py`. Compressed figure data and metric definitions are in `mean-plot-data.json.gz`.
