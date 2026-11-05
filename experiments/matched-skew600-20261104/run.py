@@ -117,8 +117,8 @@ def anchor_deployment(ordinal, node, namespace):
                 nodeSelector={'kubernetes.io/hostname': node},
                 automountServiceAccountToken=False,
                 containers=[dict(name='placement-reference', image='registry.k8s.io/pause:3.10',
-                    resources=dict(requests={'cpu': '1m', 'memory': '2Mi', 'ephemeral-storage': '1Mi'},
-                                   limits={'cpu': '1m', 'memory': '2Mi', 'ephemeral-storage': '1Mi'}),
+                    resources=dict(requests={'cpu': '5m', 'memory': '32Mi', 'ephemeral-storage': '1Mi'},
+                                   limits={'cpu': '6m', 'memory': '38Mi', 'ephemeral-storage': '1Mi'}),
                     securityContext=dict(allowPrivilegeEscalation=False, readOnlyRootFilesystem=True,
                                          capabilities=dict(drop=['ALL'])))],
                 terminationGracePeriodSeconds=5))))
