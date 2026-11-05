@@ -1,0 +1,58 @@
+{
+  "run_id": "run-20261104-184749",
+  "initial_partition_counts": {
+    "consumer-sts-0": 20,
+    "consumer-sts-1": 20,
+    "consumer-sts-2": 20
+  },
+  "evaluation_seconds": 1200.0,
+  "admitted": 720000,
+  "completed": 720000,
+  "unfinished": 0,
+  "input_rate": 600.0,
+  "throughput": 600.0025,
+  "whole_run_mean_latency_seconds": 0.14348283080922233,
+  "whole_run_p99_seconds": 1.1878864765167236,
+  "deadline_miss_fraction": 0.013548611111111112,
+  "peak_total_backlog": 376.0,
+  "consumer_resource_means": {
+    "cpu": {
+      "mean": 1.6724215358931551,
+      "covered_seconds": 1198.0,
+      "coverage_fraction": 0.9983333333333333
+    },
+    "memory": {
+      "mean": 97.4733801126878,
+      "covered_seconds": 1198.0,
+      "coverage_fraction": 0.9983333333333333
+    }
+  },
+  "lag_coverage": 0.995,
+  "replay_matches_saved_outcomes": true,
+  "source_script_sha256": "fb5f7d83d2982ac032903bd8309a4edd8000a1896859c4705ea8c4027d193383",
+  "analysis_base_revision": "c6690b1edc32ad96ff119a8c19a0d5a0db7622ee",
+  "event_file_sha256": {
+    "consumer/consumer-sts-0/0e8597c15d834d89baaea4c5e4156569/events.jsonl.gz": "65d5295c02d4cbddb7d51870e776340226b7c7f38b19aa5400d2826006f77856",
+    "consumer/consumer-sts-1/d3bfbcb9e707483f821be3be57006b68/events.jsonl.gz": "9612a56341d2c6af6a1c0ede4726a772958a54a9ec93b25ead5b7048593ff056",
+    "consumer/consumer-sts-2/a6585b8773244e11ab0eddfe8da9dcf2/events.jsonl.gz": "3339329cbc03a0af3c309f0c07431dbd0702f7f802f62896f05f8f8a5aaa5fe4",
+    "producer/producer-workers-0/c3f05f35b0a9478ea46241ed52bc2cee/events.jsonl.gz": "ff6ffe3bd4a816b6b636b1c9191bc49fe98e8bde105c852b1019a79ccfe1de3d",
+    "producer/producer-workers-1/83ae67cd6dea4d7f9380966f6713b093/events.jsonl.gz": "843cc33bd2854deb04e13b9f83f68ea19b67494b62c3bb49b9bf8b13626f8889",
+    "producer/producer-workers-2/39ec2d4047dc4739953b5b72cc3a7fc1/events.jsonl.gz": "c5aa48250f21d7f8ae8962e0c0915412b6d7b3743da2923b49e614a1c024c5dd"
+  },
+  "evidence_sha256": {
+    "manifest.json": "27b58d3818e8136951b899bfafc175c9ac65c0dec42fbef941897995b6a0df83",
+    "outcome-summary.json": "28e58cdbf72bfff4d98ca3f2328931b54d246cfae63166a37614e1faf698e984",
+    "lag-summary.json": "be84ad0a5cb4499e042b1b93f75d5bbb538cdc12fa703c3ad0fa1cda8a34657e",
+    "prometheus.json": "87289097329a7f4cc8af013e9c0c31603192b2a9b9add6e09505089a7c208d26",
+    "matched-placement-checks.jsonl": "4d51bad44ed3006262d781f913e3287778af6d952eb9eafab522183ea51ab503",
+    "compressed-evidence.json": "d01776b264c7c50e03badb9c9784ddea4bac82cab91aedd37e0baf01b1e59250"
+  },
+  "definitions": {
+    "whole_run": "Evaluation messages followed through drain. Latency is reported only for completed messages.",
+    "throughput": "Distinct completions during each evaluation interval, including warm-up messages completed then.",
+    "p99": "Nearest-rank p99 of evaluation-message latencies completed in each 30-second interval, measured from original producer timestamps.",
+    "growth": "Mean of 15 consecutive lag changes divided by elapsed time, using valid two-second observations.",
+    "skew": "Mean of 15 consecutive valid max-to-mean partition-lag ratios.",
+    "resources": "Total observed consumer CPU cores and RSS memory. Time-weighted means over valid evaluation intervals."
+  }
+}

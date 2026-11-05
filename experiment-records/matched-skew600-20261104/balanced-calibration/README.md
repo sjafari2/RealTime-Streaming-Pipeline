@@ -1,0 +1,13 @@
+# Balanced reference at 600 messages/s
+
+Run `run-20261104-184749` used three producers at 200 messages/s each, 60 partitions and three consumers. Each consumer initially owned 20 partitions. Processing used 2,000 SHA-256 iterations per message without artificial sleep. The recorded node placement and resource settings match the subsequent comparison series. No mitigation was applied.
+
+The run consisted of one minute of warm-up, twenty minutes of evaluation and two minutes of drain. The figures cover evaluation only. All 720,000 acknowledged evaluation messages completed by drain cutoff. Evaluation throughput was 600.0025 messages/s, and peak observed total lag was 376 offsets. Backlog showed brief increases followed by clearing rather than sustained accumulation during this observation period.
+
+Admission required no unfinished evaluation messages, valid outcomes, input within 1% of the target, and in each of the final two five-minute intervals at least 95% monitoring coverage, mean processing backlog at most 500 offsets and covered backlog growth at most 1 offset/s. Both intervals passed. This verifies the reference rate for this deployment and observation period. It does not establish maximum consumer capacity or indefinite stability.
+
+The run-level mean end-to-end latency was 0.1435 seconds and p99 was 1.1879 seconds. The one-second SLO violation fraction was 1.3549%. Thus, backlog stability did not imply full compliance with the latency target. These cohort statistics follow evaluation messages through drain and differ from the 30-second completion windows shown in the performance figure.
+
+The figures separate performance, runtime control signals and resource use. Throughput includes all distinct completions in an evaluation interval, including warm-up messages completed then. Window latency uses evaluation messages completed in that interval and their original producer timestamps. Growth uses fifteen successive lag changes, while mean lag skew uses fifteen valid observations. Missing observations remain gaps. CPU cores and process RSS memory are summed across the three consumers. Their time-weighted evaluation means were 1.6724 cores and 97.4734 MiB, with 99.83% temporal coverage.
+
+The plotting script is `experiments/matched-skew600-20261104/plot_calibration.py`. It verifies source hashes, managed-run validity, phase durations and placement checks, then reproduces saved cohort counts, latency and throughput from the message records. `summary.json` contains the source and evidence hashes. `plot-data.json.gz` contains the plotted series. Large raw records remain in separately backed-up storage outside Git.
