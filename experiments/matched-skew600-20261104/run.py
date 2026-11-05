@@ -292,7 +292,8 @@ def main():
             matched_workloads=protocol, calibration_reference=state['calibration']['run_id'])
         p['lag_analysis_parameters']['growth_window_samples'] = 15
         p['outcomes'] = [x.replace('10-second growth', '30-second growth') for x in p['outcomes']]
-        return p
+        # Compare nested trial-order rows in the same representation saved on disk.
+        return json.loads(json.dumps(p))
     base.campaign_protocol = campaign_protocol
     if prior:
         base.validate_resume_state(prior_campaign, prior_campaign['cost_protocol'])
