@@ -144,6 +144,24 @@ def assess_balanced(directory):
         message='Balanced reference passed.' if passed else 'Balanced reference did not pass. Stop for review without changing the input rate.')
 
 
+def validate_resume_source(series, campaign, protocol):
+    """Resume only an interrupted series with the same design and passed gates."""
+    if series.get('status') != 'failed' or series.get('restoration') != 'verified':
+        raise ValueError('Resume requires a failed series with verified restoration')
+    if campaign.get('status') != 'failed' or campaign.get('restoration') != 'verified':
+        raise ValueError('Resume requires a failed campaign with verified restoration')
+    if (series.get('calibration') or {}).get('admission', {}).get('status') != 'passed':
+        raise ValueError('Resume cannot bypass balanced calibration')
+    saved = campaign.get('cost_protocol', {}).get('matched_workloads')
+    if json.loads(json.dumps(saved)) != json.loads(json.dumps(protocol)):
+        raise ValueError('Resume cannot change workload, placement, or admission settings')
+    if {x['hot_count'] for x in series.get('stress_controls', [])
+            if x['report']['status'] == 'passed'} != {4, 12}:
+        raise ValueError('Resume requires both passed Keep 3 pressure checks')
+    if not 0 < len(campaign.get('runs', [])) < 16:
+        raise ValueError('Resume requires an incomplete comparison series')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute', action='store_true')
@@ -152,7 +170,11 @@ def main():
     parser.add_argument('--placement-plan', type=Path, required=True)
     parser.add_argument('--admission-plan', type=Path, required=True)
     parser.add_argument('--monitoring-gate', type=Path, required=True)
+    parser.add_argument('--resume-series', type=Path)
+    parser.add_argument('--resume-campaign', type=Path)
     args = parser.parse_args()
+    if bool(args.resume_series) != bool(args.resume_campaign):
+        parser.error('Supply both --resume-series and --resume-campaign')
     document = json.loads(args.placement_plan.read_text())
     order = trial_order()
     protocol = dict(aggregate_rate=600, partitions=60, hot_fraction=.8,
@@ -179,8 +201,23 @@ def main():
     audit = root / ('matched-series-' + time.strftime('%Y%m%d-%H%M%S'))
     audit.mkdir()
     write_json(audit / 'protocol.json', protocol)
+    prior = None
+    if args.resume_series:
+        prior = json.loads((args.resume_series / 'series-status.json').read_text())
+        prior_campaign = json.loads((args.resume_campaign / 'campaign-status.json').read_text())
+        validate_resume_source(prior, prior_campaign, protocol)
+        if assess_balanced(Path(prior['calibration']['directory'])) != prior['calibration']['admission']:
+            raise ValueError('Saved balanced calibration evidence changed')
+        for control in prior['stress_controls']:
+            if check_saved_control(Path(control['directory']), dict(stress=STRESS)) != control['report']:
+                raise ValueError('Saved Keep 3 pressure evidence changed')
+        support.preserve(args.resume_campaign, args.backup_root / ('before-resume-' + audit.name))
     state = dict(status='preparing', code_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip(),
-                 started_epoch=time.time(), stress_controls=[], calibration=None)
+                 started_epoch=time.time(), stress_controls=copy.deepcopy(prior['stress_controls']) if prior else [],
+                 calibration=copy.deepcopy(prior['calibration']) if prior else None)
+    if prior:
+        state.update(resumed_from=str(args.resume_series.resolve()), campaign_directory=str(args.resume_campaign.resolve()),
+                     retained_completed_trials=len(prior_campaign['runs']))
     def save(**values):
         state.update(values)
         write_json(audit / 'series-status.json', state)
@@ -205,7 +242,21 @@ def main():
     r.verify_node_placement = verify
     original_complete = r.complete_run
     def complete(plan=None):
-        directory = original_complete(plan)
+        try:
+            directory = original_complete(plan)
+        except BaseException:
+            # Preserve pod startup details before the campaign removes added pods.
+            try:
+                current = r.read_control()
+                if current and current.get('start_epoch'):
+                    failed = ROOT / 'results' / current['run_id']
+                    if failed.exists():
+                        write_json(failed / 'failure-pods.json', json.loads(r.kubectl('get', 'pods', '-l', 'app=consumer-sts', '-o', 'json')))
+                        write_json(failed / 'failure-events.json', json.loads(r.kubectl('get', 'events', '-o', 'json')))
+                        support.preserve(failed, args.backup_root)
+            except Exception as evidence_error:
+                print('[FAILURE EVIDENCE]', str(evidence_error), flush=True)
+            raise
         r.stop()
         m = json.loads((directory / 'manifest.json').read_text())
         stress = None
@@ -243,6 +294,8 @@ def main():
         p['outcomes'] = [x.replace('10-second growth', '30-second growth') for x in p['outcomes']]
         return p
     base.campaign_protocol = campaign_protocol
+    if prior:
+        base.validate_resume_state(prior_campaign, prior_campaign['cost_protocol'])
     def ready(campaign, arm):
         n, response = split_arm(arm)
         passed = {x['hot_count'] for x in state['stress_controls'] if x['report']['status'] == 'passed'}
@@ -286,38 +339,41 @@ def main():
                      dict(op='replace', path='/spec/template', value=template_installed)]
             r.kubectl('patch', 'statefulset', 'consumer-sts', '--type=json', '-p', json.dumps(patch))
             save(placement_installed=True)
-        # Calibration uses the same processing settings, resources and original nodes.
-        with r.command_lock():
-            original = r.shared_read(r.CONFIG)
-            (audit / 'original-config.yaml').write_bytes(original)
-            config, plan = prepared('kafka_scale6', 0, 71)
-            config['data'].update(TRAFFIC_MODE='balanced', EXP_DURATION_SEC='1260',
-                EXP_ID='matched-balanced600', WORKLOAD_SEED='71')
-            plan.update(action='none', target_consumers=None)
-            expected = yaml.safe_dump(config, sort_keys=False).encode()
-            try:
-                r.stop()
-                r.shared_write(r.CONFIG, expected)
-                save(status='balanced_calibration')
-                with r.paused_for_experiment(r, plan), r.prometheus_connection():
-                    r.preflight()
-                    directory = r.complete_run(plan)
-                result = assess_balanced(directory)
-                write_json(audit / 'balanced-admission.json', result)
-                save(calibration=dict(directory=str(directory.resolve()), run_id=result['run_id'], admission=result))
-                support.preserve(audit, args.backup_root / 'calibration-stage')
-                require_passed(result)
-            finally:
-                r.stop()
-                if base.normalized(r.shared_read(r.CONFIG)) != base.normalized(expected):
-                    raise RuntimeError('Shared configuration changed externally. Restoration withheld.')
-                r.shared_write(r.CONFIG, original)
-                if r.shared_read(r.CONFIG) != original:
-                    raise RuntimeError('Configuration restoration failed')
+        if not prior:
+            # Calibration uses the same processing settings, resources and original nodes.
+            with r.command_lock():
+                original = r.shared_read(r.CONFIG)
+                (audit / 'original-config.yaml').write_bytes(original)
+                config, plan = prepared('kafka_scale6', 0, 71)
+                config['data'].update(TRAFFIC_MODE='balanced', EXP_DURATION_SEC='1260',
+                    EXP_ID='matched-balanced600', WORKLOAD_SEED='71')
+                plan.update(action='none', target_consumers=None)
+                expected = yaml.safe_dump(config, sort_keys=False).encode()
+                try:
+                    r.stop()
+                    r.shared_write(r.CONFIG, expected)
+                    save(status='balanced_calibration')
+                    with r.paused_for_experiment(r, plan), r.prometheus_connection():
+                        r.preflight()
+                        directory = r.complete_run(plan)
+                    result = assess_balanced(directory)
+                    write_json(audit / 'balanced-admission.json', result)
+                    save(calibration=dict(directory=str(directory.resolve()), run_id=result['run_id'], admission=result))
+                    support.preserve(audit, args.backup_root / 'calibration-stage')
+                    require_passed(result)
+                finally:
+                    r.stop()
+                    if base.normalized(r.shared_read(r.CONFIG)) != base.normalized(expected):
+                        raise RuntimeError('Shared configuration changed externally. Restoration withheld.')
+                    r.shared_write(r.CONFIG, original)
+                    if r.shared_read(r.CONFIG) != original:
+                        raise RuntimeError('Configuration restoration failed')
         save(status='comparison')
         sys.argv = [sys.argv[0], '--execute', '--aggregate-rate', '600', '--hot-partitions', '12',
             '--slo-ms', '1000', '--monitoring-gate', str(args.monitoring_gate),
             '--admission-plan', str(args.admission_plan), '--audit-root', str(root)]
+        if prior:
+            sys.argv += ['--resume', str(args.resume_campaign)]
         campaign = base.main()
         save(status='complete', campaign_directory=str(campaign.resolve()))
         support.preserve(campaign, args.backup_root)

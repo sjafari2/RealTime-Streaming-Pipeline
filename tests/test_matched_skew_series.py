@@ -94,3 +94,20 @@ def test_analysis_projection_keeps_run_identity_and_validates_complete_series():
     source['status'] = 'failed'
     with pytest.raises(ValueError):
         analysis.project_campaign(source, 4)
+
+
+def test_resume_keeps_passed_gates_and_rejects_changed_settings():
+    import pytest
+    protocol=dict(aggregate_rate=600, order=m.trial_order(), placement={'fixed': True})
+    series=dict(status='failed', restoration='verified', calibration={'admission': {'status': 'passed'}},
+                stress_controls=[dict(hot_count=h, report={'status':'passed'}) for h in (4,12)])
+    campaign=dict(status='failed', restoration='verified', runs=[{'run_id':'completed'}],
+                  cost_protocol={'matched_workloads':json.loads(json.dumps(protocol))})
+    m.validate_resume_source(series,campaign,protocol)
+    with pytest.raises(ValueError):
+        m.validate_resume_source(series,campaign,dict(protocol,aggregate_rate=700))
+    incomplete=copy.deepcopy(series);incomplete['stress_controls'].pop()
+    with pytest.raises(ValueError):
+        m.validate_resume_source(incomplete,campaign,protocol)
+    with pytest.raises(ValueError):
+        m.validate_resume_source(dict(series,status='stopped_for_review'),campaign,protocol)

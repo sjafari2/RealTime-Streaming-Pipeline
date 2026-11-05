@@ -1,0 +1,381 @@
+{
+  "status": "partial_interrupted",
+  "planned_comparison_trials": 16,
+  "completed_comparison_trials": 5,
+  "remaining_comparison_trials": 11,
+  "interrupted_attempt": {
+    "run_id": "run-20261104-210131",
+    "arm": "hot4__scale_redistribute6",
+    "run_number": 1,
+    "reason": "consumer-sts-5: pod/container is not continuously ready",
+    "startup_timeout_seconds": 90,
+    "observed": "Consumer 5 was Pending on its designated node. Its application container had not started. The original pod startup cause was not retained in the resource snapshots and live events had expired by inspection.",
+    "interpretation": "The attempt started traffic but did not complete its scheduled observation period. It is retained separately, not reported as a completed performance trial."
+  },
+  "calibration": {
+    "directory": "/Users/soheila/Library/Application Support/StreamProcessing/matched-skew600-20261104/run-20261104-184749",
+    "run_id": "run-20261104-184749",
+    "admission": {
+      "status": "passed",
+      "run_id": "run-20261104-184749",
+      "thresholds": {
+        "maximum_mean_backlog": 500,
+        "maximum_growth": 1,
+        "minimum_coverage": 0.95,
+        "input_rate_tolerance": 0.01
+      },
+      "windows": [
+        {
+          "start": 1793844018.7124102,
+          "end": 1793844318.7124102,
+          "covered_seconds": 294.0,
+          "coverage_fraction": 0.98,
+          "covered_interval_growth_offsets_per_second": -0.9149659863945578,
+          "time_weighted_mean_backlog": 58.54081632653061,
+          "peak_observed_backlog": 376.0,
+          "segments": [
+            {
+              "start": 1793844020.712,
+              "end": 1793844230.712,
+              "growth_offsets_per_second": 0.1,
+              "first": 49.0,
+              "last": 70.0
+            },
+            {
+              "start": 1793844234.712,
+              "end": 1793844318.712,
+              "growth_offsets_per_second": -3.4523809523809526,
+              "first": 376.0,
+              "last": 86.0
+            }
+          ]
+        },
+        {
+          "start": 1793844318.7124102,
+          "end": 1793844618.7124102,
+          "covered_seconds": 298.0,
+          "coverage_fraction": 0.9933333333333333,
+          "covered_interval_growth_offsets_per_second": 0.12080536912751678,
+          "time_weighted_mean_backlog": 57.88590604026846,
+          "peak_observed_backlog": 197.0,
+          "segments": [
+            {
+              "start": 1793844320.712,
+              "end": 1793844618.712,
+              "growth_offsets_per_second": 0.12080536912751678,
+              "first": 45.0,
+              "last": 81.0
+            }
+          ]
+        }
+      ],
+      "input_rate": 600.0,
+      "unfinished": 0,
+      "message": "Balanced reference passed."
+    }
+  },
+  "stress_controls": [
+    {
+      "hot_count": 12,
+      "directory": "/Users/soheila/Library/Application Support/StreamProcessing/matched-skew600-20261104/run-20261104-193306",
+      "report": {
+        "status": "passed",
+        "reason": "stress_demonstrated",
+        "run_id": "run-20261104-193306",
+        "settings": {
+          "window_seconds": 60,
+          "consecutive_windows": 3,
+          "minimum_growth_offsets_per_second": 100,
+          "minimum_mean_backlog_offsets": 10000,
+          "minimum_coverage": 0.95,
+          "maximum_gap_seconds": 3
+        },
+        "windows": [
+          {
+            "start_after_evaluation_seconds": 420.0,
+            "end_after_evaluation_seconds": 480.0,
+            "valid_observations": 31,
+            "coverage_fraction": 1.0,
+            "growth_offsets_per_second": 235.53333333333333,
+            "mean_backlog_offsets": 120816.74193548386,
+            "passed": true
+          },
+          {
+            "start_after_evaluation_seconds": 480.0,
+            "end_after_evaluation_seconds": 540.0,
+            "valid_observations": 31,
+            "coverage_fraction": 1.0,
+            "growth_offsets_per_second": 234.0,
+            "mean_backlog_offsets": 134946.35483870967,
+            "passed": true
+          },
+          {
+            "start_after_evaluation_seconds": 540.0,
+            "end_after_evaluation_seconds": 600.0,
+            "valid_observations": 31,
+            "coverage_fraction": 1.0,
+            "growth_offsets_per_second": 234.76666666666668,
+            "mean_backlog_offsets": 148958.48387096773,
+            "passed": true
+          }
+        ],
+        "invalid_observations": [],
+        "message": "Keep 3 demonstrated the prespecified stress condition.",
+        "evidence_sha256": {
+          "manifest.json": "a08e1599929a50eccfa2100b4525df1e808da2616c02ce1e7500a370ef68f78b",
+          "lag-summary.json": "9914d11d383c180f687ad7540fb7f23246c8fa000d37af38afb2f761abe208f2",
+          "outcome-summary.json": "72ade2174dc1c63ad7856e31b2286d4f564c1469a43b4bb53f9cc5da289dca1c"
+        }
+      }
+    },
+    {
+      "hot_count": 4,
+      "directory": "/Users/soheila/Library/Application Support/StreamProcessing/matched-skew600-20261104/run-20261104-195047",
+      "report": {
+        "status": "passed",
+        "reason": "stress_demonstrated",
+        "run_id": "run-20261104-195047",
+        "settings": {
+          "window_seconds": 60,
+          "consecutive_windows": 3,
+          "minimum_growth_offsets_per_second": 100,
+          "minimum_mean_backlog_offsets": 10000,
+          "minimum_coverage": 0.95,
+          "maximum_gap_seconds": 3
+        },
+        "windows": [
+          {
+            "start_after_evaluation_seconds": 420.0,
+            "end_after_evaluation_seconds": 480.0,
+            "valid_observations": 31,
+            "coverage_fraction": 1.0,
+            "growth_offsets_per_second": 249.75,
+            "mean_backlog_offsets": 129629.51612903226,
+            "passed": true
+          },
+          {
+            "start_after_evaluation_seconds": 480.0,
+            "end_after_evaluation_seconds": 540.0,
+            "valid_observations": 31,
+            "coverage_fraction": 1.0,
+            "growth_offsets_per_second": 254.73333333333332,
+            "mean_backlog_offsets": 144627.29032258064,
+            "passed": true
+          },
+          {
+            "start_after_evaluation_seconds": 540.0,
+            "end_after_evaluation_seconds": 600.0,
+            "valid_observations": 30,
+            "coverage_fraction": 0.9666666666666667,
+            "growth_offsets_per_second": 251.17241379310346,
+            "mean_backlog_offsets": 159375.5,
+            "passed": true
+          }
+        ],
+        "invalid_observations": [],
+        "message": "Keep 3 demonstrated the prespecified stress condition.",
+        "evidence_sha256": {
+          "manifest.json": "60b7102b26d36f198bdf04ecd7d5a853ae92db1971d186f0e7761a948a1d3cf3",
+          "lag-summary.json": "55f2a77e4b57696fcd826b67b815859b7e4dd48cb4cbf74f968e119cb3aa02c5",
+          "outcome-summary.json": "f623cb85116c273b9faf876626a422a8ba9c38caa0365a8116bbdabff4260850"
+        }
+      }
+    }
+  ],
+  "completed": [
+    {
+      "arm": "hot12__keep3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-193306",
+      "validation": {
+        "run_id": "run-20261104-193306",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395982,
+        "completion_attempts_whole_run": 271419,
+        "unfinished_whole_run": 124563,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "outcomes": {
+        "admitted_evaluation_cohort": 360000,
+        "completed_by_drain": 235436,
+        "incomplete_by_drain": 124564,
+        "incomplete_fraction": 0.3460111111111111,
+        "admitted_cohort_completion_mean_seconds": 159.25949610457263,
+        "admitted_cohort_completion_p99_seconds": 364.84230160713196,
+        "useful_throughput_per_second": 362.7216666666667
+      },
+      "evidence_sha256": {
+        "manifest.json": "a08e1599929a50eccfa2100b4525df1e808da2616c02ce1e7500a370ef68f78b",
+        "outcome-summary.json": "72ade2174dc1c63ad7856e31b2286d4f564c1469a43b4bb53f9cc5da289dca1c",
+        "lag-summary.json": "9914d11d383c180f687ad7540fb7f23246c8fa000d37af38afb2f761abe208f2",
+        "matched-placement-checks.jsonl": "d440c3443c984225e1e35ea85f4f2fc99a275ced23b49dfb0a869f1dec10a813",
+        "handoff-validation.json": "f1547f22886c50f5ffd57e83b293c222f910d29f2192cc90355e82d0c38ecbec"
+      }
+    },
+    {
+      "arm": "hot4__keep3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-195047",
+      "validation": {
+        "run_id": "run-20261104-195047",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395980,
+        "completion_attempts_whole_run": 259804,
+        "unfinished_whole_run": 136176,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": false,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "outcomes": {
+        "admitted_evaluation_cohort": 360000,
+        "completed_by_drain": 223823,
+        "incomplete_by_drain": 136177,
+        "incomplete_fraction": 0.37826944444444444,
+        "admitted_cohort_completion_mean_seconds": 172.69587369612222,
+        "admitted_cohort_completion_p99_seconds": 379.5593864917755,
+        "useful_throughput_per_second": 345.9633333333333
+      },
+      "evidence_sha256": {
+        "manifest.json": "60b7102b26d36f198bdf04ecd7d5a853ae92db1971d186f0e7761a948a1d3cf3",
+        "outcome-summary.json": "f623cb85116c273b9faf876626a422a8ba9c38caa0365a8116bbdabff4260850",
+        "lag-summary.json": "55f2a77e4b57696fcd826b67b815859b7e4dd48cb4cbf74f968e119cb3aa02c5",
+        "matched-placement-checks.jsonl": "ceb8fc480867d9bd4865abd60422a05a5137e2510baed0edbca775f59a5f5c1d",
+        "handoff-validation.json": "f86e6db8155dd912f0aaedeb0a6cfedd602bf9f2840f13a236afd2cc8a0f8b70"
+      }
+    },
+    {
+      "arm": "hot12__redistribute3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-200815",
+      "validation": {
+        "run_id": "run-20261104-200815",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395978,
+        "completion_attempts_whole_run": 395978,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "outcomes": {
+        "admitted_evaluation_cohort": 360000,
+        "completed_by_drain": 360000,
+        "incomplete_by_drain": 0,
+        "incomplete_fraction": 0.0,
+        "admitted_cohort_completion_mean_seconds": 14.459041981619597,
+        "admitted_cohort_completion_p99_seconds": 87.70434021949768,
+        "useful_throughput_per_second": 623.875
+      },
+      "evidence_sha256": {
+        "manifest.json": "1c2f6953591711e6bc5092ee52cb4dedef249d9526c2c0697496b8ac6d0078fa",
+        "outcome-summary.json": "92bec2b43ccf3d7d664644e64fcaeb0f32d2c415c44457bfefd27c97a6a5bb2a",
+        "lag-summary.json": "9c99ffa9a38905f49f440377b8294d1ff38fb32de8301c8de1dae1beb916ccc7",
+        "matched-placement-checks.jsonl": "76cfff073e5cdc09e641d6daf9baaa58cfca56811bbda875e11b88d12176ab2e",
+        "handoff-validation.json": "770195ce62fc01dc2fb9c20306e872fe1fec620f66f22a14241b7826cf3aeb62"
+      }
+    },
+    {
+      "arm": "hot4__redistribute3",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-202549",
+      "validation": {
+        "run_id": "run-20261104-202549",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395995,
+        "completion_attempts_whole_run": 394985,
+        "unfinished_whole_run": 1010,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "outcomes": {
+        "admitted_evaluation_cohort": 360000,
+        "completed_by_drain": 358989,
+        "incomplete_by_drain": 1011,
+        "incomplete_fraction": 0.0028083333333333333,
+        "admitted_cohort_completion_mean_seconds": 49.75893030856095,
+        "admitted_cohort_completion_p99_seconds": 122.64238357543945,
+        "useful_throughput_per_second": 571.6716666666666
+      },
+      "evidence_sha256": {
+        "manifest.json": "8fadcfb1165790d72ab55153017b54c182e5273fb73292ebeeb1fc607183b117",
+        "outcome-summary.json": "667e8e7d02162846a9f0e8f7c83ed88d1f91dfded18fbec8089f2e4cfdb74eaa",
+        "lag-summary.json": "d5cad88ec69e8adf3b624a71b6db5d24c1d1e44c7e47d4636980fc5c612444c5",
+        "matched-placement-checks.jsonl": "74a3160c47781385ef25e048c228d7f3deff478a7255b4faf8e95a565580132b",
+        "handoff-validation.json": "9ac09cc6c8e65cfc5031f5fbce110f804d52feaf7865ab7ed9a2ef9eefc25432"
+      }
+    },
+    {
+      "arm": "hot12__scale_redistribute6",
+      "run_number": 1,
+      "seed": 81,
+      "run_id": "run-20261104-204339",
+      "validation": {
+        "run_id": "run-20261104-204339",
+        "status": "passed",
+        "failures": [],
+        "acknowledged_whole_run": 395993,
+        "completion_attempts_whole_run": 395993,
+        "unfinished_whole_run": 0,
+        "duplicate_message_ids": 0,
+        "duplicate_offsets": 0,
+        "unmatched_completion_identities": 0,
+        "handoff_checked": true,
+        "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+      },
+      "outcomes": {
+        "admitted_evaluation_cohort": 360000,
+        "completed_by_drain": 360000,
+        "incomplete_by_drain": 0,
+        "incomplete_fraction": 0.0,
+        "admitted_cohort_completion_mean_seconds": 16.523509820470544,
+        "admitted_cohort_completion_p99_seconds": 110.06073474884033,
+        "useful_throughput_per_second": 624.0483333333333
+      },
+      "evidence_sha256": {
+        "manifest.json": "df068af0ef594697f33a17bdc6cea4e66bb24c9cf6349821ad23b8817440e1f3",
+        "outcome-summary.json": "b4f258c805af63589c71d4ce9cf68c368615120262e2c46cce38a1c80a6d847b",
+        "lag-summary.json": "1d06688a1ef393fb77268350d42fe48313898d67b39da73cd29682078582e563",
+        "matched-placement-checks.jsonl": "91dce4cf8257db19f38fd3bf49b1aa9652847410f2488c20e32ab49c37d9cd10",
+        "handoff-validation.json": "eb65089fd9cec8369df22c45a6794857b30e590759485cb75c4add8dd75889f6"
+      }
+    }
+  ],
+  "interpretation": "Preliminary individual first repetitions. No two-run means or final cross-workload conclusions are available. Valid unfavorable outcomes are retained. Completion latency covers completed evaluation messages through drain. Throughput counts distinct completions during evaluation and can include warm-up messages.",
+  "series_code_revision": "756a044e3d153394fd2f4fdde2201cc6388f0cee",
+  "campaign_code_revision": "bc8eebe7f61a5bfc5425ce3189e63bcd0ce1758a",
+  "captured_epoch": 1793856452.015973,
+  "no_traffic_readiness_check": {
+    "status": "passed",
+    "ready_after_seconds": 17.436301958,
+    "restoration": "verified",
+    "evidence_directory": "readiness-check-20261104-222651",
+    "evidence_sha256": {
+      "original-statefulset.json": "a14ac63dd9e6c29b058e6452ebcc51ac01102b1404ae10046ceedce36c81e6b0",
+      "events.json": "36ee798467e36582f2d1220725f93293ad934fd3f5232989ebd552e32d18d73c",
+      "pods-3.json": "2757f0c2fbee26d21fc8bb8b151c2de477dda424d096b76d7b76c391a64108cc",
+      "pods-2.json": "640819c389c7a060b34c089b5d2d7d0d4af547f0d42da12f0b6e4c854931f16a",
+      "pods-1.json": "73d17870061bbeb85bd2bfc499b4dfd68731b9caeb0eaee1cf5dae24e8dea82e",
+      "pods-0.json": "0e18a8cd45c81075c583a13ee0bb14dd953b4296de8465a6cabdedf0fe3166d5",
+      "status.json": "6f23509a4aa171f01d116804e0d61682e8106ade9ab2bf2a62ed4a5e4de19fb1"
+    }
+  }
+}
