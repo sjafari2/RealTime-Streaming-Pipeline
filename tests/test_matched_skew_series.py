@@ -75,3 +75,22 @@ def test_stress_requires_each_late_window_not_only_full_run_average():
         if row['timestamp'] >= 540:
             row['total_lag'] = 101000
     assert stress_check(manifest, rows, m.STRESS)['status'] == 'stopped_for_review'
+
+
+def test_analysis_projection_keeps_run_identity_and_validates_complete_series():
+    import pytest
+    script = SCRIPT.parent / 'analyze.py'
+    spec = importlib.util.spec_from_file_location('matched_analysis', script)
+    analysis = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(analysis)
+    order = m.trial_order()
+    source = dict(status='complete', restoration='verified', hot_partitions=list(range(12)),
+        runs=[dict(arm=a, run_number=n, seed=s, run_id=f'fixture-{i}') for i, (a, n, s) in enumerate(order)],
+        cost_protocol=dict(order=order, conditions={a: a for a, _, _ in order}, performance_trials=16))
+    projected = analysis.project_campaign(source, 4)
+    assert len(projected['runs']) == 8 and projected['hot_partitions'] == [0, 1, 2, 3]
+    assert projected['runs'][0]['run_id'] == 'fixture-1'
+    assert source['runs'][0]['arm'] == 'hot12__keep3'
+    source['status'] = 'failed'
+    with pytest.raises(ValueError):
+        analysis.project_campaign(source, 4)
