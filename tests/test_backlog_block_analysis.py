@@ -1,7 +1,12 @@
 import copy
 import pytest
 
-from analyze_backlog_block import validate_block, ARMS
+from analyze_backlog_block import validate_block, preparation_verifier, ARMS
+
+
+def test_standalone_analysis_loads_preparation_evidence_reader():
+    with pytest.raises(ValueError, match='Preparation trace check did not pass'):
+        preparation_verifier()({'status': 'failed'})
 
 
 def block():

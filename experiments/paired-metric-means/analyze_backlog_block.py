@@ -12,6 +12,13 @@ from analyze_repetitions import (
 from repetition_statistics import validate_design
 
 
+def preparation_verifier():
+    sys.path.insert(0, str(REPO / 'python-scripts'))
+    sys.path.insert(0, str(REPO / 'experiments/matched-skew600-20261104'))
+    from backlog_evidence import verify_preparation
+    return verify_preparation
+
+
 def validate_block(series, campaign):
     if any(s.get('status') != 'complete' or s.get('restoration') != 'verified'
            for s in (series, campaign)):
@@ -46,9 +53,7 @@ def main():
     campaign_path = Path(series['campaign_directory']) / 'campaign-status.json'
     campaign = read(campaign_path)
     validate_block(series, campaign)
-    sys.path.insert(0, str(REPO / 'experiments/matched-skew600-20261104'))
-    from backlog_evidence import verify_preparation
-    verify_preparation(series['starting_backlog_preparation'])
+    preparation_verifier()(series['starting_backlog_preparation'])
     script = REPO / 'experiments/paired-metric-means/analyze_matched.py'
     spec = importlib.util.spec_from_file_location('backlog_metric_methods', script)
     methods = importlib.util.module_from_spec(spec)
