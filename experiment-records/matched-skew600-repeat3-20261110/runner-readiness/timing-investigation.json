@@ -1,0 +1,22 @@
+{
+  "status": "investigating_runner_delay",
+  "run_id": "run-20261111-030538",
+  "recorded_epoch": 1794392569.170986,
+  "decision_after_evaluation": 69.80950093269348,
+  "transfer_entry_after_evaluation": 508.94010496139526,
+  "active_after_evaluation": 539.2088117599487,
+  "delay_before_transfer": 439.1306040287018,
+  "transfer_duration": 30.268706798553467,
+  "interpretation": "Large delay before transfer entry. Investigate lazy imports or host I/O before pooling. Preserve this accepted run and every outcome. Do not classify ordinary bad mitigation performance as an infrastructure failure.",
+  "source_sha256": {
+    "manifest.json": "d0300e562ba77c695d1f09ee87a8dd0391c8ff4ec4dbb6e13e29fc635a20b000",
+    "intervention-events.jsonl": "048d0a7cbf33b2cbdeca50f9050d0caab6a9c661fd9e93dd0d8ad7fb4dafb087",
+    "explicit-handoff-events.jsonl": "7764c03f6f7fda7a93f748ba3fe207aeb487178a0cac560d8f68e669323d8b39"
+  },
+  "action_module_cache_created_epoch": 1794392165.692924,
+  "action_module_cache_modified_epoch": 1794392165.6934125,
+  "action_module_source_sha256": "2767b7f72713757a58f43647d8caa96e9502619db5c00b9ea8b3dded8111335d",
+  "pause_restoration_verified": true,
+  "classification": "Runner preparation failure. The action module first finished loading at transfer entry, long after the action decision. The precise blocked I/O call was not recorded.",
+  "treatment": "Preserve the original run, label the runner delay, and repeat this condition after preloading the unchanged action implementation before traffic. Do not pool the delayed attempt into the matched repetition without explicit review."
+}

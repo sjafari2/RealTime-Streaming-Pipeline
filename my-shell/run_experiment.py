@@ -4,6 +4,7 @@ import argparse
 from contextlib import contextmanager
 import fcntl
 import hashlib
+import importlib
 import json
 import math
 import os
@@ -1178,12 +1179,40 @@ def analyze_collected(directory, control):
     return directory
 
 
+def prepare_action_code(plan):
+    """Resolve action modules before a timed run can start.
+
+    Loading source from synchronized storage can block. That preparation must
+    finish before traffic, rather than delay a scheduled intervention.
+    """
+    action = (plan or {}).get('action', 'none')
+    module_name = {'redistribute': 'explicit_control',
+                   'scale_redistribute': 'explicit_scale'}.get(action)
+    if module_name is None:
+        return None
+    started = time.time()
+    began = time.monotonic()
+    module = importlib.import_module(module_name)
+    handler = 'transfer' if action == 'redistribute' else 'scale_and_transfer'
+    if not callable(getattr(module, handler, None)):
+        raise RuntimeError('Intervention handler is unavailable: ' + module_name + '.' + handler)
+    source = Path(module.__file__)
+    source_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
+    return dict(event='action_code_ready', timestamp=time.time(),
+                preparation_started_epoch=started, preparation_seconds=time.monotonic()-began,
+                action=action, module=module_name, handler=handler,
+                source_path=str(source), source_sha256=source_sha256)
+
+
 def complete_run(plan=None):
     previous = read_control()
     previous_id = previous.get('run_id') if previous else None
     control = None
+    readiness = prepare_action_code(plan)
     try:
         control = start(plan) if plan else start()
+        if readiness is not None:
+            journal(control, 'runner-readiness.jsonl', readiness)
         if control.get('preparation_only'):
             stop()
             directory = collect()
