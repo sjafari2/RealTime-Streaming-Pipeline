@@ -1,4 +1,4 @@
-"""Compare four and twelve hot partitions on one fixed deployment at 600 msg/s."""
+"""Compare traffic concentration or starting backlog on a fixed deployment."""
 import argparse
 import copy
 import importlib.util
@@ -26,6 +26,58 @@ BALANCE = dict(maximum_mean_backlog=500, maximum_growth=1,
 ANCHOR_LABEL = 'stream-study-placement'
 ANCHOR_VALUE = 'matched-skew600-20261104'
 INDEX = 'apps.kubernetes.io/pod-index'
+BACKLOG_RATES = {'smaller': 300, 'larger': 900}
+
+
+def condition_names(comparison_mode):
+    if comparison_mode == 'traffic':
+        return ('hot12', 'hot4')
+    if comparison_mode == 'starting-backlog':
+        return ('smaller', 'larger')
+    raise ValueError('Unknown comparison mode')
+
+
+def control_condition(control):
+    return control.get('condition', 'hot' + str(control['hot_count']))
+
+
+def set_backlog_schedule(config, condition):
+    """Use different warm-up rates and the same continuing input at second 60."""
+    if condition not in BACKLOG_RATES:
+        raise ValueError('Unknown starting-backlog condition')
+    if config['data']['WARMUP_SECONDS'] != '60':
+        raise ValueError('The backlog comparison requires a 60-second warm-up')
+    config['data']['PRODUCER_RATE_SCHEDULE_JSON'] = json.dumps([
+        {'at_seconds': 0, 'rate': BACKLOG_RATES[condition] / 3},
+        {'at_seconds': 60, 'rate': 200}])
+
+
+def backlog_at_decision(directory):
+    """Use a recent valid observation at or before the common action reference."""
+    manifest = json.loads((directory / 'manifest.json').read_text())
+    snapshots = json.loads((directory / 'lag-summary.json').read_text())['snapshots']
+    anchor = manifest['evaluation_start_epoch'] + 60
+    eligible = [r for r in snapshots if r.get('valid')
+                and 0 <= anchor - r['timestamp'] <= 3]
+    if not eligible:
+        raise RuntimeError('Retryable monitoring failure in Keep 3: no valid decision backlog')
+    row = max(eligible, key=lambda r: r['timestamp'])
+    return dict(run_id=manifest['run_id'], anchor_epoch=anchor,
+                observation_epoch=row['timestamp'], total_backlog=row['total_lag'])
+
+
+def assess_backlog_contrast(controls):
+    """Confirm the preparation contrast without selecting favorable mitigations."""
+    passed = {control_condition(c): c for c in controls
+              if c['report']['status'] == 'passed'}
+    if not {'smaller', 'larger'} <= set(passed):
+        raise AdmissionStopped('Both backlog conditions need passed Keep 3 checks.')
+    observed = {level: passed[level]['decision_backlog'] for level in BACKLOG_RATES}
+    difference = observed['larger']['total_backlog'] - observed['smaller']['total_backlog']
+    return dict(status='passed' if difference > 0 else 'stopped_for_review',
+                observations=observed, larger_minus_smaller_offsets=difference,
+                interpretation='The larger warm-up rate must create more waiting offsets at the common action reference. '
+                    'This check does not establish that backlog and message age vary independently.')
 
 
 def load(path, name):
@@ -42,17 +94,18 @@ def write_json(path, value):
     temporary.replace(path)
 
 
-def trial_order(repetitions=2, first_repetition=1):
+def trial_order(repetitions=2, first_repetition=1, comparison_mode='traffic'):
     if repetitions < 1 or first_repetition < 1:
         raise ValueError('Repetition counts and identifiers must be positive')
-    arms = [f'hot{n}__{arm}' for arm in ARMS for n in (12, 4)]
+    arms = [f'{condition}__{arm}' for arm in ARMS for condition in condition_names(comparison_mode)]
     order = []
     for number in range(first_repetition, first_repetition + repetitions):
         current = arms if number % 2 else list(reversed(arms))
         if number == first_repetition:
             current = ([a for a in current if a.endswith('__keep3')]
                        + [a for a in current if not a.endswith('__keep3')])
-        order.extend((arm, number, 80 + number) for arm in current)
+        seed_base = 80 if comparison_mode == 'traffic' else 90
+        order.extend((arm, number, seed_base + number) for arm in current)
     return order
 
 
@@ -60,6 +113,10 @@ def split_arm(arm):
     if '__' not in arm:
         return 12, arm
     block, response = arm.split('__', 1)
+    if block in BACKLOG_RATES:
+        if response not in ARMS:
+            raise ValueError('Unreviewed response')
+        return 12, response
     count = int(block.removeprefix('hot')) if hasattr(str, 'removeprefix') else int(block[3:])
     if count not in (4, 12) or response not in ARMS:
         raise ValueError('Unreviewed response or hot-partition count')
@@ -171,15 +228,20 @@ def validate_resume_source(series, campaign, protocol):
     saved = campaign.get('cost_protocol', {}).get('matched_workloads')
     if json.loads(json.dumps(saved)) != json.loads(json.dumps(protocol)):
         raise ValueError('Resume cannot change workload, placement, or admission settings')
-    passed = {x['hot_count'] for x in series.get('stress_controls', [])
+    mode = protocol.get('comparison_mode', 'traffic')
+    required = set(condition_names(mode))
+    passed = {control_condition(x) for x in series.get('stress_controls', [])
               if x['report']['status'] == 'passed'}
     completed = campaign.get('runs', [])
-    completed_controls = {split_arm(x['arm'])[0] for x in completed
+    completed_controls = {x['arm'].split('__')[0] for x in completed
                           if x.get('arm', '').endswith('__keep3')}
     if not completed_controls <= passed:
         raise ValueError('A completed Keep 3 trial lacks a passed pressure check')
-    if any(not x.get('arm', '').endswith('__keep3') for x in completed) and passed != {4, 12}:
+    if any(not x.get('arm', '').endswith('__keep3') for x in completed) and passed != required:
         raise ValueError('Resume after mitigation requires both passed Keep 3 pressure checks')
+    if mode == 'starting-backlog' and any(not x.get('arm', '').endswith('__keep3') for x in completed):
+        if assess_backlog_contrast(series['stress_controls'])['status'] != 'passed':
+            raise ValueError('Resume cannot bypass starting-backlog contrast checks')
     if not 0 <= len(completed) < len(protocol['order']):
         raise ValueError('Resume requires an incomplete comparison series')
 
@@ -194,13 +256,15 @@ def main():
     parser.add_argument('--monitoring-gate', type=Path, required=True)
     parser.add_argument('--repetitions', type=int, default=2)
     parser.add_argument('--first-repetition', type=int, default=1)
+    parser.add_argument('--comparison-mode', choices=['traffic', 'starting-backlog'], default='traffic')
     parser.add_argument('--resume-series', type=Path)
     parser.add_argument('--resume-campaign', type=Path)
     args = parser.parse_args()
     if bool(args.resume_series) != bool(args.resume_campaign):
         parser.error('Supply both --resume-series and --resume-campaign')
     document = json.loads(args.placement_plan.read_text())
-    order = trial_order(args.repetitions, args.first_repetition)
+    order = trial_order(args.repetitions, args.first_repetition, args.comparison_mode)
+    conditions = condition_names(args.comparison_mode)
     protocol = dict(aggregate_rate=600, partitions=60, hot_fraction=.8,
         initial_hot_owner='consumer-sts-0', hot_partition_counts=[4, 12],
         comparison_trials=len(order), order=order, comparison_phases_seconds=[60, 600, 120],
@@ -213,6 +277,13 @@ def main():
     if (args.repetitions, args.first_repetition) != (2, 1):
         protocol['figures']['presentation'] = ('Retain individual runs. Review comparability before combining '
             'with earlier repetitions for means and sample standard deviations.')
+    if args.comparison_mode == 'starting-backlog':
+        protocol.update(comparison_mode=args.comparison_mode,
+            hot_partition_counts=[12], warmup_aggregate_rates=BACKLOG_RATES,
+            starting_backlog_check='The larger condition must have more total backlog than the smaller condition at evaluation second 60 in the two Keep 3 controls.',
+            evaluation_trace='Producer partition-selection randomness restarts at evaluation. Compare the logged common trace prefix across preparation conditions.',
+            historical_comparability='This is a new fixed-deployment block. Do not pool with the October starting-backlog runs, whose client nodes differ.')
+        protocol['figures']['presentation'] = 'Retain individual runs and report the two preparation conditions separately from historical deployments.'
     if not args.execute:
         print(json.dumps(protocol, indent=2))
         return
@@ -238,6 +309,8 @@ def main():
         for control in prior['stress_controls']:
             if check_saved_control(Path(control['directory']), dict(stress=STRESS)) != control['report']:
                 raise ValueError('Saved Keep 3 pressure evidence changed')
+            if 'decision_backlog' in control and backlog_at_decision(Path(control['directory'])) != control['decision_backlog']:
+                raise ValueError('Saved starting-backlog evidence changed')
         support.preserve(args.resume_campaign, args.backup_root / ('before-resume-' + audit.name))
     state = dict(status='preparing', code_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip(),
                  started_epoch=time.time(), stress_controls=copy.deepcopy(prior['stress_controls']) if prior else [],
@@ -245,6 +318,10 @@ def main():
     if prior:
         state.update(resumed_from=str(args.resume_series.resolve()), campaign_directory=str(args.resume_campaign.resolve()),
                      retained_completed_trials=len(prior_campaign['runs']))
+        if prior.get('starting_backlog_preparation'):
+            from backlog_evidence import verify_preparation
+            verify_preparation(prior['starting_backlog_preparation'])
+            state['starting_backlog_preparation'] = copy.deepcopy(prior['starting_backlog_preparation'])
     def save(**values):
         state.update(values)
         write_json(audit / 'series-status.json', state)
@@ -290,7 +367,22 @@ def main():
         if not (plan or {}).get('prepare_only'):
             if m['config']['TRAFFIC_MODE'] == 'skew' and (plan or {}).get('action') == 'none':
                 stress = check_saved_control(directory, dict(stress=STRESS))
-                state['stress_controls'].append(dict(hot_count=len(m['config']['SKEW_PARTITION'].split(',')), directory=str(directory.resolve()), report=stress))
+                control = dict(hot_count=len(m['config']['SKEW_PARTITION'].split(',')), directory=str(directory.resolve()), report=stress)
+                if args.comparison_mode == 'starting-backlog':
+                    control['condition'] = m['config']['EXP_ID'].split('-')[2]
+                    if control['condition'] not in BACKLOG_RATES:
+                        raise ValueError('Cannot identify the starting-backlog condition')
+                    if stress['status'] == 'passed':
+                        try:
+                            control['decision_backlog'] = backlog_at_decision(directory)
+                        except RuntimeError as exc:
+                            write_json(directory / 'backlog-observation-error.json',
+                                       dict(run_id=m['run_id'], error=str(exc)))
+                            compress(directory)
+                            compress_csv(directory)
+                            support.preserve(directory, args.backup_root)
+                            raise
+                state['stress_controls'].append(control)
                 write_json(directory / 'matched-stress-admission.json', stress)
                 save()
             compress(directory)
@@ -309,13 +401,18 @@ def main():
             hot_count=selected, deadline_ms=1000)
         config['data']['SEPARATE_BROKER_NODES'] = 'false'
         config['data']['EXP_ID'] = f'matched-hot{selected}-{response}-run{number}' + ('-technical' if gate else '')
+        if args.comparison_mode == 'starting-backlog' and '__' in arm:
+            condition = arm.split('__')[0]
+            set_backlog_schedule(config, condition)
+            config['data']['EXP_ID'] = f'matched-backlog-{condition}-{response}-run{number}'
+            r.validate_config(config['data'])
         return config, plan
     base.prepared = prepared
     original_protocol = base.campaign_protocol
     def campaign_protocol(*_args, **_kwargs):
         p = original_protocol(600, False, 12, 1000)
         p.update(performance_trials=len(order), order=order,
-            conditions={f'hot{n}__{a}': p['conditions'][a] for n in (4, 12) for a in ARMS},
+            conditions={f'{condition}__{a}': p['conditions'][a] for condition in conditions for a in ARMS},
             matched_workloads=protocol, calibration_reference=state['calibration']['run_id'])
         p['lag_analysis_parameters']['growth_window_samples'] = 15
         p['outcomes'] = [x.replace('10-second growth', '30-second growth') for x in p['outcomes']]
@@ -326,9 +423,17 @@ def main():
         base.validate_resume_state(prior_campaign, prior_campaign['cost_protocol'])
     def ready(campaign, arm):
         n, response = split_arm(arm)
-        passed = {x['hot_count'] for x in state['stress_controls'] if x['report']['status'] == 'passed'}
-        if response != 'keep3' and passed != {4, 12}:
+        passed = {control_condition(x) for x in state['stress_controls'] if x['report']['status'] == 'passed'}
+        if response != 'keep3' and passed != set(conditions):
             raise AdmissionStopped('Both Keep 3 workloads must demonstrate pressure before any mitigation.')
+        if response != 'keep3' and args.comparison_mode == 'starting-backlog':
+            contrast = assess_backlog_contrast(state['stress_controls'])
+            save(starting_backlog_contrast=contrast)
+            require_passed(contrast)
+            from backlog_evidence import check_preparation, verify_preparation
+            if not state.get('starting_backlog_preparation'):
+                save(starting_backlog_preparation=check_preparation(state['stress_controls']))
+            verify_preparation(state['starting_backlog_preparation'])
     base.require_comparison_ready = ready
     template_original = None
     template_installed = None
