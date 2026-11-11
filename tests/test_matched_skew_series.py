@@ -22,6 +22,34 @@ def test_balanced_order_has_two_baselines_before_mitigations():
         (h, a, n) for h in (4, 12) for a in m.ARMS for n in (1, 2)}
 
 
+def test_additional_repetition_has_eight_new_trials_and_keeps_pressure_gates_first():
+    import pytest
+    order = m.trial_order(repetitions=1, first_repetition=3)
+    assert len(order) == len(set(order)) == 8
+    assert order[:2] == [('hot12__keep3', 3, 83), ('hot4__keep3', 3, 83)]
+    assert {(m.split_arm(a)[0], m.split_arm(a)[1]) for a, _, _ in order} == {
+        (h, a) for h in (4, 12) for a in m.ARMS}
+    assert all(n == 3 and seed == 83 for _, n, seed in order)
+    assert all(a.endswith('__keep3') for a, _, _ in m.trial_order(1, 4)[:2])
+    with pytest.raises(ValueError):
+        m.trial_order(0, 3)
+
+
+def test_resume_during_pressure_checks_never_allows_unqualified_mitigation():
+    import pytest
+    protocol = dict(order=m.trial_order(1, 3))
+    series = dict(status='failed', restoration='verified',
+                  calibration={'admission': {'status': 'passed'}},
+                  stress_controls=[dict(hot_count=12, report={'status': 'passed'})])
+    campaign = dict(status='failed', restoration='verified',
+                    runs=[dict(arm='hot12__keep3')],
+                    cost_protocol={'matched_workloads': json.loads(json.dumps(protocol))})
+    m.validate_resume_source(series, campaign, protocol)
+    campaign['runs'].append(dict(arm='hot4__redistribute3'))
+    with pytest.raises(ValueError):
+        m.validate_resume_source(series, campaign, protocol)
+
+
 def test_per_consumer_placement_rejects_permuted_added_nodes_and_broker_restart():
     original = dict(pod='consumer-sts-0', node='old', uid='original', role='consumer', image_id='image', resources={'cpu': 2}, restart_count=0)
     broker = dict(pod='broker-0', uid='b', node='broker-node', containers=[{'restartCount': 0}])

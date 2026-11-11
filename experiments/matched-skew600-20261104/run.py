@@ -42,9 +42,18 @@ def write_json(path, value):
     temporary.replace(path)
 
 
-def trial_order():
-    first = [(f'hot{n}__{arm}', 1, 81) for arm in ARMS for n in (12, 4)]
-    return first + [(arm, 2, 82) for arm, _, _ in reversed(first)]
+def trial_order(repetitions=2, first_repetition=1):
+    if repetitions < 1 or first_repetition < 1:
+        raise ValueError('Repetition counts and identifiers must be positive')
+    arms = [f'hot{n}__{arm}' for arm in ARMS for n in (12, 4)]
+    order = []
+    for number in range(first_repetition, first_repetition + repetitions):
+        current = arms if number % 2 else list(reversed(arms))
+        if number == first_repetition:
+            current = ([a for a in current if a.endswith('__keep3')]
+                       + [a for a in current if not a.endswith('__keep3')])
+        order.extend((arm, number, 80 + number) for arm in current)
+    return order
 
 
 def split_arm(arm):
@@ -162,10 +171,16 @@ def validate_resume_source(series, campaign, protocol):
     saved = campaign.get('cost_protocol', {}).get('matched_workloads')
     if json.loads(json.dumps(saved)) != json.loads(json.dumps(protocol)):
         raise ValueError('Resume cannot change workload, placement, or admission settings')
-    if {x['hot_count'] for x in series.get('stress_controls', [])
-            if x['report']['status'] == 'passed'} != {4, 12}:
-        raise ValueError('Resume requires both passed Keep 3 pressure checks')
-    if not 0 < len(campaign.get('runs', [])) < 16:
+    passed = {x['hot_count'] for x in series.get('stress_controls', [])
+              if x['report']['status'] == 'passed'}
+    completed = campaign.get('runs', [])
+    completed_controls = {split_arm(x['arm'])[0] for x in completed
+                          if x.get('arm', '').endswith('__keep3')}
+    if not completed_controls <= passed:
+        raise ValueError('A completed Keep 3 trial lacks a passed pressure check')
+    if any(not x.get('arm', '').endswith('__keep3') for x in completed) and passed != {4, 12}:
+        raise ValueError('Resume after mitigation requires both passed Keep 3 pressure checks')
+    if not 0 <= len(completed) < len(protocol['order']):
         raise ValueError('Resume requires an incomplete comparison series')
 
 
@@ -177,22 +192,27 @@ def main():
     parser.add_argument('--placement-plan', type=Path, required=True)
     parser.add_argument('--admission-plan', type=Path, required=True)
     parser.add_argument('--monitoring-gate', type=Path, required=True)
+    parser.add_argument('--repetitions', type=int, default=2)
+    parser.add_argument('--first-repetition', type=int, default=1)
     parser.add_argument('--resume-series', type=Path)
     parser.add_argument('--resume-campaign', type=Path)
     args = parser.parse_args()
     if bool(args.resume_series) != bool(args.resume_campaign):
         parser.error('Supply both --resume-series and --resume-campaign')
     document = json.loads(args.placement_plan.read_text())
-    order = trial_order()
+    order = trial_order(args.repetitions, args.first_repetition)
     protocol = dict(aggregate_rate=600, partitions=60, hot_fraction=.8,
         initial_hot_owner='consumer-sts-0', hot_partition_counts=[4, 12],
-        comparison_trials=16, order=order, comparison_phases_seconds=[60, 600, 120],
+        comparison_trials=len(order), order=order, comparison_phases_seconds=[60, 600, 120],
         balanced_reference_phases_seconds=[60, 1200, 120], stress=STRESS,
         balanced_admission=BALANCE, placement=document,
         decision='Scheduled action at evaluation second 60. No adaptive controller or splitting.',
         figures=dict(categories=['Performance evaluation metrics', 'Runtime control signals', 'Resource use'],
                      cpu_axis='CPU use (cores)', memory_axis='Memory use (MiB)',
                      presentation='Two-run means, observed ranges, shared axes and short labels.'))
+    if (args.repetitions, args.first_repetition) != (2, 1):
+        protocol['figures']['presentation'] = ('Retain individual runs. Review comparability before combining '
+            'with earlier repetitions for means and sample standard deviations.')
     if not args.execute:
         print(json.dumps(protocol, indent=2))
         return
@@ -294,7 +314,7 @@ def main():
     original_protocol = base.campaign_protocol
     def campaign_protocol(*_args, **_kwargs):
         p = original_protocol(600, False, 12, 1000)
-        p.update(performance_trials=16, order=order,
+        p.update(performance_trials=len(order), order=order,
             conditions={f'hot{n}__{a}': p['conditions'][a] for n in (4, 12) for a in ARMS},
             matched_workloads=protocol, calibration_reference=state['calibration']['run_id'])
         p['lag_analysis_parameters']['growth_window_samples'] = 15
@@ -382,10 +402,16 @@ def main():
             '--admission-plan', str(args.admission_plan), '--audit-root', str(root)]
         if prior:
             sys.argv += ['--resume', str(args.resume_campaign)]
-        campaign = base.main()
+        prior_campaigns = set(root.glob('four-condition-*/campaign-status.json'))
+        try:
+            campaign = base.main()
+        finally:
+            created_campaigns = set(root.glob('four-condition-*/campaign-status.json')) - prior_campaigns
+            if len(created_campaigns) == 1:
+                save(campaign_directory=str(created_campaigns.pop().parent.resolve()))
         save(status='complete', campaign_directory=str(campaign.resolve()))
         support.preserve(campaign, args.backup_root)
-        print('[COMPLETE] Sixteen matched comparison trials finished.', flush=True)
+        print(f'[COMPLETE] {len(order)} matched comparison trials finished.', flush=True)
     except BaseException as exc:
         save(status='stopped_for_review' if isinstance(exc, AdmissionStopped) else 'failed', error=str(exc) or type(exc).__name__)
         print('[STOPPED]', state['error'], flush=True)

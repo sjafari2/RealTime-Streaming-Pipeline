@@ -1,0 +1,283 @@
+{
+  "aggregate_rate": 600,
+  "partitions": 60,
+  "hot_fraction": 0.8,
+  "initial_hot_owner": "consumer-sts-0",
+  "hot_partition_counts": [
+    4,
+    12
+  ],
+  "comparison_trials": 8,
+  "order": [
+    [
+      "hot12__keep3",
+      3,
+      83
+    ],
+    [
+      "hot4__keep3",
+      3,
+      83
+    ],
+    [
+      "hot12__redistribute3",
+      3,
+      83
+    ],
+    [
+      "hot4__redistribute3",
+      3,
+      83
+    ],
+    [
+      "hot12__scale_redistribute6",
+      3,
+      83
+    ],
+    [
+      "hot4__scale_redistribute6",
+      3,
+      83
+    ],
+    [
+      "hot12__kafka_scale6",
+      3,
+      83
+    ],
+    [
+      "hot4__kafka_scale6",
+      3,
+      83
+    ]
+  ],
+  "comparison_phases_seconds": [
+    60,
+    600,
+    120
+  ],
+  "balanced_reference_phases_seconds": [
+    60,
+    1200,
+    120
+  ],
+  "stress": {
+    "window_seconds": 60,
+    "consecutive_windows": 3,
+    "minimum_growth_offsets_per_second": 100,
+    "minimum_mean_backlog_offsets": 10000,
+    "minimum_coverage": 0.95,
+    "maximum_gap_seconds": 3
+  },
+  "balanced_admission": {
+    "maximum_mean_backlog": 500,
+    "maximum_growth": 1,
+    "minimum_coverage": 0.95,
+    "input_rate_tolerance": 0.01
+  },
+  "placement": {
+    "schema_version": 1,
+    "clients": [
+      {
+        "role": "consumer",
+        "pod": "consumer-sts-0",
+        "uid": "7c967e23-e892-4d84-ab14-bd977230cfb0",
+        "node": "k8s-chase-ci-04.calit2.optiputer.net",
+        "container_id": "containerd://4001ec75b534a8b679e255185c8b37a64ff0baa3640a5cd8553ca2bf601ea09f",
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "restart_count": 0,
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        }
+      },
+      {
+        "role": "consumer",
+        "pod": "consumer-sts-1",
+        "uid": "2a92d9ad-2ba1-4800-9512-9e83e20ccb49",
+        "node": "k8s-chase-ci-10.calit2.optiputer.net",
+        "container_id": "containerd://6c28078b7d89f4efad9ab92b426b52cb0bd6c41da56cae361e712d25d644f4dc",
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "restart_count": 0,
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        }
+      },
+      {
+        "role": "consumer",
+        "pod": "consumer-sts-2",
+        "uid": "ae3713ac-2e3f-43d2-9ab4-84f922d123d5",
+        "node": "k8s-gen4-03.calit2.optiputer.net",
+        "container_id": "containerd://dc5a5eb9d335dc8bb6bc5f400a067686dff5eae99ec0cf24a03501fdc0b797fe",
+        "image_id": "docker.io/sjafari2/kafkaconfluentconsumer@sha256:b9951c2cb822e758893d2a837e64ec0a402b42fcb8cf9f1b868a800e0883e476",
+        "restart_count": 0,
+        "resources": {
+          "limits": {
+            "cpu": "2400m",
+            "ephemeral-storage": "50Gi",
+            "memory": "920Mi"
+          },
+          "requests": {
+            "cpu": "2",
+            "ephemeral-storage": "0",
+            "memory": "768Mi"
+          }
+        }
+      },
+      {
+        "role": "producer",
+        "pod": "producer-workers-0",
+        "uid": "3b19b780-1c9b-4d52-8c8d-b11150991887",
+        "node": "k8s-4090-01.calit2.optiputer.net",
+        "container_id": "containerd://c588d70e1d28f54e7e0707ecbcaebd98527632884fdf0a13d883d35895205abe",
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "restart_count": 0,
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        }
+      },
+      {
+        "role": "producer",
+        "pod": "producer-workers-1",
+        "uid": "f7bf1892-e7a7-4573-8b20-c3b93759c559",
+        "node": "knuron.calit2.optiputer.net",
+        "container_id": "containerd://2a7b3c2680a056076e0f670d6e1c94cb1c3c6368f0a758944f392ff19e3deee6",
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "restart_count": 0,
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        }
+      },
+      {
+        "role": "producer",
+        "pod": "producer-workers-2",
+        "uid": "9fa8085e-9c1c-4dfc-88ff-f7f8194d30b1",
+        "node": "edex.calit2.optiputer.net",
+        "container_id": "containerd://69755d735a0b5da5cb8a0eab830b738de326be3c801669292365f06297e814f2",
+        "image_id": "docker.io/sjafari2/kafkaconfluentproducer@sha256:465c07bf7ad5e5d679287628014ecd0351189f9ce368f6c4293a9feff5c5a0a7",
+        "restart_count": 0,
+        "resources": {
+          "limits": {
+            "cpu": "360m",
+            "ephemeral-storage": "50Gi",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "300m",
+            "ephemeral-storage": "0",
+            "memory": "160Mi"
+          }
+        }
+      }
+    ],
+    "brokers": [
+      {
+        "pod": "pip-kafka-recovery-ucsd-controller-0",
+        "uid": "04002f1b-373a-4e36-af66-64e099958b83",
+        "node": "k8s-u200-00.calit2.optiputer.net",
+        "containers": [
+          {
+            "name": "jmx-exporter",
+            "imageID": "docker.io/bitnami/jmx-exporter@sha256:007c436c5b585f60dea9923ca0e138c0492ae2edc2f2ea6acbd635fe2e656038",
+            "containerID": "containerd://84f805b99d48ebaba57b768cf8d0c59ae26082cbc4cac683cb60a242a3589777",
+            "restartCount": 0
+          },
+          {
+            "name": "kafka",
+            "imageID": "docker.io/bitnamilegacy/kafka@sha256:aa0b2aee8c5610dd1d18d48b4f1df0dbe3267b5d4c338d36c9af9cbf0529c0b0",
+            "containerID": "containerd://d788abb2860ceac608b23acafc486a34e6a143cfb55518bdd59c4935fa2bb5e1",
+            "restartCount": 0
+          }
+        ]
+      },
+      {
+        "pod": "pip-kafka-recovery-ucsd-controller-1",
+        "uid": "b17c4c51-65ee-449f-ba47-186d11a5e78b",
+        "node": "k8s-u200-00.calit2.optiputer.net",
+        "containers": [
+          {
+            "name": "jmx-exporter",
+            "imageID": "docker.io/bitnami/jmx-exporter@sha256:007c436c5b585f60dea9923ca0e138c0492ae2edc2f2ea6acbd635fe2e656038",
+            "containerID": "containerd://ac11f3077d0a7178ef3fb53579dce040b3035365b834f67fbfe942447c882685",
+            "restartCount": 0
+          },
+          {
+            "name": "kafka",
+            "imageID": "docker.io/bitnamilegacy/kafka@sha256:aa0b2aee8c5610dd1d18d48b4f1df0dbe3267b5d4c338d36c9af9cbf0529c0b0",
+            "containerID": "containerd://ca23ac7bdbd3819701c25fb212af2a173f1eda087f9e0c07ad0e56cea945b925",
+            "restartCount": 0
+          }
+        ]
+      },
+      {
+        "pod": "pip-kafka-recovery-ucsd-controller-2",
+        "uid": "2e9ffaa9-595a-47f7-9d20-cacbe08e69e2",
+        "node": "k8s-u200-00.calit2.optiputer.net",
+        "containers": [
+          {
+            "name": "jmx-exporter",
+            "imageID": "docker.io/bitnami/jmx-exporter@sha256:007c436c5b585f60dea9923ca0e138c0492ae2edc2f2ea6acbd635fe2e656038",
+            "containerID": "containerd://4fa9cb0da6032703c4bfa0c6c05566be41ef0825181a1e650869ef59718dae34",
+            "restartCount": 0
+          },
+          {
+            "name": "kafka",
+            "imageID": "docker.io/bitnamilegacy/kafka@sha256:aa0b2aee8c5610dd1d18d48b4f1df0dbe3267b5d4c338d36c9af9cbf0529c0b0",
+            "containerID": "containerd://a76684b5afc3cce7675a98163fe25402325cf231839f4e45cc841447515709c4",
+            "restartCount": 0
+          }
+        ]
+      }
+    ],
+    "added_nodes": {
+      "consumer-sts-3": "k8s-ravi-01.calit2.optiputer.net",
+      "consumer-sts-4": "k8s-chase-ci-01.calit2.optiputer.net",
+      "consumer-sts-5": "unseenu.crbs.ucsd.edu"
+    }
+  },
+  "decision": "Scheduled action at evaluation second 60. No adaptive controller or splitting.",
+  "figures": {
+    "categories": [
+      "Performance evaluation metrics",
+      "Runtime control signals",
+      "Resource use"
+    ],
+    "cpu_axis": "CPU use (cores)",
+    "memory_axis": "Memory use (MiB)",
+    "presentation": "Retain individual runs. Review comparability before combining with earlier repetitions for means and sample standard deviations."
+  }
+}
