@@ -1,0 +1,28 @@
+{
+  "status": "verified_failure",
+  "timestamp": 1794418773.317416,
+  "run_id": "run-20261111-101917",
+  "classification": "Readiness failure before workload release",
+  "cause": "Consumers 0 and 1 exited during explicit assignment with Local Unknown partition from the watermark request. Consumer 2 initialized. All three producer delivery summaries recorded zero enqueued messages. Subsequent read-only checks from all three consumers found all 60 partitions readable and empty.",
+  "limitations": "The logs establish the initialization error, not its underlying Kafka metadata cause. The current retry helper does not handle the client-local _UNKNOWN_PARTITION code. Any source change is deferred until this frozen campaign ends.",
+  "backup": "/Users/soheila/Desktop/Thesis-26-27/backup/matched-backlog600-20261111/readiness-failure/run-20261111-101917",
+  "verified_raw_files": 18,
+  "restoration": {
+    "state": "failed",
+    "config_sha256": "0c8fcdc67b2c071f388ccf0f5931bdc32d5efe5a610ec90f7af95ffe261b9200",
+    "producer_free_bytes": 2734686208,
+    "consumer_replicas": 3,
+    "template_matches": true,
+    "update_strategy_matches": true,
+    "placement_issues": [],
+    "inactive_client_pods": [
+      "consumer-sts-0",
+      "consumer-sts-1",
+      "consumer-sts-2",
+      "producer-workers-0",
+      "producer-workers-1",
+      "producer-workers-2"
+    ]
+  },
+  "action": "Retain the failed preparation, then retry with the same frozen source and scientific settings. Do not count it as a completed main trial."
+}

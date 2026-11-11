@@ -1,0 +1,16 @@
+[supervisor] Consumer exited with 0 for run-20261111-095307
+Traceback (most recent call last):
+  File "/app/consumer-merge-data/consumer.py", line 498, in <module>
+    MetricConsumer().run()
+  File "/app/consumer-merge-data/consumer.py", line 149, in __init__
+    self.explicit.initialize()
+  File "/app/consumer-merge-data/explicit_assignment.py", line 71, in initialize
+    w.on_assign(w.consumer, parts)
+  File "/app/consumer-merge-data/consumer.py", line 62, in call
+    return method(self, *args, **kwargs)
+  File "/app/consumer-merge-data/consumer.py", line 198, in on_assign
+    low, high = self.assignment_bounds(consumer, tp, assignment_deadline)
+  File "/app/consumer-merge-data/consumer.py", line 174, in assignment_bounds
+    return consumer.get_watermark_offsets(partition, timeout=min(5, remaining))
+cimpl.KafkaException: KafkaError{code=_UNKNOWN_PARTITION,val=-190,str="Failed to get watermark offsets: Local: Unknown partition"}
+[supervisor] Consumer exited with 1 for run-20261111-101917
