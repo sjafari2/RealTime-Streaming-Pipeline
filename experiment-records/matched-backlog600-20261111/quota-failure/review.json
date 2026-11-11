@@ -1,0 +1,89 @@
+{
+  "status": "verified_failure",
+  "timestamp": 1794417322.4337971,
+  "run_id": "run-20261111-095307",
+  "classification": "Producer evidence storage quota exceeded",
+  "cause": "All three producer final records report disk quota exceeded. Producer evidence PVC was full. Per-message evidence stopped before production ended, so this attempt is invalid.",
+  "producer_final_records": [
+    {
+      "role": "producer",
+      "run_id": "run-20261111-095307",
+      "pod": "producer-workers-2",
+      "incarnation": "d03457520b164d6bb16898074edc9617",
+      "config_sha256": "95bf89846b72f92b54da8d810729de56f2a54f3f049272deee541c8f11fb5ac2",
+      "phase": "failed",
+      "timestamp": 1794416704.5762362,
+      "failure": "Incomplete evidence collection",
+      "evidence_dropped": 0,
+      "evidence_error": "[Errno 122] Disk quota exceeded",
+      "producer_workload_id": "2",
+      "workload_seed": "91",
+      "workload_rng": "sha256-workload-id-v1",
+      "workload_rng_seed_hex": "a78f0d2b2753d8e3",
+      "rate_stage": 1,
+      "target_rate": 200.0
+    },
+    {
+      "role": "producer",
+      "run_id": "run-20261111-095307",
+      "pod": "producer-workers-0",
+      "incarnation": "664260689bc046419f45986986a7d670",
+      "config_sha256": "95bf89846b72f92b54da8d810729de56f2a54f3f049272deee541c8f11fb5ac2",
+      "phase": "failed",
+      "timestamp": 1794416704.5751536,
+      "failure": "Incomplete evidence collection",
+      "evidence_dropped": 0,
+      "evidence_error": "[Errno 122] Disk quota exceeded",
+      "producer_workload_id": "0",
+      "workload_seed": "91",
+      "workload_rng": "sha256-workload-id-v1",
+      "workload_rng_seed_hex": "1058e94f6e9d5688",
+      "rate_stage": 1,
+      "target_rate": 200.0
+    },
+    {
+      "role": "producer",
+      "run_id": "run-20261111-095307",
+      "pod": "producer-workers-1",
+      "incarnation": "e0617e1f756e41f5bbeb966dc034b5a7",
+      "config_sha256": "95bf89846b72f92b54da8d810729de56f2a54f3f049272deee541c8f11fb5ac2",
+      "phase": "failed",
+      "timestamp": 1794416704.5795538,
+      "failure": "Incomplete evidence collection",
+      "evidence_dropped": 0,
+      "evidence_error": "[Errno 122] Disk quota exceeded",
+      "producer_workload_id": "1",
+      "workload_seed": "91",
+      "workload_rng": "sha256-workload-id-v1",
+      "workload_rng_seed_hex": "617d9ee50115b18b",
+      "rate_stage": 1,
+      "target_rate": 200.0
+    }
+  ],
+  "restoration": {
+    "state": "stopped",
+    "config_sha256": "0c8fcdc67b2c071f388ccf0f5931bdc32d5efe5a610ec90f7af95ffe261b9200",
+    "replicas": 3,
+    "template_matches": true,
+    "update_strategy_matches": true
+  },
+  "backup": "/Users/soheila/Desktop/Thesis-26-27/backup/matched-backlog600-20261111/quota-failure/run-20261111-095307",
+  "verified_raw_files": 36,
+  "action": "Preserve and exclude the failed attempt, archive closed traffic evidence to a separate PVC with byte verification, then retry larger Keep 3 without changing scientific settings or runtime source.",
+  "storage_recovery": {
+    "available_bytes": 2734686208,
+    "write_and_fsync_verified": true,
+    "timestamp": 1794417455.80212,
+    "note": "Ceph quota free-space statistics updated after verified duplicate removal."
+  },
+  "archive": {
+    "archive": "/app/consumer-merge-data/archived-producer-evidence-20261111/traffic-24-runs-v2.tar.gz",
+    "bytes": 203830553,
+    "sha256": "4d74f0985afeba28bd490176203e4d3472fdb8a4b96e9db7a57c7ef8099592ba"
+  },
+  "archive_verification": {
+    "status": "verified",
+    "files": 216,
+    "bytes": 2733489940
+  }
+}
