@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "observations": {
+    "smaller": {
+      "run_id": "run-20261111-093603",
+      "anchor_epoch": 1794415139.456087,
+      "observation_epoch": 1794415139.456,
+      "total_backlog": 14525.0
+    },
+    "larger": {
+      "run_id": "run-20261111-104120",
+      "anchor_epoch": 1794419059.7795289,
+      "observation_epoch": 1794419057.78,
+      "total_backlog": 43098.0
+    }
+  },
+  "larger_minus_smaller_offsets": 28573.0,
+  "interpretation": "The larger warm-up rate must create more waiting offsets at the common action reference. This check does not establish that backlog and message age vary independently."
+}

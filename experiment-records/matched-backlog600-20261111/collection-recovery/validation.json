@@ -1,0 +1,70 @@
+{
+  "handoff": {
+    "run_id": "run-20261111-104120",
+    "status": "passed",
+    "failures": [],
+    "acknowledged_whole_run": 413990,
+    "completion_attempts_whole_run": 270639,
+    "unfinished_whole_run": 143351,
+    "duplicate_message_ids": 0,
+    "duplicate_offsets": 0,
+    "unmatched_completion_identities": 0,
+    "handoff_checked": false,
+    "interpretation": "Synthetic completion/offset evidence only; not exactly-once external application effects."
+  },
+  "stress": {
+    "status": "passed",
+    "reason": "stress_demonstrated",
+    "run_id": "run-20261111-104120",
+    "settings": {
+      "window_seconds": 60,
+      "consecutive_windows": 3,
+      "minimum_growth_offsets_per_second": 100,
+      "minimum_mean_backlog_offsets": 10000,
+      "minimum_coverage": 0.95,
+      "maximum_gap_seconds": 3
+    },
+    "windows": [
+      {
+        "start_after_evaluation_seconds": 420.0,
+        "end_after_evaluation_seconds": 480.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 240.46666666666667,
+        "mean_backlog_offsets": 138673.5806451613,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 480.0,
+        "end_after_evaluation_seconds": 540.0,
+        "valid_observations": 31,
+        "coverage_fraction": 1.0,
+        "growth_offsets_per_second": 237.43333333333334,
+        "mean_backlog_offsets": 152926.16129032258,
+        "passed": true
+      },
+      {
+        "start_after_evaluation_seconds": 540.0,
+        "end_after_evaluation_seconds": 600.0,
+        "valid_observations": 30,
+        "coverage_fraction": 0.9666666666666667,
+        "growth_offsets_per_second": 232.08620689655172,
+        "mean_backlog_offsets": 166995.66666666666,
+        "passed": true
+      }
+    ],
+    "invalid_observations": [],
+    "message": "Keep 3 demonstrated the prespecified stress condition.",
+    "evidence_sha256": {
+      "manifest.json": "d2590cb4f1a618bba73ec8355cf4278a4442c447a0ba14b9f2d5f38b500a4e99",
+      "lag-summary.json": "12cede4b3656ceadc4bc8eea678d3c4ffabb33dd4f8a2ab0a984f5c3fe9677ac",
+      "outcome-summary.json": "6ea02e15ba727242cf7c816d9bffa32dcaf7c99a21bc83692b13f5f94065e56a"
+    }
+  },
+  "decision_backlog": {
+    "run_id": "run-20261111-104120",
+    "anchor_epoch": 1794419059.7795289,
+    "observation_epoch": 1794419057.78,
+    "total_backlog": 43098.0
+  }
+}

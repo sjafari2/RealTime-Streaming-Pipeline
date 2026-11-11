@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "sources": {
+    "smaller": {
+      "directory": "/Users/soheila/Library/Application Support/StreamProcessing/matched-backlog600-20261111/run-20261111-093603",
+      "run_id": "run-20261111-093603",
+      "event_sha256": {
+        "producer/producer-workers-0/a11fa5a705674be8a513923fa6209266/events.jsonl.gz": "f68023996695ac2addebe5ae40362cdb0b485459fff232dfa789d1658f8e9147",
+        "producer/producer-workers-1/60d6a303a0464861b6e11440e89aa0ba/events.jsonl.gz": "bd8432ae2df6d659aab4a4fa7462e9d2b1bcdf6fa7ee43fd9cf7ac525dc6c8f3",
+        "producer/producer-workers-2/b3cdf980c23e413d8304623dcbc9aa58/events.jsonl.gz": "91ae13271656e13562ec64441b1e017ac3f2d7ad88cf09761cfab01e3346a76f"
+      },
+      "manifest_sha256": "ca9ed696253e96f70fc48162a5f709160a7b2f3ca3f6caef404f17083ee7044d",
+      "outcome_sha256": "1d193a0c0d5d803c48dcc5058e79039b3f0ad2e334e6b3e39ff4e36dc736b306"
+    },
+    "larger": {
+      "directory": "/Users/soheila/Library/Application Support/StreamProcessing/matched-backlog600-20261111/run-20261111-104120",
+      "run_id": "run-20261111-104120",
+      "event_sha256": {
+        "producer/producer-workers-0/3403382c3df94e7b9a8a9b16093a4056/events.jsonl.gz": "66145eeff87b389b887412f52d79ec53594eb4b50efb641de065cacfa4e1bb3d",
+        "producer/producer-workers-1/bde404d5d7d3494d8ca8e2a9b1309f81/events.jsonl.gz": "38eb13b3fe3cda3ee916950c5a450a00c34c783f41b47450ae4a77d6c9ba1d4c",
+        "producer/producer-workers-2/8908b7203e9a4695a09c6f0d24dfb573/events.jsonl.gz": "08bad4c5d998dd53a76ed526f14aa2f04d987cfc85bfcd0a844a511fef9b9b51"
+      },
+      "manifest_sha256": "d2590cb4f1a618bba73ec8355cf4278a4442c447a0ba14b9f2d5f38b500a4e99",
+      "outcome_sha256": "6ea02e15ba727242cf7c816d9bffa32dcaf7c99a21bc83692b13f5f94065e56a"
+    }
+  },
+  "producers": {
+    "producer-workers-0": {
+      "compared_messages": 120000,
+      "smaller_messages": 120000,
+      "larger_messages": 120000,
+      "common_sequence_sha256": "218567acb355d6493b73acabca4c304a0b1676db8256f8c137f62b879e3f5bab"
+    },
+    "producer-workers-1": {
+      "compared_messages": 120000,
+      "smaller_messages": 120000,
+      "larger_messages": 120000,
+      "common_sequence_sha256": "b3c50cab8f364a29b9128f7da096b5643887f718c929b15b6e4c55f834966c96"
+    },
+    "producer-workers-2": {
+      "compared_messages": 120000,
+      "smaller_messages": 120000,
+      "larger_messages": 120000,
+      "common_sequence_sha256": "9c7fa5df0863c49c2a9fdec40b8a29cdc75e9b454ad69ca224daa60c757d9ddd"
+    }
+  },
+  "interpretation": "The logged evaluation partition sequences share identical prefixes despite different warm-up histories. Exact arrival timestamps and total counts are still reported separately."
+}
