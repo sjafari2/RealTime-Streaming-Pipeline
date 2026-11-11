@@ -1,0 +1,111 @@
+{
+  "conflicts": [
+    {
+      "message_id": "run-20261111-090854/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/87714",
+      "first": [
+        [
+          "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+          13,
+          1082,
+          1794413860.1490576
+        ],
+        "consumer/consumer-sts-1/5021156d37bc483f89c925c322ab7083/events.jsonl",
+        22532
+      ],
+      "second": [
+        [
+          "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+          13,
+          1114,
+          1794413860.1490576
+        ],
+        "consumer/consumer-sts-1/5021156d37bc483f89c925c322ab7083/events.jsonl",
+        22762
+      ]
+    },
+    {
+      "message_id": "run-20261111-090854/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/87714",
+      "first": [
+        [
+          "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+          13,
+          1082,
+          1794413860.1490576
+        ],
+        "consumer/consumer-sts-1/5021156d37bc483f89c925c322ab7083/events.jsonl",
+        22532
+      ],
+      "second": [
+        [
+          "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+          13,
+          1114,
+          1794413860.1490576
+        ],
+        "producer/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/events.jsonl",
+        88587
+      ]
+    }
+  ],
+  "events": [
+    {
+      "path": "consumer/consumer-sts-1/5021156d37bc483f89c925c322ab7083/events.jsonl",
+      "line": 22532,
+      "event": {
+        "event": "completed",
+        "timestamp": 1794413873.1643233,
+        "message_id": "run-20261111-090854/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/87714",
+        "producer_timestamp": 1794413860.1490576,
+        "completion_timestamp": 1794413873.1643157,
+        "processing_start_timestamp": 1794413873.1623998,
+        "processing_seconds": 0.0019156327471137047,
+        "topic": "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+        "partition": 13,
+        "offset": 1082,
+        "output_sha256": "116eee75635a922408e1eeb5e84f7030c857434e7634e530c96d90c7e54e1891",
+        "assignment_epoch": 1
+      }
+    },
+    {
+      "path": "consumer/consumer-sts-1/5021156d37bc483f89c925c322ab7083/events.jsonl",
+      "line": 22762,
+      "event": {
+        "event": "completed",
+        "timestamp": 1794413873.6728868,
+        "message_id": "run-20261111-090854/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/87714",
+        "producer_timestamp": 1794413860.1490576,
+        "completion_timestamp": 1794413873.67288,
+        "processing_start_timestamp": 1794413873.671027,
+        "processing_seconds": 0.0018523731268942356,
+        "topic": "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+        "partition": 13,
+        "offset": 1114,
+        "output_sha256": "116eee75635a922408e1eeb5e84f7030c857434e7634e530c96d90c7e54e1891",
+        "assignment_epoch": 1
+      }
+    },
+    {
+      "path": "producer/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/events.jsonl",
+      "line": 88587,
+      "event": {
+        "event": "acknowledged",
+        "timestamp": 1794413873.2652788,
+        "message_id": "run-20261111-090854/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/87714",
+        "producer_timestamp": 1794413860.1490576,
+        "topic": "matched-backlog-smaller-keep3-run1-skew-R200-20261111-090854_0",
+        "partition": 13,
+        "offset": 1114,
+        "workload_phase": 1,
+        "workload_phase_index": 81715
+      }
+    }
+  ],
+  "event_hashes": {
+    "consumer/consumer-sts-0/6dcb740f6d0944db8dd9ae41879d0df4/events.jsonl": "54632181e994eda1b708a842899d4707d91515dbacf46bda794a1070e394df2f",
+    "consumer/consumer-sts-1/5021156d37bc483f89c925c322ab7083/events.jsonl": "e62f3c2eb4b7a462a9262250c15f241564ead7003037181dace0f0f67509bbd9",
+    "consumer/consumer-sts-2/d0deee6085944b1c8b866cf922e74eb8/events.jsonl": "81f3a01cd83d3ba9abb152a42387b3ce41cc74b3c3566d000a6705fbca7d2676",
+    "producer/producer-workers-0/b8b84b33c34e48a5a1b17d2377169c09/events.jsonl": "2067aa6c2d016c6e13add721d3fb4db17fc0c5ec4b3d417cf0e2a3c3f50f6f2c",
+    "producer/producer-workers-1/c798b38b6dfc48c39869587ffdbe62e2/events.jsonl": "af9e2e12dbea59fdf8b669f89c11014fffe3a10e01d42ade4fa8b27b9e4b7284",
+    "producer/producer-workers-2/75f1a0ffbdde4c0bb028981f7a119d22/events.jsonl": "dfe28f6b3846e344ea9b38243344d0f3adf8358f398c2b4a766c3490b383727a"
+  }
+}

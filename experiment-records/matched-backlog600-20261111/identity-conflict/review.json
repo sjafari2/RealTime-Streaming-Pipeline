@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "timestamp": 1794414741.717238,
+  "run_id": "run-20261111-090854",
+  "classification": "Invalid physical-message identity mapping",
+  "observation": "One logical message was completed at two different offsets in partition 13 with the same producer timestamp. Its acknowledgment names the second offset.",
+  "producer_idempotence": "true",
+  "cause": "Duplicate physical delivery is confirmed. Producer idempotence was enabled in the frozen settings and effective producer configuration. The exact producer, broker or transport cause is not established.",
+  "action": "Retain this failed attempt and retry the same condition without changing settings or weakening validation.",
+  "restoration": {
+    "control_state": "stopped",
+    "config_sha256": "0c8fcdc67b2c071f388ccf0f5931bdc32d5efe5a610ec90f7af95ffe261b9200",
+    "template_matches": true,
+    "replicas": 3
+  },
+  "backup": "/Users/soheila/Desktop/Thesis-26-27/backup/matched-backlog600-20261111/identity-conflict/run-20261111-090854",
+  "verified_raw_files": 36,
+  "earlier_backup": "Earlier copy retained. Only resource-history.jsonl gained a final append after its original copy. The old bytes are an exact prefix of the final file. The new complete backup was verified after all observers stopped.",
+  "broker_record_check": "Independent manual-assignment read confirmed both physical offsets contain the same message ID and creation timestamp. Diagnostic consumer had auto commit and offset storage disabled. No experiment consumer ownership was changed."
+}
