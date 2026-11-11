@@ -57,3 +57,34 @@ def test_builtin_actions_need_no_extra_imports(monkeypatch):
     assert r.prepare_action_code(None) is None
     assert r.prepare_action_code({'action': 'none'}) is None
     assert r.prepare_action_code({'action': 'scale'}) is None
+
+
+def test_source_checks_return_exact_file_hashes(tmp_path):
+    source = tmp_path / 'worker.py'
+    source.write_bytes(b'print("source check")\n')
+    assert r.local_source_hashes([source]) == {
+        source.name: r.hashlib.sha256(source.read_bytes()).hexdigest()}
+
+
+def test_source_read_timeout_retries_with_fresh_reader(monkeypatch, tmp_path):
+    calls = []
+    def reader(argv, **kwargs):
+        calls.append((argv, kwargs))
+        if len(calls) == 1:
+            raise r.subprocess.TimeoutExpired(argv, kwargs['timeout'])
+        return types.SimpleNamespace(stdout=b'{"worker.py": "verified-hash"}')
+    monkeypatch.setattr(r.subprocess, 'run', reader)
+    assert r.local_source_hashes([tmp_path/'worker.py'], timeout=2) == {'worker.py':'verified-hash'}
+    assert len(calls) == 2
+    assert all(call[1]['timeout'] == 2 for call in calls)
+
+
+def test_repeated_source_timeouts_stop_before_source_admission(monkeypatch, tmp_path):
+    calls = []
+    def unavailable(argv, **kwargs):
+        calls.append(argv)
+        raise r.subprocess.TimeoutExpired(argv, kwargs['timeout'])
+    monkeypatch.setattr(r.subprocess, 'run', unavailable)
+    with pytest.raises(RuntimeError, match='Retryable local source-read timeout before traffic'):
+        r.local_source_hashes([tmp_path/'worker.py'], attempts=3)
+    assert len(calls) == 3

@@ -1023,6 +1023,27 @@ def analysis_tools():
     return evaluate, analyze, summarize
 
 
+def local_source_hashes(sources, timeout=30, attempts=3):
+    """Bound file-provider reads before traffic, without skipping source checks.
+
+    A read opened before a cloud file is downloaded can remain blocked even
+    after a fresh reader can access it. Reap that reader and retry in a new
+    process, rather than leaving the experiment coordinator stuck indefinitely.
+    """
+    code = ('import hashlib,json,sys; from pathlib import Path; '
+            'print(json.dumps({Path(p).name:hashlib.sha256(Path(p).read_bytes()).hexdigest() '
+            'for p in sys.argv[1:]}))')
+    argv = [sys.executable, '-c', code] + [str(p) for p in sources]
+    for attempt in range(attempts):
+        try:
+            result = subprocess.run(argv, capture_output=True, check=True, timeout=timeout)
+            return json.loads(result.stdout)
+        except subprocess.TimeoutExpired as exc:
+            if attempt + 1 == attempts:
+                raise RuntimeError('Retryable local source-read timeout before traffic') from exc
+            print('[SOURCE] Local source read timed out. Retrying with a fresh reader.', flush=True)
+
+
 def preflight():
     analysis_tools()  # Check local analysis imports before changing a run.
     context = kubectl('config', 'current-context').decode().strip()
@@ -1037,7 +1058,7 @@ def preflight():
             sources += [ROOT / 'src/common/explicit_assignment.py', ROOT / 'src/consumer/supervise.py', ROOT / 'src/consumer/create_topics.sh']
         else:
             sources += [ROOT / 'src/common/rate_schedule.py']
-        expected = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
+        expected = local_source_hashes(sources)
         for pod in names:
             code = f'''import confluent_kafka,prometheus_client,psutil,yaml,hashlib,json
 from pathlib import Path

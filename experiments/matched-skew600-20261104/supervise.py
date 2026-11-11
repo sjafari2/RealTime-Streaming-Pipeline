@@ -13,6 +13,7 @@ TRANSIENT_ERRORS = (
     'TLS handshake timeout', 'i/o timeout', 'context deadline exceeded',
     'ServiceUnavailable', 'connection reset by peer',
     'Retryable monitoring failure in Keep 3:',
+    'Retryable local source-read timeout before traffic',
 )
 
 
